@@ -1,0 +1,7 @@
+.highlight{
+    border: 3px solid rgb(248, 146, 146);
+    background: rgba(0,0,0,0.1);
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+}

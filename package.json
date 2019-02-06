@@ -170,5 +170,11 @@
     "presets": [
       "react-app"
     ]
+  },
+  "devDependencies": {
+    "css-loader": "^1.0.0",
+    "less": "^3.9.0",
+    "less-loader": "^4.1.0",
+    "style-loader": "^0.23.0"
   }
 }

@@ -324,6 +324,16 @@ module.exports = function(webpackEnv) {
                 name: 'static/media/[name].[hash:8].[ext]',
               },
             },
+            {
+              test: /\.(less)$/,
+              use: [{
+                  loader: 'style-loader' // creates style nodes from JS strings
+              }, {
+                  loader: 'css-loader' // translates CSS into CommonJS
+              }, {
+                  loader: 'less-loader' // compiles Less to CSS
+              }]
+            },
             // Process application JS with Babel.
             // The preset includes JSX, Flow, TypeScript, and some ESnext features.
             {

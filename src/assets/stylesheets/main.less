@@ -1,0 +1,375 @@
+@primary : #37474f;
+@primary-l: #62727b;
+@primary-d: #102027;
+@primary-text: #ffffff;
+
+
+@secondary: #e91e63;
+@secondary-l: #ff6090;
+@secondary-d: #b0003a;
+@secondary-text: #000000;
+
+@background: #E1E2E1;
+@background-white: #fff;
+
+@font-face {
+    font-family: 'GTWalsheimMedium';
+    src: url('../fonts/GTWalsheimMedium.eot?#iefix') format('embedded-opentype'),  
+    url('../fonts/GTWalsheimMedium.woff') format('woff'), 
+    url('../fonts/GTWalsheimMedium.ttf')  format('truetype'),
+    url('../fonts/GTWalsheimMedium.svg#GTWalsheimMedium') format('svg');
+  }
+  
+
+@font-face {
+    font-family: 'GTWalsheimProBold';
+    src: url('../fonts/GTWalsheimProBold.eot?#iefix') format('embedded-opentype'),  
+    url('../fonts/GTWalsheimProBold.woff') format('woff'), 
+    url('../fonts/GTWalsheimProBold.ttf')  format('truetype'), 
+    url('../fonts/GTWalsheimProBold.svg#GTWalsheimProBold') format('svg');
+  }
+  
+
+@font-face {
+    font-family: 'GTWalsheimProLight';
+    src: url('../fonts/GTWalsheimProLight.eot?#iefix') format('embedded-opentype'),  
+    url('../fonts/GTWalsheimProLight.woff') format('woff'), 
+    url('../fonts/GTWalsheimProLight.ttf')  format('truetype'), 
+    url('../fonts/GTWalsheimProLight.svg#GTWalsheimProLight') format('svg');
+  }
+  
+
+@font-face {
+    font-family: 'GTWalsheimProRegular';
+    src: url('../fonts/GTWalsheimProRegular.eot?#iefix') format('embedded-opentype'),  
+    url('../fonts/GTWalsheimProRegular.woff') format('woff'), 
+    url('../fonts/GTWalsheimProRegular.ttf')  format('truetype'), 
+    url('../fonts/GTWalsheimProRegular.svg#GTWalsheimProRegular') format('svg');
+}
+
+/* Generic Styles */
+
+body{
+    font-family: 'GTWalsheimProRegular', sans-serif;
+    margin: 0;
+    background-color: #fff;  
+    color: rgba(0, 0, 0, 0.87)!important;
+    overflow-x: auto;
+}
+
+input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill{
+    -webkit-box-shadow: 0 0 0px 1000px white inset !important; 
+    
+}
+
+input,
+textarea,
+select
+form {  
+    font-family: 'GTWalsheimProLight', sans-serif!important;
+    font-size: 1.1rem!important;
+}
+.boxshadownone{
+    box-shadow: none!important;
+}
+.master input{
+padding: 8px 0 9px;
+}
+.d-block{
+    display: block;
+}
+.title-btn{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10px;
+}
+
+
+.MuiFormControl-marginNormal-3
+
+// Consult Vishnu Ji
+.legal-images-container{
+    width: 30%;
+}
+.legal-images{
+    width: 100%;
+}
+// To be removed
+
+label, p{
+    font-size: 1rem!important;
+    font-family: 'GTWalsheimProLight', sans-serif!important;
+}
+.fwidth{
+    width: 100%;    
+}
+/* Global */
+
+.flex-row{
+    display: flex;
+    flex-direction: row;
+}
+.flex-column{
+    display: flex;
+    flex-direction: column;
+}
+.width-100-percent{
+    width: 100%;
+}
+.align-center{
+    align-items: center
+}
+.justify-center{
+    justify-content: center;
+}
+.justify-space-between{
+    justify-content: space-between
+}
+.cursor-pointer{
+    cursor: pointer;
+}
+.master h1{
+    font-size: 1.8rem;
+    padding-bottom: 1rem;
+    font-family: 'GTWalsheimMedium', sans-serif!important;
+    margin-bottom: 0;
+}
+.m-50{
+    margin: 50px!important;
+}
+.m-10{
+    margin: 10px!important;
+}
+.ml-35{
+    margin-left: 35px!important;
+}
+.ml-20{
+    margin-left: 20px!important;
+}
+.pad-20{
+    padding: 20px!important;
+}
+
+.mr-20{
+    margin-right: 20px!important;
+}
+.mr-10{
+    margin-right: 10px!important;
+}
+.mt-16{
+    margin-top: 16px!important;
+}
+.mt-5{
+    margin-top: 5px!important;
+}
+.mt-30{
+    margin-top: 30px!important;
+}
+.mt-20{
+    margin-top: 20px!important;
+}
+.mt-50{
+    margin-top: 50px!important;
+}
+.mt-10{
+    margin-top: 10px!important;
+}
+.no-pad{
+    padding:0!important;
+}
+.no-marg{
+    margin: 0!important;
+}
+.p-rel{
+    position: relative;
+}
+.p-abs{
+    position: absolute;
+}
+.pt-10{
+    padding-top:10px!important;
+}
+.pt-15{
+    padding-top:15px!important;
+}
+.pb-15{
+    padding-bottom:15px!important;
+}
+.pb-20{
+    padding-bottom:20px!important;
+}
+.pb-30{
+    padding-bottom:30px!important;
+}
+.pt-60{
+    padding-top: 6rem!important; 
+}
+.pt-30{
+    padding-top: 3rem!important; 
+}
+.pt-40{
+    padding-top: 4rem!important; 
+}
+.pt-20{
+    padding-top: 2rem!important; 
+}
+.pt-78{
+    padding-top: 7.8rem!important;
+}
+.mb-20{
+    margin-bottom: 2rem!important;
+}
+.mb-50{
+    margin-bottom: 5rem!important;
+}
+.mb-5{
+    margin-bottom: 5px !important;
+}
+.mb-10{
+    margin-bottom: 1rem!important;
+}
+.mtrb-12{
+    margin:1.2rem;
+    margin-left: 0;
+}
+
+
+
+
+
+
+
+/* --------------- Main Styles --------------- */
+
+/* Login Styles */
+
+
+/* Home Styles */
+.pos-body{
+    overflow-x: auto;
+    display: flex;
+    background: @background;
+}
+
+.pos-products-collection{
+    width: 60%;
+    .pos-header{
+        width: 100%;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+        .header-top{
+            width: 100%;
+            height: 60px;
+            background: @primary;
+        } 
+        .header-bottom{
+            width: 100%;
+            height: 30px;
+            background: @primary-l;
+        }
+    }
+
+    .product-catogories{
+        padding: 20px 0;
+        display: flex;
+        flex-wrap: wrap;
+
+        .category-text{
+            margin: 0 auto;
+            align-self: center;
+        }
+    }
+
+    .each-tile{
+        position: relative;
+        width: 28%;
+        border-radius: 4px;
+        margin: 1%;
+        padding: 10px;
+        min-height: 100px;
+        display: flex;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    }
+
+    .blue-background{
+        background: @primary-d;
+        color: @primary-text;
+    }
+
+    .white-background{
+        background: #fff;
+        color: @secondary-text;
+    }
+
+    .pos-products{
+        display: flex;
+        flex-wrap: wrap;
+        .truncate {
+            width: 80%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .each-card-name{
+            font-size: 0.9em;
+            color: rgba(0,0,0,0.8);
+        }
+        .each-card-code-head{
+            font-size: 0.7em;
+            color: rgba(0,0,0,0.8);
+        }
+        .each-card-code{
+            font-size: 0.7em;
+            color: rgba(0,0,0,0.8);
+        }
+        .each-card-price{
+            padding-top: 30px;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .each-card-more{
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            display: inline-block;
+        }
+        .indicator{
+            width: 15px;
+            height: 15px;
+            background: #ff000096;
+            border-radius: 100%;
+        }
+
+    }
+}
+
+.pos-checkout{
+    width: 40%;
+    background: @background-white;
+    .pos-header{
+        width: 100%;
+        height: 60px;
+        background: @background;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+        .checkout-tabs{
+            display: flex;
+            height: 60px;
+            .each-tab{
+                flex: 1;
+                margin: 0 auto;
+                align-self: center;
+                text-align: center;
+                border-right: 1px solid black;
+            }
+        }
+    }
+}
+
+.pos-payment{
+    width: 60%;
+    display: none;
+}
