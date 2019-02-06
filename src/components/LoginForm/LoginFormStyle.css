@@ -1,0 +1,97 @@
+@font-face {
+  font-family: "FontAwesome";
+  src: 
+  url('../font/fontawesome-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+.navbar-default .navbar-nav > li > a, .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
+	color: #fff;
+}
+
+@media all and (min-width: 480px) {
+
+  .login-wrapper{
+    width: 100%;
+    height: 100%;
+    /* margin: 0;
+    padding: 0; */
+  }
+
+  .login form {
+    margin: 0 auto;
+    max-width: 520px;
+    position: relative;
+  }
+
+  .login label {
+    padding-bottom: 10px;
+  }
+
+  .bottom-default{
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+  }
+
+  .modal{
+        z-index: 9999999999 !important;
+  }
+
+  .modal-dialog {
+    top: 145px ;
+  }
+
+  .modal-header{
+    color: #fff;
+    background: #004974;
+  }
+
+
+}
+
+@media (max-width: 480px){
+
+  .login-wrapper{
+    width: 100%;
+    height: 100%;
+    /* margin: 0;
+    padding: 0; */
+  }
+
+  .login form {
+    margin: 0 auto;
+    max-width: 520px;
+    position: relative;
+  }
+
+  .login label {
+    padding-bottom: 10px;
+  }
+
+  .login input {
+    border-radius: 0 !important;
+  }
+
+  .bottom-default{
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+  }
+
+  .modal{
+        z-index: 9999999999 !important;
+  }
+
+  .modal-dialog {
+    top: 145px ;
+  }
+
+  .modal-header{
+    color: #fff;
+    background: #004974;
+  }
+
+}

@@ -1,0 +1,265 @@
+/*************************************** CSS IDRIS *****************************************/
+.navbar-collapse {
+	padding-left: 0;
+}
+.navbar-collapse .nav > li:last-child > a{
+    border-bottom:none;
+}
+.jumbotron {
+	background-color: #FFF;
+}
+
+.navbar-collapse.collapse {
+    /* box-shadow: 7px 0px 10px 1px #ddd; */
+    margin-top: 82px;
+    position: fixed;
+    z-index: 88;
+    background-color: #fff;
+    height: 100%;
+    bottom: 0;
+    top: 0;
+    border-right: solid 1px #ddd;
+    width: 16.66%;
+    left: 0;
+    padding-left: 15px;
+}
+.nav > li > a:hover, .nav > li > a:focus, .nav .open > a, .nav .open > a:hover, .nav .open > a:focus{
+    background-color:transparent;
+    color:#000;
+}
+.navbar-collapse .nav > li > a {
+	padding: 20px 10px;
+    border-color: #DDD;
+    transition: ease-in-out all 0.9s;
+    -moz-transition: ease-in-out all 0.9s;
+    -webkit-transition: ease-in-out all 0.9s;
+    -ms-transition: ease-in-out all 0.9s;
+}
+.jumbotron {
+	padding-top: 100px;
+}
+.navbar.navbar-default > .container {
+	width: 100%;
+}
+
+.navbar > .container .navbar-brand, .navbar > .container-fluid .navbar-brand {
+    margin-left: 0;
+    padding:0;
+    float:none;
+}
+.logoimg {
+	height: auto;
+	width: 120px;
+	padding-top: 0;
+    padding-left: 0;
+    display: inline-block;
+}
+.navbar-brand>img.logoimg{
+    display: inline-block;
+}
+
+.panel-info {
+    border-color: #ddd;
+    float: left;
+    width: 100%;
+}
+.panel-body {
+    padding: 30px 20px;
+}
+.panel-info > .panel-heading {
+    color: #00598d !important;
+    background: #f4f4f4 !important;
+    border-color: #ddd;
+}
+
+.panel.panel-info .panel.panel-info{
+    margin-top:40px;
+}
+.form-horizontal .control-label {
+    font-size:14px;
+}
+.Select-placeholder, .Select--single .Select-value {
+    font-size: 14px !important;
+}
+.btn.btn-success {
+    margin-right: 5px;
+}
+.btn.btn-success span.glyphicon {
+    margin-right: 5px;
+}
+.navbar-header {
+    float: left;
+    position: relative;
+    width: 200px;
+    text-align: center;
+}
+.navbar-right {
+    float: right !important;
+    margin-right: 0;
+}
+nav.navbar {
+    position: fixed;
+}
+.navbar-collapse li a img{
+    width: 20px;
+    margin-right: 10px;
+}
+.Select-value {
+    color: #000;
+}
+.form-d label.control-label {
+    margin-bottom: 7px;
+}
+.form-d{
+    margin-bottom:15px;
+}
+.content.main-block {
+    float: left;
+    width: 100%;
+}
+.footer {
+    float: left;
+}
+.EnhancedTableToolbar-root-119 {
+    border-bottom: solid 3px #DDD;
+}
+.MuiTableCell-head-182 {
+    color: #FFF !important;
+    font-size: 14px !important;
+    background: #3244a9;
+}
+.MuiTableCell-root-181 {
+    padding: 4px 12px 4px 12px !important;
+}
+.MuiTooltip-root-150 {
+    flex-direction: initial !important;
+    text-align: left !important;
+}
+.content {
+    margin-top: 100px;
+}
+.table-custom th, .table-custom td, .table-custom td div span {
+    font-size: 14px;
+    padding: 4px 12px 4px 24px;
+}
+.table-custom th div{
+    font-size:13px;
+}
+.table-custom h2{
+    font-size:18px;
+}
+.table-custom td button {
+    font-size: 13px;
+    padding: 8px;
+    min-width: 70px;
+}
+
+
+
+
+
+@media (min-width:480px) {
+    .login {
+        height: 320px;
+        padding: 30px;
+        border: none;
+        border-radius: 0;
+        box-shadow: 0px 2px 19px #aaa;
+        background: #fff;
+    }
+}
+@media(min-width:768px){
+    .form-horizontal .control-label {
+        padding-top: 0;
+    }
+    .navbar-right {
+        margin-right: 0;
+      }
+}
+@media(max-width:1250px){
+    .navbar-collapse .nav > li > a {
+       font-size: 14px;
+    }
+}
+@media (max-width:1199px) {
+    .navbar-collapse .nav > li > a {
+        padding: 15px 0;
+        line-height: 16px;
+    }
+    .navbar-collapse li a img {
+        width: 16px;
+        margin-right: 5px;
+    }
+}
+@media (max-width:991px){
+    .navbar-collapse .nav > li > a {
+        border-top: none;
+        border-right: none;
+        border-left: none;
+    }
+    .content {
+        margin-top: 84px;
+    }
+    .navbar-collapse.collapse {
+        width: 25%;
+    }
+}
+@media(max-width:799px){
+    .navbar-header {
+        width: 190px;
+    }
+    .logoimg {
+        margin-left: 0;
+    }
+    .navbar-default, .bottom-default {
+        padding: 10px 0;
+    }
+}
+@media(max-width:767px){
+    label.control-label {
+        font-size: 14px;
+    }
+    .navbar-collapse.collapse {
+        width: 100%;
+    }
+}
+@media (min-width:480px) and (max-width:767px){
+    .form-d {
+        margin-bottom: 15px;
+        width: 50%;
+        float: left;
+    }
+}
+
+
+@media(max-width:479px){
+    nav.navbar {
+        position: relative;
+    }
+    .login {
+        width: 450px;
+        height: 310px;
+        max-width: 100%;
+        padding: 20px;
+        border: none;
+        border-radius: 0;
+        box-shadow: 0 2px 19px #aaa;
+    }
+    .navbar-header {
+        width: auto;
+        padding: 6px 10px 0;
+    }
+    .logoimg {
+        width: 100px;
+    }
+    .jumbotron {
+        padding-top: 30px;
+        padding-bottom: 30px;
+    }
+    .content {
+        margin-top: 0px;
+    }
+}
+
+
+/*************************************** CSS IDRIS *****************************************/
