@@ -64,7 +64,6 @@ const requestSaleTransactionData = (subreddit) => ({
 });
 
 const receiveSaleTransactionData = (subreddit, data, status) => {
-    debugger;
     return {
         type: PRODUCT_CONSTANT.RECEIVE_SALE_TRANSACTION_DATA,
         subreddit,
@@ -93,7 +92,6 @@ export const postSaleTransactionData = (subreddit, data, url) => dispatch => {
 }
 // Sale offline Transaction Call
 export const postCustomerSearchDataOffline = (data, url, subreddit) => dispatch => {
-    debugger;
     //logic of api clone will come here
     dispatch(receiveSaleTransactionData(subreddit, jsonData, 200)
     )
@@ -185,7 +183,6 @@ export const postCustomerSearchData = (data, url, subreddit) => dispatch => {
         body: JSON.stringify(data),
     })
         .then(response => {
-            debugger;
             status = response.status;
             return response.json()
         })

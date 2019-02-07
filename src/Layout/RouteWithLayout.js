@@ -26,7 +26,7 @@ class RouteWithLayout extends React.Component {
   }
 
   toggleDrawer() {
-    debugger;
+  
     console.log(this, "invoked this is here")
     const { dispatch, headersReducer } = this.props;
     this.leftDrawerOpen = !this.leftDrawerOpen;
@@ -35,7 +35,7 @@ class RouteWithLayout extends React.Component {
     this.forceUpdate();
   }
   toggleRightDrawer = () => {
-    debugger;
+  
     this.setState({ rightDrawerOpen: !this.state.rightDrawerOpen });
   }
   onRightDraweClose = () => {
@@ -141,7 +141,7 @@ class RouteWithLayout extends React.Component {
   }
 
   onCustomerHistoryClose() {
-    debugger;
+  
     const { dispatch, headersReducer } = this.props;
     dispatch(hideLeftBackButton(headersReducer, false));
     this.forceUpdate();

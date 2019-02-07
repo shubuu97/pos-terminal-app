@@ -58,7 +58,6 @@ let productData = (state = {
         productData: action.data, lastUpdated: action.receivedAt
       });
       case RECEIVE_PRODUCT_DATA_ERROR:
-      debugger;
       return Object.assign({}, state, {
         isFetching: false,
         type: action.type, didInvalidate: false, status: action.status,

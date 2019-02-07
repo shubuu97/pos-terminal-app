@@ -5,325 +5,115 @@ import _get from 'lodash/get';
 
 /* Redux Imports */
 
+/* React Pose */
+import posed from 'react-pose';
 /* Component Imports */
+import ProductsSection from '../Components/ProductsSection/ProductsSection'
+import CheckoutSection from '../Components/CheckoutSection/CheckoutSection'
+import PaymentSection from '../Components/PaymentSection/PaymentSection'
 
-/* style */
-//import style from './styles/pos.less'
+
+/* Pose Animation Configs */
+const Config = {
+    open: { width: '60%', opacity: 1 },
+    closed: { width: '0px', opacity: 0 }
+}
+
+const Products = posed.div(Config)
+const Payment = posed.div(Config)
+
 
 class HomeContainer extends React.Component {
 
     constructor() {
         super();
         this.state = {
-
+            productListHeight: 0,
+            isOpenProduct: true,
+            isOpenPayment: false,
         }
+    }
+
+    componentDidMount() {
+        this.calcHeight();
+    }
+
+    calcHeight() {
+        let windowHeight = document.documentElement.scrollHeight
+        // * Product Section Calculations
+        let headerHeight = 80;
+        let categoriesHeight = 90;
+        let productListHeight = windowHeight - (headerHeight + categoriesHeight + 50)
+        // * Checkout Section Calculations
+        let checkoutHeader = headerHeight * 0.65;
+        let checkoutMainPart = windowHeight - (checkoutHeader + 80);
+        let checkoutcalcArea = 150
+        let checkoutactionArea = 60
+        let checkoutcartArea = checkoutMainPart - (checkoutcalcArea + checkoutactionArea)
+        
+
+        this.setState({
+            windowHeight: windowHeight,
+            headerHeight,
+            categoriesHeight,
+            productListHeight,
+            checkoutHeader,
+            checkoutMainPart,
+            checkoutcalcArea,
+            checkoutactionArea,
+            checkoutcartArea
+        })
+    }
+
+    toggleViewPayment = () => {
+        this.setState({
+            isOpenProduct: false,
+            isOpenPayment: true,
+        })
+    }
+
+    toggleViewProduct = () => {
+        this.setState({
+            isOpenProduct: true,
+            isOpenPayment: false,
+        })
     }
 
 
     render() {
-        let height = document.documentElement.scrollHeight
+        let windowHeight = document.documentElement.scrollHeight
+        let { productListHeight, isOpenProduct, isOpenPayment, headerHeight, categoriesHeight, checkoutHeader, checkoutMainPart, checkoutcalcArea,checkoutactionArea, checkoutcartArea } = this.state
         return (
-            <div className='pos-body' style={{ height: height }}>
+            <div className='main pos-body'>
+                <Products pose={isOpenProduct ? 'open' : 'closed'}>
+                    <ProductsSection
+                        // * Css Specific props
+                        windowHeight={windowHeight}
+                        productListHeight={productListHeight}
+                        headerHeight={headerHeight}
+                        categoriesHeight={categoriesHeight}
+                        // ! Actions
 
-                <div className='pos-products-collection'>
+                    />
+                </Products>
 
+                <CheckoutSection
+                    // * Css Specific props
+                    windowHeight={windowHeight}
+                    checkoutHeader={checkoutHeader}
+                    checkoutMainPart={checkoutMainPart}
+                    checkoutcalcArea={checkoutcalcArea}
+                    checkoutactionArea={checkoutactionArea}
+                    checkoutcartArea={checkoutcartArea}
+                    // ! Actions
+                    toggleViewPayment={this.toggleViewPayment}
+                    toggleViewProduct={this.toggleViewProduct}
 
-                    <div className='pos-header'>
-                        <div className="header-top">
+                />
 
-                        </div>
-                        <div className='header-bottom'>
-
-                        </div>
-                    </div>
-
-
-                    <div className='product-catogories'>
-                        <div className='each-tile blue-background'>
-                            <span className='category-text'>
-                                Hello
-                            </span>
-                        </div>
-                        <div className='each-tile blue-background'>
-                            <span className='category-text'>
-                                Hello
-                            </span>
-                        </div>
-                        <div className='each-tile blue-background'>
-                            <span className='category-text'>
-                                Hello
-                            </span>
-                        </div>
-                        <div className='each-tile blue-background'>
-                            <span className='category-text'>
-                                Hello
-                            </span>
-                        </div>
-                    </div>
-
-                    <div className='pos-products'>
-                        <div className='each-tile white-background flex-column'>
-                            <div className='truncate'>
-                                <span className="each-card-name">Red Blue Green Rose</span>
-                            </div>
-                            <div>
-                                <span className="each-card-code-head">Item Code:</span>
-                                <span className='each-card-code'>G93487739</span>
-                            </div>
-                            <div className="each-card-price flex-row">
-                                $50.00
-                                    <div className='indicator'></div>
-                            </div>
-                            <span className="quick-view each-card-more" title="View Details"></span>
-                        </div>
-                        <div className='each-tile white-background flex-column'>
-                            <div className='truncate'>
-                                <span className="each-card-name">Name</span>
-                            </div>
-                            <div>
-                                <span className="each-card-code-head">Item Code:</span>
-                                <span className='each-card-code'>G93487739</span>
-                            </div>
-                            <div className="each-card-price flex-row">
-                                $50.00
-                                    <div className='indicator'></div>
-                            </div>
-                            <span className="quick-view each-card-more" title="View Details"></span>
-                        </div>
-                        <div className='each-tile white-background flex-column'>
-                            <div className='truncate'>
-                                <span className="each-card-name">Name</span>
-                            </div>
-                            <div>
-                                <span className="each-card-code-head">Item Code:</span>
-                                <span className='each-card-code'>G93487739</span>
-                            </div>
-                            <div className="each-card-price flex-row">
-                                $50.00
-                                    <div className='indicator'></div>
-                            </div>
-                            <span className="quick-view each-card-more" title="View Details"></span>
-                        </div>
-                        <div className='each-tile white-background flex-column'>
-                            <div className='truncate'>
-                                <span className="each-card-name">Name</span>
-                            </div>
-                            <div>
-                                <span className="each-card-code-head">Item Code:</span>
-                                <span className='each-card-code'>G93487739</span>
-                            </div>
-                            <div className="each-card-price flex-row">
-                                $50.00
-                                    <div className='indicator'></div>
-                            </div>
-                            <span className="quick-view each-card-more" title="View Details"></span>
-                        </div>
-                        <div className='each-tile white-background flex-column'>
-                            <div className='truncate'>
-                                <span className="each-card-name">Name</span>
-                            </div>
-                            <div>
-                                <span className="each-card-code-head">Item Code:</span>
-                                <span className='each-card-code'>G93487739</span>
-                            </div>
-                            <div className="each-card-price flex-row">
-                                $50.00
-                                    <div className='indicator'></div>
-                            </div>
-                            <span className="quick-view each-card-more" title="View Details"></span>
-                        </div>
-                        <div className='each-tile white-background flex-column'>
-                            <div className='truncate'>
-                                <span className="each-card-name">Name</span>
-                            </div>
-                            <div>
-                                <span className="each-card-code-head">Item Code:</span>
-                                <span className='each-card-code'>G93487739</span>
-                            </div>
-                            <div className="each-card-price flex-row">
-                                $50.00
-                                    <div className='indicator'></div>
-                            </div>
-                            <span className="quick-view each-card-more" title="View Details"></span>
-                        </div>
-                        <div className='each-tile white-background flex-column'>
-                            <div className='truncate'>
-                                <span className="each-card-name">Name</span>
-                            </div>
-                            <div>
-                                <span className="each-card-code-head">Item Code:</span>
-                                <span className='each-card-code'>G93487739</span>
-                            </div>
-                            <div className="each-card-price flex-row">
-                                $50.00
-                                    <div className='indicator'></div>
-                            </div>
-                            <span className="quick-view each-card-more" title="View Details"></span>
-                        </div>
-                        <div className='each-tile white-background flex-column'>
-                            <div className='truncate'>
-                                <span className="each-card-name">Name</span>
-                            </div>
-                            <div>
-                                <span className="each-card-code-head">Item Code:</span>
-                                <span className='each-card-code'>G93487739</span>
-                            </div>
-                            <div className="each-card-price flex-row">
-                                $50.00
-                                    <div className='indicator'></div>
-                            </div>
-                            <span className="quick-view each-card-more" title="View Details"></span>
-                        </div>
-                        <div className='each-tile white-background flex-column'>
-                            <div className='truncate'>
-                                <span className="each-card-name">Name</span>
-                            </div>
-                            <div>
-                                <span className="each-card-code-head">Item Code:</span>
-                                <span className='each-card-code'>G93487739</span>
-                            </div>
-                            <div className="each-card-price flex-row">
-                                $50.00
-                                    <div className='indicator'></div>
-                            </div>
-                            <span className="quick-view each-card-more" title="View Details"></span>
-                        </div>
-                        <div className='each-tile white-background flex-column'>
-                            <div className='truncate'>
-                                <span className="each-card-name">Name</span>
-                            </div>
-                            <div>
-                                <span className="each-card-code-head">Item Code:</span>
-                                <span className='each-card-code'>G93487739</span>
-                            </div>
-                            <div className="each-card-price flex-row">
-                                $50.00
-                                    <div className='indicator'></div>
-                            </div>
-                            <span className="quick-view each-card-more" title="View Details"></span>
-                        </div>
-                        <div className='each-tile white-background flex-column'>
-                            <div className='truncate'>
-                                <span className="each-card-name">Name</span>
-                            </div>
-                            <div>
-                                <span className="each-card-code-head">Item Code:</span>
-                                <span className='each-card-code'>G93487739</span>
-                            </div>
-                            <div className="each-card-price flex-row">
-                                $50.00
-                                    <div className='indicator'></div>
-                            </div>
-                            <span className="quick-view each-card-more" title="View Details"></span>
-                        </div>
-                        <div className='each-tile white-background flex-column'>
-                            <div className='truncate'>
-                                <span className="each-card-name">Name</span>
-                            </div>
-                            <div>
-                                <span className="each-card-code-head">Item Code:</span>
-                                <span className='each-card-code'>G93487739</span>
-                            </div>
-                            <div className="each-card-price flex-row">
-                                $50.00
-                                    <div className='indicator'></div>
-                            </div>
-                            <span className="quick-view each-card-more" title="View Details"></span>
-                        </div>
-                        <div className='each-tile white-background flex-column'>
-                            <div className='truncate'>
-                                <span className="each-card-name">Name</span>
-                            </div>
-                            <div>
-                                <span className="each-card-code-head">Item Code:</span>
-                                <span className='each-card-code'>G93487739</span>
-                            </div>
-                            <div className="each-card-price flex-row">
-                                $50.00
-                                    <div className='indicator'></div>
-                            </div>
-                            <span className="quick-view each-card-more" title="View Details"></span>
-                        </div>
-                        <div className='each-tile white-background flex-column'>
-                            <div className='truncate'>
-                                <span className="each-card-name">Name</span>
-                            </div>
-                            <div>
-                                <span className="each-card-code-head">Item Code:</span>
-                                <span className='each-card-code'>G93487739</span>
-                            </div>
-                            <div className="each-card-price flex-row">
-                                $50.00
-                                    <div className='indicator'></div>
-                            </div>
-                            <span className="quick-view each-card-more" title="View Details"></span>
-                        </div>
-                        <div className='each-tile white-background flex-column'>
-                            <div className='truncate'>
-                                <span className="each-card-name">Name</span>
-                            </div>
-                            <div>
-                                <span className="each-card-code-head">Item Code:</span>
-                                <span className='each-card-code'>G93487739</span>
-                            </div>
-                            <div className="each-card-price flex-row">
-                                $50.00
-                                    <div className='indicator'></div>
-                            </div>
-                            <span className="quick-view each-card-more" title="View Details"></span>
-                        </div>
-                        <div className='each-tile white-background flex-column'>
-                            <div className='truncate'>
-                                <span className="each-card-name">Name</span>
-                            </div>
-                            <div>
-                                <span className="each-card-code-head">Item Code:</span>
-                                <span className='each-card-code'>G93487739</span>
-                            </div>
-                            <div className="each-card-price flex-row">
-                                $50.00
-                                    <div className='indicator'></div>
-                            </div>
-                            <span className="quick-view each-card-more" title="View Details"></span>
-                        </div>
-                        <div className='each-tile white-background flex-column'>
-                            <div className='truncate'>
-                                <span className="each-card-name">Name</span>
-                            </div>
-                            <div>
-                                <span className="each-card-code-head">Item Code:</span>
-                                <span className='each-card-code'>G93487739</span>
-                            </div>
-                            <div className="each-card-price flex-row">
-                                $50.00
-                                    <div className='indicator'></div>
-                            </div>
-                            <span className="quick-view each-card-more" title="View Details"></span>
-                        </div>
-                    </div>
-
-                </div>
-
-
-
-                <div className='pos-checkout'>
-                    <div className='pos-header'>
-                        <div className='checkout-tabs'>
-                            <div className='each-tab'>Order</div>
-                            <div className='each-tab'>Customer</div>
-                            <div className='each-tab'>Payment</div>
-                        </div>
-                    </div>
-                </div>
-
-
-
-
-                <div className='pos-payment'>
-                    hello
-                </div>
-
-
+                <Payment pose={isOpenPayment ? 'open' : 'closed'}>
+                    <PaymentSection />
+                </Payment>
 
             </div>
         );

@@ -6,44 +6,28 @@ import _get from 'lodash/get';
 /* Redux Imports */
 
 /* Component Imports */
+import SideDrawer from '../SideDrawer'
 
-
-class HomeContainer extends React.Component {
+class ProductsSection extends React.Component {
 
     constructor() {
         super();
         this.state = {
-            productListHeight: 0,
+
         }
     }
 
-    componentDidMount(){
-        this.calcHeight();
-    }
-
-    calcHeight(){
-        let windowHeight = document.documentElement.scrollHeight
-        let headerHeight = document.getElementById('pos-product-header').offsetHeight;
-        let categoriesHeight = document.getElementById('pos-categories-header').offsetHeight;
-        let productListHeight = windowHeight - ( headerHeight + categoriesHeight + 30)
-        this.setState({
-            windowHeight: windowHeight,
-            headerHeight,
-            categoriesHeight,
-            productListHeight
-        })
-    }
-
-
     render() {
-        let windowHeight = document.documentElement.scrollHeight
-        let { productListHeight } = this.state
+        let { windowHeight, productListHeight, headerHeight, categoriesHeight } = this.props
         return (
-            <div className='pos-body'>
-                <div className='pos-products-collection' style={{height: windowHeight}}>
-                    <div className='pos-header' id='pos-product-header'>
-                        <div className="header-top">
+            <div className='pos-products-collection' style={{ height: windowHeight }}>
 
+                    {/* 
+                // * Header Component
+                */}
+                    <div className='pos-header' style={{height:headerHeight}}>
+                        <div className="header-top" >
+                            <SideDrawer/>
                         </div>
                         <div className='header-bottom'>
 
@@ -51,7 +35,10 @@ class HomeContainer extends React.Component {
                     </div>
 
 
-                    <div className='product-catogories' id='pos-categories-header'>
+                    {/* 
+                // * Product Categories Component
+                */}
+                    <div className='product-catogories' style={{height:categoriesHeight}}>
                         <div className='each-tile blue-background'>
                             <span className='category-text'>
                                 Hello
@@ -74,7 +61,10 @@ class HomeContainer extends React.Component {
                         </div>
                     </div>
 
-                    <div className='pos-products' style={{height: productListHeight}}>
+                    {/* 
+                // * Products List Component
+                */}
+                    <div className='pos-products' style={{ height: productListHeight }}>
                         <div className='each-tile white-background flex-column'>
                             <div className='truncate'>
                                 <span className="each-card-name">Red Blue Green Rose</span>
@@ -314,33 +304,9 @@ class HomeContainer extends React.Component {
                             <span className="quick-view each-card-more" title="View Details"></span>
                         </div>
                     </div>
-
                 </div>
-
-
-
-                <div className='pos-checkout'>
-                    <div className='pos-header'>
-                        <div className='checkout-tabs'>
-                            <div className='each-tab'>Order</div>
-                            <div className='each-tab'>Customer</div>
-                            <div className='each-tab'>Payment</div>
-                        </div>
-                    </div>
-                </div>
-
-
-
-
-                <div className='pos-payment'>
-                    hello
-                </div>
-
-
-
-            </div>
         );
     }
 }
 
-export default HomeContainer;
+export default ProductsSection;

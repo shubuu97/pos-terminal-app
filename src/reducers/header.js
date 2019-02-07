@@ -33,7 +33,7 @@ const headersData = (state = {
 }, action) => {
     switch (action.type) {
         case HEADER_TOGGLE_CAT:
-            debugger;
+            
             return Object.assign({}, state, {
                 isFetching: false,
                 type: action.type,

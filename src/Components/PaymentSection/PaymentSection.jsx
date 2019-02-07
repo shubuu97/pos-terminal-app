@@ -9,7 +9,7 @@ import _get from 'lodash/get';
 
 /* style */
 
-class Quick extends React.Component {
+class PaymentSection extends React.Component {
 
     constructor(){
         super();
@@ -20,12 +20,11 @@ class Quick extends React.Component {
     
     render() {
         return (
-            <div>
+            <div className='pos-payment'>
                 hello
-
             </div>
         );
     }
 }
 
-export default Quick;
+export default PaymentSection;
