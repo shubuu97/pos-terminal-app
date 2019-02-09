@@ -309,6 +309,9 @@ label, p{
         min-height: 50px;
         display: flex;
         box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+        .each-tile-img{
+            width: 20%;
+        }
     }
 
     .blue-background{
@@ -452,6 +455,24 @@ label, p{
             .calc-first-part{
                 padding: 10px;
                 width: 50%;
+                .cart-details{
+                    align-self: flex-end;
+                    width: 100%;
+                    .cart-each-details{
+                        display: flex;
+                        justify-content: space-between;
+                        padding: 3px 0;
+                        .cart-title{
+                            width: 50%;
+                            font-size: 0.9em;
+                            color: @soft-text;
+                        }
+                        .cart-amount{
+                            font-size: 0.9em;
+                            color: @soft-text;
+                        }
+                    }
+                }
             }
             .calc-second-part{
                 margin: 10px;

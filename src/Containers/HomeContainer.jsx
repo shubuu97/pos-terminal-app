@@ -15,8 +15,8 @@ import PaymentSection from '../Components/PaymentSection/PaymentSection'
 
 /* Pose Animation Configs */
 const Config = {
-    open: { width: '60%', opacity: 1 },
-    closed: { width: '0px', opacity: 0 }
+    open: { width: '60%', opacity: 1},
+    closed: { width: '0px', opacity: 0}
 }
 
 const Products = posed.div(Config)

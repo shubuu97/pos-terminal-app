@@ -129,7 +129,20 @@ class OrdersTab extends React.Component {
 
                 <div className='calculation-section flex-row' style={{ height: checkoutcalcArea }}>
                     <div className="calc-first-part">
-
+                        <div className="cart-details">
+                            <div className='cart-each-details'>
+                                <span className='cart-title'>Total Items </span>
+                                <span className='cart-amount'>$ 3000</span>
+                            </div>
+                            <div className='cart-each-details'>
+                                <span className='cart-title'>Discount </span>
+                                <span className='cart-amount'>- $ 1200</span>
+                            </div>
+                            <div className='cart-each-details'>
+                                <span className='cart-title'>Est.Tax </span>
+                                <span className='cart-amount'>$ 200.89</span>
+                            </div>
+                        </div>
                     </div>
                     <div className="calc-second-part flex-column justify-space-between">
                         <div className="cart-details">
@@ -158,6 +171,7 @@ class OrdersTab extends React.Component {
 
                 <div className='button-section flex-row ' style={{ height: checkoutactionArea }}>
                     <div>
+                        <Button className='mr-20' variant="outlined">Clear</Button>
                         <Button className='mr-20' variant="outlined">Hold</Button>
                         <Button variant="contained">Proceed</Button>
                     </div>
