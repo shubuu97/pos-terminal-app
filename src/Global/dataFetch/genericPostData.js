@@ -5,13 +5,13 @@ import showMessage from '../../Redux/toastAction';
 
 function genericPostData({dispatch,reqObj,url,constants,identifier,successText,successCb,successTimeOutCb,errorCb,errorTimeOutCb,dontShowMessage})
 {
-    dispatch(
+     dispatch(
         postData(`${APPLICATION_BFF_URL}${url}`, reqObj,identifier ,constants)
     ).then((data) => {
         if(!dontShowMessage)
         dispatch(showMessage({ text: successText||'Updated SuccessFully', isSuccess: true }));
         if(successCb)
-        successCb();
+        successCb(data);
         // this.basicDataFetcher();
 
         setTimeout(() => {

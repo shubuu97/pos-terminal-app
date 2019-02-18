@@ -1,8 +1,7 @@
 /* Main Route Imports */
-import HomeContainer from './Containers/HomeContainer';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import JssProvider from 'react-jss/lib/JssProvider';
 /* Redux Imports*/
 import { createStore, applyMiddleware, compose } from 'redux';
@@ -28,6 +27,7 @@ import pos from './xBoilerplate/pos';
 /* Main Route Imports */
 import HomeContainer from './Containers/HomeContainer';
 import LoginContainer from './Containers/LoginContainer';
+import StoreContainer from './Containers/StoreContainer';
 
 
 
@@ -76,11 +76,10 @@ ReactDOM.render(
 
     <Router>
       <Switch>
-
+      <RouteWithLayout Layout={EmptyLayout} exact path="/" Component={HomeContainer} />
         <RouteWithLayout Layout={EmptyLayout} exact path="/boilerplate/pos" Component={pos} />
-
-        <RouteWithLayout Layout={EmptyLayout} exact path="/" Component={HomeContainer} />
         <RouteWithLayout Layout={EmptyLayout} exact path="/login" Component={LoginContainer} />
+        <RouteWithLayout Layout={EmptyLayout} exact path="/store" Component={StoreContainer} />
 
 
       </Switch>
