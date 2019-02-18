@@ -118,7 +118,7 @@ class HomeContainer extends React.Component {
     }
 
     componentWillReceiveProps(props){
-        debugger;
+        
     }
 
 
