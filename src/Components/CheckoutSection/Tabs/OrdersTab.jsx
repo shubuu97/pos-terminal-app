@@ -1,10 +1,13 @@
 import React from 'react';
 /* Lodash Imports */
 import _get from 'lodash/get';
+import _findIndex from 'lodash/findIndex';
+
 /* Material import */
 import Button from '@material-ui/core/Button';
 import SvgIcon from '@material-ui/core/SvgIcon';
 /* Redux Imports */
+import {commonActionCreater} from '../../../Redux/commonAction'
 
 /* Component Imports */
 
@@ -30,12 +33,20 @@ class OrdersTab extends React.Component {
 
         }
     }
+    handleDelete=(item)=>
+    {
+    let cartItems = [...this.props.cartItems];
+    let index = _findIndex(cartItems, ['id',item.id]);
+    cartItems.splice(index,1);
+    this.props.dispatch(commonActionCreater(cartItems, 'CART_ITEM_LIST'));
+
+    }
 
     mapCartItems = () => {
         return this.props.cartItems.map((item) => {
             return (
                 <div className='p-rel each-checkout-item flex-row'>
-                    <div className='p-abs delete-item'>
+                    <div onClick={()=>this.handleDelete(item)} className='p-abs delete-item'>
                         <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
                             <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
                             <path d="M0 0h24v24H0z" fill="none" />
@@ -51,7 +62,7 @@ class OrdersTab extends React.Component {
                         <span className='code'>{`${_get(item,'salePrice.currencyCode')}${_get(item,'salePrice.price')}`}</span>
                     </div>
                     <div className='each-product-price flex-column justify-center'>
-                        $ 1000
+                       {item.cartQuantity*_get(item,'salePrice.price')}
                    </div>
                 </div>)
         })

@@ -15,14 +15,28 @@ class Product extends React.Component {
         super(props);
         this.state = {};
     }
-    componentDidMount()
+    // componentDidMount()
+    // {
+    // let cartItems = _get(this, 'props.CartItems', [])
+    // let data =  _get(this, `props.productList.lookUpData[${this.props.index}]`, {})
+
+    //     if(_find(cartItems, data)){
+    //         let cartQuantity = (_find(cartItems, data)).cartQuantity;
+    //         this.setState({cartQuantity})
+    //     }
+    // }
+    componentWillReceiveProps(props)
     {
-    let cartItems = _get(this, 'props.CartItems', [])
-    let data =  _get(this, `props.productList.lookUpData[${this.props.index}]`, {})
+        debugger;
+    let cartItems = _get(props, 'cartItems.lookUpData', [])
+    let data =  _get(props, `productList.lookUpData[${props.index}]`, {})
 
         if(_find(cartItems, data)){
             let cartQuantity = (_find(cartItems, data)).cartQuantity;
             this.setState({cartQuantity})
+        }
+        else{
+            this.setState({cartQuantity:0})
         }
     }
      
@@ -31,7 +45,7 @@ class Product extends React.Component {
     }
 
     addToCart = (index) => {
-        let cartItems = _get(this, 'props.CartItems', [])
+        let cartItems = _get(this, 'props.cartItems.lookUpData', [])
         let data =  _get(this, `props.productList.lookUpData[${index}]`, {})
         let reqObj
         if(_isEmpty(_find(cartItems, data))){

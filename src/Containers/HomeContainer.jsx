@@ -39,7 +39,7 @@ class HomeContainer extends React.Component {
         this.calcHeight();
         this.getProductData();
         // ! To be deleted
-        this.TEMPinitialize();
+        //this.TEMPinitialize();
 
         
     }
@@ -118,7 +118,7 @@ class HomeContainer extends React.Component {
     }
 
     componentWillReceiveProps(props){
-        
+        debugger;
     }
 
 
