@@ -12,19 +12,6 @@ import {commonActionCreater} from '../../../Redux/commonAction'
 /* Component Imports */
 
 /* style */
-
-/* dummy images */
-import img1 from '../../../assets/images/flowers/flower1.jpg'
-import img2 from '../../../assets/images/flowers/flower2.jpg'
-import img3 from '../../../assets/images/flowers/flower3.jpg'
-import img4 from '../../../assets/images/flowers/flower4.jpg'
-import img5 from '../../../assets/images/flowers/flower5.jpg'
-import img6 from '../../../assets/images/flowers/flower6.jpg'
-import img7 from '../../../assets/images/flowers/flower7.jpg'
-import img8 from '../../../assets/images/flowers/flower8.JPG'
-import img9 from '../../../assets/images/flowers/flower9.jpg'
-import img10 from '../../../assets/images/flowers/flower10.jpg'
-
 class OrdersTab extends React.Component {
 
     constructor() {
@@ -93,6 +80,10 @@ class OrdersTab extends React.Component {
                    </div>
                 </div>)
         });
+        let reqObj = {};
+        reqObj.orderTotal = orderTotal.toFixed(2);
+        reqObj.totalCartItems = totalCartItems;
+        // this.props.dispatch(commonActionCreater(reqObj, 'ORDER_DETAILS'));
         this.state.orderTotal = orderTotal.toFixed(2);
         this.state.totalCartItems = totalCartItems;
         return cartItems
