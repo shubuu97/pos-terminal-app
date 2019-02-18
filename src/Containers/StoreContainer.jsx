@@ -1,13 +1,15 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import genericPostData from '../Global/dataFetch/genericPostData';
-
+import _get from 'lodash/get';
+import Select from '@material-ui/core/Select';
 
 
 class StoreContainer extends React.Component {
     constructor(props) {
         super(props);
          this.state = {
+            terminals:[]
         };
      
     }
@@ -42,11 +44,11 @@ class StoreContainer extends React.Component {
             reqObj:{ id: localStorage.getItem('storeId')},
             url:'Store/AllData',
             constants:{
-                init:'store_init',
-                success:'store_success',
-                error:'store_error'
+                init:'GET_STORE_DATA_init',
+                success:'GET_STORE_DATA_success',
+                error:'GET_STORE_DATA_error'
             },
-            identifier:'store',
+            identifier:'GET_STORE_DATA',
             successCb:this.afterStoreSuccess,
             errorCb:()=>this.setState({isFetching:false})
         })
@@ -54,13 +56,31 @@ class StoreContainer extends React.Component {
     }
     afterStoreSuccess=(data)=>
     {
-    console.log(data,"data is here")
+    this.setState({terminals:_get(data,'terminals')})
+    }
+    handleChange = (terminal)=>
+    {
+
+    }
+    mapTermainal=()=>
+    {
+       this.state.terminals.map((terminal)=>
+    {
+        return <option value ={terminal}>{terminal.name}</option>
+    })
     }
     render() {
 
         return (
             <div>
-                this is dfjd
+              <Select
+            native
+            value={this.state.terminal}
+            onChange={this.handleChange}
+          >
+           {this.mapTermainal()}
+          </Select>
+
              </div>
         )
     }

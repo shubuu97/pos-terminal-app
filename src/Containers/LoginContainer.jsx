@@ -63,11 +63,11 @@ class SignIn extends React.Component {
             reqObj:{email:this.state.email,password:this.state.password},
             url:'login/pos-login',
             constants:{
-                init:'login_init',
-                success:'login_success',
-                error:'login_error'
+                init:'POST_LOGIN_DATA_init',
+                success:'POST_LOGIN_DATA_success',
+                error:'POST_LOGIN_DATA_error'
             },
-            identifier:'login',
+            identifier:'POST_LOGIN_DATA',
             successCb:this.afterLoginSuccess,
             errorCb:()=>this.setState({isFetching:false})
         })
