@@ -137,6 +137,12 @@ label, p{
     font-family: 'GTWalsheimMedium', sans-serif!important;
     margin-bottom: 0;
 }
+.relative{
+    position: relative;
+}
+.absolute{
+    position: absolute;
+}
 .m-50{
     margin: 50px!important;
 }
@@ -334,7 +340,16 @@ label, p{
             overflow: hidden;
             text-overflow: ellipsis;
         }
-
+        .added-item-position{
+            top: 0;
+            right: 0;
+        }
+        .added-item-count{
+            background: @primary-l;
+            border-radius: 0 0 0 10px;
+            padding: 10px;
+            color: @primary-text;
+        }
         .each-card-name{
             font-size: 0.9em;
             color: @soft-text;
