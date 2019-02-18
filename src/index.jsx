@@ -1,8 +1,7 @@
 /* Main Route Imports */
-import HomeContainer from './Containers/HomeContainer';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import JssProvider from 'react-jss/lib/JssProvider';
 /* Redux Imports*/
 import { createStore, applyMiddleware, compose } from 'redux';

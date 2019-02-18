@@ -114,10 +114,17 @@ class HomeContainer extends React.Component {
         })
     }
 
+    componentWillReceiveProps(props){
+        
+    }
+
 
     render() {
         let windowHeight = document.documentElement.scrollHeight
+        
         let { productListHeight, isOpenProduct, isOpenPayment, headerHeight, categoriesHeight, checkoutHeader, checkoutMainPart, checkoutcalcArea, checkoutactionArea, checkoutcartArea } = this.state
+
+        let { productList } = this.props
         return (
             <div className='main pos-body'>
                 <Products pose={isOpenProduct ? 'open' : 'closed'}>
@@ -127,6 +134,7 @@ class HomeContainer extends React.Component {
                         productListHeight={productListHeight}
                         headerHeight={headerHeight}
                         categoriesHeight={categoriesHeight}
+                        productList = {productList}
                     // ! Actions
 
                     />
@@ -156,6 +164,10 @@ class HomeContainer extends React.Component {
 }
 
 function mapStateToProps(state) {
+    let { productList } = state 
     
+    return {
+        productList
+    }
 }
 export default connect(mapStateToProps)(HomeContainer)
