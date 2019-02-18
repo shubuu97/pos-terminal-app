@@ -25,7 +25,7 @@ const httpVerbs = {
 };
 
 const axiosMiddleware = store => next => (action) => {
-  let authToken = `Bearer ${localStorage.getItem("authToken")}`;
+  let authToken = `Bearer ${localStorage.getItem("Token")}`;
   if (!action || !action.fetchConfig) {
     return next(action)
   }
