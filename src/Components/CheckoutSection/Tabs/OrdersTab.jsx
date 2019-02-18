@@ -58,7 +58,10 @@ class OrdersTab extends React.Component {
                     <div className='each-product-des flex-column'>
                         <span className='title'>{item.name}</span>
                         <span className='code'>{item.sku}</span>
-                        <span className='code'>{item.cartQuantity}</span>
+                        <span className='title'>
+                        <span>+</span>
+                        <span>{item.cartQuantity}</span>
+                        <span>-</span></span>
                         <span className='code'>{`${_get(item,'salePrice.currencyCode')}${_get(item,'salePrice.price')}`}</span>
                     </div>
                     <div className='each-product-price flex-column justify-center'>
