@@ -30,7 +30,8 @@ class OrdersTab extends React.Component {
     constructor() {
         super();
         this.state = {
-
+            totalCartItems:0,
+            orderTotal:0
         }
     }
     handleDelete=(item)=>
@@ -41,9 +42,32 @@ class OrdersTab extends React.Component {
     this.props.dispatch(commonActionCreater(cartItems, 'CART_ITEM_LIST'));
 
     }
+    handleIncreaseQuantity = (item)=>
+    {
+        let cartItems = [...this.props.cartItems];
+        let index = _findIndex(cartItems, ['id',item.id]);
+        cartItems[index].cartQuantity = cartItems[index].cartQuantity+1;
+        cartItems[index].subTotal = item.salePrice.price* cartItems[index].cartQuantity;
+        this.props.dispatch(commonActionCreater(cartItems, 'CART_ITEM_LIST'));
+    }
+    handleDecreseQuantity = (item)=>{
+        let cartItems = [...this.props.cartItems];
+        let index = _findIndex(cartItems, ['id',item.id]);
+        cartItems[index].cartQuantity = cartItems[index].cartQuantity-1;
+        cartItems[index].subTotal = item.salePrice.price* cartItems[index].cartQuantity;
+        if(cartItems[index].cartQuantity==0){
+         cartItems.splice(index,1);
+        }
+        this.props.dispatch(commonActionCreater(cartItems, 'CART_ITEM_LIST'));
+    }
 
     mapCartItems = () => {
-        return this.props.cartItems.map((item) => {
+        let totalCartItems = 0;
+        let orderTotal = 0
+        let cartItems =  this.props.cartItems.map((item) => {
+            totalCartItems+=item.cartQuantity;
+            orderTotal+=item.subTotal;
+            this.state.orderTotal = this.state.orderTotal+item.subTotal;
             return (
                 <div className='p-rel each-checkout-item flex-row'>
                     <div onClick={()=>this.handleDelete(item)} className='p-abs delete-item'>
@@ -59,16 +83,19 @@ class OrdersTab extends React.Component {
                         <span className='title'>{item.name}</span>
                         <span className='code'>{item.sku}</span>
                         <span className='title'>
-                        <span>+</span>
+                        <span onClick={()=>this.handleIncreaseQuantity(item)} style={{cursor:'pointer'}}>+</span>
                         <span>{item.cartQuantity}</span>
-                        <span>-</span></span>
+                        <span  onClick={()=>this.handleDecreseQuantity(item)} style={{cursor:'pointer'}}>-</span></span>
                         <span className='code'>{`${_get(item,'salePrice.currencyCode')}${_get(item,'salePrice.price')}`}</span>
                     </div>
                     <div className='each-product-price flex-column justify-center'>
-                       {item.cartQuantity*_get(item,'salePrice.price')}
+                       {item.subTotal.toFixed(2)}
                    </div>
                 </div>)
-        })
+        });
+        this.state.orderTotal = orderTotal.toFixed(2);
+        this.state.totalCartItems = totalCartItems;
+        return cartItems
     }
 
     render() {
@@ -87,15 +114,15 @@ class OrdersTab extends React.Component {
                         <div className="cart-details">
                             <div className='cart-each-details'>
                                 <span className='cart-title'>Total Items </span>
-                                <span className='cart-amount'>$ 3000</span>
+                                <span className='cart-amount'>{this.state.totalCartItems}</span>
                             </div>
                             <div className='cart-each-details'>
                                 <span className='cart-title'>Discount </span>
-                                <span className='cart-amount'>- $ 1200</span>
+                                <span className='cart-amount'>- $0</span>
                             </div>
                             <div className='cart-each-details'>
                                 <span className='cart-title'>Est.Tax </span>
-                                <span className='cart-amount'>$ 200.89</span>
+                                <span className='cart-amount'>$0</span>
                             </div>
                         </div>
                     </div>
@@ -103,20 +130,20 @@ class OrdersTab extends React.Component {
                         <div className="cart-details">
                             <div className='cart-each-details'>
                                 <span className='cart-title'>Order Total </span>
-                                <span className='cart-amount'>$ 3000</span>
+                                <span className='cart-amount'>{this.state.orderTotal}</span>
                             </div>
                             <div className='cart-each-details'>
                                 <span className='cart-title'>Discount </span>
-                                <span className='cart-amount'>- $ 1200</span>
+                                <span className='cart-amount'>- $ 0</span>
                             </div>
                             <div className='cart-each-details'>
                                 <span className='cart-title'>Est.Tax </span>
-                                <span className='cart-amount'>$ 200.89</span>
+                                <span className='cart-amount'>$ 0</span>
                             </div>
                         </div>
                         <div className="cart-total">
                             <span className='total-text'>Total </span>
-                            <span className='total-amount'>$ 2000.89</span>
+                            <span className='total-amount'>{this.state.orderTotal}</span>
                         </div>
                     </div>
                 </div>
