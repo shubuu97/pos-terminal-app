@@ -1,20 +1,28 @@
-import React from "react";
+/* Main Route Imports */
+import HomeContainer from './Containers/HomeContainer';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import JssProvider from 'react-jss/lib/JssProvider';
+/* Redux Imports*/
+import { createStore, applyMiddleware, compose } from 'redux';
+import axiosMiddleWare from './Redux/axiosMiddleware';
+import { createLogger } from 'redux-logger';
 import thunk from 'redux-thunk';
-import ReactDom from "react-dom";
-import { Switch } from "react-router-dom";
-import Provider from 'react-redux/lib/components/Provider';
-import { createLogger } from 'redux-logger/src/index';
-import { compose, createStore, applyMiddleware } from 'redux'
-import Router from 'react-router-dom/HashRouter';
-import Route from 'react-router-dom/Route';
-import Link from 'react-router-dom/Link';
-
-import reducer from './reducers';
-
-import MainLayout from './Layout/MainLayout.jsx'
+import rootReducer from './Redux/RootReducer';
+import { Provider } from 'react-redux';
+/* Stylesheet */
+import './assets/stylesheets/main.less'
+/*Material UI Imports*/
+import { createGenerateClassName } from '@material-ui/core/styles';
+/*Redux Persist Import */
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import hardSet from 'redux-persist/lib/stateReconciler/hardSet';
+import { PersistGate } from 'redux-persist/integration/react';
+/*Layout imports*/
 import EmptyLayout from './Layout/EmptyLayout.jsx';
-
-
+import RouteWithLayout from './Global/layout/RouteWithLayout';
 /* Boilerplate Imports */
 import pos from './xBoilerplate/pos';
 /* Main Route Imports */
@@ -23,34 +31,43 @@ import LoginContainer from './Containers/LoginContainer';
 
 
 
-
-
-import PouchDB from 'pouchdb';
-import { persistentStore } from 'redux-pouchdb-plus';
 import * as serviceWorker from './serviceWorker';
 
-import "./assets/stylesheets/main.less";
+const generateClassName = createGenerateClassName({
+  dangerouslyUseGlobalCSS: true,
+  productionPrefix: 'c',
+});
 
-import RouteWithLayout from './Layout/RouteWithLayout';
-
-const middleware = [thunk]
+const middleware = [thunk, axiosMiddleWare];
 if (process.env.NODE_ENV !== 'production') {
-  middleware.push(createLogger())
-}
-const db = new PouchDB('posdb');
-const applyMiddlewares = applyMiddleware(
-  ...middleware
-);
-const createStoreWithMiddleware = compose(
-  applyMiddlewares,
-  persistentStore({ db })
-)(createStore);
+  middleware.push(createLogger());
+};
+const persistConfig = {
+  key: 'SMEInvestorRoot',
+  storage,
+  stateReconciler: hardSet,
+  blacklist: ['form', 'ShowToast']
+};
 
-const store = createStoreWithMiddleware(reducer);
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+let store;
+
+if (process.env.NODE_ENV !== 'production') {
+  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+  store = createStore(persistedReducer,
+    composeEnhancers(applyMiddleware(...middleware))
+  );
+}
+else {
+  store = createStore(persistedReducer, applyMiddleware(...middleware));
+}
+
+const persistor = persistStore(store);
 
 
 // @todo: drive url routes from a config file for central control
-ReactDom.render(
+ReactDOM.render(
   //   <div>
   //     <Favicon url="/src/assets/images/favicon.ico" />
 
