@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SwipeableViews from 'react-swipeable-views';
+/* Redux Imports */
+import { connect } from 'react-redux';
 /* Material Imports */
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
@@ -8,7 +10,8 @@ import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 /* Component Imports */
 import OrdersTab from './Tabs/OrdersTab';
-import {connect} from 'react-redux';
+import CustomersTab from './Tabs/CustomersTab'
+
 
 function TabContainer({ children, dir }) {
   return (
@@ -73,15 +76,22 @@ function FullWidthTabs(props) {
             checkoutcartArea={props.checkoutcartArea}
           />
         </TabContainer>
+        <CustomersTab
+          checkoutMainPart={props.checkoutMainPart}
+          checkoutcalcArea={props.checkoutcalcArea}
+          checkoutactionArea={props.checkoutactionArea}
+          checkoutcartArea={props.checkoutcartArea}
+        />
+        <TabContainer >
 
-        <TabContainer >Item Two</TabContainer>
+        </TabContainer>
         <TabContainer >Item Three</TabContainer>
       </SwipeableViews>
     </div>
   );
 }
 
-function mapStateToProps(props){
+function mapStateToProps(props) {
   return (props)
 }
 export default connect(mapStateToProps)(FullWidthTabs);

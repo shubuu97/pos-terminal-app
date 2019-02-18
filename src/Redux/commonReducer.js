@@ -1,6 +1,5 @@
-function commonReducerFunc (identifier)
-{
-const commonReducer = (state = {
+function commonReducerFunc(identifier) {
+  const commonReducer = (state = {
     type: '',
     error: '',
     isFetching: false,
@@ -16,7 +15,7 @@ const commonReducer = (state = {
         });
       case `${identifier}_SUCCESS`:
         return Object.assign({}, state, {
-          error:'',
+          error: '',
           isFetching: false,
           type: action.type,
           //didInvalidate: false,
@@ -28,10 +27,10 @@ const commonReducer = (state = {
           isFetching: false,
           type: action.type,
           error: action.error,
-          lookUpData:[],
-          lastUpdated:action.receivedAt
+          lookUpData: [],
+          lastUpdated: action.receivedAt
         });
-        
+
     }
     return state;
   }
