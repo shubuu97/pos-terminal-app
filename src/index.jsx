@@ -19,6 +19,7 @@ import EmptyLayout from './Layout/EmptyLayout.jsx';
 import pos from './xBoilerplate/pos';
 /* Main Route Imports */
 import HomeContainer from './Containers/HomeContainer';
+import LoginContainer from './Containers/LoginContainer';
 
 
 
@@ -62,6 +63,8 @@ ReactDom.render(
         <RouteWithLayout Layout={EmptyLayout} exact path="/boilerplate/pos" Component={pos} />
 
         <RouteWithLayout Layout={EmptyLayout} exact path="/" Component={HomeContainer} />
+        <RouteWithLayout Layout={EmptyLayout} exact path="/login" Component={LoginContainer} />
+
 
       </Switch>
     </Router>
