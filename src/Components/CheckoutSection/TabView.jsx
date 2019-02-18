@@ -9,6 +9,7 @@ import Typography from '@material-ui/core/Typography';
 /* Component Imports */
 import OrdersTab from './Tabs/OrdersTab';
 import {connect} from 'react-redux';
+import _get from 'lodash/get'
 
 function TabContainer({ children, dir }) {
   return (
@@ -27,6 +28,7 @@ TabContainer.propTypes = {
 
 function FullWidthTabs(props) {
   const [value, setValue] = React.useState(0);
+  const {cartItems} = props
 
   function handleChange(event, newValue) {
     setValue(newValue);
@@ -66,7 +68,7 @@ function FullWidthTabs(props) {
       >
         <TabContainer >
           <OrdersTab
-
+            cartItems = {cartItems}
             checkoutMainPart={props.checkoutMainPart}
             checkoutcalcArea={props.checkoutcalcArea}
             checkoutactionArea={props.checkoutactionArea}
@@ -81,7 +83,8 @@ function FullWidthTabs(props) {
   );
 }
 
-function mapStateToProps(props){
-  return (props)
+function mapStateToProps(state){
+  let cartItems = _get(state,'cartItems.lookUpData',[]);
+  return {cartItems};
 }
 export default connect(mapStateToProps)(FullWidthTabs);
