@@ -1,0 +1,52 @@
+@black-border: rgba(0,0,0,0.25);
+@progress-color: #313787;
+
+.dropzoneTitle{
+    font-size: 1em;
+    font-weight: 400;
+    color: rgba(0,0,0,0.8);
+    margin-top: 25px;
+}
+.dropzone{
+    width: 100%;
+    height: 200px;
+    border: 2px dashed @black-border;
+    border-radius: 15px;
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.dropzoneTextarea{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: rgba(0,0,0,0.5);
+    font-size: 0.9em;
+}
+.dropzoneMainText{
+    color: #000;
+    margin: 10px 20px;
+    text-align: center;
+}
+.dropzoneImgarea{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 80%;
+}
+.dropzoneImgarea span{
+  margin: 8px 0;
+}
+.progress{
+    background: white;
+    border-color: @progress-color;
+}
+.progress-text{
+    margin-top: 10px;
+    font-size: 15px;
+    font-weight: bold;
+
+}

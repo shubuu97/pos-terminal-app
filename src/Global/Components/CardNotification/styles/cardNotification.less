@@ -1,0 +1,102 @@
+/* Global Styles */
+.flex-row{
+    display: flex;
+    flex-direction: row;
+}
+.flex-column{
+    display: flex;
+    flex-direction: column;
+}
+.flex-space-between{
+    justify-content: space-between
+}
+
+
+.card-notification-container{
+    .card-notification-header{
+        font-size: 1.5em;
+        font-weight: bold;
+    }
+
+    .notification-cards{
+        background: #fff;
+        border-radius: 2px;
+        box-shadow: 2px 2px 2px -2px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0px 1px 3px 0 rgba(0, 0, 0, 0.12);
+        margin: 20px 0;
+        overflow: hidden;
+        position: relative;
+        transition: 0.1s ease-in;
+        width: 100%;
+        z-index: 1;
+        min-height: 50px;
+
+        .notification-body{
+            padding: 15px;
+            .card-notification-main{
+                width: 90%;
+                cursor: pointer;
+
+                .notification-card-header-part{
+                    align-items: center;
+                    display: flex;
+                    flex-direction: row;
+    
+                    .card-header-task{
+                        color: #313787;
+                        font-size: 0.9em;
+                        font-weight: bold;
+                        padding-right: 10px; 
+                    }
+    
+                    .card-header-time{
+                        color: rgba(0,0,0,0.6);
+                        font-size: 0.9em;
+                        padding-left: 10px;
+                    }
+    
+                }
+    
+                .notification-card-body-part{
+                    padding-top: 10px;
+                    display: flex;
+                    
+                    .body-part-info-area{
+                        
+                        .body-part-title{
+                            font-size: 1.1em;
+                            font-weight: bold;
+                        }
+    
+                        .body-part-desc{
+                            font-size: 0.8em;
+                            color: rgba(0,0,0,0.68);
+                        }
+                    }            
+                }
+            }
+    
+            .card-notification-icon{
+                align-items: center;
+                display: flex;
+                justify-content: center;
+                width: 10%;
+                .card-notification-icon-img{
+                    border-radius: 50%;
+                    height: 65px;
+                    width: 65px;
+                }
+            }
+        }
+
+        .notification-actions{
+            background: rgba(0, 0, 0, 0.06);
+            .card-actions{
+                font-weight: bold;
+                padding: 0 10px;
+                color: #313787;
+                cursor: pointer;
+            }
+        }
+        
+    } 
+}

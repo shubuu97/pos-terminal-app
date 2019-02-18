@@ -1,0 +1,331 @@
+.width-100-percent {
+    width: 100%;
+}
+.flex-row{
+    display: flex;
+    flex-direction: row;
+}
+.flex-wrap{
+    flex-wrap: wrap;
+}
+.flex-column{
+    display: flex;
+    flex-direction: column;
+}
+.justify-center{
+    justify-content: center;
+}
+.align-center{
+    align-items: center;
+}
+.relative{
+    position: relative;
+}
+.bold{
+    font-weight: bold;
+}
+
+.filter-test{
+    background: #ebecfd; 
+    display: flex;
+    display: flex;
+    flex: 1;
+    box-shadow: 2px 2px 2px -2px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0px 1px 3px 0 rgba(0, 0, 0, 0.12);
+
+    .filter-sub-block{
+        display: flex;
+        flex: 1;
+        padding: 1rem;
+        flex-direction: column;
+
+        .MuiSvgIcon-root{
+            width: .7em;
+            height: .7em;
+        }
+        .MuiIconButton-root{
+            padding: 6px;
+        }
+        .filter-list{
+            display: flex;
+            flex-direction: column;
+            margin-top: 15px;
+            
+        }
+        label{
+            margin-bottom: 0;
+        }
+        .MuiFormControlLabel-root{
+            margin-left: -8px;
+        }
+    }
+}
+
+#table-heading{
+    z-index: 3;
+    background: #fafafa;
+    top: 0;
+    padding-top: 5px;
+}
+
+.title-btn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10px;
+}
+
+.table-head{
+    z-index: 3;
+}
+
+.sticky {
+    position: -webkit-sticky;
+    position: sticky;
+}
+
+html {
+    display: grid;
+    min-height: 100%;
+  }
+  
+.longCard {
+    position: relative;
+    margin: auto;
+    width: 100%;
+    background: rgba(255,255,255);
+    box-shadow: 2px 2px 2px -2px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0px 1px 3px 0 rgba(0, 0, 0, 0.12);
+    border-radius: 0;
+    transition: 0.1s ease-in; 
+    margin: 7px 0;
+    overflow: hidden;
+    z-index: 1;
+    cursor: pointer;
+  }
+    
+  .longCard:nth-child(2){
+    margin-top: 0;
+  }
+  
+  .longCard:hover {
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0px 1px 3px 0 rgba(0, 0, 0, 0.12);
+  }
+  .primary-text{
+    font-size: 1em;
+    color: rgba(0, 0, 0, 0.8)
+  }
+  .title-text{
+    font-size: 0.65em;
+    color: rgba(0,0,0,0.5);
+  }
+  
+  
+  .heading-text{
+    font-family: 'GTWalsheimMedium', sans-serif!important;
+    margin-bottom: 0;
+  }
+      
+  .table-head{
+    margin-bottom: .5rem;
+    .heading-part{
+        display: flex;
+        background: #5a5f9f;
+        color: #fff;
+        box-shadow: 2px 2px 2px -2px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0px 1px 3px 0 rgba(0, 0, 0, 0.12);
+    }
+  }  
+  .table-col{
+    display: flex;
+    
+  }
+  .data-col{       
+    flex: 1;
+    padding: 1rem;
+    align-items: center;
+    display: flex;
+    
+    .MuiButton-label{
+        font-size: 0.85em;
+    }
+  }
+  
+  .pagination-block{
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+  
+  @media (max-width: 1100px) {
+    .custom-table{           
+        overflow-x: auto;
+        flex-wrap: nowrap;
+    }        
+  
+    .data-col{       
+        flex:0 0 auto;
+        flex-wrap: wrap;
+    }
+  
+    .data-col:nth-child(1){       
+        width: 20%;
+    }
+  
+    .data-col:nth-child(12){       
+        width: 20%;
+    }
+  }
+
+.sub-data-text{
+    font-size: 0.7em;
+    opacity: 0.65;
+}   
+
+
+.search-input {
+	outline: none;
+}
+
+
+  .edit-icon
+{
+    background-image: url("../images/edit.svg"); 
+    width: 20px;
+    height: 20px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    cursor: pointer;
+    text-indent: -9999px;
+    transition: .3s all;
+}
+.more-icon
+{
+    background-image: url("../images/more.svg"); 
+    width: 29px;
+    height: 14px;
+    background-repeat: no-repeat;
+    background-size: 70%;
+    cursor: pointer;
+    background-position: center;
+    text-indent: -9999px;
+    border: solid 1px #928f8f;
+    border-radius: 3px;
+    margin:3px 0 0 20px;
+    transition: .3s all;
+}
+.edit-icon:hover, .more-icon:hover{
+    opacity: .5;
+}
+
+
+.g-filters
+    {
+        padding-left: 32px !important;
+        position: relative !important;
+    }
+    .g-filters::before
+    {
+        content: "";
+    background-image: url("../images/filter.svg"); 
+    width: 15px;
+    height: 15px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    cursor: pointer;
+    text-indent: -9999px;
+    position: absolute;
+    left:10px;
+    }
+.search-input[type=search] {
+	-webkit-appearance: textfield;
+	-webkit-box-sizing: content-box;
+	font-family: inherit;
+	font-size: 100%;
+}
+.search-input::-webkit-search-decoration,
+.search-input::-webkit-search-cancel-button {
+	display: none; 
+}
+
+
+.card-table {
+    .search-input {
+        font-size: 0.8rem !important;
+        padding: 8px 35px;
+        margin-bottom: 1rem;
+        margin-right: 20px;
+    }
+    .search-input[type=search] {
+        background: #fafafa url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
+        border: 1px solid rgba(49, 55, 135, 0.5);
+        padding: 9px 10px 9px 32px;
+        width: 55px;
+        
+        -webkit-border-radius: 10em;
+        -moz-border-radius: 10em;
+        border-radius: 10em;
+        
+        -webkit-transition: all .5s;
+        -moz-transition: all .5s;
+        transition: all .5s;
+    }
+    .search-input[type=search]:focus {
+        width: 130px;
+        background-color: #fff;
+        border: 1px solid  rgba(49, 55, 135, 0.5);
+
+        -webkit-box-shadow: 0 0 5px rgba(49, 55, 135, 0.5);
+        -moz-box-shadow: 0 0 5px rgba(49, 55, 135, 0.5);
+        box-shadow: 0 0 5px rgba(49, 55, 135, 0.5);
+    }
+    .search-input:-moz-placeholder {
+        color: #999;
+    }
+    .search-input::-webkit-input-placeholder {
+        color: #999;
+    }
+}
+
+.layover{
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    background: rgba(0, 0, 0, .3);
+    z-index: 2;
+    margin-top: 90px;
+
+    .loader {
+        position: absolute;
+        margin: 0px auto;
+        width: 100px;
+        height: 100px;
+        top:70%;
+        left:50%;
+        margin-left: -25px;
+        margin-top: -100px;
+        z-index: 1;
+      }
+}
+
+.extendedPart{
+    padding: 20px;
+
+    .table-head {
+        background: #f9f9f9;
+        color:black;
+        border: 1px solid rgba(0,0,0,0.1);
+        box-shadow: none;
+        margin: 0;
+    }
+    .longCard{
+        box-shadow: none;
+        margin: 0;
+    }
+    .table-col {
+        
+        border-bottom: 1px solid rgba(0,0,0,0.2);
+        border-left: 1px solid rgba(0,0,0,0.2);
+        border-right: 1px solid rgba(0,0,0,0.2);
+    }
+}
