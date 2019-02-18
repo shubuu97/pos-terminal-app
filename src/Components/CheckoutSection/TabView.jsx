@@ -69,6 +69,7 @@ function FullWidthTabs(props) {
         <TabContainer >
           <OrdersTab
             cartItems = {cartItems}
+            dispatch = {props.dispatch}
             checkoutMainPart={props.checkoutMainPart}
             checkoutcalcArea={props.checkoutcalcArea}
             checkoutactionArea={props.checkoutactionArea}
