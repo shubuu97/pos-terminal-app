@@ -19,6 +19,7 @@ class CheckoutSection extends React.Component {
     }
 
     render() {
+        let {CartItems}  = this.props;
         return (
             <div className='pos-checkout' style={{height: this.props.windowHeight}}>
                 <TabView

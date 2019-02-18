@@ -124,7 +124,7 @@ class HomeContainer extends React.Component {
 
         let { productListHeight, isOpenProduct, isOpenPayment, headerHeight, categoriesHeight, checkoutHeader, checkoutMainPart, checkoutcalcArea, checkoutactionArea, checkoutcartArea } = this.state
 
-        let { productList, dispatch, CartItems } = this.props
+        let { productList, dispatch, cartItems } = this.props
         return (
             <div className='main pos-body'>
                 <Products pose={isOpenProduct ? 'open' : 'closed'}>
@@ -135,7 +135,7 @@ class HomeContainer extends React.Component {
                         headerHeight={headerHeight}
                         categoriesHeight={categoriesHeight}
                         productList = {productList}
-                        CartItems={CartItems}
+                        cartItems={cartItems}
                         dispatch={dispatch}
                     // ! Actions
 
@@ -166,12 +166,11 @@ class HomeContainer extends React.Component {
 }
 
 function mapStateToProps(state) {
-    let { productList, staticReducers } = state
-    
-    let { CartItems } = staticReducers || []
+    let { productList, cartItems } = state
+
     return {
         productList,
-        CartItems
+        cartItems
     }
 }
 export default connect(mapStateToProps)(HomeContainer)

@@ -7,7 +7,8 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 /* Component Imports */
-import OrdersTab from './Tabs/OrdersTab'
+import OrdersTab from './Tabs/OrdersTab';
+import {connect} from 'react-redux';
 
 function TabContainer({ children, dir }) {
   return (
@@ -65,6 +66,7 @@ function FullWidthTabs(props) {
       >
         <TabContainer >
           <OrdersTab
+
             checkoutMainPart={props.checkoutMainPart}
             checkoutcalcArea={props.checkoutcalcArea}
             checkoutactionArea={props.checkoutactionArea}
@@ -79,4 +81,7 @@ function FullWidthTabs(props) {
   );
 }
 
-export default FullWidthTabs;
+function mapStateToProps(props){
+  return (props)
+}
+export default connect(mapStateToProps)(FullWidthTabs);

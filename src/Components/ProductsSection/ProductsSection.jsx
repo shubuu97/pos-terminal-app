@@ -2,8 +2,8 @@ import React from 'react';
 /* Lodash Imports */
 import _get from 'lodash/get';
 import _isEmpty from 'lodash/isEmpty';
-import _find from 'lodash/find';
-import _indexOf from  'lodash/indexOf'
+import _findIndex from 'lodash/findIndex';
+import _find from 'lodash/find'
 /* Material import */
 
 /* Redux Imports */
@@ -21,6 +21,7 @@ import img7 from '../../assets/images/flowers/flower7.jpg'
 import img8 from '../../assets/images/flowers/flower8.JPG'
 import img9 from '../../assets/images/flowers/flower9.jpg'
 import img10 from '../../assets/images/flowers/flower10.jpg'
+import Product from './Product';
 
 
 class ProductsSection extends React.Component {
@@ -62,56 +63,19 @@ class ProductsSection extends React.Component {
         this.forceUpdate();
     }
 
-    addToCart = (index) => {
-        let cartItems = _get(this, 'props.CartItems', [])
-        let data =  _get(this, `props.productList.lookUpData[${index}]`, {})
-        let reqObj
-        if(_isEmpty(_find(cartItems, data))){
-            reqObj = [
-                ...cartItems,
-                { ...data, cartQuantity: 1 }
-            ]
-        }
-        else{
-            let cartQuantity = (_find(cartItems, data)).cartQuantity + 1
-            let index = _indexOf(cartItems, data);
-            debugger;
-            reqObj = [
-                ...cartItems
-            ]
-            debugger
-            reqObj[index].cartQuantity = cartQuantity
-            debugger
-        }
-        
-        this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
-    }
+    
 
     populateProducts = () => {
         let productList = _get(this, 'props.productList.lookUpData', [])
         let products = []
-        productList.map((data, index) => {
-            products.push(
-                <div className='each-tile white-background flex-row relative' onClick={()=>this.addToCart(index)}>
-                    <div className='absolute added-item-position'>
-                        <div className='added-item-count'></div>
-                    </div>
-                    <div className='flex-column fwidth'>
-                        <div className='truncate'>
-                            <span className="each-card-name">{_get(data, 'name', 'undefined')}</span>
-                        </div>
-                        <div className='truncate'>
-                            <span className="each-card-code-head">Code : </span>
-                            <span className='each-card-code'>{_get(data, 'id', '')}</span>
-                        </div>
-                        <div className="each-card-price flex-row">
-                            {_get(data, 'salePrice.currencyCode', '')} {_get(data, 'salePrice.price', 'NaN')}
-                            <div className='indicator'></div>
-                        </div>
-                        <span className="quick-view each-card-more" title="View Details"></span>
-                    </div>
-                </div>
-            )
+        products =  productList.map((data, index) => {
+            return <Product
+             data={data}
+             index={index}
+             productList = {this.props.productList}
+             CartItems={_get(this.props,'cartItems.lookUpData',[])}
+             dispatch={this.props.dispatch}
+              />
         })
 
         return (

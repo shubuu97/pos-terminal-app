@@ -10,11 +10,13 @@ import loginReducerFun from './commonReducer';
 import storeReducerFun from './commonReducer';
 import productDataFun from './commonReducer';
 import terminalDataFun from './commonReducer';
+import cartItemFun from './commonStaticReducer';
 
 let loginReducer = loginReducerFun('POST_LOGIN_DATA');
 let  storeReducer = storeReducerFun('GET_STORE_DATA');
 let productList = productDataFun('GET_PRODUCT_DATA');
-let terminalData = terminalDataFun('GET_TERMINAL_DATA')
+let terminalData = terminalDataFun('GET_TERMINAL_DATA');
+let cartItems = cartItemFun('CART_ITEM_LIST');
 
 
 let rootRducer = combineReducers({
@@ -22,7 +24,8 @@ let rootRducer = combineReducers({
     storeReducer,
     productList,
     staticReducers,
-    terminalData
+    terminalData,
+    cartItems
 })
 
 export default rootRducer;
