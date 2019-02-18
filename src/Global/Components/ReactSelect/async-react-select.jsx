@@ -16,7 +16,9 @@ export default class WithPromises extends Component {
        cacheOptions={this.props.cacheOptions}
        defaultOptions={this.props.defaultOptions}
        onInputChange={this.props.onInputChange}
-       loadOptions={this.props.loadOptions} />
+       loadOptions={this.props.loadOptions} 
+       className={this.props.className}
+       />
     );
   }
 }

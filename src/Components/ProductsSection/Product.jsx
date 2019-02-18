@@ -7,11 +7,10 @@ import _find from 'lodash/find'
 /* Material import */
 
 /* Redux Imports */
-import {commonActionCreater} from '../../Redux/commonAction'
+import { commonActionCreater } from '../../Redux/commonAction'
 
 class Product extends React.Component {
-    constructor(props)
-    {
+    constructor(props) {
         super(props);
         this.state = {};
     }
@@ -25,43 +24,41 @@ class Product extends React.Component {
     //         this.setState({cartQuantity})
     //     }
     // }
-    componentWillReceiveProps(props)
-    {
-        debugger;
-    let cartItems = _get(props, 'cartItems.lookUpData', [])
-    let data =  _get(props, `productList.lookUpData[${props.index}]`, {})
+    componentWillReceiveProps(props) {
+        let cartItems = _get(props, 'cartItems.lookUpData', [])
+        let data = _get(props, `productList.lookUpData[${props.index}]`, {})
 
-        if(_find(cartItems, data)){
+        if (_find(cartItems, data)) {
             let cartQuantity = (_find(cartItems, data)).cartQuantity;
-            this.setState({cartQuantity})
+            this.setState({ cartQuantity })
         }
-        else{
-            this.setState({cartQuantity:0})
+        else {
+            this.setState({ cartQuantity: 0 })
         }
     }
 
     addToCart = (index) => {
         let cartItems = _get(this, 'props.cartItems.lookUpData', [])
-        let data =  _get(this, `props.productList.lookUpData[${index}]`, {})
+        let data = _get(this, `props.productList.lookUpData[${index}]`, {})
         let reqObj
-        if(_isEmpty(_find(cartItems, data))){
+        if (_isEmpty(_find(cartItems, data))) {
             reqObj = [
                 ...cartItems,
                 { ...data, cartQuantity: 1 }
             ];
-            this.setState({cartQuantity:1})
+            this.setState({ cartQuantity: 1 })
         }
-        else{
+        else {
             let cartQuantity = (_find(cartItems, data)).cartQuantity + 1
-            let index = _findIndex(cartItems, ['id',data.id]);
+            let index = _findIndex(cartItems, ['id', data.id]);
             reqObj = [
                 ...cartItems
             ]
             reqObj[index].cartQuantity = cartQuantity;
-            this.setState({cartQuantity})
+            this.setState({ cartQuantity })
         }
-    this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
-    
+        this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
+
     }
     render() {
         let data = this.props.data;
@@ -69,7 +66,7 @@ class Product extends React.Component {
         return (
             <div className='each-tile white-background flex-row relative' onClick={() => this.addToCart(index)}>
                 <div className='absolute added-item-position'>
-                   { this.state.cartQuantity?<div className='added-item-count'>{this.state.cartQuantity}</div>:null}
+                    {this.state.cartQuantity ? <div className='added-item-count'>{this.state.cartQuantity}</div> : null}
                 </div>
                 <div className='flex-column fwidth'>
                     <div className='truncate'>

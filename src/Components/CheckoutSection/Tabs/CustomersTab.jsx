@@ -6,21 +6,13 @@ import Button from '@material-ui/core/Button';
 import SvgIcon from '@material-ui/core/SvgIcon';
 /* Redux Imports */
 
+/* Global Imports */
+import ReactSelect from '../../../Global/Components/ReactSelect/async-react-select'
 /* Component Imports */
 
-/* style */
 
-/* dummy images */
-import img1 from '../../../assets/images/flowers/flower1.jpg'
-import img2 from '../../../assets/images/flowers/flower2.jpg'
-import img3 from '../../../assets/images/flowers/flower3.jpg'
-import img4 from '../../../assets/images/flowers/flower4.jpg'
-import img5 from '../../../assets/images/flowers/flower5.jpg'
-import img6 from '../../../assets/images/flowers/flower6.jpg'
-import img7 from '../../../assets/images/flowers/flower7.jpg'
-import img8 from '../../../assets/images/flowers/flower8.JPG'
-import img9 from '../../../assets/images/flowers/flower9.jpg'
-import img10 from '../../../assets/images/flowers/flower10.jpg'
+
+
 
 class OrdersTab extends React.Component {
 
@@ -35,8 +27,13 @@ class OrdersTab extends React.Component {
         let {checkoutactionArea, checkoutMainPart, checkoutCustomerArea } = this.props
         return (
             <div className="customer-section" style={{ height: checkoutMainPart }}>
-                <div  style={{height: checkoutCustomerArea}}>
-                    hello
+                <div className="customer-main" style={{height: checkoutCustomerArea}}>
+                    <div className='search-section flex-row'>
+                        <ReactSelect 
+                            className='fwidth'
+                        />
+                        <div className='add-customer flex-row align-center justify-center'> + </div>
+                    </div>
                 </div>
                 
                 <div className='button-section flex-row ' style={{ height: checkoutactionArea }}>
