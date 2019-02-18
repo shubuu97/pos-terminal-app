@@ -27,6 +27,7 @@ import pos from './xBoilerplate/pos';
 /* Main Route Imports */
 import HomeContainer from './Containers/HomeContainer';
 import LoginContainer from './Containers/LoginContainer';
+import StoreContainer from './Containers/StoreContainer';
 
 
 
@@ -75,11 +76,10 @@ ReactDOM.render(
 
     <Router>
       <Switch>
-
+      <RouteWithLayout Layout={EmptyLayout} exact path="/" Component={HomeContainer} />
         <RouteWithLayout Layout={EmptyLayout} exact path="/boilerplate/pos" Component={pos} />
-
-        <RouteWithLayout Layout={EmptyLayout} exact path="/" Component={HomeContainer} />
         <RouteWithLayout Layout={EmptyLayout} exact path="/login" Component={LoginContainer} />
+        <RouteWithLayout Layout={EmptyLayout} exact path="/store" Component={StoreContainer} />
 
 
       </Switch>
