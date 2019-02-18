@@ -1,0 +1,149 @@
+.history-block{
+    position: relative;
+    min-height: 400px;
+            .history-row{
+                position: relative;
+                padding-bottom: 50px;
+                .short-history{
+                    display: flex;
+                    width:90%;
+                    align-items: center;
+                        .block-title{
+                        font-size: .8rem;           
+                        font-family: 'GTWalsheimProRegular', sans-serif;
+                        }
+                        .block-data{
+                        font-size: 1rem;           
+                        font-family: 'GTWalsheimProLight', sans-serif;
+                        }
+                        .wrapper-block{
+                        position: relative;
+                        padding-left: 3rem;
+                        display: flex;
+                        flex-direction: column; 
+                        flex:0 0 18%; 
+                        justify-content: center;
+                        margin-right: 50px;
+                        }
+                    .transaction-date{
+                        content: "";
+                        background-image: url("../images/history.svg"); 
+                        width: 80px;
+                        height: 80px;     
+                        background-repeat: no-repeat;
+                        background-size: cover;
+                        position: relative;
+                        margin-right:40px;
+                        align-items: center;
+                        justify-content: center;
+                        text-align: center;
+                        line-height: 16px;
+                        font-size: 14px;
+                        color:#fff; 
+                        font-family: 'GTWalsheimMedium', sans-serif;
+                        display: flex;
+                    }
+                }
+                .detailed-history{
+                    margin-left:120px;
+                }
+            }
+         .history-row:before{
+            width: 2px;
+            content: "";
+            background-color: #5d5d5d;
+            height: 100%;
+            position: absolute;
+            z-index: 0;
+            left: 38px;
+            top:0;
+        }
+        .history-row:last-child:before{
+            width:0;        
+            background-color:transparent;
+            height:0;
+            
+        }
+    }
+
+    .compare-view{
+        display: flex;
+        flex-direction: column;
+        margin-left:1rem;
+        border-left:solid 1px #ddd;
+
+         .previous-data{
+            display: flex;
+            align-items: center;
+            font-size: 1rem;
+            margin-top: 10px;
+
+            .data{
+                background: #f6f6f6;
+                padding: 10px;
+
+            }
+         }
+
+         .current-data{
+            display: flex;
+            align-items: center;
+            font-size: 1rem;
+            margin-top: 10px;
+
+            .data{
+                background: #dddddd;
+                padding: 10px;
+            }
+         }
+
+         .title{
+            font-size: .8rem;
+            width:30%;
+            text-align: center;
+            position: relative;
+            height: 1px;
+            background-color: #ddd;
+            font-family: 'GTWalsheimMedium', sans-serif;
+
+                span{
+                    position: absolute;
+                    bottom: 5px;
+                    bottom: -2px;
+                    width: 100%;
+                    margin: 0 auto;
+                    left: 0;
+                }
+            }
+            
+
+
+         .data{
+            font-size: 1rem;
+            flex:1;
+            display: flex;
+            flex-direction: column;          
+         }
+
+    }
+
+.default-icon:before{
+    content: "";
+    background-image: url("../images/history-default-icon.png"); 
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    background-repeat: no-repeat;
+    background-size: 95%;
+    left:0;
+
+}
+
+.no-data-icon-history{
+    background-image: url(../images/no-data.svg); 
+    background-repeat: no-repeat;
+    background-size: 19%;
+    width: 100%;
+    min-height: 60vh;
+    background-position: center;
+}
