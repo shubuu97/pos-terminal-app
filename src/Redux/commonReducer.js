@@ -8,13 +8,13 @@ const commonReducer = (state = {
     lookUpData: []
   }, action) => {
     switch (action.type) {
-      case `${identifier}_init`:
+      case `${identifier}_INIT`:
         return Object.assign({}, state, {
           isFetching: true,
           type: action.type,
           lastUpdated: action.receivedAt,
         });
-      case `${identifier}_success`:
+      case `${identifier}_SUCCESS`:
         return Object.assign({}, state, {
           error:'',
           isFetching: false,
@@ -23,7 +23,7 @@ const commonReducer = (state = {
           lookUpData: action.data,
           lastUpdated: action.receivedAt,
         });
-      case `${identifier}_error`:
+      case `${identifier}_ERROR`:
         return Object.assign({}, state, {
           isFetching: false,
           type: action.type,

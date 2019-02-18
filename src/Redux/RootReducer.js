@@ -8,15 +8,18 @@ import staticReducers from './staticReducers'
 let loginReducer = loginReducerFun('login');
 let  storeReducer = storeReducerFun('store');
 
+/* COMMON Reducers*/ 
+import productData from './commonReducer'
 
 /* Static Reducer */
 
-
+let productList = productData('GET_PRODUCT_DATA');
 
 
 let rootRducer = combineReducers({
     loginReducer,
-    storeReducer
+    storeReducer,
+    productList
 })
 
 export default rootRducer;
