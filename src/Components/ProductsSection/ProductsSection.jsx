@@ -34,17 +34,20 @@ class ProductsSection extends React.Component {
         let products = []
         productList.map((data, index) => {
             products.push(
-                <div className='each-tile white-background flex-row'>
+                <div className='each-tile white-background flex-row relative'>
+                    <div className='absolute added-item-position'>
+                        <div className='added-item-count'>2</div>
+                    </div>
                     <div className='flex-column fwidth'>
                         <div className='truncate'>
-                            <span className="each-card-name">{_get(data, 'name', '')}</span>
+                            <span className="each-card-name">{_get(data, 'name', 'undefined')}</span>
                         </div>
                         <div className='truncate'>
                             <span className="each-card-code-head">Code : </span>
                             <span className='each-card-code'>{_get(data, 'id', '')}</span>
                         </div>
                         <div className="each-card-price flex-row">
-                            {_get(data, 'salePrice.currencyCode', '')} {_get(data, 'salePrice.price', '')}
+                            {_get(data, 'salePrice.currencyCode', '')} {_get(data, 'salePrice.price', 'NaN')}
                             <div className='indicator'></div>
                         </div>
                         <span className="quick-view each-card-more" title="View Details"></span>
