@@ -31,97 +31,38 @@ class OrdersTab extends React.Component {
         }
     }
 
+    mapCartItems = () => {
+        return this.props.cartItems.map((item) => {
+            return (
+                <div className='p-rel each-checkout-item flex-row'>
+                    <div className='p-abs delete-item'>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
+                            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                            <path d="M0 0h24v24H0z" fill="none" />
+                        </svg>
+                    </div>
+                    <div className='each-img'>
+                        <img src={item.image} alt="img" />
+                    </div>
+                    <div className='each-product-des flex-column'>
+                        <span className='title'>{item.name}</span>
+                        <span className='code'>{item.sku}</span>
+                        <span className='code'>{item.cartQuantity}</span>
+                        <span className='code'>{`${_get(item,'salePrice.currencyCode')}${_get(item,'salePrice.price')}`}</span>
+                    </div>
+                    <div className='each-product-price flex-column justify-center'>
+                        $ 1000
+                   </div>
+                </div>)
+        })
+    }
+
     render() {
         let { checkoutcalcArea, checkoutactionArea, checkoutcartArea, checkoutMainPart } = this.props
         return (
             <div className="orders-section" style={{ height: checkoutMainPart }}>
                 <div className="items-section flex-column" style={{ height: checkoutcartArea }}>
-
-                    <div className='p-rel each-checkout-item flex-row'>
-                        <div className='p-abs delete-item'>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
-                                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-                                <path d="M0 0h24v24H0z" fill="none" />
-                            </svg>
-                        </div>
-                        <div className='each-img'>
-                            <img src={img2} alt="img" />
-                        </div>
-                        <div className='each-product-des flex-column'>
-                            <span className='title'>The Serpent of the Thoughts</span>
-                            <span className='code'>SKU0008934</span>
-                        </div>
-                        <div className='each-product-price flex-column justify-center'>
-                            $ 1000
-                        </div>
-                    </div>
-
-                    <div className='p-rel each-checkout-item flex-row'>
-                        <div className='p-abs delete-item'>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
-                                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-                                <path d="M0 0h24v24H0z" fill="none" />
-                            </svg>
-                        </div>
-                        <div className='each-img'>
-                            <img src={img3} alt="img" />
-                        </div>
-                        <div className='each-product-des flex-column'>
-                            <span className='title'>Moon Landing was fake</span>
-                            <span className='code'>SKU000038934</span>
-                        </div>
-                        <div className='each-product-price flex-column justify-center'>
-                            $ 500
-                        </div>
-                    </div>
-
-
-                    <div className='p-rel each-checkout-item flex-row'>
-                        <div className='p-abs delete-item'>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
-                                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-                                <path d="M0 0h24v24H0z" fill="none" />
-                            </svg>
-                        </div>
-                        <div className='each-img'>
-                            <img src={img1} alt="img" />
-                        </div>
-                        <div className='each-product-des flex-column'>
-                            <span className='title'>The Cook Book</span>
-                            <span className='code'>SKU232134434</span>
-                        </div>
-                        <div className='each-product-price flex-column justify-center'>
-                            $ 385
-                        </div>
-                    </div>
-
-
-                    <div className='p-rel each-checkout-item flex-row'>
-                        <div className='p-abs delete-item'>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
-                                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-                                <path d="M0 0h24v24H0z" fill="none" />
-                            </svg>
-                        </div>
-                        <div className='each-img'>
-                            <img src={img5} alt="img" />
-                        </div>
-                        <div className='each-product-des flex-column'>
-                            <span className='title'>Harry Potter and the Goblet of Fire</span>
-                            <span className='code'>SKU2118934</span>
-                        </div>
-                        <div className='each-product-price flex-column justify-center'>
-                            $ 200
-                        </div>
-                    </div>
-
-
-
-
-
-
-
-
+                {this.mapCartItems()}
                 </div>
 
 

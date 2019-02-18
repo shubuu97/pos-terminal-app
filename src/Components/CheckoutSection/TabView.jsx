@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import SwipeableViews from 'react-swipeable-views';
 /* Redux Imports */
 import { connect } from 'react-redux';
+/* Lodash Imports */
+import _get from 'lodash/get';
 /* Material Imports */
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
@@ -30,6 +32,7 @@ TabContainer.propTypes = {
 
 function FullWidthTabs(props) {
   const [value, setValue] = React.useState(0);
+  const { cartItems } = props
 
   function handleChange(event, newValue) {
     setValue(newValue);
@@ -69,21 +72,20 @@ function FullWidthTabs(props) {
       >
         <TabContainer >
           <OrdersTab
-
+            cartItems={cartItems}
             checkoutMainPart={props.checkoutMainPart}
             checkoutcalcArea={props.checkoutcalcArea}
             checkoutactionArea={props.checkoutactionArea}
             checkoutcartArea={props.checkoutcartArea}
           />
         </TabContainer>
-        <CustomersTab
-          checkoutMainPart={props.checkoutMainPart}
-          checkoutcalcArea={props.checkoutcalcArea}
-          checkoutactionArea={props.checkoutactionArea}
-          checkoutcartArea={props.checkoutcartArea}
-        />
-        <TabContainer >
 
+        <TabContainer >
+          <CustomersTab
+            checkoutMainPart={props.checkoutMainPart}
+            checkoutactionArea={props.checkoutactionArea}
+            checkoutCustomerArea={props.checkoutCustomerArea}
+          />
         </TabContainer>
         <TabContainer >Item Three</TabContainer>
       </SwipeableViews>
@@ -91,7 +93,8 @@ function FullWidthTabs(props) {
   );
 }
 
-function mapStateToProps(props) {
-  return (props)
+function mapStateToProps(state) {
+  let cartItems = _get(state, 'cartItems.lookUpData', []);
+  return { cartItems };
 }
 export default connect(mapStateToProps)(FullWidthTabs);

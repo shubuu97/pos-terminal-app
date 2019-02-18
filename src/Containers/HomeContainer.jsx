@@ -68,6 +68,8 @@ class HomeContainer extends React.Component {
         let checkoutcalcArea = 150
         let checkoutactionArea = 60
         let checkoutcartArea = checkoutMainPart - (checkoutcalcArea + checkoutactionArea)
+        // * Checkout Customer Section Calculations
+        let checkoutCustomerArea = checkoutMainPart - checkoutactionArea
 
 
         this.setState({
@@ -79,7 +81,8 @@ class HomeContainer extends React.Component {
             checkoutMainPart,
             checkoutcalcArea,
             checkoutactionArea,
-            checkoutcartArea
+            checkoutcartArea,
+            checkoutCustomerArea
         })
     }
 
@@ -122,7 +125,7 @@ class HomeContainer extends React.Component {
     render() {
         let windowHeight = document.documentElement.scrollHeight
 
-        let { productListHeight, isOpenProduct, isOpenPayment, headerHeight, categoriesHeight, checkoutHeader, checkoutMainPart, checkoutcalcArea, checkoutactionArea, checkoutcartArea } = this.state
+        let { productListHeight, isOpenProduct, isOpenPayment, headerHeight, categoriesHeight, checkoutHeader, checkoutMainPart, checkoutcalcArea, checkoutactionArea, checkoutcartArea, checkoutCustomerArea } = this.state
 
         let { productList, dispatch, cartItems } = this.props
         return (
@@ -150,6 +153,7 @@ class HomeContainer extends React.Component {
                     checkoutcalcArea={checkoutcalcArea}
                     checkoutactionArea={checkoutactionArea}
                     checkoutcartArea={checkoutcartArea}
+                    checkoutCustomerArea={checkoutCustomerArea}
                     // ! Actions
                     toggleViewPayment={this.toggleViewPayment}
                     toggleViewProduct={this.toggleViewProduct}

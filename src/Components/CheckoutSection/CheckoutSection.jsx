@@ -29,6 +29,7 @@ class CheckoutSection extends React.Component {
                     checkoutcalcArea={this.props.checkoutcalcArea}
                     checkoutactionArea={this.props.checkoutactionArea}
                     checkoutcartArea={this.props.checkoutcartArea}
+                    checkoutCustomerArea={this.props.checkoutCustomerArea}
                 />
             </div>
         );

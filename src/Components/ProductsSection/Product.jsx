@@ -25,6 +25,10 @@ class Product extends React.Component {
             this.setState({cartQuantity})
         }
     }
+     
+    componentWillReceiveProps(props){
+        
+    }
 
     addToCart = (index) => {
         let cartItems = _get(this, 'props.CartItems', [])
