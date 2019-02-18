@@ -19,7 +19,8 @@ let productList = productData('GET_PRODUCT_DATA');
 let rootRducer = combineReducers({
     loginReducer,
     storeReducer,
-    productList
+    productList,
+    staticReducers
 })
 
 export default rootRducer;

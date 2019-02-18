@@ -110,7 +110,7 @@ class HomeContainer extends React.Component {
             },
             // successCb:()=> this.deleteSuccess(),
             // errorCb:()=> this.deleteSuccess(),
-            successText: 'Deleted Successfully',
+            successText: 'Product Fetched Successfully',
         })
     }
 
@@ -121,10 +121,10 @@ class HomeContainer extends React.Component {
 
     render() {
         let windowHeight = document.documentElement.scrollHeight
-        
+
         let { productListHeight, isOpenProduct, isOpenPayment, headerHeight, categoriesHeight, checkoutHeader, checkoutMainPart, checkoutcalcArea, checkoutactionArea, checkoutcartArea } = this.state
 
-        let { productList } = this.props
+        let { productList, dispatch, CartItems } = this.props
         return (
             <div className='main pos-body'>
                 <Products pose={isOpenProduct ? 'open' : 'closed'}>
@@ -135,6 +135,8 @@ class HomeContainer extends React.Component {
                         headerHeight={headerHeight}
                         categoriesHeight={categoriesHeight}
                         productList = {productList}
+                        CartItems={CartItems}
+                        dispatch={dispatch}
                     // ! Actions
 
                     />
@@ -164,10 +166,12 @@ class HomeContainer extends React.Component {
 }
 
 function mapStateToProps(state) {
-    let { productList } = state 
+    let { productList, staticReducers } = state
     
+    let { CartItems } = staticReducers || []
     return {
-        productList
+        productList,
+        CartItems
     }
 }
 export default connect(mapStateToProps)(HomeContainer)
