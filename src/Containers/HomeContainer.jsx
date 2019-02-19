@@ -140,6 +140,7 @@ class HomeContainer extends React.Component {
                         productList = {productList}
                         cart={cart}
                         dispatch={dispatch}
+                        history={this.props.history}
                     // ! Actions
 
                     />

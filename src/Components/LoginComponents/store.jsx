@@ -4,7 +4,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import genericPostData from '../../Global/dataFetch/genericPostData';
 import _get from 'lodash/get';
-import moment  from 'moment';
+import moment from 'moment';
 
 
 class Store extends React.Component {
@@ -61,7 +61,7 @@ class Store extends React.Component {
         this.setState({ terminals: _get(data, 'terminals') })
     }
     mapTermainal = () => {
-        let terminals = this.state.terminals.map((terminal,index) => {
+        let terminals = this.state.terminals.map((terminal, index) => {
             console.log(terminal, "here");
             return <option data-value={terminal} value={index}>{terminal.name}</option>
         })
@@ -69,20 +69,19 @@ class Store extends React.Component {
     }
 
     handleChange = (event) => {
-        this.setState({selectedTerminal:event.target.value});
+        this.setState({ selectedTerminal: event.target.value });
         let terminalObj = this.state.terminals[event.target.value];
-        localStorage.setItem('terminalId',terminalObj.id);
-        localStorage.setItem('terminalName',terminalObj.name);
-        }
+        localStorage.setItem('terminalId', terminalObj.id);
+        localStorage.setItem('terminalName', terminalObj.name);
+    }
 
-        handleLoginToPos = ()=>
-        {
+    handleLoginToPos = () => {
         let loginData = {
             operatorId: localStorage.getItem('userId'),
             terminalId: localStorage.getItem('terminalId'),
             type: 'login'
         }
-        this.setState({isFetching:true});
+        this.setState({ isFetching: true });
         genericPostData({
             dispatch: this.props.dispatch,
             reqObj: loginData,
@@ -96,23 +95,21 @@ class Store extends React.Component {
             successCb: this.afterLoginSuccess,
             errorCb: () => this.setState({ isFetching: false })
         })
-        }
-        afterLoginSuccess = (data)=>
-        {
-        console.log(data,"data is here");
-        this.setState({isFetching:false});
-        let loggedInTime = moment(_get(data, 'loginTime.seconds')*1000).format('h:mm:ss a');
-        let loggedInDate = moment(_get(data, 'loginTime.seconds')*1000).format('MMMM Do YYYY');
+    }
+    afterLoginSuccess = (data) => {
+        console.log(data, "data is here");
+        this.setState({ isFetching: false });
+        let loggedInTime = moment(_get(data, 'loginTime.seconds') * 1000).format('h:mm:ss a');
+        let loggedInDate = moment(_get(data, 'loginTime.seconds') * 1000).format('MMMM Do YYYY');
         localStorage.setItem('loggedInTime', loggedInTime);
         localStorage.setItem('loggedInDate', loggedInDate);
-        if(_get(data,'sessionId','nil')=='nil')
-        {
-         this.setState({sessionFound:false})
+        if (_get(data, 'sessionId', 'nil') == 'nil') {
+            this.setState({ sessionFound: false })
         }
-        else{
-           this.props.history.push('/')
+        else {
+            this.props.history.push('/')
         }
-        }
+    }
     render() {
         let { classes } = this.props
         return (
@@ -135,7 +132,7 @@ class Store extends React.Component {
                     className={classes.submit}
                 >
                     Login in to POS
-          </LoaderButton>
+                </LoaderButton>
             </React.Fragment>)
     }
 }

@@ -44,16 +44,14 @@ const styles = theme => ({
 });
 
 class SignIn extends React.Component {
-    constructor(props)
-    {
+    constructor(props) {
         super(props);
         this.state = {
-            currentStep:1
+            currentStep: 1
         }
     }
-    handleStepChange = (currentStep)=>
-    {
-        this.setState({currentStep})
+    handleStepChange = (currentStep) => {
+        this.setState({ currentStep })
     }
     render() {
         const { classes } = this.props;
@@ -66,21 +64,21 @@ class SignIn extends React.Component {
                         <LockOutlinedIcon />
                     </Avatar>
                     <Typography component="h1" variant="h5">
-                        {this.state.currentStep==1?'Sign in':'Choose terminal'}
-        </Typography>
+                        {this.state.currentStep == 1 ? 'Sign in' : 'Choose terminal'}
+                    </Typography>
                     <form className={classes.form}>
-                   {this.state.currentStep ==1?<LoginComponent
-                   handleStepChange = {this.handleStepChange}
-                   dispatch = {this.props.dispatch}
-                    classes = {classes}
-                    />:null}
-                    {
-                     this.state.currentStep==2?<StoreComponent
-                     handleStepChange = {this.handleStepChange}
-                     dispatch = {this.props.dispatch}
-                     history = {this.props.history}
-                     classes = {classes}/>:null
-                     }
+                        {this.state.currentStep == 1 ? <LoginComponent
+                            handleStepChange={this.handleStepChange}
+                            dispatch={this.props.dispatch}
+                            classes={classes}
+                        /> : null}
+                        {
+                            this.state.currentStep == 2 ? <StoreComponent
+                                handleStepChange={this.handleStepChange}
+                                dispatch={this.props.dispatch}
+                                history={this.props.history}
+                                classes={classes} /> : null
+                        }
                     </form>
                 </Paper>
             </main>
