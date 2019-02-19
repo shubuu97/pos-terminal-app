@@ -17,6 +17,7 @@ import { commonActionCreater } from '../../../Redux/commonAction'
 
 /* Component Imports */
 import CalculationSection from './CalculationSection'
+import DiscountDialogue from '../DiscountDialogue/DiscountDialogue'
 /* style */
 
 /* Global Function import */
@@ -33,21 +34,23 @@ class OrdersTab extends React.Component {
             orderTotal: 0,
             expanded: null,
             cartListHeight: 0,
+            open: false,
+            identifier: '',
+            itemIndex: ''
         }
     }
 
     componentDidMount() {
         this.props.dispatch(commonActionCreater(10, 'ADD_DISCOUNT_TO_CART'));
-        
+
     }
 
-    componentWillReceiveProps(props){
+    componentWillReceiveProps(props) {
         let cartItemHeight = document.getElementById('cartItemHeading').offsetHeight;
         let cartListHeight = this.props.checkoutcartArea - cartItemHeight - 30;
         this.setState({
             cartListHeight
         })
-        debugger
     }
 
     handleDelete = (item) => {
@@ -80,6 +83,29 @@ class OrdersTab extends React.Component {
             expanded: expanded ? panel : false,
         });
     };
+
+    handleClickOpenDiscount = () => {
+        this.setState({ 
+            open: true,
+            identifier: 'Discount'
+        });
+    };
+    handleClickOpenItemDiscount = (index) => {
+        debugger
+        this.setState({ 
+            open: true,
+            identifier: 'ItemDiscount',
+            itemIndex: index,
+        });
+    };
+
+    handleClose = () => {
+        this.setState({ open: false });
+    };
+
+    handleDiscount = (data, identifier, index) => {
+        debugger
+    }
 
     mapCartItems = () => {
         let totalCartItems = 0;
@@ -140,7 +166,7 @@ class OrdersTab extends React.Component {
                             <div className='expanded-options'>
                                 <span className='option-title'>Item Discount</span>
                                 <div className='flex-row justify-center align-center'>
-
+                                    <div onClick={() => this.handleClickOpenItemDiscount(index)}>Add Discount</div>
                                 </div>
                             </div>
                         </div>
@@ -171,10 +197,18 @@ class OrdersTab extends React.Component {
 
         return (
             <div className="orders-section" style={{ height: checkoutMainPart }}>
+                <DiscountDialogue
+                    open={this.state.open}
+                    identifier={this.state.identifier}
+                    handleClose={this.handleClose}
+                    handleDiscount={this.handleDiscount}
+                    itemIndex={this.state.itemIndex}
+                />
+
                 <div style={{ height: checkoutcartArea }}>
                     <div className='cart-items' id='cartItemHeading'>
                         <span>Cart Items</span>
-                        <Button variant="outlined">Add Discount</Button>
+                        <Button variant="outlined" onClick={this.handleClickOpenDiscount}>Add Discount</Button>
                     </div>
                     <div className="items-section flex-column" style={{ height: this.state.cartListHeight }} >
                         {this.mapCartItems()}
