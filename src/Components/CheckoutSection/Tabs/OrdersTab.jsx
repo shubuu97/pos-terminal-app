@@ -104,7 +104,7 @@ class OrdersTab extends React.Component {
     globalClearCart(this.props.dispatch);
     }
     holdCart = ()=>{
-    globalHoldCart(this.props.dispatch,this.props.cart);
+    globalHoldCart(this.props.dispatch,this.props.cart,'title','customer Name');
     }
 
     render() {
@@ -162,7 +162,7 @@ class OrdersTab extends React.Component {
                 <div className='button-section flex-row ' style={{ height: checkoutactionArea }}>
                     <div>
                         <Button className='mr-20' variant="outlined" onClick={this.clearCart}>Clear</Button>
-                        <Button className='mr-20' variant="outlined">Hold</Button>
+                        <Button className='mr-20' variant="outlined" onClick={this.holdCart}>Hold</Button>
                         <Button variant="contained">Proceed</Button>
                     </div>
 
