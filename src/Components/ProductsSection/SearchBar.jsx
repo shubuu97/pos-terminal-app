@@ -39,7 +39,10 @@ function CustomizedInputBase(props) {
       {/* <IconButton className={classes.iconButton} aria-label="Menu">
         <MenuIcon />
       </IconButton> */}
-      <InputBase className={classes.input} placeholder="Search For Item" />
+      <InputBase 
+      className={classes.input} 
+      placeholder="Search For Item"
+      onChange = {(event)=>props.handleChange(event.target.value)} />
       <IconButton className={classes.iconButton} aria-label="Search">
         <SearchIcon />
       </IconButton>

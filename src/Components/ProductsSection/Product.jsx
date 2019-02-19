@@ -26,7 +26,7 @@ class Product extends React.Component {
     // }
     componentWillReceiveProps(props) {
         let cartItems = _get(props, 'cart.cartItems', [])
-        let data = _get(props, `productList.lookUpData[${props.index}]`, {})
+        let data = _get(this, `props.data`, {});
 
         if (_find(cartItems, data)) {
             let cartQuantity = (_find(cartItems, data)).cartQuantity;
@@ -39,13 +39,16 @@ class Product extends React.Component {
 
     addToCart = (index) => {
         let cartItems = _get(this, 'props.cart.cartItems', [])
-        let data = _get(this, `props.productList.lookUpData[${index}]`, {})
+        let data = _get(this, `props.data`, {});
+        debugger;
         let reqObj
         if (_isEmpty(_find(cartItems, data))) {
             reqObj = [
                 ...cartItems,
-                { 
-            ...data, cartQuantity: 1,subTotal:data.salePrice.price*1 }
+            { 
+            ...data,
+             cartQuantity: 1,
+             subTotal:_get(data,'doc.product.salePrice.price')*1}
             ];
             this.setState({ cartQuantity: 1 })
         }
@@ -56,7 +59,7 @@ class Product extends React.Component {
                 ...cartItems
             ]
             reqObj[index].cartQuantity = cartQuantity;
-            reqObj[index].subTotal = data.salePrice.price*cartQuantity;
+            reqObj[index].subTotal = _get(data,'doc.product.salePrice.price')*cartQuantity;
             this.setState({cartQuantity})
         }
         this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
@@ -71,14 +74,14 @@ class Product extends React.Component {
                 </div>
                 <div className='flex-column fwidth'>
                     <div className='truncate'>
-                        <span className="each-card-name">{_get(data, 'name', 'undefined')}</span>
+                        <span className="each-card-name">{_get(data, 'doc.product.name', 'undefined')}</span>
                     </div>
                     <div className='truncate'>
                         <span className="each-card-code-head">Code : </span>
-                        <span className='each-card-code'>{_get(data, 'id', '')}</span>
+                        <span className='each-card-code'>{_get(data, 'doc.product.id', '')}</span>
                     </div>
                     <div className="each-card-price flex-row">
-                        {_get(data, 'salePrice.currencyCode', '')} {_get(data, 'salePrice.price', 'NaN')}
+                        {_get(data, 'doc.product.salePrice.currencyCode', '')} {_get(data, 'doc.product.salePrice.price', 'NaN')}
                         <div className='indicator'></div>
                     </div>
                     <span className="quick-view each-card-more" title="View Details"></span>
