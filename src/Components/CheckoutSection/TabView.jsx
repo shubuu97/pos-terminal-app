@@ -86,6 +86,8 @@ function FullWidthTabs(props) {
             checkoutMainPart={props.checkoutMainPart}
             checkoutactionArea={props.checkoutactionArea}
             checkoutCustomerArea={props.checkoutCustomerArea}
+            checkoutcalcArea={props.checkoutcalcArea}
+            checkoutcartArea={props.checkoutcartArea}
           />
         </TabContainer>
         <TabContainer >Item Three</TabContainer>

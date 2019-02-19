@@ -106,9 +106,6 @@ class OrdersTab extends React.Component {
                 {this.mapCartItems()}
                 </div>
 
-
-
-
                 <div className='calculation-section flex-row' style={{ height: checkoutcalcArea }}>
                     <div className="calc-first-part">
                         <div className="cart-details">

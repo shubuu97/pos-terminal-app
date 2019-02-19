@@ -7,7 +7,6 @@ import _get from 'lodash/get';
 
 /* Component Imports */
 
-/* style */
 
 class Quick extends React.Component {
 
@@ -21,7 +20,6 @@ class Quick extends React.Component {
     render() {
         return (
             <div>
-                hello
 
             </div>
         );
