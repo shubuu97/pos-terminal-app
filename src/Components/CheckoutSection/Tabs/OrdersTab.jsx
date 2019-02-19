@@ -105,7 +105,7 @@ class OrdersTab extends React.Component {
                     <ExpansionPanelSummary className=''>
                         <div className='each-product-des fwidth flex-row justify-space-between'>
                             <div className='flex-row justify-center align-center'>
-                                <div  onClick={() => this.handleDelete(item)}>
+                                <div onClick={() => this.handleDelete(item)}>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z" /></svg>
                                 </div>
                                 <div className='title'>{item.name}</div>
@@ -140,7 +140,7 @@ class OrdersTab extends React.Component {
         globalClearCart(this.props.dispatch);
     }
     holdCart = () => {
-        globalHoldCart(this.props.dispatch, this.props.cart);
+        globalHoldCart(this.props.dispatch, this.props.cart, 'title', 'customer Name');
     }
 
     render() {
@@ -159,7 +159,7 @@ class OrdersTab extends React.Component {
                 <div className='button-section flex-row ' style={{ height: checkoutactionArea }}>
                     <div>
                         <Button className='mr-20' variant="outlined" onClick={this.clearCart}>Clear</Button>
-                        <Button className='mr-20' variant="outlined">Hold</Button>
+                        <Button className='mr-20' variant="outlined" onClick={this.holdCart}>Hold</Button>
                         <Button variant="contained">Proceed</Button>
                     </div>
 
