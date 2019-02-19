@@ -10,7 +10,11 @@ import loginReducerFun from './commonReducer';
 import storeReducerFun from './commonReducer';
 import productDataFun from './commonReducer';
 import terminalDataFun from './commonReducer';
+
+/* SPECIFIC Reducers */
 import cart from '../reducers/cartItem';
+import cartHoldData from '../reducers/holdCartItem';
+
 
 // import cartItemFun from './commonStaticReducer';
 // import cartOrderDetailsFun from './commonStaticReducer';
@@ -30,7 +34,8 @@ let rootRducer = combineReducers({
     productList,
     staticReducers,
     terminalData,
-    cart
+    cart,
+    cartHoldData
 })
 
 export default rootRducer;

@@ -12,6 +12,12 @@ import {commonActionCreater} from '../../../Redux/commonAction'
 /* Component Imports */
 
 /* style */
+
+/* Global Function import */
+import globalClearCart from '../../../Global/PosFunctions/clearCart';
+import globalHoldCart from '../../../Global/PosFunctions/holdCart';
+
+
 class OrdersTab extends React.Component {
 
     constructor() {
@@ -93,6 +99,13 @@ class OrdersTab extends React.Component {
         this.state.totalCartItems = totalCartItems;
         return cartItems
     }
+    clearCart = ()=>
+    {
+    globalClearCart(this.props.dispatch);
+    }
+    holdCart = ()=>{
+    globalHoldCart(this.props.dispatch,this.props.cart);
+    }
 
     render() {
         
@@ -151,7 +164,7 @@ class OrdersTab extends React.Component {
 
                 <div className='button-section flex-row ' style={{ height: checkoutactionArea }}>
                     <div>
-                        <Button className='mr-20' variant="outlined">Clear</Button>
+                        <Button className='mr-20' variant="outlined" onClick={this.clearCart}>Clear</Button>
                         <Button className='mr-20' variant="outlined">Hold</Button>
                         <Button variant="contained">Proceed</Button>
                     </div>
