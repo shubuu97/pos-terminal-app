@@ -5,13 +5,14 @@ import _isEmpty from 'lodash/isEmpty';
 import _findIndex from 'lodash/findIndex';
 import _find from 'lodash/find'
 /* Material import */
-
+import LockIcon from '@material-ui/icons/Lock';
+import ExitToApp from '@material-ui/icons/ExitToApp';
 /* Redux Imports */
-import {commonActionCreater} from '../../Redux/commonAction'
+import { commonActionCreater } from '../../Redux/commonAction'
 /* Component Imports */
 import SideDrawer from '../SideDrawer'
 import Products from './Products';
-
+import SearchBar from './SearchBar'
 
 
 class ProductsSection extends React.Component {
@@ -22,7 +23,12 @@ class ProductsSection extends React.Component {
 
         }
     }
-    
+
+    logout = () => {
+        localStorage.clear();
+        this.props.history.push('/login')
+    }
+
     render() {
         let { windowHeight, productListHeight, headerHeight, categoriesHeight } = this.props
         return (
@@ -32,8 +38,13 @@ class ProductsSection extends React.Component {
                 // * Header Component
                 */}
                 <div className='pos-header' style={{ height: headerHeight }}>
-                    <div className="header-top" >
+                    <div className="header-top flex-row align-center justify-space-between pl-10 pr-10" >
                         <SideDrawer />
+                        <SearchBar />
+                        <div>
+                            <LockIcon style={{color: 'white', padding:'0 10px', fontSize: 30}}/>
+                            <ExitToApp style={{color: 'white', padding:'0 10px', fontSize: 30}} onClick={this.logout}/>
+                        </div>
                     </div>
                     <div className='header-bottom'>
 
@@ -73,7 +84,7 @@ class ProductsSection extends React.Component {
 
 
                 <Products
-                {...this.props}
+                    {...this.props}
                 />
 
             </div>

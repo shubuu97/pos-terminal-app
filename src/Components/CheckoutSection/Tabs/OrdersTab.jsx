@@ -11,6 +11,10 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+/* Material Icons */
+import RemoveCircleIcons from '@material-ui/icons/RemoveCircleOutline';
+import DeleteIcons from '@material-ui/icons/DeleteOutline';
+import AddIcons from '@material-ui/icons/AddCircleOutline';
 /* Redux Imports */
 import { commonActionCreater } from '../../../Redux/commonAction'
 
@@ -104,23 +108,33 @@ class OrdersTab extends React.Component {
                 <ExpansionPanel className='each-checkout-item' expanded={this.state.expanded === `Panel${item.sku}`} onChange={this.handleChange(`Panel${item.sku}`)}>
                     <ExpansionPanelSummary className=''>
                         <div className='each-product-des fwidth flex-row justify-space-between'>
-                            <div className='flex-row justify-center align-center'>
-                                <div onClick={() => this.handleDelete(item)}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z" /></svg>
-                                </div>
+                            <div className=' des-first-part flex-row align-center'>
+                                <DeleteIcons onClick={() => this.handleDelete(item)} style={{ color: '#ff000096', fontSize: '1.5em' }} />
                                 <div className='title'>{item.name}</div>
                             </div>
 
-                            <div className='each-product-price'>{_get(item, 'salePrice.currencyCode')} {item.subTotal.toFixed(2)}</div>
+                            <div className='flex-column'>
+                                <div className='each-product-price'>{_get(item, 'salePrice.currencyCode')} {item.subTotal.toFixed(2)}</div>
+                                <div className='each-product-reg-price'>Reg Price - $50</div>
+                            </div>
                         </div>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails>
-                        <div className='flex-row justify-center align-center'>
-                            <span onClick={() => this.handleDecreseQuantity(item)} style={{ cursor: 'pointer' }}><svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path d="M7 11v2h10v-2H7zm5-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" /></svg></span>
-                            <span className='quantity'>{item.cartQuantity}</span>
-                            <span onClick={() => this.handleIncreaseQuantity(item)} style={{ cursor: 'pointer' }}><svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" /></svg></span>
+                        <div className='fwidth flex-row justify-space-between'>
+                            <div className='expanded-options'>
+                                <span className='option-title'>Quantity</span>
+                                <div className='flex-row justify-center align-center'>
+                                    <RemoveCircleIcons onClick={() => this.handleDecreseQuantity(item)} style={{ fontSize: '1.7em' }} />
+                                    <span className='quantity'>{item.cartQuantity}</span>
+                                    <AddIcons onClick={() => this.handleIncreaseQuantity(item)} style={{ fontSize: '1.7em' }} />
+                                </div>
+                            </div>
+                            <div className='expanded-options'>
+                                <span className='option-title'>Item Discount</span>
+                                <div className='flex-row justify-center align-center'>
 
-
+                                </div>
+                            </div>
                         </div>
                     </ExpansionPanelDetails>
                 </ExpansionPanel >
