@@ -15,6 +15,11 @@ import Products from './Products';
 import SearchBar from './SearchBar';
 import PouchDb from 'pouchdb';
 PouchDb.plugin(require('pouchdb-quick-search'));
+let productsdb = new PouchDb('productsdb');
+productsdb.search({
+    fields: ['product.name', 'product.description', 'product.sku'],
+    build:true
+  })
 
 
 
@@ -32,7 +37,6 @@ class ProductsSection extends React.Component {
         this.props.history.push('/login')
     }
     handleChange = (searchText)=>{
-     let productsdb =  new PouchDb('productsdb');
      if(searchText.length>3)
      {
      productsdb.search({
