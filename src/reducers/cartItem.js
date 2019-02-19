@@ -12,7 +12,6 @@ const cartItem = (state = { cartItems: [], }, action) => {
             });
             break;
         case 'ADD_DISCOUNT_TO_CART':
-        debugger;
             // let total = 0;
             // action.data.forEach(item=>{
             //     total+=item.subTotal;

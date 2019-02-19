@@ -40,7 +40,6 @@ class Product extends React.Component {
     addToCart = (index) => {
         let cartItems = _get(this, 'props.cart.cartItems', [])
         let data = _get(this, `props.productList.lookUpData[${index}]`, {})
-        debugger;
         let reqObj
         if (_isEmpty(_find(cartItems, data))) {
             reqObj = [

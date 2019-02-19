@@ -1,6 +1,5 @@
 
 const holdCartItem = (state = { holdedItems: [], }, action) => {
-    debugger;
     switch (action.type) {
         case 'HOLD_CART_ITEM':
             return Object.assign({}, state, {
