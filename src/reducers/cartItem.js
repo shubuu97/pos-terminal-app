@@ -2,26 +2,27 @@
 const cartItem = (state = { cartItems: [], }, action) => {
     switch (action.type) {
         case 'CART_ITEM_LIST':
+            debugger
             let total = 0;
+            let itemDiscountTotal = 0;
             action.data.forEach(item => {
                 total += item.subTotal;
+                if(item.itemDiscount)
+                itemDiscountTotal += parseFloat(item.itemDiscount)
             });
             return Object.assign({}, state, {
                 cartItems: action.data,
-                total
+                total,
+                itemDiscountTotal
             });
             break;
         case 'ADD_DISCOUNT_TO_CART':
-            // let total = 0;
-            // action.data.forEach(item=>{
-            //     total+=item.subTotal;
-            //  });
-            let newState =  Object.assign({}, state, {
+            let newState = Object.assign({}, state, {
                 discount: action.data,
-                // total
             });
-            console.log(newState,"newState is here");
+            console.log(newState, "newState is here");
             return newState
+            break;
 
     }
     return state;
