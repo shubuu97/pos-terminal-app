@@ -110,7 +110,8 @@ class Store extends React.Component {
          this.setState({sessionFound:false})
         }
         else{
-           this.props.history.push('/')
+        //    this.props.history.push('/')
+        this.props.handleStepChange(3)
         }
         }
     render() {

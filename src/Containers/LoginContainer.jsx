@@ -8,8 +8,9 @@ import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { connect } from 'react-redux';
 import _get from 'lodash/get';
-import LoginComponent from '../Components/LoginComponents/login'
-import StoreComponent from '../Components/LoginComponents/store'
+import LoginComponent from '../Components/LoginComponents/login';
+import StoreComponent from '../Components/LoginComponents/store';
+import SyncComponent from '../Components/LoginComponents/sync';
 
 const styles = theme => ({
     main: {
@@ -44,16 +45,17 @@ const styles = theme => ({
 });
 
 class SignIn extends React.Component {
-    constructor(props)
-    {
+    constructor(props) {
         super(props);
         this.state = {
-            currentStep:1
+            currentStep: 1
         }
     }
-    handleStepChange = (currentStep)=>
-    {
-        this.setState({currentStep})
+    handleStepChange = (currentStep) => {
+        if(currentStep==4){
+          this.props.history.push('/');
+        }
+        this.setState({ currentStep })
     }
     render() {
         const { classes } = this.props;
@@ -66,21 +68,32 @@ class SignIn extends React.Component {
                         <LockOutlinedIcon />
                     </Avatar>
                     <Typography component="h1" variant="h5">
-                        {this.state.currentStep==1?'Sign in':'Choose terminal'}
-        </Typography>
+                        {this.state.currentStep == 1 ? 'Sign in' :
+                            <div>{this.state.currentStep == 2 ?
+                                'Choose terminal' :
+                                'Synching data'}
+                            </div>
+                        }
+                    </Typography>
                     <form className={classes.form}>
-                   {this.state.currentStep ==1?<LoginComponent
-                   handleStepChange = {this.handleStepChange}
-                   dispatch = {this.props.dispatch}
-                    classes = {classes}
-                    />:null}
-                    {
-                     this.state.currentStep==2?<StoreComponent
-                     handleStepChange = {this.handleStepChange}
-                     dispatch = {this.props.dispatch}
-                     history = {this.props.history}
-                     classes = {classes}/>:null
-                     }
+                        {this.state.currentStep == 1 ? <LoginComponent
+                            handleStepChange={this.handleStepChange}
+                            dispatch={this.props.dispatch}
+                            classes={classes}
+                        /> : null}
+                        {
+                            this.state.currentStep == 2 ? <StoreComponent
+                                handleStepChange={this.handleStepChange}
+                                dispatch={this.props.dispatch}
+                                history={this.props.history}
+                                classes={classes} /> : null
+                        }
+                        {this.state.currentStep == 3 ? <SyncComponent
+                            handleStepChange={this.handleStepChange}
+                            dispatch={this.props.dispatch}
+                            history={this.props.history}
+                            classes={classes} /> : null
+                        }
                     </form>
                 </Paper>
             </main>
