@@ -3,7 +3,8 @@ import React from 'react';
 import _get from 'lodash/get';
 /* Material import */
 import Button from '@material-ui/core/Button';
-import SvgIcon from '@material-ui/core/SvgIcon';
+/* Material Icons */
+import PersonAdd from '@material-ui/icons/PersonAddOutlined';
 /* Redux Imports */
 
 /* Global Imports */
@@ -73,7 +74,9 @@ class CustomerTab extends React.Component {
                              loadOptions={this.loadOptions}
                             className='fwidth'
                         />
-                        <div className='add-customer flex-row align-center justify-center'> + </div>
+                        <div className='add-customer flex-row align-center justify-center'>
+                        <PersonAdd style={{ fontSize: '1.3em', color: 'rgba(0,0,0,0.5)' }}/>
+                        </div>
                     </div>
                     <div className='flex-column'>
                         <div className='customer-info'>
