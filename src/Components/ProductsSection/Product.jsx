@@ -25,7 +25,7 @@ class Product extends React.Component {
     //     }
     // }
     componentWillReceiveProps(props) {
-        let cartItems = _get(props, 'cartItems.lookUpData', [])
+        let cartItems = _get(props, 'cart.cartItems', [])
         let data = _get(props, `productList.lookUpData[${props.index}]`, {})
 
         if (_find(cartItems, data)) {
@@ -38,8 +38,9 @@ class Product extends React.Component {
     }
 
     addToCart = (index) => {
-        let cartItems = _get(this, 'props.cartItems.lookUpData', [])
+        let cartItems = _get(this, 'props.cart.cartItems', [])
         let data = _get(this, `props.productList.lookUpData[${index}]`, {})
+        debugger;
         let reqObj
         if (_isEmpty(_find(cartItems, data))) {
             reqObj = [
@@ -60,7 +61,6 @@ class Product extends React.Component {
             this.setState({cartQuantity})
         }
         this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
-
     }
     render() {
         let data = this.props.data;

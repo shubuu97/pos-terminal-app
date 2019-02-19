@@ -21,6 +21,11 @@ class OrdersTab extends React.Component {
             orderTotal:0
         }
     }
+
+    componentDidMount(){
+        this.props.dispatch(commonActionCreater(10, 'ADD_DISCOUNT_TO_CART'));
+
+    }
     handleDelete=(item)=>
     {
     let cartItems = [...this.props.cartItems];
@@ -90,7 +95,9 @@ class OrdersTab extends React.Component {
     }
 
     render() {
-        let { checkoutcalcArea, checkoutactionArea, checkoutcartArea, checkoutMainPart } = this.props
+        
+        let { checkoutcalcArea, checkoutactionArea, checkoutcartArea, checkoutMainPart } = this.props;
+
         return (
             <div className="orders-section" style={{ height: checkoutMainPart }}>
                 <div className="items-section flex-column" style={{ height: checkoutcartArea }}>

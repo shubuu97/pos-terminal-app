@@ -95,7 +95,7 @@ function FullWidthTabs(props) {
 }
 
 function mapStateToProps(state) {
-  let cartItems = _get(state, 'cartItems.lookUpData', []);
+  let cartItems = _get(state, 'cart.cartItems', []);
   return { cartItems };
 }
 export default connect(mapStateToProps)(FullWidthTabs);
