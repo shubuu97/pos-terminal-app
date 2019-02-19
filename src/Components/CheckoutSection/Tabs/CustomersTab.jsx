@@ -7,14 +7,15 @@ import SvgIcon from '@material-ui/core/SvgIcon';
 /* Redux Imports */
 
 /* Global Imports */
-import ReactSelect from '../../../Global/Components/ReactSelect/async-react-select'
+import ReactSelect from '../../../Global/Components/ReactSelect/async-react-select';
+import genericPostData from '../../../Global/dataFetch/genericPostData';
 /* Component Imports */
 import CalculationSection from './CalculationSection'
 
 
 
 
-class OrdersTab extends React.Component {
+class CustomerTab extends React.Component {
 
     constructor() {
         super();
@@ -22,6 +23,41 @@ class OrdersTab extends React.Component {
 
         }
     }
+    onInputChange = (newValue) => {
+        //const inputValue = newValue.replace(/\W/g, '');
+        this.setState({ newValue });
+        return newValue;
+      }
+       mapCustomer = (data) => {
+        return data.rows.map(d =>
+          {
+          let obj = {};
+          obj.label = d.key;
+          obj.value = d.value;
+          return obj;
+          }
+        );
+        // console.log(result,"colourOptions");
+        // return result
+      };
+      
+       loadOptions = (inputValue, callback) => {
+         console.log(inputValue,"")
+        // posdb.queryToView('customerView/byCustomerName', {
+        //   include_docs: true,
+        //   startkey:inputValue,
+        //   endkey:`${inputValue}\ufff0`
+    
+        // }).then((data) => {
+        //   console.log(data, "result is here")
+        //   callback(this.mapCustomer(data))
+         
+        // });
+      };
+      onChange = (value)=>
+      {
+        console.log(value,"yogi jain");
+      }
 
     render() {
         let { checkoutactionArea, checkoutMainPart, checkoutCustomerArea, checkoutcalcArea, checkoutcartArea } = this.props
@@ -29,7 +65,12 @@ class OrdersTab extends React.Component {
             <div className="customer-section" style={{ height: checkoutMainPart }}>
                 <div className="customer-main" style={{ height: checkoutcartArea }}>
                     <div className='search-section flex-row'>
-                        <ReactSelect
+                        <ReactSelect 
+                             onInputChange = {this.onInputChange}
+                             cacheOptions
+                             defaultOptions
+                             onChange={this.onChange}
+                             loadOptions={this.loadOptions}
                             className='fwidth'
                         />
                         <div className='add-customer flex-row align-center justify-center'> + </div>
@@ -75,4 +116,4 @@ class OrdersTab extends React.Component {
     }
 }
 
-export default OrdersTab;
+export default CustomerTab;

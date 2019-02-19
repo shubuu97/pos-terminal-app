@@ -13,17 +13,10 @@ import {commonActionCreater} from '../../../Redux/commonAction'
 
 /* style */
 
-/* dummy images */
-import img1 from '../../../assets/images/flowers/flower1.jpg'
-import img2 from '../../../assets/images/flowers/flower2.jpg'
-import img3 from '../../../assets/images/flowers/flower3.jpg'
-import img4 from '../../../assets/images/flowers/flower4.jpg'
-import img5 from '../../../assets/images/flowers/flower5.jpg'
-import img6 from '../../../assets/images/flowers/flower6.jpg'
-import img7 from '../../../assets/images/flowers/flower7.jpg'
-import img8 from '../../../assets/images/flowers/flower8.JPG'
-import img9 from '../../../assets/images/flowers/flower9.jpg'
-import img10 from '../../../assets/images/flowers/flower10.jpg'
+/* Global Function import */
+import globalClearCart from '../../../Global/PosFunctions/clearCart';
+import globalHoldCart from '../../../Global/PosFunctions/holdCart';
+
 
 class OrdersTab extends React.Component {
 
@@ -33,6 +26,11 @@ class OrdersTab extends React.Component {
             totalCartItems:0,
             orderTotal:0
         }
+    }
+
+    componentDidMount(){
+        this.props.dispatch(commonActionCreater(10, 'ADD_DISCOUNT_TO_CART'));
+
     }
     handleDelete=(item)=>
     {
@@ -93,13 +91,26 @@ class OrdersTab extends React.Component {
                    </div>
                 </div>)
         });
+        let reqObj = {};
+        reqObj.orderTotal = orderTotal.toFixed(2);
+        reqObj.totalCartItems = totalCartItems;
+        // this.props.dispatch(commonActionCreater(reqObj, 'ORDER_DETAILS'));
         this.state.orderTotal = orderTotal.toFixed(2);
         this.state.totalCartItems = totalCartItems;
         return cartItems
     }
+    clearCart = ()=>
+    {
+    globalClearCart(this.props.dispatch);
+    }
+    holdCart = ()=>{
+    globalHoldCart(this.props.dispatch,this.props.cart);
+    }
 
     render() {
-        let { checkoutcalcArea, checkoutactionArea, checkoutcartArea, checkoutMainPart } = this.props
+        
+        let { checkoutcalcArea, checkoutactionArea, checkoutcartArea, checkoutMainPart } = this.props;
+
         return (
             <div className="orders-section" style={{ height: checkoutMainPart }}>
                 <div className="items-section flex-column" style={{ height: checkoutcartArea }}>
@@ -150,7 +161,7 @@ class OrdersTab extends React.Component {
 
                 <div className='button-section flex-row ' style={{ height: checkoutactionArea }}>
                     <div>
-                        <Button className='mr-20' variant="outlined">Clear</Button>
+                        <Button className='mr-20' variant="outlined" onClick={this.clearCart}>Clear</Button>
                         <Button className='mr-20' variant="outlined">Hold</Button>
                         <Button variant="contained">Proceed</Button>
                     </div>

@@ -10,7 +10,7 @@ const Products = (props) => {
          data={data}
          index={index}
          productList = {props.productList}
-         cartItems={_get(props,'cartItems',[])}
+         cart={_get(props,'cart',[])}
          dispatch={props.dispatch}
           />
     })
