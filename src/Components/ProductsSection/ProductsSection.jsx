@@ -7,10 +7,11 @@ import _find from 'lodash/find'
 /* Material import */
 
 /* Redux Imports */
-import {commonActionCreater} from '../../Redux/commonAction'
+import { commonActionCreater } from '../../Redux/commonAction'
 /* Component Imports */
 import SideDrawer from '../SideDrawer'
 import Products from './Products';
+import SearchBar from './SearchBar'
 
 
 
@@ -22,7 +23,7 @@ class ProductsSection extends React.Component {
 
         }
     }
-    
+
     render() {
         let { windowHeight, productListHeight, headerHeight, categoriesHeight } = this.props
         return (
@@ -32,8 +33,10 @@ class ProductsSection extends React.Component {
                 // * Header Component
                 */}
                 <div className='pos-header' style={{ height: headerHeight }}>
-                    <div className="header-top" >
+                    <div className="header-top flex-row align-center justify-space-between pl-10 pr-10" >
                         <SideDrawer />
+                        <SearchBar />
+                        <div>Logout</div>
                     </div>
                     <div className='header-bottom'>
 
@@ -73,7 +76,7 @@ class ProductsSection extends React.Component {
 
 
                 <Products
-                {...this.props}
+                    {...this.props}
                 />
 
             </div>

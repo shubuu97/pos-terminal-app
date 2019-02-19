@@ -76,7 +76,7 @@ function TemporaryDrawer(props) {
 
     return (
         <div>
-            <HomeIcon className={classes.icon} onClick={toggleDrawer('left', true)}/>
+            <HomeIcon className={classes.icon} style={{color: 'white'}} onClick={toggleDrawer('left', true)}/>
             <Drawer open={state.left} onClose={toggleDrawer('left', false)}>
                 <div
                     tabIndex={0}
