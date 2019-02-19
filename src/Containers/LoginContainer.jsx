@@ -8,8 +8,9 @@ import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { connect } from 'react-redux';
 import _get from 'lodash/get';
-import LoginComponent from '../Components/LoginComponents/login'
-import StoreComponent from '../Components/LoginComponents/store'
+import LoginComponent from '../Components/LoginComponents/login';
+import StoreComponent from '../Components/LoginComponents/store';
+import SyncComponent from '../Components/LoginComponents/sync';
 
 const styles = theme => ({
     main: {
@@ -51,6 +52,9 @@ class SignIn extends React.Component {
         }
     }
     handleStepChange = (currentStep) => {
+        if(currentStep==4){
+          this.props.history.push('/');
+        }
         this.setState({ currentStep })
     }
     render() {
@@ -64,7 +68,12 @@ class SignIn extends React.Component {
                         <LockOutlinedIcon />
                     </Avatar>
                     <Typography component="h1" variant="h5">
-                        {this.state.currentStep == 1 ? 'Sign in' : 'Choose terminal'}
+                        {this.state.currentStep == 1 ? 'Sign in' :
+                            <div>{this.state.currentStep == 2 ?
+                                'Choose terminal' :
+                                'Synching data'}
+                            </div>
+                        }
                     </Typography>
                     <form className={classes.form}>
                         {this.state.currentStep == 1 ? <LoginComponent
@@ -78,6 +87,12 @@ class SignIn extends React.Component {
                                 dispatch={this.props.dispatch}
                                 history={this.props.history}
                                 classes={classes} /> : null
+                        }
+                        {this.state.currentStep == 3 ? <SyncComponent
+                            handleStepChange={this.handleStepChange}
+                            dispatch={this.props.dispatch}
+                            history={this.props.history}
+                            classes={classes} /> : null
                         }
                     </form>
                 </Paper>

@@ -103,11 +103,13 @@ class Store extends React.Component {
         let loggedInDate = moment(_get(data, 'loginTime.seconds') * 1000).format('MMMM Do YYYY');
         localStorage.setItem('loggedInTime', loggedInTime);
         localStorage.setItem('loggedInDate', loggedInDate);
-        if (_get(data, 'sessionId', 'nil') == 'nil') {
-            this.setState({ sessionFound: false })
+        if(_get(data,'sessionId','nil')=='nil')
+        {
+         this.setState({sessionFound:false})
         }
-        else {
-            this.props.history.push('/')
+        else{
+        //    this.props.history.push('/')
+        this.props.handleStepChange(3)
         }
     }
     render() {

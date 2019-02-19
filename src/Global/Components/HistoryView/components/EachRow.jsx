@@ -22,7 +22,7 @@ class EachRow extends React.Component {
     // * Populating Row Heading with Dynamic classNames for Custom Icons
     // Todo: Ask Vishnu to make a default icon, If no Icon is provided.
     populateHeading = () => {
-        let headingData = _get(this, 'props.data.heading', [])
+        let headingData = _get(this, 'props.data.heading', []);
         let row = []
         row.push(headingData.map((data, index) => {
             return (
