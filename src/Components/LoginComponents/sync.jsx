@@ -19,7 +19,7 @@ class SyncContainer extends Component {
         let retailerId = localStorage.getItem('retailerId');
         axiosFetcher({
             method: 'POST',
-            url: 'Product/ByStoreId',
+            url: 'Inventory/ByStoreId',
             reqObj: { id: storeId },
             successCb: this.handleProductFetchSuccess,
             errorCb: this.handleProductFetchError
