@@ -5,12 +5,9 @@ import _findIndex from 'lodash/findIndex';
 
 /* Material import */
 import Button from '@material-ui/core/Button';
-import SvgIcon from '@material-ui/core/SvgIcon';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import Typography from '@material-ui/core/Typography';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 /* Material Icons */
 import RemoveCircleIcons from '@material-ui/icons/RemoveCircleOutline';
 import DeleteIcons from '@material-ui/icons/DeleteOutline';
@@ -35,20 +32,31 @@ class OrdersTab extends React.Component {
             totalCartItems: 0,
             orderTotal: 0,
             expanded: null,
+            cartListHeight: 0,
         }
     }
 
     componentDidMount() {
         this.props.dispatch(commonActionCreater(10, 'ADD_DISCOUNT_TO_CART'));
-
+        
     }
+
+    componentWillReceiveProps(props){
+        let cartItemHeight = document.getElementById('cartItemHeading').offsetHeight;
+        let cartListHeight = this.props.checkoutcartArea - cartItemHeight - 30;
+        this.setState({
+            cartListHeight
+        })
+        debugger
+    }
+
     handleDelete = (item) => {
         let cartItems = [...this.props.cartItems];
         let index = _findIndex(cartItems, ['id', item.id]);
         cartItems.splice(index, 1);
         this.props.dispatch(commonActionCreater(cartItems, 'CART_ITEM_LIST'));
-
     }
+
     handleIncreaseQuantity = (item) => {
         let cartItems = [...this.props.cartItems];
         let index = _findIndex(cartItems, ['id', item.id]);
@@ -163,9 +171,16 @@ class OrdersTab extends React.Component {
 
         return (
             <div className="orders-section" style={{ height: checkoutMainPart }}>
-                <div className="items-section flex-column" style={{ height: checkoutcartArea }}>
-                    {this.mapCartItems()}
+                <div style={{ height: checkoutcartArea }}>
+                    <div className='cart-items' id='cartItemHeading'>
+                        <span>Cart Items</span>
+                        <Button variant="outlined">Add Discount</Button>
+                    </div>
+                    <div className="items-section flex-column" style={{ height: this.state.cartListHeight }} >
+                        {this.mapCartItems()}
+                    </div>
                 </div>
+
 
                 <CalculationSection
                     checkoutcalcArea={checkoutcalcArea}

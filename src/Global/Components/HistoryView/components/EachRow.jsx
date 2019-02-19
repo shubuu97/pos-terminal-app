@@ -23,7 +23,6 @@ class EachRow extends React.Component {
     // Todo: Ask Vishnu to make a default icon, If no Icon is provided.
     populateHeading = () => {
         let headingData = _get(this, 'props.data.heading', [])
-        debugger;
         let row = []
         row.push(headingData.map((data, index) => {
             return (
