@@ -419,158 +419,133 @@ label, p{
             padding: 10px;
             background: @background-l;
             .each-checkout-item{
-                border-radius: 4px;
-                margin: 1%;
-                padding: 10px;
-                background: @background-white;
-                box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-                justify-content: space-between;
-                .each-img{
-                    width: 20%;
-                    img{
-                        width: 100%;
-                    }
-                }
-
                 .each-product-des{
-                    width: 55%;
+                    padding: 0;
                     .title{
                         font-size: 1.1em;
-                        color: @soft-text;
+                        color: @softer-text;
+                        padding-left: 20px;
                     }
-                    .code{
-                        font-size: 0.8em;
-                        color: @soft-text;
-                    }
-                }
-                .each-product-price{
-                    width: 20%;
-                    font-size: 1.5em;
-                    color: @soft-text;
-                }
-                .delete-item{
-                    top: -15px;
-                    left: -15px;
-                }
-            }
-        }
-    }
-    .calculation-section{
-        //border-top: 1px solid @soft-text;
-        border-bottom: 1px solid @soft-text;
-        .calc-first-part{
-            padding: 10px;
-            width: 50%;
-            .cart-details{
-                align-self: flex-end;
-                width: 100%;
-                .cart-each-details{
-                    display: flex;
-                    justify-content: space-between;
-                    padding: 3px 0;
-                    .cart-title{
-                        width: 50%;
-                        font-size: 0.9em;
-                        color: @soft-text;
-                    }
-                    .cart-amount{
-                        font-size: 0.9em;
+                    .each-product-price{
+                        font-size: 1.2em;
                         color: @soft-text;
                     }
                 }
-            }
-        }
-        .calc-second-part{
-            margin: 10px;
-            padding-left: 15px;
-            width: 50%;
-            border-left: 1px solid @soft-text;
-            .cart-details{
-                align-self: flex-end;
-                width: 100%;
-                .cart-each-details{
-                    display: flex;
-                    justify-content: space-between;
-                    padding: 3px 0;
-                    .cart-title{
-                        width: 50%;
-                        font-size: 0.9em;
-                        color: @soft-text;
-                    }
-                    .cart-amount{
-                        font-size: 0.9em;
-                        color: @soft-text;
-                    }
-                }
-            }
-            .cart-total{
-                align-self: flex-end;
-                font-weight: bold;
-                width: 100%;
-                justify-content: space-between;
-                display: flex;
-                .total-text{
+                .quantity{
                     font-size: 1.4em;
-                    width: 50%;
-                    color: @soft-text;
-                }
-                .total-amount{
-                    font-size: 1.5em;
-                    color: @soft-text;
+                    padding: 0 10px;
                 }
             }
         }
-    }
-    .customer-section{
-        .customer-main{
-            .search-section{
-                .add-customer{
-                    width: 20%;
-                    font-size: 2em;
+        .calculation-section{
+            //border-top: 1px solid @soft-text;
+            border-bottom: 1px solid @soft-text;
+            .calc-first-part{
+                padding: 10px;
+                width: 50%;
+                .cart-details{
+                    align-self: flex-end;
+                    width: 100%;
+                    .cart-each-details{
+                        display: flex;
+                        justify-content: space-between;
+                        padding: 3px 0;
+                        .cart-title{
+                            width: 50%;
+                            font-size: 0.9em;
+                            color: @soft-text;
+                        }
+                        .cart-amount{
+                            font-size: 0.9em;
+                            color: @soft-text;
+                        }
+                    }
+                }
+            }
+            .calc-second-part{
+                margin: 10px;
+                padding-left: 15px;
+                width: 50%;
+                border-left: 1px solid @soft-text;
+                .cart-details{
+                    align-self: flex-end;
+                    width: 100%;
+                    .cart-each-details{
+                        display: flex;
+                        justify-content: space-between;
+                        padding: 3px 0;
+                        .cart-title{
+                            width: 50%;
+                            font-size: 0.9em;
+                            color: @soft-text;
+                        }
+                        .cart-amount{
+                            font-size: 0.9em;
+                            color: @soft-text;
+                        }
+                    }
+                }
+                .cart-total{
+                    align-self: flex-end;
                     font-weight: bold;
-                }
-            }
-            .customer-info{
-                margin: 20px 0;
-                display: flex;
-                flex-wrap: wrap;
-                .each-info{
-                    padding: 10px 0;
-                    margin-right: 10%;
-                    width: 40%;
-                    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-                    .info-title{
-                        color: @softer-text;
-                        font-size: 0.9em;
+                    width: 100%;
+                    justify-content: space-between;
+                    display: flex;
+                    .total-text{
+                        font-size: 1.4em;
+                        width: 50%;
+                        color: @soft-text;
                     }
-                    .info-data{
+                    .total-amount{
+                        font-size: 1.5em;
                         color: @soft-text;
                     }
                 }
             }
-            .customer-billing-info{
-                .each-info{
-                    padding: 10px 0;
-                    margin-right: 10%;
-                    .info-title{
-                        color: @softer-text;
-                        font-size: 0.9em;
+        }
+        .customer-section{
+            .customer-main{
+                .search-section{
+                    .add-customer{
+                        width: 20%;
+                        font-size: 2em;
+                        font-weight: bold;
                     }
-                    .info-data{
-                        color: @soft-text;
+                }
+                .customer-info{
+                    margin: 20px 0;
+                    display: flex;
+                    flex-wrap: wrap;
+                    .each-info{
+                        padding: 10px 0;
+                        margin-right: 10%;
+                        width: 40%;
+                        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+                        .info-title{
+                            color: @softer-text;
+                            font-size: 0.9em;
+                        }
+                        .info-data{
+                            color: @soft-text;
+                        }
+                    }
+                }
+                .customer-billing-info{
+                    .each-info{
+                        padding: 10px 0;
+                        margin-right: 10%;
+                        .info-title{
+                            color: @softer-text;
+                            font-size: 0.9em;
+                        }
+                        .info-data{
+                            color: @soft-text;
+                        }
                     }
                 }
             }
-
-
-
         }
     }
-    
-
-
-
-
 }
 
 .pos-payment{

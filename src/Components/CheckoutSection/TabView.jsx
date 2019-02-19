@@ -32,7 +32,7 @@ TabContainer.propTypes = {
 
 function FullWidthTabs(props) {
   const [value, setValue] = React.useState(0);
-  const { cartItems,cart } = props
+  const { cartItems, cart } = props
 
   function handleChange(event, newValue) {
     setValue(newValue);
@@ -60,7 +60,7 @@ function FullWidthTabs(props) {
           textColor="primary"
           variant="fullWidth"
         >
-          <Tab label="Orders" onClick={toggleViewProduct} />
+          <Tab label="Cart" onClick={toggleViewProduct} />
           <Tab label="Customer" onClick={toggleViewProduct} />
           <Tab label="Payment" onClick={toggleViewPayment} />
         </Tabs>
@@ -72,9 +72,9 @@ function FullWidthTabs(props) {
       >
         <TabContainer >
           <OrdersTab
-            cartItems = {cartItems}
-            cart = {cart}
-            dispatch = {props.dispatch}
+            cartItems={cartItems}
+            cart={cart}
+            dispatch={props.dispatch}
             checkoutMainPart={props.checkoutMainPart}
             checkoutcalcArea={props.checkoutcalcArea}
             checkoutactionArea={props.checkoutactionArea}
@@ -99,7 +99,7 @@ function FullWidthTabs(props) {
 
 function mapStateToProps(state) {
   let cartItems = _get(state, 'cart.cartItems', []);
-  let cart = _get(state,'cart',{})
-  return { cartItems,cart };
+  let cart = _get(state, 'cart', {})
+  return { cartItems, cart };
 }
 export default connect(mapStateToProps)(FullWidthTabs);
