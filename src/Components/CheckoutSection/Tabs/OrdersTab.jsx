@@ -91,7 +91,6 @@ class OrdersTab extends React.Component {
         });
     };
     handleClickOpenItemDiscount = (index) => {
-        debugger
         this.setState({ 
             open: true,
             identifier: 'ItemDiscount',
@@ -105,6 +104,19 @@ class OrdersTab extends React.Component {
 
     handleDiscount = (data, identifier, index) => {
         debugger
+        let cartItems = _get(this, 'props.cart.cartItems', []);
+
+        if(identifier == 'Discount'){
+            this.props.dispatch(commonActionCreater(data, 'ADD_DISCOUNT_TO_CART'));
+        }
+        else if(identifier == 'ItemDiscount'){
+            let reqObj = [
+                ...cartItems
+            ]
+            reqObj[index].itemDiscount = data;
+            this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
+        }
+        
     }
 
     mapCartItems = () => {

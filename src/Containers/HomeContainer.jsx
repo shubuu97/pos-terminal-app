@@ -1,6 +1,7 @@
 import React from 'react';
 /* Lodash Imports */
 import _get from 'lodash/get';
+import _isEmpty from 'lodash/isEmpty'
 /* Material import */
 
 /* Redux Imports */
@@ -40,24 +41,13 @@ class HomeContainer extends React.Component {
     }
 
     componentDidMount() {
+        let token = localStorage.getItem('Token')
+        if (_isEmpty(token)){
+            this.props.history.push('/login')
+        }
         this.calcHeight();
         this.getProductData();
-        // ! To be deleted
-        //this.TEMPinitialize();
-
-        
-    }
-
-    TEMPinitialize() {
-        localStorage.setItem('Token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJPcGVyYXRvciI6eyJpZCI6ImQ0NDU1YzAzLTUxM2YtNDk5Ny05ZWYzLWQxMDE1ZWUwYTQwZCIsInN0b3JlSWQiOiJmZTkzMjhlOS1hNzJhLTRmMzktYmM3ZS01N2Q2OWUwNzRhNjEiLCJhY3RpdmUiOnRydWUsInBlcnNvbiI6eyJmaXJzdE5hbWUiOiJPcGVyYXRvciIsImxhc3ROYW1lIjoiUGVyc29uIn0sInBob25lTnVtYmVyIjp7ImNvdW50cnlDb2RlIjo5MSwicGhvbmVOdW1iZXIiOjEyMzEyMzEyM30sImVtYWlsIjoiU3RvcmUxT3AxLmdtYWlsLmNvbSIsInBhc3N3b3JkIjoiJDJhJDEwJGh0T1owQTJUZDQ0bnZqNmdVN3N4QU90Ty4zelEvSWZkODg0VTB4S0o3c0JGdi5HbndObUNtIiwibG9naW5QaW4iOiIxMjM0NSIsInJvbGUiOiJjYXNoaWVyIn0sIlN0b3JlIjp7ImlkIjoiZmU5MzI4ZTktYTcyYS00ZjM5LWJjN2UtNTdkNjllMDc0YTYxIiwibmFtZSI6IlN0b3JlMSIsImFkZHJlc3MiOnsiYWRkcmVzc0xpbmUxIjoiQWRkcmVzcyBsaW5lIDEiLCJhZGRyZXNzTGluZTIiOiJBZGRyZXNzIExpbmUgMiIsImNpdHkiOiJCb290aCIsInN0YXRlIjoiQUwiLCJjb3VudHJ5IjoiVVNBIiwicG9zdGFsQ29kZSI6IjM2MDA4In0sImFjdGl2ZSI6dHJ1ZSwicmV0YWlsZXJJZCI6ImIxYjMzYWVkLTdiNTctNDQzNC1iODk0LTVjMzFjZmNlZTRhMyJ9LCJSZXRhaWxlciI6eyJpZCI6ImIxYjMzYWVkLTdiNTctNDQzNC1iODk0LTVjMzFjZmNlZTRhMyIsIm5hbWUiOiJBcmFtYXJrIERldi4ifSwiZXhwIjoxNTUwNzUwNDM4LCJpc3MiOiJwb3MtYXV0aC1zZXJ2aWNlIn0.-gbDAm5ZZSCtFfMLlO9Ieetme7CJS3nJBRwLN4Y8SMI')
-        localStorage.setItem('email', 'Store1Op1.gmail.com')
-        localStorage.setItem('retailerId', 'b1b33aed-7b57-4434-b894-5c31cfcee4a3')
-        localStorage.setItem('role', 'cashier')
-        localStorage.setItem('storeId', 'fe9328e9-a72a-4f39-bc7e-57d69e074a61')
-        localStorage.setItem('terminalId', '92e0c56e-c95c-4002-99cc-5812485b2e2c')
-        localStorage.setItem('userId', 'd4455c03-513f-4997-9ef3-d1015ee0a40d')
-        localStorage.setItem('userName', 'Operator Person')
-        localStorage.setItem('userPin', '12345')
+              
     }
 
     calcHeight() {
@@ -75,6 +65,7 @@ class HomeContainer extends React.Component {
         // * Checkout Customer Section Calculations
         let checkoutCustomerArea = checkoutMainPart - checkoutactionArea
 
+        debugger
 
         this.setState({
             windowHeight: windowHeight,
