@@ -18,7 +18,7 @@ const cartItem = (state = { cartItems: [], }, action) => {
             });
             return Object.assign({}, state, {
                 cartItems: action.data,
-                cartTotal,
+                cartTotal:cartTotal.toFixed(2),
                 itemsDiscount
             });
             break;

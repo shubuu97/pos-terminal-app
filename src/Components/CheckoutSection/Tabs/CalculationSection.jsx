@@ -28,7 +28,7 @@ class CalculationSection extends React.Component {
                     <div className="cart-details">
                         <div className='cart-each-details'>
                             <span className='cart-title'>Cart Total</span>
-                            <span className='cart-amount'>${_get(cart, 'cartTotal', 0).toFixed(2)}</span>
+                            <span className='cart-amount'>${_get(cart, 'cartTotal', 0)}</span>
                         </div>
                         {
                             _get(cart, 'cartDiscount') ?

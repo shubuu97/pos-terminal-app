@@ -14,6 +14,7 @@ function commonReducerFunc(identifier) {
           lastUpdated: action.receivedAt,
         });
       case `${identifier}_SUCCESS`:
+   
         return Object.assign({}, state, {
           error: '',
           isFetching: false,
