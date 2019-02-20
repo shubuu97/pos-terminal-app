@@ -34,7 +34,7 @@ class SyncContainer extends Component {
         })
         axiosFetcher({
             method: 'POST',
-            url: '/Category/AllByRetailerId',
+            url: 'Category/AllByRetailerId',
             reqObj:{id : retailerId},
             successCb: this.handleCategoryFetchSuccess,
             errorCb: this.handleCategoryFetchError
@@ -47,7 +47,7 @@ class SyncContainer extends Component {
         categoryDb.bulkDocs(_get(categoryData,'data', [])).then((res) => {
             let percentageComplete = this.state.percentageComplete + 100 / this.state.ApiCallCount;
             this.setState({ percentageComplete });
-            PouchDb.replicate('categoryDb', `http://localhost:5984/productsdb`, {
+            PouchDb.replicate('categoryDb', `http://localhost:5984/categoryDb`, {
                 live: true,
                 retry: true
             })
