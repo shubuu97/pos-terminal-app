@@ -111,11 +111,10 @@ class HomeContainer extends React.Component {
         limit: 20,
         skip: 0
       }).then((result)=> {
-          debugger;
         this.props.dispatch(commonActionCreater(result,'GET_PRODUCT_DATA_SUCCESS'));
        
       }).catch((err)=> {
-       debugger;
+          
       });
         // genericPostData({
         //     dispatch: this.props.dispatch,

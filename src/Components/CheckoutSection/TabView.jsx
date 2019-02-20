@@ -84,6 +84,7 @@ function FullWidthTabs(props) {
 
         <TabContainer >
           <CustomersTab
+            {...props}
             checkoutMainPart={props.checkoutMainPart}
             checkoutactionArea={props.checkoutactionArea}
             checkoutCustomerArea={props.checkoutCustomerArea}
