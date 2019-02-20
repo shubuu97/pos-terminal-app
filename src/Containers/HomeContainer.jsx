@@ -172,7 +172,7 @@ class HomeContainer extends React.Component {
                                 cart={cart}
                                 dispatch={dispatch}
                                 history={this.props.history}
-                            // ! Actions
+                                // ! Actions
                                 handleClickOpen={this.handleClickOpen}
                             /> : null
                     }
@@ -187,6 +187,8 @@ class HomeContainer extends React.Component {
                     checkoutactionArea={checkoutactionArea}
                     checkoutcartArea={checkoutcartArea}
                     checkoutCustomerArea={checkoutCustomerArea}
+                    dispatch={dispatch}
+                    cart={cart}
                     // ! Actions
                     toggleViewPayment={this.toggleViewPayment}
                     toggleViewProduct={this.toggleViewProduct}
@@ -199,17 +201,16 @@ class HomeContainer extends React.Component {
                     }
                 </Payment>
 
-                {   
+                {
                     this.state.openOnHold ?
-                    <HoldDialogue 
-                        handleClickOpen={this.handleClickOpen}
-                        handleClose={this.handleClose}
-                        open={this.state.openOnHold}
-                        holdCartData={this.props.holdCartData}
-                        dispatch={dispatch}
-                    /> : null
+                        <HoldDialogue
+                            handleClickOpen={this.handleClickOpen}
+                            handleClose={this.handleClose}
+                            open={this.state.openOnHold}
+                            holdCartData={this.props.holdCartData}
+                            dispatch={dispatch}
+                        /> : null
                 }
-
             </div>
         );
     }
