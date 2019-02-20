@@ -199,11 +199,16 @@ class HomeContainer extends React.Component {
                     }
                 </Payment>
 
-                <HoldDialogue 
-                    handleClickOpen={this.handleClickOpen}
-                    handleClose={this.handleClose}
-                    open={this.state.openOnHold}
-                />
+                {   
+                    this.state.openOnHold ?
+                    <HoldDialogue 
+                        handleClickOpen={this.handleClickOpen}
+                        handleClose={this.handleClose}
+                        open={this.state.openOnHold}
+                        holdCartData={this.props.holdCartData}
+                        dispatch={dispatch}
+                    /> : null
+                }
 
             </div>
         );
@@ -211,16 +216,18 @@ class HomeContainer extends React.Component {
 }
 
 function mapStateToProps(state) {
-    let { productList, cart, categoryList } = state;
+    let { productList, cart, categoryList, cartHoldData } = state;
     categoryList = _get(categoryList, 'lookUpData.rows', [])
     productList = _get(productList, 'lookUpData.rows', []);
     let totalCount = _get(productList, 'lookUpData.total_rows', 0);
+    let holdCartData = _get(cartHoldData, 'holdedItems', []);
 
     return {
         categoryList,
         productList,
         totalCount,
-        cart
+        cart,
+        holdCartData,
     }
 }
 export default connect(mapStateToProps)(HomeContainer)

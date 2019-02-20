@@ -13,8 +13,7 @@ import RemoveCircleIcons from '@material-ui/icons/RemoveCircleOutline';
 import DeleteIcons from '@material-ui/icons/DeleteOutline';
 import AddIcons from '@material-ui/icons/AddCircleOutline';
 /* Redux Imports */
-import { commonActionCreater } from '../../../Redux/commonAction'
-
+import { commonActionCreater } from '../../../Redux/commonAction';
 /* Component Imports */
 import CalculationSection from './CalculationSection'
 import DiscountDialogue from '../DiscountDialogue/DiscountDialogue'
