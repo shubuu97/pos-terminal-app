@@ -5,9 +5,8 @@ import _get from 'lodash/get';
 
 /* Material Icons */
 import RemoveCircleIcons from '@material-ui/icons/RemoveCircleOutline';
-import DeleteIcons from '@material-ui/icons/DeleteOutline';
-import AddIcons from '@material-ui/icons/AddCircleOutline';
 /* Redux Imports */
+import { connect } from 'react-redux';
 
 /* Component Imports */
 
@@ -22,33 +21,42 @@ class CalculationSection extends React.Component {
     }
 
     render() {
-        let { checkoutcalcArea } = this.props
+        let { checkoutcalcArea, cartItems, cart } = this.props
         return (
             <div className='calculation-section flex-row' style={{ height: checkoutcalcArea }}>
                 <div className="calc-first-part">
                     <div className="cart-details">
                         <div className='cart-each-details'>
                             <span className='cart-title'>Cart Total</span>
-                            <span className='cart-amount'>$500</span>
+                            <span className='cart-amount'>${_get(cart, 'cartTotal', 0).toFixed(2)}</span>
                         </div>
-                        <div className='cart-each-details'>
-                            <span className='cart-title flex-row align-center'>
-                                <RemoveCircleIcons style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }} />
-                                Discount
-                            </span>
-                            <span className='cart-amount'>- $10</span>
-                        </div>
-                        <div className='cart-each-details'>
-                            <span className='cart-title'>Emp. Discount </span>
-                            <span className='cart-amount'>- $20</span>
-                        </div>
-                        <div className='cart-each-details'>
-                            <span className='cart-title flex-row align-center'>
-                                <RemoveCircleIcons style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }} />
-                                Item Discount
-                            </span>
-                            <span className='cart-amount'>- $50</span>
-                        </div>
+                        {
+                            _get(cart, 'cartDiscount') ?
+                                <div className='cart-each-details'>
+                                    <span className='cart-title flex-row align-center'>
+                                        <RemoveCircleIcons style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }} />
+                                        Cart Discount
+                                    </span>
+                                    <span className='cart-amount'>- ${_get(cart, 'cartDiscount')}</span>
+                                </div> : null
+                        }
+                        {
+                            _get(cart, 'empDiscount') ?
+                                <div className='cart-each-details'>
+                                    <span className='cart-title'>Emp. Discount </span>
+                                    <span className='cart-amount'>- ${_get(cart, 'empDiscount')}</span>
+                                </div> : null
+                        }
+                        {
+                            _get(cart, 'itemsDiscount') ?
+                            <div className='cart-each-details'>
+                                <span className='cart-title flex-row align-center'>
+                                    <RemoveCircleIcons style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }} />
+                                    Items Discount
+                                </span>
+                                <span className='cart-amount'>- ${_get(cart, 'itemsDiscount')}</span>
+                            </div> : null
+                        }
                     </div>
                 </div>
                 <div className="calc-second-part flex-column justify-space-between">
@@ -58,15 +66,7 @@ class CalculationSection extends React.Component {
                             <span className='cart-amount'>$420</span>
                         </div>
                         <div className='cart-each-details'>
-                            <span className='cart-title'>County Tax</span>
-                            <span className='cart-amount'>$ 10</span>
-                        </div>
-                        <div className='cart-each-details'>
-                            <span className='cart-title'>Fedral Tax</span>
-                            <span className='cart-amount'>$ 10</span>
-                        </div>
-                        <div className='cart-each-details'>
-                            <span className='cart-title'>State Tax</span>
+                            <span className='cart-title'>Tax</span>
                             <span className='cart-amount'>$ 10</span>
                         </div>
                     </div>
@@ -80,4 +80,15 @@ class CalculationSection extends React.Component {
     }
 }
 
-export default CalculationSection;
+function mapStateToProps(state) {
+
+    let cartItems = _get(state, 'cart.cartItems', []);
+    let cart = _get(state, 'cart', {})
+
+    return {
+        cartItems,
+        cart
+    };
+}
+
+export default connect(mapStateToProps)(CalculationSection);

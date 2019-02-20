@@ -44,8 +44,11 @@ class Product extends React.Component {
         if (_isEmpty(_find(cartItems, data))) {
             reqObj = [
                 ...cartItems,
-                { 
-            ...data, cartQuantity: 1,subTotal:data.salePrice.price*1 }
+                {
+                    ...data,
+                    cartQuantity: 1,
+                    // subTotal: data.salePrice.price * 1
+                }
             ];
             this.setState({ cartQuantity: 1 })
         }
@@ -56,8 +59,8 @@ class Product extends React.Component {
                 ...cartItems
             ]
             reqObj[index].cartQuantity = cartQuantity;
-            reqObj[index].subTotal = data.salePrice.price*cartQuantity;
-            this.setState({cartQuantity})
+            // reqObj[index].subTotal = data.salePrice.price*cartQuantity;
+            this.setState({ cartQuantity })
         }
         this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
     }
