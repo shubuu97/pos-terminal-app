@@ -10,6 +10,9 @@ import CashPay from './CashPay';
 import CardPay from './CardPay';
 import DefaultCardPay from './DefaultCardPay';
 import GiftPay from './GiftPay';
+import Button from '@material-ui/core/Button';
+import {connect} from 'react-redux';
+import genericPostData from '../../Global/dataFetch/genericPostData';
 
 
 /* style */
@@ -64,6 +67,56 @@ class PaymentSection extends React.Component {
     }
     onRemovePaymentMethod = (fieldValue) => {
         this.setState({ [fieldValue]: false })
+    }
+    handleSaleTransaction = ()=>{
+        debugger;
+    let {customer,cartItems,cartTotal} = this.props;
+    let saleItems =   cartItems.map((item)=>{
+            let obj = {}
+            obj.productId=item.doc.product.id;
+            obj.qty = item.cartQuantity;
+            return obj;
+        });
+        let paymentAmount = 
+        (parseFloat(this.state.cardAmountValue)||0)+
+        (parseFloat(this.state. defaultcardAmountValue)||0)
+        + (parseFloat(this.state.cashPayValue||0))+
+        (parseFloat(this.state.giftPayNumberValue)||0)
+      let reqObj = {
+        customerId:customer.id,
+        storeId:localStorage.getItem('storeId'),
+        terminalId:localStorage.getItem('terminalId'),
+        operatorId:localStorage.getItem('userId'),
+        saleItem:saleItems,
+        miscSaleItems:[],
+        sessionId:'',
+        totalAmount:parseFloat(cartTotal),
+        paymentAmount:paymentAmount,
+        paymentMethod:'CASH',
+        paymentReference:''
+    };
+    genericPostData({
+        dispatch:this.props.dispatch,
+        reqObj,
+        url:'Sale/CreateSaleTransaction',
+        constants:{
+            init:'POST_SALE_TRANSACTION_INIT',
+            success:'POST_SALE_TRANSACTION_SUCCESS',
+            error:'POST_SALE_TRANSACTION_ERROR'
+        },
+        identifier:'SALE_TRANSACTION_INIT',
+        successCb:this.handleSaleTransactionTransactionSuccess,
+        errorCb:this.handleSaleTransactionTransactionError
+
+    })
+    
+    }
+
+    handleSaleTransactionTransactionSuccess = ()=>{
+        debugger;
+    }
+    handleSaleTransactionTransactionError = ()=>{
+        debugger;
     }
     render() {
         return (
@@ -139,10 +192,29 @@ class PaymentSection extends React.Component {
                     </div>
 
                 </div>
+                <div className="flex-row justify-flex-end">
+                    <div style={{ width: '48%' }}>
+                        <Button
+                            color='primary'
+                            fullWidth
+                            variant='contained'
+                            onClick={this.handleSaleTransaction}
+                        >
+                            Submit Transaction
+                    </Button>
+                    </div>
+                </div>
             </div>
 
         );
     }
 }
 
-export default PaymentSection;
+function mapStateToProps(state){
+   let  cartItems = _get(state,'cart.cartItems');
+   let  customer = _get(state,'cart.customer');
+   let  cartTotal = _get(state,'cart.cartTotal')
+   return {cartItems,customer,cartTotal}
+}
+
+export default connect(mapStateToProps)(PaymentSection);
