@@ -26,9 +26,6 @@ const Config = {
 const Products = posed.div(Config)
 const Payment = posed.div(Config);
 
-
-
-
 class HomeContainer extends React.Component {
 
     constructor() {
@@ -47,7 +44,7 @@ class HomeContainer extends React.Component {
         }
         this.calcHeight();
         this.getProductData();
-              
+        this.getCategoryData();
     }
 
     calcHeight() {
@@ -102,7 +99,7 @@ class HomeContainer extends React.Component {
         }).then((results) => {
             this.props.dispatch(commonActionCreater(results,'GET_CATEGORY_DATA_SUCCESS'))
         }).catch((err) => {
-            console.log(err);
+            this.props.dispatch(commonActionCreater(err,'GET_CATEGORY_DATA_ERROR'))
         })
     }
 
@@ -142,7 +139,6 @@ class HomeContainer extends React.Component {
 
     render() {
         let windowHeight = document.documentElement.scrollHeight
-
         let { productListHeight, isOpenProduct, isOpenPayment, headerHeight, categoriesHeight, checkoutHeader, checkoutMainPart, checkoutcalcArea, checkoutactionArea, checkoutcartArea, checkoutCustomerArea } = this.state
 
         let { productList, dispatch, cart , categoryList } = this.props
@@ -190,8 +186,8 @@ class HomeContainer extends React.Component {
 }
 
 function mapStateToProps(state) {
-    let { productList, cart , categoryList} = state;
-    categoryList = _get(categoryList, 'lookUpData.rows',[])
+   let { productList, cart , categoryList} = state;
+   categoryList = _get(categoryList, 'lookUpData.rows',[])
    productList =  _get(productList,'lookUpData.rows',[]);
    let totalCount = _get(productList,'lookUpData.total_rows',0);
 

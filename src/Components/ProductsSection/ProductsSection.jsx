@@ -14,14 +14,13 @@ import SideDrawer from '../SideDrawer'
 import Products from './Products';
 import SearchBar from './SearchBar';
 import PouchDb from 'pouchdb';
+import Categories from './Categories';
 PouchDb.plugin(require('pouchdb-quick-search'));
 let productsdb = new PouchDb('productsdb');
 productsdb.search({
     fields: ['product.name', 'product.description', 'product.sku'],
     build:true
   })
-
-
 
 class ProductsSection extends React.Component {
 
@@ -98,29 +97,9 @@ class ProductsSection extends React.Component {
                 {/* 
                 // * Product Categories Component
                 */}
-                <div className='product-catogories' style={{ height: categoriesHeight }}>
-                    <div className='each-tile blue-background'>
-                        <span className='category-text'>
-                            Hello
-                            </span>
-                    </div>
-                    <div className='each-tile blue-background'>
-                        <span className='category-text'>
-                            Hello
-                            </span>
-                    </div>
-                    <div className='each-tile blue-background'>
-                        <span className='category-text'>
-                            Hello
-                            </span>
-                    </div>
-                    <div className='each-tile blue-background'>
-                        <span className='category-text'>
-                            Hello
-                            </span>
-                    </div>
-                </div>
-
+                <Categories 
+                    categoryList={_get(this.props,'categoryList', [])}
+                    categoriesHeight={categoriesHeight} />
                 {/* 
                 // * Products List Component
                 */}
