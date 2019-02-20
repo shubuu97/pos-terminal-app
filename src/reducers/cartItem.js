@@ -28,6 +28,13 @@ const cartItem = (state = { cartItems: [], }, action) => {
             });
             return newState
             break;
+            case 'ADD_CUSTOMER_TO_CART':
+            debugger;
+            return Object.assign({}, state, {
+                customer: action.data,
+            });
+            break;
+        
 
     }
     return state;
