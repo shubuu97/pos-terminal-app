@@ -7,12 +7,12 @@ const cartItem = (state = { cartItems: [], }, action) => {
             let cartTotal = 0;
             let itemsDiscount = 0;
             action.data.forEach(item => {
-                if(item.itemDiscount){
+                if (item.itemDiscount) {
                     itemsDiscount += parseFloat(item.itemDiscount)
-                    item.subTotal = (_get(item,'doc.product.salePrice.price') * item.cartQuantity) - parseFloat(item.itemDiscount);
+                    item.subTotal = (_get(item, 'doc.product.salePrice.price') * item.cartQuantity) - parseFloat(item.itemDiscount);
                 }
-                else{
-                    item.subTotal = (_get(item,'doc.product.salePrice.price') * item.cartQuantity)
+                else {
+                    item.subTotal = (_get(item, 'doc.product.salePrice.price') * item.cartQuantity)
                 }
                 cartTotal += item.subTotal;
             });
@@ -28,13 +28,12 @@ const cartItem = (state = { cartItems: [], }, action) => {
             });
             return newState
             break;
-            case 'ADD_CUSTOMER_TO_CART':
-            debugger;
+        case 'ADD_CUSTOMER_TO_CART':
             return Object.assign({}, state, {
                 customer: action.data,
             });
             break;
-        
+
 
     }
     return state;

@@ -3,7 +3,12 @@ const holdCartItem = (state = { holdedItems: [], }, action) => {
     switch (action.type) {
         case 'HOLD_CART_ITEM':
             return Object.assign({}, state, {
-                holdedItems:[...state.holdedItems,action.data]
+                holdedItems: [...state.holdedItems, action.data]
+            });
+            break;
+        case 'DELETE_HOLD_CART_ITEM':
+            return Object.assign({}, state, {
+                holdedItems: action.data
             });
             break;
     }
