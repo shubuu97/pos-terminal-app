@@ -95,8 +95,18 @@ class HomeContainer extends React.Component {
         })
     }
 
+    getCategoryData = () => {
+        let categoryDb =  new PouchDb('categoryDb');
+        categoryDb.allDocs({
+            include_docs: true
+        }).then((results) => {
+            this.props.dispatch(commonActionCreater(results,'GET_CATEGORY_DATA_SUCCESS'))
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
+
     getProductData = () => {
-        let storeId = localStorage.getItem('storeId');
        let productsdb =  new PouchDb('productsdb');
        productsdb.allDocs({
         include_docs: true,
@@ -135,7 +145,7 @@ class HomeContainer extends React.Component {
 
         let { productListHeight, isOpenProduct, isOpenPayment, headerHeight, categoriesHeight, checkoutHeader, checkoutMainPart, checkoutcalcArea, checkoutactionArea, checkoutcartArea, checkoutCustomerArea } = this.state
 
-        let { productList, dispatch, cart } = this.props
+        let { productList, dispatch, cart , categoryList } = this.props
         return (
             <div className='main pos-body'>
                 <Products pose={isOpenProduct ? 'open' : 'closed'}>
@@ -146,6 +156,7 @@ class HomeContainer extends React.Component {
                         headerHeight={headerHeight}
                         categoriesHeight={categoriesHeight}
                         productList = {productList}
+                        categoryList = {categoryList}
                         cart={cart}
                         dispatch={dispatch}
                         history={this.props.history}
@@ -179,11 +190,13 @@ class HomeContainer extends React.Component {
 }
 
 function mapStateToProps(state) {
-    let { productList, cart } = state;
+    let { productList, cart , categoryList} = state;
+    categoryList = _get(categoryList, 'lookUpData.rows',[])
    productList =  _get(productList,'lookUpData.rows',[]);
    let totalCount = _get(productList,'lookUpData.total_rows',0);
 
     return {
+        categoryList,
         productList,
         totalCount,
         cart

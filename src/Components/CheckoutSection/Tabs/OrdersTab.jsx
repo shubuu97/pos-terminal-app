@@ -64,14 +64,12 @@ class OrdersTab extends React.Component {
         let cartItems = [...this.props.cartItems];
         let index = _findIndex(cartItems, ['id', item.id]);
         cartItems[index].cartQuantity = cartItems[index].cartQuantity + 1;
-        cartItems[index].subTotal =_get(item,'doc.product.salePrice.price') * cartItems[index].cartQuantity;
         this.props.dispatch(commonActionCreater(cartItems, 'CART_ITEM_LIST'));
     }
     handleDecreseQuantity = (item) => {
         let cartItems = [...this.props.cartItems];
         let index = _findIndex(cartItems, ['id', item.id]);
         cartItems[index].cartQuantity = cartItems[index].cartQuantity - 1;
-        cartItems[index].subTotal =_get(item,'doc.product.salePrice.price') * cartItems[index].cartQuantity;
         if (cartItems[index].cartQuantity == 0) {
             cartItems.splice(index, 1);
         }
@@ -103,7 +101,6 @@ class OrdersTab extends React.Component {
     };
 
     handleDiscount = (data, identifier, index) => {
-        debugger
         let cartItems = _get(this, 'props.cart.cartItems', []);
 
         if(identifier == 'Discount'){
@@ -113,7 +110,8 @@ class OrdersTab extends React.Component {
             let reqObj = [
                 ...cartItems
             ]
-            reqObj[index].itemDiscount = data;
+            reqObj[index].itemDiscount = parseFloat(data);
+            // reqObj[index].subTotal = (cartItems[index].salePrice.price * cartItems[index].cartQuantity) - parseFloat(data);
             this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
         }
         
@@ -127,30 +125,6 @@ class OrdersTab extends React.Component {
             orderTotal += item.subTotal;
             this.state.orderTotal = this.state.orderTotal + item.subTotal;
             return (
-                // <div className='p-rel each-checkout-item flex-row'>
-                //     <div onClick={() => this.handleDelete(item)} className='p-abs delete-item'>
-                //         <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
-                //             <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-                //             <path d="M0 0h24v24H0z" fill="none" />
-                //         </svg>
-                //     </div>
-                //     <div className='each-img'>
-                //         <img src={item.image} alt="img" />
-                //     </div>
-                //     <div className='each-product-des flex-column'>
-                //         <span className='title'>{item.name}</span>
-                //         <span className='code'>{item.sku}</span>
-                //         <span className='title'>
-                //             <span onClick={() => this.handleIncreaseQuantity(item)} style={{ cursor: 'pointer' }}>+</span>
-                //             <span>{item.cartQuantity}</span>
-                //             <span onClick={() => this.handleDecreseQuantity(item)} style={{ cursor: 'pointer' }}>-</span></span>
-                //         <span className='code'>{`${_get(item, 'salePrice.currencyCode')}${_get(item, 'salePrice.price')}`}</span>
-                //     </div>
-                //     <div className='each-product-price flex-column justify-center'>
-                //         {item.subTotal.toFixed(2)}
-                //     </div>
-                // </div>
-
                 <ExpansionPanel className='each-checkout-item' expanded={this.state.expanded === `Panel${item.sku}`} onChange={this.handleChange(`Panel${item.sku}`)}>
                     <ExpansionPanelSummary className=''>
                         <div className='each-product-des fwidth flex-row justify-space-between'>
@@ -161,7 +135,7 @@ class OrdersTab extends React.Component {
 
                             <div className='flex-column'>
                                 <div className='each-product-price'>{_get(item, 'doc.product.salePrice.currencyCode')} {item.subTotal.toFixed(2)}</div>
-                                <div className='each-product-reg-price'>Reg Price - $50</div>
+                                <div className='each-product-reg-price'>Reg Price - ${_get(item, 'doc.product.salePrice.currencyCode')}{_get(item, 'doc.product.salePrice.price')}</div>
                             </div>
                         </div>
                     </ExpansionPanelSummary>

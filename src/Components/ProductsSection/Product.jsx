@@ -14,16 +14,7 @@ class Product extends React.Component {
         super(props);
         this.state = {};
     }
-    // componentDidMount()
-    // {
-    // let cartItems = _get(this, 'props.CartItems', [])
-    // let data =  _get(this, `props.productList.lookUpData[${this.props.index}]`, {})
-
-    //     if(_find(cartItems, data)){
-    //         let cartQuantity = (_find(cartItems, data)).cartQuantity;
-    //         this.setState({cartQuantity})
-    //     }
-    // }
+    
     componentWillReceiveProps(props) {
         let cartItems = _get(props, 'cart.cartItems', [])
         let data = _get(this, `props.data`, {});
@@ -45,10 +36,10 @@ class Product extends React.Component {
         if (_isEmpty(_find(cartItems, data))) {
             reqObj = [
                 ...cartItems,
-            { 
-            ...data,
-             cartQuantity: 1,
-             subTotal:_get(data,'doc.product.salePrice.price')*1}
+                {
+                    ...data,
+                    cartQuantity: 1,
+                }
             ];
             this.setState({ cartQuantity: 1 })
         }
@@ -59,8 +50,7 @@ class Product extends React.Component {
                 ...cartItems
             ]
             reqObj[index].cartQuantity = cartQuantity;
-            reqObj[index].subTotal = _get(data,'doc.product.salePrice.price')*cartQuantity;
-            this.setState({cartQuantity})
+            this.setState({ cartQuantity })
         }
         this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
     }

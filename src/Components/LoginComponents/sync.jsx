@@ -10,7 +10,7 @@ class SyncContainer extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            ApiCallCount: 2,
+            ApiCallCount: 3,
             percentageComplete: 0
         };
     }
@@ -26,13 +26,37 @@ class SyncContainer extends Component {
         })
         axiosFetcher({
             method: 'POST',
-            reqObj: { email: this.state.email, password: this.state.password },
+            // reqObj: { email: this.state.email, password: this.state.password },
             url: 'Customer/All',
             reqObj: { id: retailerId },
             successCb: this.handleCustomerFetchSuccess,
             errorCb: this.handleCustomerFetchError
         })
+        axiosFetcher({
+            method: 'POST',
+            url: 'Category/AllByRetailerId',
+            reqObj:{id : retailerId},
+            successCb: this.handleCategoryFetchSuccess,
+            errorCb: this.handleCategoryFetchError
+        })
 
+    }
+
+    handleCategoryFetchSuccess = (categoryData) => {
+        let categoryDb = new PouchDb('categoryDb');
+        categoryDb.bulkDocs(_get(categoryData,'data', [])).then((res) => {
+            let percentageComplete = this.state.percentageComplete + 100 / this.state.ApiCallCount;
+            this.setState({ percentageComplete });
+            PouchDb.replicate('categoryDb', `http://localhost:5984/categoryDb`, {
+                live: true,
+                retry: true
+            })
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
+    handleCategoryFetchError = (err) => {
+        console.log(err);
     }
 
     handleProductFetchSuccess = (productData) => {
