@@ -629,13 +629,30 @@ label, p{
        }
     }
 
-
-
-
-
-
 }
 
+/* On Hold Dialogue */
+.on-hold-section{
+    background: @background;
+    height: 100%;
+    .on-hold-header{
+        display: flex;
+        align-items: center;
+        height: 50px;
+        background: @primary-d;
+        color: @primary-text;
+        font-size: 1.3em;
+    }
+    .card{
+        background: @background-white;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        margin: 10px;
+        min-height: 50px;
+        padding: 20px;
+        width: 20%;
+    }
+}
 
 /* Discount Dialogue */
 // ! Need to change the keypad UI
@@ -668,8 +685,11 @@ label, p{
         padding: 20px;
     }
     .card-title{
-        font-size: 1.15em;
-
+        font-size: 1.2em;
+        font-weight: bold;
+    }
+    .soft-text{
+        color: rgba(0,0,0,0.7)
     }
     .payment-card{
         .each-payment-method{
@@ -679,8 +699,9 @@ label, p{
             text-align: center;
             width: 25%;
             min-height: 120px;
-            border: 1px solid @softer-text;
-            margin: 20px 20px 10px 20px;
+            border: 2px solid @softer-text;
+            margin: 20px 10px 10px 10px;
+            font-weight: bold;
         }
     }
     .gift-card{
@@ -706,12 +727,19 @@ label, p{
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 28%;
             height: 50px;
-            border-radius: 3px;
+            border-radius: 5px;
             border: 2px solid rgba(255,255,255,0.8);
-            margin: 1%;
             
+            
+        }
+        .big-key{
+            width: 59%;
+            margin: 1%;
+        }
+        .small-key{
+            width: 28%;
+            margin: 1%;
         }
     }
     

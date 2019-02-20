@@ -7,8 +7,6 @@ import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
 import { withStyles } from '@material-ui/core/styles';
 import blue from '@material-ui/core/colors/blue';
 import SvgIcon from '@material-ui/core/SvgIcon';
@@ -33,8 +31,8 @@ const styles = theme => ({
 function HomeIcon(props) {
     return (
         <SvgIcon {...props}>
-            <path d="M0 0h24v24H0z" fill="none"/>
-            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
         </SvgIcon>
     );
 }
@@ -54,29 +52,46 @@ function TemporaryDrawer(props) {
 
     const sideList = (
         <div>
+            <div className='pb-30'>
+
+            </div>
             <List>
-                {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                    <ListItem button key={text}>
-                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                        <ListItemText primary={text} />
-                    </ListItem>
-                ))}
-            </List>
-            <Divider />
-            <List>
-                {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                    <ListItem button key={text}>
-                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                        <ListItemText primary={text} />
-                    </ListItem>
-                ))}
+                <Divider />
+                <ListItem button key={1}>
+                    <ListItemIcon>
+
+                    </ListItemIcon>
+                    <ListItemText primary={'Home'} />
+                </ListItem>
+                <Divider />
+                <ListItem button key={1} onClick={props.handleClickOpen}>
+                    <ListItemIcon>
+
+                    </ListItemIcon>
+                    <ListItemText primary={'On Hold'} />
+                </ListItem>
+                <Divider />
+                <ListItem button key={1}>
+                    <ListItemIcon>
+
+                    </ListItemIcon>
+                    <ListItemText primary={'Session Management'} />
+                </ListItem>
+                <Divider />
+                <ListItem button key={1}>
+                    <ListItemIcon>
+
+                    </ListItemIcon>
+                    <ListItemText primary={'Log Out'} />
+                </ListItem>
+                <Divider />
             </List>
         </div>
     );
 
     return (
         <div>
-            <HomeIcon className={classes.icon} style={{color: 'white', padding:'0 10px', fontSize: 30}} onClick={toggleDrawer('left', true)}/>
+            <HomeIcon className={classes.icon} style={{ color: 'white', padding: '0 10px', fontSize: 30 }} onClick={toggleDrawer('left', true)} />
             <Drawer open={state.left} onClose={toggleDrawer('left', false)}>
                 <div
                     tabIndex={0}

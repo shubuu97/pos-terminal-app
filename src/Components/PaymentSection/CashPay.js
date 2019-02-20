@@ -24,22 +24,33 @@ class CashPay extends React.Component {
             [name]: event.target.value,
         });
     };
+    componentWillReceiveProps(props){
+        this.setState({cashPay:props.value})
+    }
     render() {
         return (
             <div className="default-card-pay">
-            <span>Cash Pay</span>
-            <div className="flex-row align-center justify-space-between">
-                <div style={{width:'80%'}}>
-                <TextField
-                    id="outlined-name"
-                    label="Amount"
-                    value={this.state.name}
-                    onChange={this.handleChange('cashPay')}
-                    margin="normal"
-                    variant="outlined"
-                />
-                </div>
-                 <CloseIcon/>
+                <span>Cash Pay</span>
+                <div className="flex-row align-center justify-space-between">
+                    <div style={{ width: '80%' }}>
+                        <TextField
+                        InputLabelProps={{ shrink: true }}
+                            id="cashPay"
+                            label="Amount"
+                            value={this.state.cashPay}
+                            onChange={this.handleChange('cashPay')}
+                            margin="outline"
+                            onFocus={() => this.props.currentFocus('cashPay')}
+                            fullWidth
+                            autoFocus
+                            type='text'
+                            variant="outlined"
+                            className='mt-10'
+                        />
+                    </div>
+                    <CloseIcon
+                        onClick={() => this.props.onRemovePaymentMethod('showCashPay')} />
+                    
             </div>
             </div>
         );

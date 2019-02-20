@@ -11,6 +11,7 @@ import CardPay from './CardPay';
 import DefaultCardPay from './DefaultCardPay';
 import GiftPay from './GiftPay';
 
+
 /* style */
 
 class PaymentSection extends React.Component {
@@ -18,30 +19,57 @@ class PaymentSection extends React.Component {
     constructor() {
         super();
         this.state = {
-         showCashPay:false,
-         showCardPay:false,
-         showDefaultCardPay:false,
-         showGiftPay:false
+            showCashPay: false,
+            showCardPay: false,
+            showDefaultCardPay: false,
+            showGiftPay: false,
+            cardAmountValue: '',
+            defaultcardAmountValue: '',
+            cashPayValue: '',
+            giftPayNumberValue: ''
+
         }
     }
-    handleCashPayment = ()=>{
-    this.setState({showCashPay:true})
+    handleCashPayment = () => {
+        this.setState({ showCashPay: true })
     }
-    handleCardPayment = ()=>{
-    this.setState({showCardPay:true})
+    handleCardPayment = () => {
+        this.setState({ showCardPay: true })
 
     }
-    handleDefaultCardPayment = ()=>{
-    this.setState({showDefaultCardPay:true})
+    handleDefaultCardPayment = () => {
+        this.setState({ showDefaultCardPay: true })
     }
-    handleGiftCardPayment = ()=>{
-    this.setState({showGiftPay:true})
+    handleGiftCardPayment = () => {
+        this.setState({ showGiftPay: true })
+    }
+
+    handleInputChange = num => event => {
+        debugger;
+        let currentFocus = this.state.currentFocus;
+        let currenctFocusValue = this.state[`${currentFocus}Value`]
+        if (num != '<') {
+            currenctFocusValue = currenctFocusValue + num;
+        }
+        else {
+            currenctFocusValue = ''
+        }
+
+        this.setState({
+            [`${currentFocus}Value`]: currenctFocusValue,
+        })
+    }
+    currentFocus = (fieldValue) => {
+        this.setState({ currentFocus: fieldValue })
+    }
+    onRemovePaymentMethod = (fieldValue) => {
+        this.setState({ [fieldValue]: false })
     }
     render() {
         return (
             <div className='pos-payment m-50'>
                 <div className='card payment-card'>
-                    <span className='card-title'>Payment Methods</span>
+                    <span className='card-title soft-text'>Payment Methods</span>
                     <div className='flex-row justify-center'>
                         <div onClick={this.handleCashPayment} className='each-payment-method'>
                             Cash Payment
@@ -59,11 +87,32 @@ class PaymentSection extends React.Component {
                 </div>
                 <div className='flex-row'>
                     <div className='card transaction-card'>
-                        <span className='card-title'>Transactions</span>
-                         {this.state.showCashPay?<CashPay/>:null}
-                         {this.state.showCardPay?<CardPay/>:null}
-                         {this.state.showDefaultCardPay?<DefaultCardPay/>:null}
-                         {this.state.showGiftPay?<GiftPay/>:null}
+                        <span className='card-title soft-text'>Transactions</span>
+                        {this.state.showCashPay ?
+                            <CashPay
+                                currentFocus={this.currentFocus}
+                                value={this.state.cashPayValue}
+                                onRemovePaymentMethod={this.onRemovePaymentMethod}
+                            /> : null}
+                        {this.state.showCardPay ?
+                            <CardPay
+                                currentFocus={this.currentFocus}
+                                value={this.state.cardAmountValue}
+                                onRemovePaymentMethod={this.onRemovePaymentMethod}
+                            /> : null}
+                        {this.state.showDefaultCardPay ?
+                            <DefaultCardPay
+                                value={this.state.defaultcardAmountValue}
+                                currentFocus={this.currentFocus}
+                                onRemovePaymentMethod={this.onRemovePaymentMethod}
+                            /> : null}
+                        {this.state.showGiftPay ?
+                            <GiftPay
+                                value={this.state.giftPayNumberValue}
+                                currentFocus={this.currentFocus}
+                                onRemovePaymentMethod={this.onRemovePaymentMethod}
+                            /> : null}
+
                     </div>
 
 
@@ -72,25 +121,26 @@ class PaymentSection extends React.Component {
                     <div className='card numpad-card'>
                         <span className='card-title'>Numpad</span>
                         <div className='flex-row flex-wrap justify-center pt-15'>
-                            <div className='key' onClick={this.handleInputChange('1')}>1</div>
-                            <div className='key' onClick={this.handleInputChange('2')}>2</div>
-                            <div className='key' onClick={this.handleInputChange('3')}>3</div>
-                            <div className='key' onClick={this.handleInputChange('4')}>4</div>
-                            <div className='key' onClick={this.handleInputChange('5')}>5</div>
-                            <div className='key' onClick={this.handleInputChange('6')}>6</div>
-                            <div className='key' onClick={this.handleInputChange('7')}>7</div>
-                            <div className='key' onClick={this.handleInputChange('8')}>8</div>
-                            <div className='key' onClick={this.handleInputChange('9')}>9</div>
-                            <div className='key' onClick={this.handleInputChange('.')}>.</div>
-                            <div className='key' onClick={this.handleInputChange('0')}>0</div>
-                            <div className='key' onClick={this.handleInputChange('<')}>clr</div>
-                            {/* <div className='key' onClick={this.handleInputChange('1')}>/div>
-                            <div className='key' onClick={this.handleInputChange('1')}></div> */}
+                            <div className='key small-key' onClick={this.handleInputChange('1')}>1</div>
+                            <div className='key small-key' onClick={this.handleInputChange('2')}>2</div>
+                            <div className='key small-key' onClick={this.handleInputChange('3')}>3</div>
+                            <div className='key small-key' onClick={this.handleInputChange('4')}>4</div>
+                            <div className='key small-key' onClick={this.handleInputChange('5')}>5</div>
+                            <div className='key small-key' onClick={this.handleInputChange('6')}>6</div>
+                            <div className='key small-key' onClick={this.handleInputChange('7')}>7</div>
+                            <div className='key small-key' onClick={this.handleInputChange('8')}>8</div>
+                            <div className='key small-key' onClick={this.handleInputChange('9')}>9</div>
+                            <div className='key small-key' onClick={this.handleInputChange('.')}>.</div>
+                            <div className='key small-key' onClick={this.handleInputChange('0')}>0</div>
+                            <div className='key small-key' onClick={this.handleInputChange('<')}>clr</div>
+                            <div className='small-key'></div>
+                            <div className='key big-key'>Enter</div>
                         </div>
                     </div>
 
                 </div>
             </div>
+
         );
     }
 }

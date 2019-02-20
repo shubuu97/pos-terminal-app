@@ -23,26 +23,33 @@ class CardPay extends React.Component {
             [name]: event.target.value,
         });
     };
+    componentWillReceiveProps(props){
+        this.setState({cardAmount:props.value})
+    }
 
     render() {
         return (
             <div className="default-card-pay">
                 <span>Card Pay</span>
                 <div className="flex-row align-center justify-space-between">
-                <div style={{width:'50%'}}>
-                <TextField
-                    id="outlined-name"
-                    label="Refrence Number"
-                    value={this.state.name}
-                    onChange={this.handleChange('cardRefrenceNumber')}
-                    margin="normal"
-                    variant="outlined"
-                />
-                </div>
-                <span className="pay-button">
-                  pay
+                    <div style={{ width: '50%' }}>
+                        <TextField
+                        InputLabelProps={{ shrink: true }}
+                            autoFocus
+                            onFocus={() => this.props.currentFocus('cardAmount')}
+                            id="outlined-name"
+                            label="Refrence Number"
+                            value={this.state.cardAmount}
+                            onChange={this.handleChange('cardAmount')}
+                            margin="normal"
+                            variant="outlined"
+                        />
+                    </div>
+                    <span className="pay-button">
+                        pay
               </span>
-                <CloseIcon/>
+                    <CloseIcon
+                        onClick={() => this.props.onRemovePaymentMethod('showCardPay')} />
                 </div>
             </div>
         );

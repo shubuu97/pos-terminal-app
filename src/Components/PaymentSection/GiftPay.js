@@ -25,27 +25,33 @@ class GiftPay extends React.Component {
             [name]: event.target.value,
         });
     };
-
+    componentWillReceiveProps(props){
+        this.setState({giftPayNumber:props.value})
+    }
     render() {
         return (
             <div className="default-card-pay">
                 <span>Gift Pay</span>
                 <div className="flex-row align-center justify-space-between">
-                <div style={{width:'50%'}}>
-                <TextField
-                    id="outlined-name"
-                    label="Gift Card Number"
-                    value={this.state.name}
-                    onChange={this.handleChange('giftPayNumber')}
-                    margin="normal"
-                    fullWidth
-                    variant="outlined"
-                />
-                </div>
-               <span className="pay-button">
-                  pay
+                    <div style={{ width: '50%' }}>
+                        <TextField
+                        InputLabelProps={{ shrink: true }}
+                            autoFocus
+                            onFocus={() => this.props.currentFocus('giftPayNumber')}
+                            id="giftPayNumber"
+                            label="Gift Card Number"
+                            value={this.state.giftPayNumber}
+                            onChange={this.handleChange('giftPayNumber')}
+                            margin="normal"
+                            fullWidth
+                            variant="outlined"
+                        />
+                    </div>
+                    <span className="pay-button">
+                        pay
               </span>
-                <CloseIcon/>
+                    <CloseIcon
+                        onClick={() => this.props.onRemovePaymentMethod('showGiftPay')} />
                 </div>
             </div>
         );
