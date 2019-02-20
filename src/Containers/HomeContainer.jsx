@@ -107,19 +107,18 @@ class HomeContainer extends React.Component {
     }
 
     getProductData = () => {
-        let productsdb = new PouchDb('productsdb');
-        productsdb.allDocs({
-            include_docs: true,
-            attachments: true,
-            limit: 20,
-            skip: 0
-        }).then((result) => {
-            debugger;
-            this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
-
-        }).catch((err) => {
-            debugger;
-        });
+       let productsdb =  new PouchDb('productsdb');
+       productsdb.allDocs({
+        include_docs: true,
+        attachments: true,
+        limit: 20,
+        skip: 0
+      }).then((result)=> {
+        this.props.dispatch(commonActionCreater(result,'GET_PRODUCT_DATA_SUCCESS'));
+       
+      }).catch((err)=> {
+          
+      });
         // genericPostData({
         //     dispatch: this.props.dispatch,
         //     reqObj: {id : storeId},
