@@ -31,7 +31,7 @@ class CalculationSection extends React.Component {
                             <span className='cart-amount'>${_get(cart, 'cartTotal', 0)}</span>
                         </div>
                         {
-                            _get(cart, 'cartDiscount') ?
+                            _get(cart, 'cartDiscount', 0) > 0 ?
                                 <div className='cart-each-details'>
                                     <span className='cart-title flex-row align-center'>
                                         <RemoveCircleIcons style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }} />
@@ -41,14 +41,14 @@ class CalculationSection extends React.Component {
                                 </div> : null
                         }
                         {
-                            _get(cart, 'empDiscount') ?
+                            _get(cart, 'empDiscount', 0) > 0 ?
                                 <div className='cart-each-details'>
                                     <span className='cart-title'>Emp. Discount </span>
                                     <span className='cart-amount'>- ${_get(cart, 'empDiscount')}</span>
                                 </div> : null
                         }
                         {
-                            _get(cart, 'itemsDiscount') ?
+                            _get(cart, 'itemsDiscount', 0) > 0 ?
                             <div className='cart-each-details'>
                                 <span className='cart-title flex-row align-center'>
                                     <RemoveCircleIcons style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }} />

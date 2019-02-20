@@ -117,6 +117,9 @@ label, p{
     display: flex;
     flex-direction: column;
 }
+.flex-wrap{
+    flex-wrap: wrap;
+}
 .width-100-percent{
     width: 100%;
 }
@@ -576,11 +579,66 @@ label, p{
             }
         }
     }
+
+    .payment-section{
+       background: @background;
+       .section-heading{
+            font-size: 1.4em;
+            color: @soft-text;
+            padding: 10px;
+
+       }
+       .card{
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+            background: @background-white;
+            min-height: 50px;
+            width: 80%;
+            align-self: center;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+       }
+       .customer-summary{
+            padding: 20px 0;
+       }
+       .payment-summary{
+            padding: 20px 0;
+            .summary-area{
+                justify-content: space-between;
+                .each-detail{
+                    width: 25%;
+                }
+                .summary-money{
+                    font-size: 1.2em;
+                    color: @soft-text;
+                }
+            }
+            .total-area{
+                justify-content: flex-end;
+                align-items: flex-end;
+                padding: 15px;
+                .payment-total{
+                    font-size: 2em;     
+                }
+            }
+            .summary-title{
+                font-size: 0.8em;
+                color: @softer-text;
+                padding: 10px 0 3px 0;
+            }
+       }
+    }
+
+
+
+
+
+
 }
 
 
 /* Discount Dialogue */
-
+// ! Need to change the keypad UI
 .discount-keypad{
     display: flex;
     flex-wrap: wrap;
@@ -589,7 +647,7 @@ label, p{
 }
 .discount-keys{
     display: flex;
-    justify-content: center;
+    justify-content: c2nter;
     align-items: center;
     width: 25%;
     margin: 5px;
@@ -601,5 +659,52 @@ label, p{
 }
 
 .pos-payment{
+    .card{
+        background: @background-white;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        margin: 10px;
+        min-height: 50px;
+        padding: 20px;
+    }
+    .card-title{
+        font-size: 1.15em;
+
+    }
+    .payment-card{
+        .each-payment-method{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            width: 25%;
+            min-height: 120px;
+            border: 1px solid @softer-text;
+            margin: 20px 20px 10px 20px;
+        }
+    }
+    .gift-card{
+        min-height: 100px;
+    }
+    .transaction-card{
+        width: 100%;
+        min-height: 200px;
+    }
+    .numpad-card{
+        width: 100%;
+        background: @primary-d;
+        color: @primary-text;
+        .key{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 28%;
+            height: 50px;
+            border-radius: 3px;
+            border: 2px solid rgba(255,255,255,0.8);
+            margin: 1%;
+            
+        }
+    }
     
 }

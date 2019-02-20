@@ -125,7 +125,7 @@ class OrdersTab extends React.Component {
             orderTotal += item.subTotal;
             this.state.orderTotal = this.state.orderTotal + item.subTotal;
             return (
-                <ExpansionPanel className='each-checkout-item' expanded={this.state.expanded === `Panel${item.sku}`} onChange={this.handleChange(`Panel${item.sku}`)}>
+                <ExpansionPanel className='each-checkout-item' expanded={this.state.expanded === `Panel${_get(item, 'doc.product.sku')}`} onChange={this.handleChange(`Panel${_get(item, 'doc.product.sku')}`)}>
                     <ExpansionPanelSummary className=''>
                         <div className='each-product-des fwidth flex-row justify-space-between'>
                             <div className=' des-first-part flex-row align-center'>

@@ -42,12 +42,12 @@ class HomeContainer extends React.Component {
 
     componentDidMount() {
         let token = localStorage.getItem('Token')
-        if (_isEmpty(token)){
+        if (_isEmpty(token)) {
             this.props.history.push('/login')
         }
         this.calcHeight();
         this.getProductData();
-              
+
     }
 
     calcHeight() {
@@ -96,11 +96,11 @@ class HomeContainer extends React.Component {
     }
 
     getCategoryData = () => {
-        let categoryDb =  new PouchDb('categoryDb');
+        let categoryDb = new PouchDb('categoryDb');
         categoryDb.allDocs({
             include_docs: true
         }).then((results) => {
-            this.props.dispatch(commonActionCreater(results,'GET_CATEGORY_DATA_SUCCESS'))
+            this.props.dispatch(commonActionCreater(results, 'GET_CATEGORY_DATA_SUCCESS'))
         }).catch((err) => {
             console.log(err);
         })
@@ -134,8 +134,8 @@ class HomeContainer extends React.Component {
         // })
     }
 
-    componentWillReceiveProps(props){
-        
+    componentWillReceiveProps(props) {
+
     }
 
 
@@ -144,24 +144,26 @@ class HomeContainer extends React.Component {
 
         let { productListHeight, isOpenProduct, isOpenPayment, headerHeight, categoriesHeight, checkoutHeader, checkoutMainPart, checkoutcalcArea, checkoutactionArea, checkoutcartArea, checkoutCustomerArea } = this.state
 
-        let { productList, dispatch, cart , categoryList } = this.props
+        let { productList, dispatch, cart, categoryList } = this.props
         return (
             <div className='main pos-body'>
                 <Products pose={isOpenProduct ? 'open' : 'closed'}>
-                    <ProductsSection
-                        // * Css Specific props
-                        windowHeight={windowHeight}
-                        productListHeight={productListHeight}
-                        headerHeight={headerHeight}
-                        categoriesHeight={categoriesHeight}
-                        productList = {productList}
-                        categoryList = {categoryList}
-                        cart={cart}
-                        dispatch={dispatch}
-                        history={this.props.history}
-                    // ! Actions
-
-                    />
+                    {
+                        isOpenProduct ?
+                        <ProductsSection
+                            // * Css Specific props
+                            windowHeight={windowHeight}
+                            productListHeight={productListHeight}
+                            headerHeight={headerHeight}
+                            categoriesHeight={categoriesHeight}
+                            productList={productList}
+                            categoryList={categoryList}
+                            cart={cart}
+                            dispatch={dispatch}
+                            history={this.props.history}
+                        // ! Actions
+                        /> : null
+                    }
                 </Products>
 
                 <CheckoutSection
@@ -180,7 +182,9 @@ class HomeContainer extends React.Component {
                 />
 
                 <Payment pose={isOpenPayment ? 'open' : 'closed'}>
-                    <PaymentSection />
+                    {isOpenPayment ?
+                        <PaymentSection /> : null
+                    }
                 </Payment>
 
             </div>
@@ -189,10 +193,10 @@ class HomeContainer extends React.Component {
 }
 
 function mapStateToProps(state) {
-    let { productList, cart , categoryList} = state;
-    categoryList = _get(categoryList, 'lookUpData.rows',[])
-   productList =  _get(productList,'lookUpData.rows',[]);
-   let totalCount = _get(productList,'lookUpData.total_rows',0);
+    let { productList, cart, categoryList } = state;
+    categoryList = _get(categoryList, 'lookUpData.rows', [])
+    productList = _get(productList, 'lookUpData.rows', []);
+    let totalCount = _get(productList, 'lookUpData.total_rows', 0);
 
     return {
         categoryList,
