@@ -44,7 +44,6 @@ class HomeContainer extends React.Component {
         }
         this.calcHeight();
         this.getProductData();
-        this.getCategoryData();
     }
 
     calcHeight() {
@@ -62,7 +61,6 @@ class HomeContainer extends React.Component {
         // * Checkout Customer Section Calculations
         let checkoutCustomerArea = checkoutMainPart - checkoutactionArea
 
-        debugger
 
         this.setState({
             windowHeight: windowHeight,
@@ -92,17 +90,6 @@ class HomeContainer extends React.Component {
         })
     }
 
-    getCategoryData = () => {
-        let categoryDb =  new PouchDb('categoryDb');
-        categoryDb.allDocs({
-            include_docs: true
-        }).then((results) => {
-            this.props.dispatch(commonActionCreater(results,'GET_CATEGORY_DATA_SUCCESS'))
-        }).catch((err) => {
-            this.props.dispatch(commonActionCreater(err,'GET_CATEGORY_DATA_ERROR'))
-        })
-    }
-
     getProductData = () => {
        let productsdb =  new PouchDb('productsdb');
        productsdb.allDocs({
@@ -112,7 +99,6 @@ class HomeContainer extends React.Component {
         skip: 0
       }).then((result)=> {
         this.props.dispatch(commonActionCreater(result,'GET_PRODUCT_DATA_SUCCESS'));
-       
       }).catch((err)=> {
           
       });
@@ -185,13 +171,11 @@ class HomeContainer extends React.Component {
 }
 
 function mapStateToProps(state) {
-   let { productList, cart , categoryList} = state;
-   categoryList = _get(categoryList, 'lookUpData.rows',[])
+   let { productList, cart } = state;
    productList =  _get(productList,'lookUpData.rows',[]);
    let totalCount = _get(productList,'lookUpData.total_rows',0);
 
     return {
-        categoryList,
         productList,
         totalCount,
         cart

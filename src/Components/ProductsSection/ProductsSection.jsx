@@ -63,9 +63,7 @@ class ProductsSection extends React.Component {
           }).catch((err)=> {
               
           });
-
     }
-
     }
 
     render() {
@@ -98,7 +96,9 @@ class ProductsSection extends React.Component {
                 */}
                 <Categories 
                     categoryList={_get(this.props,'categoryList', [])}
-                    categoriesHeight={categoriesHeight} />
+                    categoriesHeight={categoriesHeight}
+                    {...this.props}
+                     />
                 {/* 
                 // * Products List Component
                 */}
