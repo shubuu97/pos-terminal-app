@@ -1,4 +1,6 @@
 
+import _get from 'lodash/get'
+
 const cartItem = (state = { cartItems: [], }, action) => {
     switch (action.type) {
         case 'CART_ITEM_LIST':
@@ -7,10 +9,10 @@ const cartItem = (state = { cartItems: [], }, action) => {
             action.data.forEach(item => {
                 if(item.itemDiscount){
                     itemsDiscount += parseFloat(item.itemDiscount)
-                    item.subTotal = (item.salePrice.price * item.cartQuantity) - parseFloat(item.itemDiscount);
+                    item.subTotal = (_get(item,'doc.product.salePrice.price') * item.cartQuantity) - parseFloat(item.itemDiscount);
                 }
                 else{
-                    item.subTotal = (item.salePrice.price * item.cartQuantity)
+                    item.subTotal = (_get(item,'doc.product.salePrice.price') * item.cartQuantity)
                 }
                 cartTotal += item.subTotal;
             });

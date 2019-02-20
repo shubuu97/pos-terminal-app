@@ -3,7 +3,7 @@ import _get from 'lodash/get';
 import Product from './Product';
 
 const Products = (props) => {
-    let productList = _get(props, 'productList.lookUpData', [])
+    let productList = _get(props, 'productList', [])
     let products = []
     products =  productList.map((data, index) => {
         return <Product

@@ -12,7 +12,15 @@ import { commonActionCreater } from '../../Redux/commonAction'
 /* Component Imports */
 import SideDrawer from '../SideDrawer'
 import Products from './Products';
-import SearchBar from './SearchBar'
+import SearchBar from './SearchBar';
+import PouchDb from 'pouchdb';
+PouchDb.plugin(require('pouchdb-quick-search'));
+let productsdb = new PouchDb('productsdb');
+productsdb.search({
+    fields: ['product.name', 'product.description', 'product.sku'],
+    build:true
+  })
+
 
 
 class ProductsSection extends React.Component {
@@ -28,6 +36,39 @@ class ProductsSection extends React.Component {
         localStorage.clear();
         this.props.history.push('/login')
     }
+    handleChange = (searchText)=>{
+     if(searchText.length>3)
+     {
+     productsdb.search({
+        query: searchText,
+        fields: ['product.name', 'product.description', 'product.sku'],
+        include_docs: true,
+        limit: 20,
+        skip: 0
+      }).then((res)=> {
+        this.props.dispatch(commonActionCreater(res,'GET_PRODUCT_DATA_SUCCESS'));
+      })
+      .catch((err)=>{
+      console.log(err);
+      })
+    }
+    else if(searchText==''){
+        productsdb.allDocs({
+            include_docs: true,
+            attachments: true,
+            limit: 20,
+            skip: 0
+          }).then((result)=> {
+              debugger;
+            this.props.dispatch(commonActionCreater(result,'GET_PRODUCT_DATA_SUCCESS'));
+           
+          }).catch((err)=> {
+           debugger;
+          });
+
+    }
+
+    }
 
     render() {
         let { windowHeight, productListHeight, headerHeight, categoriesHeight } = this.props
@@ -40,7 +81,9 @@ class ProductsSection extends React.Component {
                 <div className='pos-header' style={{ height: headerHeight }}>
                     <div className="header-top flex-row align-center justify-space-between pl-10 pr-10" >
                         <SideDrawer />
-                        <SearchBar />
+                        <SearchBar
+                        handleChange = {this.handleChange}
+                        />
                         <div>
                             <LockIcon style={{color: 'white', padding:'0 10px', fontSize: 30}}/>
                             <ExitToApp style={{color: 'white', padding:'0 10px', fontSize: 30}} onClick={this.logout}/>

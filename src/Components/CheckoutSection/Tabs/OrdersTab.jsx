@@ -64,14 +64,12 @@ class OrdersTab extends React.Component {
         let cartItems = [...this.props.cartItems];
         let index = _findIndex(cartItems, ['id', item.id]);
         cartItems[index].cartQuantity = cartItems[index].cartQuantity + 1;
-        // cartItems[index].subTotal = item.salePrice.price * cartItems[index].cartQuantity;
         this.props.dispatch(commonActionCreater(cartItems, 'CART_ITEM_LIST'));
     }
     handleDecreseQuantity = (item) => {
         let cartItems = [...this.props.cartItems];
         let index = _findIndex(cartItems, ['id', item.id]);
         cartItems[index].cartQuantity = cartItems[index].cartQuantity - 1;
-        // cartItems[index].subTotal = item.salePrice.price * cartItems[index].cartQuantity;
         if (cartItems[index].cartQuantity == 0) {
             cartItems.splice(index, 1);
         }
@@ -132,12 +130,12 @@ class OrdersTab extends React.Component {
                         <div className='each-product-des fwidth flex-row justify-space-between'>
                             <div className=' des-first-part flex-row align-center'>
                                 <DeleteIcons onClick={() => this.handleDelete(item)} style={{ color: '#ff000096', fontSize: '1.5em' }} />
-                                <div className='title'>{item.name}</div>
+                                <div className='title'>{_get(item,'doc.product.name')}</div>
                             </div>
 
                             <div className='flex-column'>
-                                <div className='each-product-price'>{_get(item, 'salePrice.currencyCode')} {item.subTotal.toFixed(2)}</div>
-                                <div className='each-product-reg-price'>Reg Price - {_get(item, 'salePrice.currencyCode')}{item.salePrice.price}</div>
+                                <div className='each-product-price'>{_get(item, 'doc.product.salePrice.currencyCode')} {item.subTotal.toFixed(2)}</div>
+                                <div className='each-product-reg-price'>Reg Price - ${_get(item, 'doc.product.salePrice.currencyCode')}{_get(item, 'doc.product.salePrice.price')}</div>
                             </div>
                         </div>
                     </ExpansionPanelSummary>

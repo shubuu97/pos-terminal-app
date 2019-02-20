@@ -13,6 +13,8 @@ import posed from 'react-pose';
 import ProductsSection from '../Components/ProductsSection/ProductsSection'
 import CheckoutSection from '../Components/CheckoutSection/CheckoutSection'
 import PaymentSection from '../Components/PaymentSection/PaymentSection'
+import PouchDb from 'pouchdb';
+import { commonActionCreater } from '../Redux/commonAction';
 
 
 /* Pose Animation Configs */
@@ -22,7 +24,9 @@ const Config = {
 }
 
 const Products = posed.div(Config)
-const Payment = posed.div(Config)
+const Payment = posed.div(Config);
+
+
 
 
 class HomeContainer extends React.Component {
@@ -91,21 +95,44 @@ class HomeContainer extends React.Component {
         })
     }
 
-    getProductData = () => {
-        let storeId = localStorage.getItem('storeId')
-        genericPostData({
-            dispatch: this.props.dispatch,
-            reqObj: {id : storeId},
-            url: 'Product/ByStoreId',
-            constants: {
-                init: 'GET_PRODUCT_DATA_INIT',
-                success: 'GET_PRODUCT_DATA_SUCCESS',
-                error: 'GET_PRODUCT_DATA_ERROR'
-            },
-            // successCb:()=> this.deleteSuccess(),
-            // errorCb:()=> this.deleteSuccess(),
-            successText: 'Product Fetched Successfully',
+    getCategoryData = () => {
+        let categoryDb =  new PouchDb('categoryDb');
+        categoryDb.allDocs({
+            include_docs: true
+        }).then((results) => {
+            this.props.dispatch(commonActionCreater(results,'GET_CATEGORY_DATA_SUCCESS'))
+        }).catch((err) => {
+            console.log(err);
         })
+    }
+
+    getProductData = () => {
+       let productsdb =  new PouchDb('productsdb');
+       productsdb.allDocs({
+        include_docs: true,
+        attachments: true,
+        limit: 20,
+        skip: 0
+      }).then((result)=> {
+          debugger;
+        this.props.dispatch(commonActionCreater(result,'GET_PRODUCT_DATA_SUCCESS'));
+       
+      }).catch((err)=> {
+       debugger;
+      });
+        // genericPostData({
+        //     dispatch: this.props.dispatch,
+        //     reqObj: {id : storeId},
+        //     url: 'Product/ByStoreId',
+        //     constants: {
+        //         init: 'GET_PRODUCT_DATA_INIT',
+        //         success: 'GET_PRODUCT_DATA_SUCCESS',
+        //         error: 'GET_PRODUCT_DATA_ERROR'
+        //     },
+        //     // successCb:()=> this.deleteSuccess(),
+        //     // errorCb:()=> this.deleteSuccess(),
+        //     successText: 'Product Fetched Successfully',
+        // })
     }
 
     componentWillReceiveProps(props){
@@ -118,7 +145,7 @@ class HomeContainer extends React.Component {
 
         let { productListHeight, isOpenProduct, isOpenPayment, headerHeight, categoriesHeight, checkoutHeader, checkoutMainPart, checkoutcalcArea, checkoutactionArea, checkoutcartArea, checkoutCustomerArea } = this.state
 
-        let { productList, dispatch, cart } = this.props
+        let { productList, dispatch, cart , categoryList } = this.props
         return (
             <div className='main pos-body'>
                 <Products pose={isOpenProduct ? 'open' : 'closed'}>
@@ -129,6 +156,7 @@ class HomeContainer extends React.Component {
                         headerHeight={headerHeight}
                         categoriesHeight={categoriesHeight}
                         productList = {productList}
+                        categoryList = {categoryList}
                         cart={cart}
                         dispatch={dispatch}
                         history={this.props.history}
@@ -162,10 +190,15 @@ class HomeContainer extends React.Component {
 }
 
 function mapStateToProps(state) {
-    let { productList, cart } = state
+    let { productList, cart , categoryList} = state;
+    categoryList = _get(categoryList, 'lookUpData.rows',[])
+   productList =  _get(productList,'lookUpData.rows',[]);
+   let totalCount = _get(productList,'lookUpData.total_rows',0);
 
     return {
+        categoryList,
         productList,
+        totalCount,
         cart
     }
 }
