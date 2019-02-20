@@ -27,8 +27,8 @@ class CalculationSection extends React.Component {
                 <div className="calc-first-part">
                     <div className="cart-details">
                         <div className='cart-each-details'>
-                            <span className='cart-title'>Cart Total</span>
-                            <span className='cart-amount'>${_get(cart, 'cartTotal', 0)}</span>
+                            <span className='cart-title bold'>Gross Total</span>
+                            <span className='cart-amount bold'>${_get(cart, 'grossTotal', 0)}</span>
                         </div>
                         {
                             _get(cart, 'cartDiscount', 0) > 0 ?
@@ -62,17 +62,17 @@ class CalculationSection extends React.Component {
                 <div className="calc-second-part flex-column justify-space-between">
                     <div className="cart-details">
                         <div className='cart-each-details'>
-                            <span className='cart-title'>Discount Total</span>
-                            <span className='cart-amount'>$420</span>
+                            <span className='cart-title bold'>Net Total</span>
+                            <span className='cart-amount bold'>${_get(cart, 'netTotal')}</span>
                         </div>
                         <div className='cart-each-details'>
                             <span className='cart-title'>Tax</span>
-                            <span className='cart-amount'>$ 10</span>
+                            <span className='cart-amount'>0</span>
                         </div>
                     </div>
                     <div className="cart-total">
                         <span className='total-text'>Total </span>
-                        <span className='total-amount'>$450</span>
+                        <span className='total-amount'>${_get(cart, 'netTotal')}</span>
                     </div>
                 </div>
             </div>
