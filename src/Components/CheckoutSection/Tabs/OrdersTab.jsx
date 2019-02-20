@@ -21,7 +21,7 @@ import DiscountDialogue from '../DiscountDialogue/DiscountDialogue'
 
 /* Global Function import */
 import globalClearCart from '../../../Global/PosFunctions/clearCart';
-import globalHoldCart from '../../../Global/PosFunctions/holdCart';
+
 
 
 class OrdersTab extends React.Component {
@@ -172,9 +172,7 @@ class OrdersTab extends React.Component {
     clearCart = () => {
         globalClearCart(this.props.dispatch);
     }
-    holdCart = () => {
-        globalHoldCart(this.props.dispatch, this.props.cart, 'title', 'customer Name');
-    }
+
 
     render() {
 
@@ -207,7 +205,7 @@ class OrdersTab extends React.Component {
                 <div className='button-section flex-row ' style={{ height: checkoutactionArea }}>
                     <div>
                         <Button className='mr-20' variant="outlined" onClick={this.clearCart}>Clear</Button>
-                        <Button className='mr-20' variant="outlined" onClick={this.holdCart}>Hold</Button>
+                        <Button className='mr-20' variant="outlined" onClick={this.props.handleClickOpen}>Hold</Button>
                         <Button variant="contained">Proceed</Button>
                     </div>
 

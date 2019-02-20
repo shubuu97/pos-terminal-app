@@ -81,6 +81,7 @@ function FullWidthTabs(props) {
             checkoutcalcArea={props.checkoutcalcArea}
             checkoutactionArea={props.checkoutactionArea}
             checkoutcartArea={props.checkoutcartArea}
+            handleClickOpen={props.handleClickOpen}
           />
         </TabContainer>
 
@@ -92,6 +93,7 @@ function FullWidthTabs(props) {
             checkoutCustomerArea={props.checkoutCustomerArea}
             checkoutcalcArea={props.checkoutcalcArea}
             checkoutcartArea={props.checkoutcartArea}
+            handleClickOpen={props.handleClickOpen}
           />
         </TabContainer>
         <TabContainer >

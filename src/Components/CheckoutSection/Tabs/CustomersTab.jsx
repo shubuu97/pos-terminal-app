@@ -134,7 +134,7 @@ class CustomerTab extends React.Component {
 
                 <div className='button-section flex-row ' style={{ height: checkoutactionArea }}>
                     <div>
-                        <Button className='mr-20' variant="outlined">Hold</Button>
+                        <Button className='mr-20' variant="outlined" onClick={this.props.handleClickOpen}>Hold</Button>
                         <Button className='mr-20' variant="outlined">Proceed as Guest</Button>
                         <Button variant="contained">Proceed</Button>
                     </div>
