@@ -13,6 +13,8 @@ import genericPostData from '../../../Global/dataFetch/genericPostData';
 /* Component Imports */
 import CalculationSection from './CalculationSection';
 import PouchDb from 'pouchdb';
+import { commonActionCreater } from '../../../Redux/commonAction';
+
 PouchDb.plugin(require('pouchdb-quick-search'));
 let productsdb = new PouchDb('customersdb');
 productsdb.search({
@@ -72,13 +74,16 @@ class CustomerTab extends React.Component {
     };
     onChange = (doc) => {
       let value = _get(doc,'value');
-      debugger;
-       let billingAddress = value.billingAddress;
+     //populating cart reducer with customer
+     this.props.dispatch(commonActionCreater(doc.value, 'ADD_CUSTOMER_TO_CART'));
+
+      //mapped data to state 
+      let billingAddress = value.billingAddress;
        let customer = value.customer;
        let email = value.email;
        let phoneNumber = value.phoneNumber;
        this.setState({billingAddress,customer,email,phoneNumber});
-       
+
     }
 
     render() {
