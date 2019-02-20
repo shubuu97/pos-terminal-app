@@ -6,15 +6,18 @@ import _isEmpty from 'lodash/isEmpty'
 
 /* Redux Imports */
 import { connect } from 'react-redux';
-import genericPostData from '../Global/dataFetch/genericPostData'
+import genericPostData from '../Global/dataFetch/genericPostData';
+import { commonActionCreater } from '../Redux/commonAction';
 /* React Pose */
 import posed from 'react-pose';
+/* Pouch DB */
+import PouchDb from 'pouchdb';
 /* Component Imports */
 import ProductsSection from '../Components/ProductsSection/ProductsSection'
 import CheckoutSection from '../Components/CheckoutSection/CheckoutSection'
 import PaymentSection from '../Components/PaymentSection/PaymentSection'
-import PouchDb from 'pouchdb';
-import { commonActionCreater } from '../Redux/commonAction';
+import HoldDialogue from '../Components/HoldDialogue'
+
 
 
 /* Pose Animation Configs */
@@ -37,6 +40,7 @@ class HomeContainer extends React.Component {
             productListHeight: 0,
             isOpenProduct: true,
             isOpenPayment: false,
+            openOnHold: false,
         }
     }
 
@@ -65,7 +69,6 @@ class HomeContainer extends React.Component {
         // * Checkout Customer Section Calculations
         let checkoutCustomerArea = checkoutMainPart - checkoutactionArea
 
-        debugger
 
         this.setState({
             windowHeight: windowHeight,
@@ -95,6 +98,14 @@ class HomeContainer extends React.Component {
         })
     }
 
+    handleClickOpen = () => {
+        this.setState({ openOnHold: true });
+    };
+
+    handleClose = () => {
+        this.setState({ openOnHold: false });
+    };
+
     getCategoryData = () => {
         let categoryDb = new PouchDb('categoryDb');
         categoryDb.allDocs({
@@ -107,18 +118,18 @@ class HomeContainer extends React.Component {
     }
 
     getProductData = () => {
-       let productsdb =  new PouchDb('productsdb');
-       productsdb.allDocs({
-        include_docs: true,
-        attachments: true,
-        limit: 20,
-        skip: 0
-      }).then((result)=> {
-        this.props.dispatch(commonActionCreater(result,'GET_PRODUCT_DATA_SUCCESS'));
-       
-      }).catch((err)=> {
-          
-      });
+        let productsdb = new PouchDb('productsdb');
+        productsdb.allDocs({
+            include_docs: true,
+            attachments: true,
+            limit: 20,
+            skip: 0
+        }).then((result) => {
+            this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+
+        }).catch((err) => {
+
+        });
         // genericPostData({
         //     dispatch: this.props.dispatch,
         //     reqObj: {id : storeId},
@@ -150,19 +161,20 @@ class HomeContainer extends React.Component {
                 <Products pose={isOpenProduct ? 'open' : 'closed'}>
                     {
                         isOpenProduct ?
-                        <ProductsSection
-                            // * Css Specific props
-                            windowHeight={windowHeight}
-                            productListHeight={productListHeight}
-                            headerHeight={headerHeight}
-                            categoriesHeight={categoriesHeight}
-                            productList={productList}
-                            categoryList={categoryList}
-                            cart={cart}
-                            dispatch={dispatch}
-                            history={this.props.history}
-                        // ! Actions
-                        /> : null
+                            <ProductsSection
+                                // * Css Specific props
+                                windowHeight={windowHeight}
+                                productListHeight={productListHeight}
+                                headerHeight={headerHeight}
+                                categoriesHeight={categoriesHeight}
+                                productList={productList}
+                                categoryList={categoryList}
+                                cart={cart}
+                                dispatch={dispatch}
+                                history={this.props.history}
+                            // ! Actions
+                                handleClickOpen={this.handleClickOpen}
+                            /> : null
                     }
                 </Products>
 
@@ -186,6 +198,12 @@ class HomeContainer extends React.Component {
                         <PaymentSection /> : null
                     }
                 </Payment>
+
+                <HoldDialogue 
+                    handleClickOpen={this.handleClickOpen}
+                    handleClose={this.handleClose}
+                    open={this.state.openOnHold}
+                />
 
             </div>
         );

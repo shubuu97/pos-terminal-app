@@ -79,7 +79,9 @@ class ProductsSection extends React.Component {
                 */}
                 <div className='pos-header' style={{ height: headerHeight }}>
                     <div className="header-top flex-row align-center justify-space-between pl-10 pr-10" >
-                        <SideDrawer />
+                        <SideDrawer 
+                            handleClickOpen={this.props.handleClickOpen}
+                        />
                         <SearchBar
                         handleChange = {this.handleChange}
                         />
