@@ -46,8 +46,8 @@ class SessionDiaogue extends React.Component {
                     onClose={this.props.handleClose}
                     TransitionComponent={Transition}
                 >
-                    <div className='on-hold-section'>
-                        <div className='on-hold-header'>
+                    <div className='session-section'>
+                        <div className='session-header'>
                             <IconButton color="inherit" onClick={this.props.handleClose} aria-label="Close">
                                 <CloseIcon />
                             </IconButton>
