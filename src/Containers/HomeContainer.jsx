@@ -161,11 +161,19 @@ class HomeContainer extends React.Component {
     componentWillReceiveProps(props) {
 
     }
-    handleHistoryOpen = () => {
+    handleTerminalHistoryOpen = () => {
+        let url = 'Sale/GetByTerminalId';
+        let data = { id: _get(this.props, 'terminal.id', '') }
+        this.getOrderHistory(url, data)
+        this.setState({
+            openOrderHistory: true,
+        });
+    }
+    getOrderHistory = (url, data) => {
         genericPostData({
             dispatch: this.props.dispatch,
-            reqObj: { id: _get(this.props, 'customer.id', '') },
-            url: 'Sale/GetByCustomerId',
+            reqObj: data,
+            url: url,
             constants: {
                 init: 'GET_CUSTOMER_SALE_DATA_INIT',
                 success: 'GET_CUSTOMER_SALE_DATA_SUCCESS',
@@ -175,6 +183,11 @@ class HomeContainer extends React.Component {
             successCb: this.handleGetCustomerSaleData,
             errorCb: this.handleGetCustomerSaleDataError
         })
+    }
+    handleHistoryOpen = () => {
+        let url = 'Sale/GetByCustomerId';
+        let data = { id: _get(this.props, 'customer.id', '') }
+        this.getOrderHistory(url, data)
         this.setState({
             openOrderHistory: true,
         });
@@ -216,6 +229,7 @@ class HomeContainer extends React.Component {
                                 history={this.props.history}
                                 // ! Actions
                                 handleClickOpen={this.handleClickOpen}
+                                handleHistoryOpen={this.handleTerminalHistoryOpen}
                                 handleClickOpenSessionContainer={this.handleClickOpenSessionContainer}
                             /> : null
                     }
