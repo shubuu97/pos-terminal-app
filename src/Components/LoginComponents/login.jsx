@@ -25,9 +25,9 @@ class Login extends React.Component {
             reqObj: { email: this.state.email, password: this.state.password },
             url: 'login/pos-login',
             constants: {
-                init: 'POST_LOGIN_DATA_init',
-                success: 'POST_LOGIN_DATA_success',
-                error: 'POST_LOGIN_DATA_error'
+                init: 'POST_LOGIN_DATA_INIT',
+                success: 'POST_LOGIN_DATA_SUCCESS',
+                error: 'POST_LOGIN_DATA_ERROR'
             },
             identifier: 'POST_LOGIN_DATA',
             successCb: this.afterLoginSuccess,

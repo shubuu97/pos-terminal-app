@@ -47,9 +47,9 @@ class Store extends React.Component {
             reqObj: { id: localStorage.getItem('storeId') },
             url: 'Store/AllData',
             constants: {
-                init: 'GET_STORE_DATA_init',
-                success: 'GET_STORE_DATA_success',
-                error: 'GET_STORE_DATA_error'
+                init: 'GET_STORE_DATA_INIT',
+                success: 'GET_STORE_DATA_SUCCESS',
+                error: 'GET_STORE_DATA_ERROR'
             },
             identifier: 'GET_STORE_DATA',
             successCb: this.afterStoreSuccess,
@@ -58,6 +58,12 @@ class Store extends React.Component {
 
     }
     afterStoreSuccess = (data) => {
+        let countyTaxRate = _get(data,'tax.countyTaxRate');
+        let federalTaxRate = _get(data,'tax.federalTaxRate');
+        let stateTaxRate = _get(data,'tax.stateTaxRate');
+        localStorage.setItem('countyTaxRate',countyTaxRate);
+        localStorage.setItem('federalTaxRate',federalTaxRate);
+        localStorage.setItem('stateTaxRate',stateTaxRate);
         this.setState({ terminals: _get(data, 'terminals') })
     }
     mapTermainal = () => {
@@ -87,9 +93,9 @@ class Store extends React.Component {
             reqObj: loginData,
             url: 'Store/LoginOnTerminal',
             constants: {
-                init: 'GET_TERMINAL_DATA_init',
-                success: 'GET_TERMINAL_DATA_success',
-                error: 'GET_TERMINAL_DATA_error'
+                init: 'GET_TERMINAL_DATA_INIT',
+                success: 'GET_TERMINAL_DATA_SUCCESS',
+                error: 'GET_TERMINAL_DATA_ERROR'
             },
             identifier: 'GET_TERMINAL_DATA',
             successCb: this.afterLoginSuccess,
