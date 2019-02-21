@@ -46,6 +46,7 @@ const cartItem = (state = { cartItems: [], }, action) => {
             let regularTotal = 0
             let cartQty = 0
             let netTotal = 0
+            let totalDiscount = 0
             let totalAmount = {
                 currencyCode: '$',
                 amount: 0
@@ -119,6 +120,10 @@ const cartItem = (state = { cartItems: [], }, action) => {
                 }
             });
 
+            totalDiscount = {
+                currencyCode: '$',
+                amount: parseFloat(itemDiscountAmount.amount) + parseFloat(cartDiscountAmount.amount) + parseFloat(employeeDiscountAmount.amount)
+            }
 
             return Object.assign({}, state, {
                 cartItems: action.data,
@@ -130,6 +135,7 @@ const cartItem = (state = { cartItems: [], }, action) => {
                 employeeDiscountAmount,
                 totalTaxAmount,
                 netTotal: netTotal.toFixed(2),
+                totalDiscount
             });
             break;
     }
