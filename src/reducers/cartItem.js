@@ -24,6 +24,7 @@ const cartItem = (state = { cartItems: [], }, action) => {
                 totalQuantity +=item.cartQuantity;
             });
             netTotal = grossTotal - (itemsDiscount||0) - _get(state,'cartDiscount',0)-_get(state,'empDiscount',0)
+            debugger
             return Object.assign({}, state, {
                 cartItems: action.data,
                 grossTotal:grossTotal.toFixed(2),

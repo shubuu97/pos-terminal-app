@@ -16,7 +16,9 @@ import PouchDb from 'pouchdb';
 import ProductsSection from '../Components/ProductsSection/ProductsSection'
 import CheckoutSection from '../Components/CheckoutSection/CheckoutSection'
 import PaymentSection from '../Components/PaymentSection/PaymentSection'
-import HoldDialogue from '../Components/HoldDialogue'
+import OrderHistoryDialog from '../Components/OrderHistoryDialog';
+import SessionDialogue from '../Components/SessionDialogue'
+import HoldDialogue from '../Components/HoldDialogue';
 
 
 
@@ -38,6 +40,7 @@ class HomeContainer extends React.Component {
             isOpenProduct: true,
             isOpenPayment: false,
             openOnHold: false,
+            openOrderHistory: false,
         }
     }
 
@@ -102,6 +105,16 @@ class HomeContainer extends React.Component {
     handleClose = () => {
         this.setState({ openOnHold: false });
     };
+    handleClickOpenSessionContainer = () => {
+        debugger;
+        this.setState({ openSessionContainer: true });
+    };
+
+    handleCloseSessionContainer = () => {
+        debugger;
+        this.setState({ openSessionContainer: false });
+    };
+
 
     getProductData = () => {
         let productsdb = new PouchDb('productsdb');
@@ -116,19 +129,33 @@ class HomeContainer extends React.Component {
 
         });
     }
-        // genericPostData({
-        //     dispatch: this.props.dispatch,
-        //     reqObj: {id : storeId},
-        //     url: 'Product/ByStoreId',
-        //     constants: {
-        //         init: 'GET_PRODUCT_DATA_INIT',
-        //         success: 'GET_PRODUCT_DATA_SUCCESS',
-        //         error: 'GET_PRODUCT_DATA_ERROR'
-        //     },
-        //     // successCb:()=> this.deleteSuccess(),
-        //     // errorCb:()=> this.deleteSuccess(),
-        //     successText: 'Product Fetched Successfully',
-        // })
+    // genericPostData({
+    //     dispatch: this.props.dispatch,
+    //     reqObj: {id : storeId},
+    //     url: 'Product/ByStoreId',
+    //     constants: {
+    //         init: 'GET_PRODUCT_DATA_INIT',
+    //         success: 'GET_PRODUCT_DATA_SUCCESS',
+    //         error: 'GET_PRODUCT_DATA_ERROR'
+    //     },
+    //     // successCb:()=> this.deleteSuccess(),
+    //     // errorCb:()=> this.deleteSuccess(),
+    //     successText: 'Product Fetched Successfully',
+    // })
+
+    componentWillReceiveProps(props) {
+
+    }
+    handleHistoryOpen = () => {
+        this.setState({
+            openOrderHistory: true,
+        });
+    }
+    handleOrderHistoryClose = () => {
+        this.setState({
+            openOrderHistory: false,
+        });
+    }
 
 
     render() {
@@ -154,6 +181,7 @@ class HomeContainer extends React.Component {
                                 history={this.props.history}
                                 // ! Actions
                                 handleClickOpen={this.handleClickOpen}
+                                handleClickOpenSessionContainer={this.handleClickOpenSessionContainer}
                             /> : null
                     }
                 </Products>
@@ -172,6 +200,7 @@ class HomeContainer extends React.Component {
                     // ! Actions
                     toggleViewPayment={this.toggleViewPayment}
                     toggleViewProduct={this.toggleViewProduct}
+                    handleHistoryOpen={this.handleHistoryOpen}
 
                 />
 
@@ -187,6 +216,25 @@ class HomeContainer extends React.Component {
                             handleClickOpen={this.handleClickOpen}
                             handleClose={this.handleClose}
                             open={this.state.openOnHold}
+                            holdCartData={this.props.holdCartData}
+                            dispatch={dispatch}
+                        /> : null
+                }
+                {
+                    this.state.openOrderHistory ?
+                        <OrderHistoryDialog
+                            handleClose={this.handleOrderHistoryClose}
+                            open={this.state.openOrderHistory}
+                            dispatch={dispatch}
+                        /> : null
+                }
+
+                {
+                    this.state.openSessionContainer ?
+                        <SessionDialogue
+                            handleClickOpen={this.handleClickOpenSessionContainer}
+                            handleClose={this.handleCloseSessionContainer}
+                            open={this.state.openSessionContainer}
                             holdCartData={this.props.holdCartData}
                             dispatch={dispatch}
                         /> : null

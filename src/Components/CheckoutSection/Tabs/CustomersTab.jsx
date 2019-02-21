@@ -5,8 +5,9 @@ import _get from 'lodash/get';
 import Button from '@material-ui/core/Button';
 /* Material Icons */
 import PersonAdd from '@material-ui/icons/PersonAddOutlined';
+import History from '@material-ui/icons/History';
 /* Redux Imports */
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 /* Global Imports */
 import ReactSelect from '../../../Global/Components/ReactSelect/async-react-select';
 import genericPostData from '../../../Global/dataFetch/genericPostData';
@@ -74,16 +75,16 @@ class CustomerTab extends React.Component {
         // });
     };
     onChange = (doc) => {
-      let value = _get(doc,'value');
-     //populating cart reducer with customer
-     this.props.dispatch(commonActionCreater(doc.value, 'ADD_CUSTOMER_TO_CART'));
+        let value = _get(doc, 'value');
+        //populating cart reducer with customer
+        this.props.dispatch(commonActionCreater(doc.value, 'ADD_CUSTOMER_TO_CART'));
 
-      //mapped data to state 
-      let billingAddress = value.billingAddress;
-       let customer = value.customer;
-       let email = value.email;
-       let phoneNumber = value.phoneNumber;
-       this.setState({billingAddress,customer,email,phoneNumber});
+        //mapped data to state 
+        let billingAddress = value.billingAddress;
+        let customer = value.customer;
+        let email = value.email;
+        let phoneNumber = value.phoneNumber;
+        this.setState({ billingAddress, customer, email, phoneNumber });
 
     }
 
@@ -124,19 +125,30 @@ class CustomerTab extends React.Component {
                                 <div className='info-title'>Name</div>
                                 <div className='info-data'>{_get(this.props,'customer.firstName')} {_get(this.props,'customer.lastName')}</div>
                             </div>
-                            <div className='each-info'>
-                                <div className='info-title'>Phone</div>
-                                <div className='info-data'>{_get(this.props,'phoneNumber.countryCode')}{_get(this.props,'phoneNumber.phoneNumber')}</div>
-                            </div>
-                            <div className='each-info'>
-                                <div className='info-title'>Email</div>
-                                <div className='info-data'>{this.props.email}</div>
+                            <div onClick={this.props.handleHistoryOpen} className='add-customer flex-row align-center justify-center'>
+                                <History style={{ fontSize: '1.3em', color: 'rgba(0,0,0,0.5)' }} />
                             </div>
                         </div>
-                        <div className='customer-billing-info'>
-                            <div className='each-info'>
-                                <div className='info-title'>Billing Address</div>
-                                <div className='info-data'>{_get(this.props,'billingAddress.addressLine1')}, {_get(this.props,'billingAddress.addressLine2')}, {_get(this.props,'billingAddress.city')}, {_get(this.props,'billingAddress.state')}, {_get(this.props,'billingAddress.country')} - {_get(this.props,'billingAddress.postalCode')}</div>
+                        <div className='flex-column'>
+                            <div className='customer-info'>
+                                <div className='each-info'>
+                                    <div className='info-title'>Name</div>
+                                    <div className='info-data'>{_get(this.props, 'customer.firstName')} {_get(this.props, 'customer.lastName')}</div>
+                                </div>
+                                <div className='each-info'>
+                                    <div className='info-title'>Phone</div>
+                                    <div className='info-data'>{_get(this.props, 'phoneNumber.countryCode')}{_get(this.props, 'phoneNumber.phoneNumber')}</div>
+                                </div>
+                                <div className='each-info'>
+                                    <div className='info-title'>Email</div>
+                                    <div className='info-data'>{this.props.email}</div>
+                                </div>
+                            </div>
+                            <div className='customer-billing-info'>
+                                <div className='each-info'>
+                                    <div className='info-title'>Billing Address</div>
+                                    <div className='info-data'>{_get(this.props, 'billingAddress.addressLine1')}, {_get(this.props, 'billingAddress.addressLine2')}, {_get(this.props, 'billingAddress.city')}, {_get(this.props, 'billingAddress.props')}, {_get(this.props, 'billingAddress.country')} - {_get(this.props, 'billingAddress.postalCode')}</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -159,9 +171,9 @@ class CustomerTab extends React.Component {
     }
 }
 
-function mapStateToProps(state){
-    let customer = _get(state,'cart.customer');
-    return {...customer}
+function mapStateToProps(state) {
+    let customer = _get(state, 'cart.customer');
+    return { ...customer }
 }
 
 export default connect(mapStateToProps)(CustomerTab);
