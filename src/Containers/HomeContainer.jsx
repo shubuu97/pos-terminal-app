@@ -16,8 +16,8 @@ import PouchDb from 'pouchdb';
 import ProductsSection from '../Components/ProductsSection/ProductsSection'
 import CheckoutSection from '../Components/CheckoutSection/CheckoutSection'
 import PaymentSection from '../Components/PaymentSection/PaymentSection'
-import HoldDialogue from '../Components/HoldDialogue'
 import OrderHistoryDialog from '../Components/OrderHistoryDialog';
+import SessionDialogue from '../Components/SessionDialogue'
 
 
 
@@ -107,6 +107,16 @@ class HomeContainer extends React.Component {
     handleClose = () => {
         this.setState({ openOnHold: false });
     };
+    handleClickOpenSessionContainer = () => {
+        debugger;
+        this.setState({ openSessionContainer: true });
+    };
+
+    handleCloseSessionContainer = () => {
+        debugger;
+        this.setState({ openSessionContainer: false });
+    };
+   
 
     getCategoryData = () => {
         let categoryDb = new PouchDb('categoryDb');
@@ -186,6 +196,7 @@ class HomeContainer extends React.Component {
                                 history={this.props.history}
                                 // ! Actions
                                 handleClickOpen={this.handleClickOpen}
+                                handleClickOpenSessionContainer={this.handleClickOpenSessionContainer}
                             /> : null
                     }
                 </Products>
@@ -229,6 +240,17 @@ class HomeContainer extends React.Component {
                         <OrderHistoryDialog
                             handleClose={this.handleOrderHistoryClose}
                             open={this.state.openOrderHistory}
+                            dispatch={dispatch}
+                        /> : null
+                }
+
+                {
+                    this.state.openSessionContainer ?
+                        <SessionDialogue
+                            handleClickOpen={this.handleClickOpenSessionContainer}
+                            handleClose={this.handleCloseSessionContainer}
+                            open={this.state.openSessionContainer}
+                            holdCartData={this.props.holdCartData}
                             dispatch={dispatch}
                         /> : null
                 }
