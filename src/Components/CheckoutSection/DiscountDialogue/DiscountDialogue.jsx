@@ -41,6 +41,9 @@ class AlertDialogSlide extends React.Component {
 
     handleDiscount = () => {
         this.props.handleDiscount(this.state.discount, this.props.identifier, this.props.itemIndex)
+        this.setState({
+            discount: ''
+        })
         this.props.handleClose()
     }
 

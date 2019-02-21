@@ -117,7 +117,7 @@ class HomeContainer extends React.Component {
         debugger;
         this.setState({ openSessionContainer: false });
     };
-   
+
 
     getCategoryData = () => {
         let categoryDb = new PouchDb('categoryDb');
@@ -214,25 +214,23 @@ class HomeContainer extends React.Component {
         return (
             <div className='main pos-body'>
                 <Products pose={isOpenProduct ? 'open' : 'closed'}>
-                    {
-                        isOpenProduct ?
-                            <ProductsSection
-                                // * Css Specific props
-                                windowHeight={windowHeight}
-                                productListHeight={productListHeight}
-                                headerHeight={headerHeight}
-                                categoriesHeight={categoriesHeight}
-                                productList={productList}
-                                categoryList={categoryList}
-                                cart={cart}
-                                dispatch={dispatch}
-                                history={this.props.history}
-                                // ! Actions
-                                handleClickOpen={this.handleClickOpen}
-                                handleHistoryOpen={this.handleTerminalHistoryOpen}
-                                handleClickOpenSessionContainer={this.handleClickOpenSessionContainer}
-                            /> : null
-                    }
+
+                    <ProductsSection
+                        // * Css Specific props
+                        windowHeight={windowHeight}
+                        productListHeight={productListHeight}
+                        headerHeight={headerHeight}
+                        categoriesHeight={categoriesHeight}
+                        productList={productList}
+                        categoryList={categoryList}
+                        cart={cart}
+                        dispatch={dispatch}
+                        history={this.props.history}
+                        // ! Actions
+                        handleClickOpen={this.handleClickOpen}
+                        handleHistoryOpen={this.handleTerminalHistoryOpen}
+                        handleClickOpenSessionContainer={this.handleClickOpenSessionContainer}
+                    />
                 </Products>
 
                 <CheckoutSection
