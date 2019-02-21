@@ -33,7 +33,7 @@ class PaymentTab extends React.Component {
                 <div className='customer-summary fwidth flex-column'>
                     <span className='section-heading'>Customer Summary</span>
                     <div className='card '>
-                        {/* <React.Fragment>
+                        <React.Fragment>
                             {_get(cart, 'customer.email') ? <div>
                                 <span className='summary-title'>Name-</span>
                                 <span>{_get(cart, 'customer.customer.firstName')} {_get(cart, 'customer.customer.lastName')}</span>
@@ -50,7 +50,7 @@ class PaymentTab extends React.Component {
                                 <span className='summary-title'>Phone-</span>
                                 <span>{_get(cart, 'customer.phoneNumber.countryCode')}{_get(cart, 'customer.phoneNumber.phoneNumber')}</span>
                             </div> : null}
-                        </React.Fragment> */}
+                        </React.Fragment>
                     </div>
                 </div>
                 <div className='payment-summary fwidth flex-column'>

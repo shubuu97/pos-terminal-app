@@ -38,7 +38,7 @@ class CardPay extends React.Component {
                             autoFocus
                             onFocus={() => this.props.currentFocus('cardAmount')}
                             id="outlined-name"
-                            label="Refrence Number"
+                            label="Amount"
                             value={this.state.cardAmount}
                             onChange={this.handleChange('cardAmount')}
                             margin="normal"
