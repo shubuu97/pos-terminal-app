@@ -5,6 +5,9 @@ import Select from '@material-ui/core/Select';
 import genericPostData from '../../Global/dataFetch/genericPostData';
 import _get from 'lodash/get';
 import moment from 'moment';
+import AuthModal from './authModal';
+import Redirect from "react-router/Redirect";
+
 
 
 class Store extends React.Component {
@@ -12,7 +15,8 @@ class Store extends React.Component {
         super(props);
         this.state = {
             terminals: [],
-            selectedTerminal: 0
+            selectedTerminal: 0,
+            isManager: localStorage.getItem('role') == 'manager' ? true : false
         };
 
     }
@@ -58,12 +62,12 @@ class Store extends React.Component {
 
     }
     afterStoreSuccess = (data) => {
-        let countyTaxRate = _get(data,'tax.countyTaxRate');
-        let federalTaxRate = _get(data,'tax.federalTaxRate');
-        let stateTaxRate = _get(data,'tax.stateTaxRate');
-        localStorage.setItem('countyTaxRate',countyTaxRate);
-        localStorage.setItem('federalTaxRate',federalTaxRate);
-        localStorage.setItem('stateTaxRate',stateTaxRate);
+        let countyTaxRate = _get(data, 'tax.countyTaxRate');
+        let federalTaxRate = _get(data, 'tax.federalTaxRate');
+        let stateTaxRate = _get(data, 'tax.stateTaxRate');
+        localStorage.setItem('countyTaxRate', countyTaxRate);
+        localStorage.setItem('federalTaxRate', federalTaxRate);
+        localStorage.setItem('stateTaxRate', stateTaxRate);
         this.setState({ terminals: _get(data, 'terminals') })
     }
     mapTermainal = () => {
@@ -109,14 +113,20 @@ class Store extends React.Component {
         let loggedInDate = moment(_get(data, 'loginTime.seconds') * 1000).format('MMMM Do YYYY');
         localStorage.setItem('loggedInTime', loggedInTime);
         localStorage.setItem('loggedInDate', loggedInDate);
-        if(_get(data,'sessionId','nil')=='nil')
-        {
-         this.setState({sessionFound:false})
+        if (_get(data, 'sessionId', 'nil') == 'nil') {
+            if (this.state.isManager) {
+                this.props.history.push('/DenominationDetailsForm');
+            }
+            else {
+               this.setState({showAuthModal:true})
+            }
         }
-        else{
-        //    this.props.history.push('/')
-        this.props.handleStepChange(3)
+        else {
+            this.props.handleStepChange(3)
         }
+    }
+    authSuccess = () => {
+     this.props.history.push('/DenominationDetailsForm');
     }
     render() {
         let { classes } = this.props
@@ -141,6 +151,12 @@ class Store extends React.Component {
                 >
                     Login in to POS
                 </LoaderButton>
+                {this.state.showAuthModal ? <AuthModal
+                    open={this.state.showAuthModal}
+                    handleClose={this.handleClose}
+                    dispatch={this.props.dispatch}
+                    authSuccess={this.authSuccess}
+                /> : null}
             </React.Fragment>)
     }
 }
