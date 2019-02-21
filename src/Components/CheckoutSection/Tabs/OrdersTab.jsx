@@ -13,8 +13,7 @@ import RemoveCircleIcons from '@material-ui/icons/RemoveCircleOutline';
 import DeleteIcons from '@material-ui/icons/DeleteOutline';
 import AddIcons from '@material-ui/icons/AddCircleOutline';
 /* Redux Imports */
-import { commonActionCreater } from '../../../Redux/commonAction'
-
+import { commonActionCreater } from '../../../Redux/commonAction';
 /* Component Imports */
 import CalculationSection from './CalculationSection'
 import DiscountDialogue from '../DiscountDialogue/DiscountDialogue'
@@ -22,7 +21,7 @@ import DiscountDialogue from '../DiscountDialogue/DiscountDialogue'
 
 /* Global Function import */
 import globalClearCart from '../../../Global/PosFunctions/clearCart';
-import globalHoldCart from '../../../Global/PosFunctions/holdCart';
+
 
 
 class OrdersTab extends React.Component {
@@ -125,7 +124,7 @@ class OrdersTab extends React.Component {
             orderTotal += item.subTotal;
             this.state.orderTotal = this.state.orderTotal + item.subTotal;
             return (
-                <ExpansionPanel className='each-checkout-item' expanded={this.state.expanded === `Panel${item.sku}`} onChange={this.handleChange(`Panel${item.sku}`)}>
+                <ExpansionPanel className='each-checkout-item' expanded={this.state.expanded === `Panel${_get(item, 'doc.product.sku')}`} onChange={this.handleChange(`Panel${_get(item, 'doc.product.sku')}`)}>
                     <ExpansionPanelSummary className=''>
                         <div className='each-product-des fwidth flex-row justify-space-between'>
                             <div className=' des-first-part flex-row align-center'>
@@ -134,7 +133,7 @@ class OrdersTab extends React.Component {
                             </div>
 
                             <div className='flex-column'>
-                                <div className='each-product-price'>{_get(item, 'doc.product.salePrice.currencyCode')} {item.subTotal.toFixed(2)}</div>
+                                <div className='each-product-price'>{_get(item, 'doc.product.salePrice.currencyCode')} {item.effectiveTotal.toFixed(2)}</div>
                                 <div className='each-product-reg-price'>Reg Price - ${_get(item, 'doc.product.salePrice.currencyCode')}{_get(item, 'doc.product.salePrice.price')}</div>
                             </div>
                         </div>
@@ -173,9 +172,7 @@ class OrdersTab extends React.Component {
     clearCart = () => {
         globalClearCart(this.props.dispatch);
     }
-    holdCart = () => {
-        globalHoldCart(this.props.dispatch, this.props.cart, 'title', 'customer Name');
-    }
+
 
     render() {
 
@@ -208,7 +205,7 @@ class OrdersTab extends React.Component {
                 <div className='button-section flex-row ' style={{ height: checkoutactionArea }}>
                     <div>
                         <Button className='mr-20' variant="outlined" onClick={this.clearCart}>Clear</Button>
-                        <Button className='mr-20' variant="outlined" onClick={this.holdCart}>Hold</Button>
+                        <Button className='mr-20' variant="outlined" onClick={this.props.handleClickOpen}>Hold</Button>
                         <Button variant="contained">Proceed</Button>
                     </div>
 

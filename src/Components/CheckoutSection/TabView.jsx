@@ -12,7 +12,9 @@ import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 /* Component Imports */
 import OrdersTab from './Tabs/OrdersTab';
-import CustomersTab from './Tabs/CustomersTab'
+import CustomersTab from './Tabs/CustomersTab';
+import PaymentTab from './Tabs/PaymentTab';
+
 
 
 function TabContainer({ children, dir }) {
@@ -79,6 +81,7 @@ function FullWidthTabs(props) {
             checkoutcalcArea={props.checkoutcalcArea}
             checkoutactionArea={props.checkoutactionArea}
             checkoutcartArea={props.checkoutcartArea}
+            handleClickOpen={props.handleClickOpen}
           />
         </TabContainer>
 
@@ -90,9 +93,14 @@ function FullWidthTabs(props) {
             checkoutCustomerArea={props.checkoutCustomerArea}
             checkoutcalcArea={props.checkoutcalcArea}
             checkoutcartArea={props.checkoutcartArea}
+            handleClickOpen={props.handleClickOpen}
           />
         </TabContainer>
-        <TabContainer >Item Three</TabContainer>
+        <TabContainer >
+          <PaymentTab 
+            checkoutMainPart={props.checkoutMainPart}
+          />
+        </TabContainer>
       </SwipeableViews>
     </div>
   );

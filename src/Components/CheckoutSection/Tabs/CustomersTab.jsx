@@ -6,7 +6,7 @@ import Button from '@material-ui/core/Button';
 /* Material Icons */
 import PersonAdd from '@material-ui/icons/PersonAddOutlined';
 /* Redux Imports */
-
+import {connect} from 'react-redux';
 /* Global Imports */
 import ReactSelect from '../../../Global/Components/ReactSelect/async-react-select';
 import genericPostData from '../../../Global/dataFetch/genericPostData';
@@ -108,21 +108,21 @@ class CustomerTab extends React.Component {
                         <div className='customer-info'>
                             <div className='each-info'>
                                 <div className='info-title'>Name</div>
-                                <div className='info-data'>{_get(this.state,'customer.firstName')} {_get(this.state,'customer.lastName')}</div>
+                                <div className='info-data'>{_get(this.props,'customer.firstName')} {_get(this.props,'customer.lastName')}</div>
                             </div>
                             <div className='each-info'>
                                 <div className='info-title'>Phone</div>
-                                <div className='info-data'>{_get(this.state,'phoneNumber.countryCode')}{_get(this.state,'phoneNumber.phoneNumber')}</div>
+                                <div className='info-data'>{_get(this.props,'phoneNumber.countryCode')}{_get(this.props,'phoneNumber.phoneNumber')}</div>
                             </div>
                             <div className='each-info'>
                                 <div className='info-title'>Email</div>
-                                <div className='info-data'>{this.state.email}</div>
+                                <div className='info-data'>{this.props.email}</div>
                             </div>
                         </div>
                         <div className='customer-billing-info'>
                             <div className='each-info'>
                                 <div className='info-title'>Billing Address</div>
-                                <div className='info-data'>{_get(this.state,'billingAddress.addressLine1')}, {_get(this.state,'billingAddress.addressLine2')}, {_get(this.state,'billingAddress.city')}, {_get(this.state,'billingAddress.state')}, {_get(this.state,'billingAddress.country')} - {_get(this.state,'billingAddress.postalCode')}</div>
+                                <div className='info-data'>{_get(this.props,'billingAddress.addressLine1')}, {_get(this.props,'billingAddress.addressLine2')}, {_get(this.props,'billingAddress.city')}, {_get(this.props,'billingAddress.state')}, {_get(this.props,'billingAddress.country')} - {_get(this.props,'billingAddress.postalCode')}</div>
                             </div>
                         </div>
                     </div>
@@ -134,7 +134,7 @@ class CustomerTab extends React.Component {
 
                 <div className='button-section flex-row ' style={{ height: checkoutactionArea }}>
                     <div>
-                        <Button className='mr-20' variant="outlined">Hold</Button>
+                        <Button className='mr-20' variant="outlined" onClick={this.props.handleClickOpen}>Hold</Button>
                         <Button className='mr-20' variant="outlined">Proceed as Guest</Button>
                         <Button variant="contained">Proceed</Button>
                     </div>
@@ -145,4 +145,9 @@ class CustomerTab extends React.Component {
     }
 }
 
-export default CustomerTab;
+function mapStateToProps(state){
+    let customer = _get(state,'cart.customer');
+    return {...customer}
+}
+
+export default connect(mapStateToProps)(CustomerTab);

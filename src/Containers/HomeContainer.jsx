@@ -6,15 +6,18 @@ import _isEmpty from 'lodash/isEmpty'
 
 /* Redux Imports */
 import { connect } from 'react-redux';
-import genericPostData from '../Global/dataFetch/genericPostData'
+import genericPostData from '../Global/dataFetch/genericPostData';
+import { commonActionCreater } from '../Redux/commonAction';
 /* React Pose */
 import posed from 'react-pose';
+/* Pouch DB */
+import PouchDb from 'pouchdb';
 /* Component Imports */
 import ProductsSection from '../Components/ProductsSection/ProductsSection'
 import CheckoutSection from '../Components/CheckoutSection/CheckoutSection'
 import PaymentSection from '../Components/PaymentSection/PaymentSection'
-import PouchDb from 'pouchdb';
-import { commonActionCreater } from '../Redux/commonAction';
+import HoldDialogue from '../Components/HoldDialogue'
+
 
 
 /* Pose Animation Configs */
@@ -34,17 +37,22 @@ class HomeContainer extends React.Component {
             productListHeight: 0,
             isOpenProduct: true,
             isOpenPayment: false,
+            openOnHold: false,
         }
     }
 
     componentDidMount() {
         let token = localStorage.getItem('Token')
-        if (_isEmpty(token)){
+        if (_isEmpty(token)) {
             this.props.history.push('/login')
         }
         this.calcHeight();
         this.getProductData();
+<<<<<<< HEAD
         this.getCategoryData();
+=======
+
+>>>>>>> 48f529dd67d682fb19322ba23765856ceeea14c6
     }
 
     calcHeight() {
@@ -91,30 +99,38 @@ class HomeContainer extends React.Component {
         })
     }
 
-    getProductData = () => {
-       let productsdb =  new PouchDb('productsdb');
-       productsdb.allDocs({
-        include_docs: true,
-        attachments: true,
-        limit: 20,
-        skip: 0
-      }).then((result)=> {
-        this.props.dispatch(commonActionCreater(result,'GET_PRODUCT_DATA_SUCCESS'));
-      }).catch((err)=> {
-          
-      });
-    }
+    handleClickOpen = () => {
+        this.setState({ openOnHold: true });
+    };
+
+    handleClose = () => {
+        this.setState({ openOnHold: false });
+    };
 
     getCategoryData = () => {
-        let categoryDb =  new PouchDb('categoryDb');
+        let categoryDb = new PouchDb('categoryDb');
         categoryDb.allDocs({
-            include_docs: true 
+            include_docs: true
         }).then((results) => {
-            this.props.dispatch(commonActionCreater(results,'GET_CATEGORY_DATA_SUCCESS'))
+            this.props.dispatch(commonActionCreater(results, 'GET_CATEGORY_DATA_SUCCESS'))
         }).catch((err) => {
-            this.props.dispatch(commonActionCreater(err,'GET_CATEGORY_DATA_ERROR'))
+            console.log(err);
         })
     }
+
+    getProductData = () => {
+        let productsdb = new PouchDb('productsdb');
+        productsdb.allDocs({
+            include_docs: true,
+            attachments: true,
+            limit: 20,
+            skip: 0
+        }).then((result) => {
+            this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+
+        }).catch((err) => {
+
+        });
         // genericPostData({
         //     dispatch: this.props.dispatch,
         //     reqObj: {id : storeId},
@@ -129,8 +145,8 @@ class HomeContainer extends React.Component {
         //     successText: 'Product Fetched Successfully',
         // })
 
-    componentWillReceiveProps(props){
-        
+    componentWillReceiveProps(props) {
+
     }
 
 
@@ -138,24 +154,27 @@ class HomeContainer extends React.Component {
         let windowHeight = document.documentElement.scrollHeight
         let { productListHeight, isOpenProduct, isOpenPayment, headerHeight, categoriesHeight, checkoutHeader, checkoutMainPart, checkoutcalcArea, checkoutactionArea, checkoutcartArea, checkoutCustomerArea } = this.state
 
-        let { productList, dispatch, cart , categoryList } = this.props
+        let { productList, dispatch, cart, categoryList } = this.props
         return (
             <div className='main pos-body'>
                 <Products pose={isOpenProduct ? 'open' : 'closed'}>
-                    <ProductsSection
-                        // * Css Specific props
-                        windowHeight={windowHeight}
-                        productListHeight={productListHeight}
-                        headerHeight={headerHeight}
-                        categoriesHeight={categoriesHeight}
-                        productList = {productList}
-                        categoryList = {categoryList}
-                        cart={cart}
-                        dispatch={dispatch}
-                        history={this.props.history}
-                    // ! Actions
-
-                    />
+                    {
+                        isOpenProduct ?
+                            <ProductsSection
+                                // * Css Specific props
+                                windowHeight={windowHeight}
+                                productListHeight={productListHeight}
+                                headerHeight={headerHeight}
+                                categoriesHeight={categoriesHeight}
+                                productList={productList}
+                                categoryList={categoryList}
+                                cart={cart}
+                                dispatch={dispatch}
+                                history={this.props.history}
+                                // ! Actions
+                                handleClickOpen={this.handleClickOpen}
+                            /> : null
+                    }
                 </Products>
 
                 <CheckoutSection
@@ -167,6 +186,8 @@ class HomeContainer extends React.Component {
                     checkoutactionArea={checkoutactionArea}
                     checkoutcartArea={checkoutcartArea}
                     checkoutCustomerArea={checkoutCustomerArea}
+                    dispatch={dispatch}
+                    cart={cart}
                     // ! Actions
                     toggleViewPayment={this.toggleViewPayment}
                     toggleViewProduct={this.toggleViewProduct}
@@ -174,25 +195,46 @@ class HomeContainer extends React.Component {
                 />
 
                 <Payment pose={isOpenPayment ? 'open' : 'closed'}>
-                    <PaymentSection />
+                    {isOpenPayment ?
+                        <PaymentSection /> : null
+                    }
                 </Payment>
 
+                {
+                    this.state.openOnHold ?
+                        <HoldDialogue
+                            handleClickOpen={this.handleClickOpen}
+                            handleClose={this.handleClose}
+                            open={this.state.openOnHold}
+                            holdCartData={this.props.holdCartData}
+                            dispatch={dispatch}
+                        /> : null
+                }
             </div>
         );
     }
 }
 
 function mapStateToProps(state) {
+<<<<<<< HEAD
    let { productList, cart, categoryList } = state;
    productList =  _get(productList,'lookUpData.rows',[]);
    categoryList = _get(categoryList, 'lookUpData.rows', []);
    let totalCount = _get(productList,'lookUpData.total_rows',0);
+=======
+    let { productList, cart, categoryList, cartHoldData } = state;
+    categoryList = _get(categoryList, 'lookUpData.rows', [])
+    productList = _get(productList, 'lookUpData.rows', []);
+    let totalCount = _get(productList, 'lookUpData.total_rows', 0);
+    let holdCartData = _get(cartHoldData, 'holdedItems', []);
+>>>>>>> 48f529dd67d682fb19322ba23765856ceeea14c6
 
     return {
         productList,
         categoryList,
         totalCount,
-        cart
+        cart,
+        holdCartData,
     }
 }
 export default connect(mapStateToProps)(HomeContainer)
