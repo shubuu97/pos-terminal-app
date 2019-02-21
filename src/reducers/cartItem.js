@@ -24,10 +24,10 @@ const cartItem = (state = { cartItems: [], }, action) => {
             netTotal = grossTotal - (itemsDiscount || 0) - _get(state, 'cartDiscount', 0) - _get(state, 'empDiscount', 0)``
             return Object.assign({}, state, {
                 cartItems: action.data,
-                grossTotal: grossTotal.toFixed(2),
-                itemsDiscount: itemsDiscount.toFixed(2),
+                grossTotal: parseFloat(grossTotal.toFixed(2)),
+                itemsDiscount: parseFloat(itemsDiscount.toFixed(2)),
                 totalQuantity,
-                netTotal: netTotal.toFixed(2)
+                netTotal: parseFloat(netTotal.toFixed(2))
             });
             break;
         case 'ADD_DISCOUNT_TO_CART':
@@ -70,7 +70,7 @@ const cartItem = (state = { cartItems: [], }, action) => {
             action.data.forEach(item => {
                 item.itemRegularTotal = {
                     currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
-                    amount: (parseFloat(_get(item, 'doc.product.salePrice.price', 0)) * _get(item, 'qty', 0)).toFixed(2)
+                    amount: parseFloat((parseFloat(_get(item, 'doc.product.salePrice.price', 0)) * _get(item, 'qty', 0)).toFixed(2))
                 }
                 item.cartDiscountPercent = parseFloat(_get(state, 'cartDiscountPercent', 0))
                 item.employeeDiscountPercent = employeeDiscountPercent
@@ -82,17 +82,17 @@ const cartItem = (state = { cartItems: [], }, action) => {
 
                 item.itemTotalDiscountAmount = {
                     currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
-                    amount: (parseFloat(_get(item, 'itemRegularTotal.amount', 0)) * totalPercentDiscount / 100).toFixed(2)
+                    amount: parseFloat((parseFloat(_get(item, 'itemRegularTotal.amount', 0)) * totalPercentDiscount / 100).toFixed(2))
                 }
                 item.itemSubTotal = {
                     currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
-                    amount: (parseFloat(_get(item, 'itemRegularTotal.amount', 0)) - parseFloat(_get(item, 'itemTotalDiscountAmount.amount', 0))).toFixed(2)
+                    amount: parseFloat((parseFloat(_get(item, 'itemRegularTotal.amount', 0)) - parseFloat(_get(item, 'itemTotalDiscountAmount.amount', 0))).toFixed(2))
                 }
                 item.taxPercentage = _get(state, 'taxPercentage', 0)
                 let taxAmount = _get(item, 'itemSubTotal.amount', 0) * _get(item, 'taxPercentage', 0) / 100
                 item.itemEffectiveTotal = {
                     currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
-                    amount: (parseFloat(_get(item, 'itemSubTotal.amount', 0)) + taxAmount).toFixed(2)
+                    amount: parseFloat((parseFloat(_get(item, 'itemSubTotal.amount', 0)) + taxAmount).toFixed(2))
                 }
 
                 regularTotal += (parseFloat(_get(item, 'doc.product.salePrice.price')) * _get(item, 'qty', 0));
@@ -100,23 +100,23 @@ const cartItem = (state = { cartItems: [], }, action) => {
                 netTotal += parseFloat(_get(item, 'itemSubTotal.amount', 0))
                 totalAmount = {
                     currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
-                    amount: (parseFloat(_get(totalAmount, 'amount', 0)) + parseFloat(_get(item, 'itemEffectiveTotal.amount', 0))).toFixed(2)
+                    amount: parseFloat((parseFloat(_get(totalAmount, 'amount', 0)) + parseFloat(_get(item, 'itemEffectiveTotal.amount', 0))).toFixed(2))
                 }
                 itemDiscountAmount = {
                     currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
-                    amount: (parseFloat(_get(itemDiscountAmount, 'amount', 0)) + thisItemDiscountAmount).toFixed(2)
+                    amount: parseFloat((parseFloat(_get(itemDiscountAmount, 'amount', 0)) + thisItemDiscountAmount).toFixed(2))
                 }
                 cartDiscountAmount = {
                     currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
-                    amount: (parseFloat(_get(cartDiscountAmount, 'amount', 0)) + thisCartDiscountAmount).toFixed(2)
+                    amount: parseFloat((parseFloat(_get(cartDiscountAmount, 'amount', 0)) + thisCartDiscountAmount).toFixed(2))
                 }
                 employeeDiscountAmount = {
                     currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
-                    amount: (parseFloat(_get(employeeDiscountAmount, 'amount', 0)) + thisEmployeemDiscountAmount).toFixed(2)
+                    amount: parseFloat((parseFloat(_get(employeeDiscountAmount, 'amount', 0)) + thisEmployeemDiscountAmount).toFixed(2))
                 }
                 totalTaxAmount = {
                     currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
-                    amount: (parseFloat(_get(totalTaxAmount, 'amount', 0)) + taxAmount).toFixed(2)
+                    amount: parseFloat((parseFloat(_get(totalTaxAmount, 'amount', 0)) + taxAmount).toFixed(2))
                 }
             });
 

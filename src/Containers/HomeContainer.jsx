@@ -44,6 +44,20 @@ class HomeContainer extends React.Component {
         }
     }
 
+    // componentWillUpdate(){
+    //     debugger;
+    //     const params = new URLSearchParams(this.props.location.search);
+    //     if(params)
+    //     {
+    //     const tab = params.get('tab');
+    //     if(tab=="=1"){
+    //         this.state.isOpenPayment = false;
+    //         // this.setState({isOpenProduct:true});
+    //     }
+    //   console.log(tab);
+    //     } // bar
+    // }
+
     componentDidMount() {
         let token = localStorage.getItem('Token')
         if (_isEmpty(token)) {
