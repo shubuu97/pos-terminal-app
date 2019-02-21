@@ -772,7 +772,62 @@ label, p{
         color: @primary-text;
         font-size: 1.3em;
     }
+
+}
+//This is style for session container
 .session-parent{
     margin:10px 10px;
-}
+    .session-header{
+        display: flex;
+        align-items: center;
+        height: 50px;
+        background: @primary-d;
+        color: @primary-text;
+        font-size: 1.3em;
+    }
+
+    .session-button-style{
+        position: absolute;
+        bottom:30px
+    }
+    .mui-table{
+        tr{
+            td{
+                padding:1px 10px;
+            }
+        }
+    }
+    .mui-row{
+        display:flex;
+    }
+    .numpad-box{
+        display:flex;
+        flex-wrap:wrap;
+        align-items:center;
+    }
+    .middle{
+        width:100%;
+    }
+    .numpad-card{
+        width: 100%;
+        background: @primary-d;
+        color: @primary-text;
+
+        .key{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 50px;
+            border-radius: 5px;
+            border: 2px solid rgba(255,255,255,0.8);
+        }
+        .big-key{
+            width: 59%;
+            margin: 1%;
+        }
+        .small-key{
+            width: 28%;
+            margin: 1%;
+        }
+    }
 }
