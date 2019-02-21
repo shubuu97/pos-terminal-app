@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import moment from "moment";
 /* Lodash Imports */
 import _get from 'lodash/get';
+import _isEmpty from 'lodash/isEmpty';
+import _isArray from 'lodash/isArray';
 /* Redux Imports */
 import { commonActionCreater } from '../Redux/commonAction'
 /* Material Imports */
@@ -26,6 +28,7 @@ import DeleteIcons from '@material-ui/icons/DeleteOutline';
 /*  */
 import applyCart from '../Global/PosFunctions/applyCart';
 import genericPostData from '../Global/dataFetch/genericPostData';
+import { isArray } from 'util';
 
 
 const styles = {
@@ -42,29 +45,47 @@ function Transition(props) {
 }
 
 class OrderHistoryDialog extends React.Component {
+    state = {
+        orderId: '',
+    }
 
-    componentDidMount(){
-        genericPostData({
-            dispatch: this.props.dispatch,
-            reqObj: { id: _get(this.props, 'customer.id', '') },
-            url: 'Sale/GetByCustomerId',
-            constants: {
-                init: 'GET_CUSTOMER_SALE_DATA_INIT',
-                success: 'GET_CUSTOMER_SALE_DATA_SUCCESS',
-                error: 'GET_CUSTOMER_SALE_DATA_ERROR'
-            },
-            identifier: 'GET_CUSTOMER_SALE_DATA',
-            successCb: this.handleGetCustomerSaleData,
-            errorCb: this.handleGetCustomerSaleDataError
+    componentDidMount() {
+
+    }
+    onSelectOrder = (custData) => {
+        this.setState({
+            orderId: _get(custData, 'sale.id', ''),
         })
     }
-    handleGetCustomerSaleData = (data) => {
 
+    populateOrderHistory = () => {
+        const { salesList } = this.props;
+        console.log('customer sales data', salesList);
+        const orderHistory = !_isEmpty(salesList) && _isArray(salesList) && salesList.map((custData, index) => (
+            <div key={index} className="mdl-cell mdl-cell--6-col mdl-cell--8-col-tablet ">
+                <div className="order-date">
+                    {new Date(_get(custData, 'sale.saleTimeStamp.seconds', 0) * 1000).toISOString()}
+                </div>
+                <div className="demo-grid-3 mdl-grid">
+                    <div className={_get(this.selectedOrder, 'orderId', '') === _get(custData, 'sale.id', '') ? "active" : ""} key={index} onClick={() => this.onSelectOrder(custData)}>
+                        <div className="mdl-cell mdl-cell--1-col">
+                            <label>{_get(custData, 'sale.id', '')}</label>
+                            <span>{_get(custData, 'customer.email', '')}</span>
+                        </div>
+                        <div className="oh-right">
+                            <label>{"$ " + _get(custData, 'sale.paymentAmount', 0)}</label>
+                            <span>{_get(custData, 'sale.paymentMethod', '')}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        ));
+        return (
+            <div className="demo-grid-3 mdl-grid">
+                {orderHistory}
+            </div>
+        )
     }
-    handleGetCustomerSaleDataError = (error) => {
-
-    }
-
     render() {
         const { classes } = this.props;
         return (
@@ -82,9 +103,16 @@ class OrderHistoryDialog extends React.Component {
                             </IconButton>
                             <span className='ml-20'>Order History</span>
                         </div>
+                        <div className="d-flex">
+                            <div className="col-sm-6 pad-none"  >
+                                <div className="pro-list-section">
+                                    {this.populateOrderHistory()}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </Dialog>
-            </div>
+            </div >
         );
     }
 }
@@ -94,8 +122,12 @@ OrderHistoryDialog.propTypes = {
 };
 
 function mapStateToProps(state) {
-    let customer = _get(state, 'cart.customer');
-    return { ...customer }
+    let { customerSalesList } = state;
+    let salesList = customerSalesList.lookUpData || [];
+
+    return {
+        salesList,
+    }
 }
 
 

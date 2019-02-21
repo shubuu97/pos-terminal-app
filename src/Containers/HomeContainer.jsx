@@ -162,9 +162,28 @@ class HomeContainer extends React.Component {
 
     }
     handleHistoryOpen = () => {
+        genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj: { id: _get(this.props, 'customer.id', '') },
+            url: 'Sale/GetByCustomerId',
+            constants: {
+                init: 'GET_CUSTOMER_SALE_DATA_INIT',
+                success: 'GET_CUSTOMER_SALE_DATA_SUCCESS',
+                error: 'GET_CUSTOMER_SALE_DATA_ERROR'
+            },
+            identifier: 'GET_CUSTOMER_SALE_DATA',
+            successCb: this.handleGetCustomerSaleData,
+            errorCb: this.handleGetCustomerSaleDataError
+        })
         this.setState({
             openOrderHistory: true,
         });
+    }
+    handleGetCustomerSaleData = (data) => {
+
+    }
+    handleGetCustomerSaleDataError = (error) => {
+
     }
     handleOrderHistoryClose = () => {
         this.setState({
@@ -266,6 +285,7 @@ function mapStateToProps(state) {
     productList = _get(productList, 'lookUpData.rows', []);
     let totalCount = _get(productList, 'lookUpData.total_rows', 0);
     let holdCartData = _get(cartHoldData, 'holdedItems', []);
+    let customer = _get(cart, 'customer', {});
 
     return {
         categoryList,
@@ -273,6 +293,7 @@ function mapStateToProps(state) {
         totalCount,
         cart,
         holdCartData,
+        customer,
     }
 }
 export default connect(mapStateToProps)(HomeContainer)
