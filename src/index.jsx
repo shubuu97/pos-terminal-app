@@ -29,6 +29,7 @@ import HomeContainer from './Containers/HomeContainer';
 import LoginContainer from './Containers/LoginContainer';
 import StoreContainer from './Containers/StoreContainer';
 import SessionContainer from './Containers/SessionContainer';
+import DenominationDetailsForm from './Components/SessionComponents/DenominationDetailsForm'
 
 
 
@@ -82,7 +83,7 @@ ReactDOM.render(
         <RouteWithLayout Layout={EmptyLayout} exact path="/login" Component={LoginContainer} />
         <RouteWithLayout Layout={EmptyLayout} exact path="/store" Component={StoreContainer} />
         <RouteWithLayout Layout={EmptyLayout} exact path="/session" Component={SessionContainer} />
-
+        <RouteWithLayout Layout={EmptyLayout} exact path="/DenominationDetailsForm" Component={DenominationDetailsForm} />
 
       </Switch>
     </Router>

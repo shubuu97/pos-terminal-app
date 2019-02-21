@@ -1,7 +1,7 @@
 import React from 'react';
 /* Lodash Imports */
 import _get from 'lodash/get';
-import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button'
 
 /* Material import */
 
@@ -138,16 +138,11 @@ class DenominationDetailsForm extends React.Component {
                 <td>*</td>
                 <td> 
                     <input
-                    InputLabelProps={{ shrink: true }}
                     autoFocus = {type.id==7?true:false}
                     onFocus={() => this.currentFocus(type.stateName)}
                     id={type.id}
-                    label="Gift Card Number"
                     value={this.state[type.stateName]}
-                    onChange={this.handleChange(type.stateName)}
-                    margin="normal"
-                    fullWidth
-                    variant="outlined"
+                    onChange={this.handleChange(type.stateName)} 
                 />
                 </td>
                 <td>=</td>
@@ -156,10 +151,13 @@ class DenominationDetailsForm extends React.Component {
         })
 
     }
+    startNewSession = ()=>{
 
+    }
     render() {
+       let extraClass =  _get(this.props,'location.pathname','')=="/DenominationDetailsForm"?'session-parent':''
         return (
-            <div className="mui-container-fluid">
+            <div className={`mui-container-fluid ${extraClass}`}>
                 <div class="mui-row">
                     <div class="mui-col-md-6">
                         <table class="mui-table mui-table--bordered">
@@ -176,6 +174,13 @@ class DenominationDetailsForm extends React.Component {
                                 {this.mapTablerows()}
                             </tbody>
                         </table>
+                        <Button
+                        color='primary'
+                        variant='contained'
+                        onclick={this.startNewSession}
+                        >
+                        Start New Session
+                        </Button>
                     </div>
             
                     <div className="mui-col-md-6 numpad-box">
