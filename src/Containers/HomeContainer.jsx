@@ -129,6 +129,7 @@ class HomeContainer extends React.Component {
 
         });
     }
+    
     // genericPostData({
     //     dispatch: this.props.dispatch,
     //     reqObj: {id : storeId},
@@ -194,7 +195,7 @@ class HomeContainer extends React.Component {
         let windowHeight = document.documentElement.scrollHeight
         let { productListHeight, isOpenProduct, isOpenPayment, headerHeight, categoriesHeight, checkoutHeader, checkoutMainPart, checkoutcalcArea, checkoutactionArea, checkoutcartArea, checkoutCustomerArea } = this.state
 
-        let { productList, dispatch, cart, categoryList } = this.props
+        let { productList, dispatch, cart } = this.props
         return (
             <div className='main pos-body'>
                 <Products pose={isOpenProduct ? 'open' : 'closed'}>
@@ -207,7 +208,6 @@ class HomeContainer extends React.Component {
                                 headerHeight={headerHeight}
                                 categoriesHeight={categoriesHeight}
                                 productList={productList}
-                                // categoryList={categoryList}
                                 cart={cart}
                                 dispatch={dispatch}
                                 history={this.props.history}
@@ -278,8 +278,7 @@ class HomeContainer extends React.Component {
 }
 
 function mapStateToProps(state) {
-    let { productList, cart, categoryList, cartHoldData } = state;
-    // categoryList = _get(categoryList, 'lookUpData.rows', [])
+    let { productList, cart, cartHoldData } = state;
     productList = _get(productList, 'lookUpData.rows', []);
     let totalCount = _get(productList, 'lookUpData.total_rows', 0);
     let holdCartData = _get(cartHoldData, 'holdedItems', []);
@@ -287,7 +286,6 @@ function mapStateToProps(state) {
 
     return {
         productList,
-        // categoryList,
         totalCount,
         cart,
         holdCartData,

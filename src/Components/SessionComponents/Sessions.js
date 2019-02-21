@@ -23,10 +23,14 @@ class Sessions extends React.Component {
         let sortedSessionList = _orderBy(sessionList, ['openingTimeStamp.seconds'], ['desc']);
         return (
 
-            <div >{sortedSessionList.map((session, index) => <Session
-                index={index}
-                session={session}
-            />)} </div>
+            <div >
+                {sortedSessionList.map((session, index) => 
+                    <Session
+                        index={index}
+                        session={session}
+                    />)
+                } 
+            </div>
         );
     }
 }

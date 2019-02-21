@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import Category from './Category';
+// Lodash Import
 import _get from 'lodash/get';
 import _isEmpty from 'lodash/isEmpty';
 import _filter from 'lodash/filter';
 import {connect} from 'react-redux';
 //Redux Import
-import { commonActionCreater } from '../../Redux/commonAction';
+import { commonActionCreater } from '../../../Redux/commonAction';
 //Pouch Import
 import PouchDb from 'pouchdb';
 import Find from 'pouchdb-find'
@@ -28,15 +29,7 @@ class Categories extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            allCategory: [],
-            rootCategory: [],
-            subCategory: [],
-            leafCategory: [],
-            filteredSubCategory: [],
-            filteredLeafCategory: [],
-            categoryToDisplay: [],
-            selectedCategory: '',
-            level: 0
+            categoryToDisplay: []
         }
     }
 
@@ -91,20 +84,32 @@ class Categories extends Component {
          })
     }
 
+    getProductData = () => {
+        let productsdb = new PouchDb('productsdb');
+        productsdb.allDocs({
+            include_docs: true,
+            attachments: true,
+            limit: 20,
+            skip: 0
+        }).then((result) => {
+            this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+        }).catch((err) => {
+
+        });
+    }
+
 
     render() {
-        console.log(this.props.categoryList, 'this.props.categoryList render')
         return (
             <div className='product-catogories' style={{height:this.props.categoriesHeight}}>
-            <span>All</span>
+            <span onClick={this.getProductData}>All</span>
             <span onClick={() => this.getCategory(0)}>Root Category</span>
             <span onClick={() => this.getCategory(1)}>Sub category</span>
-                {_get(this.state,'categoryToDisplay', []).map(category => {
-                    return <Category 
-                            category={category} 
-                            clickHandler={this.handleCategoryClick} 
-                        /> 
-                })}
+            {_get(this.state,'categoryToDisplay', []).map(category => {
+                return <Category 
+                        category={category} 
+                        clickHandler={this.handleCategoryClick} /> 
+            })}
             </div>
         )
     }

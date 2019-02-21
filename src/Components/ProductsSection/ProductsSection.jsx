@@ -14,7 +14,7 @@ import SideDrawer from '../SideDrawer'
 import Products from './Products';
 import SearchBar from './SearchBar';
 import PouchDb from 'pouchdb';
-import Categories from './Categories';
+import Categories from './Categories/Categories';
 PouchDb.plugin(require('pouchdb-quick-search'));
 let productsdb = new PouchDb('productsdb');
 productsdb.search({
@@ -66,7 +66,7 @@ class ProductsSection extends React.Component {
     }
 
     render() {
-        let { windowHeight, productListHeight, headerHeight, categoriesHeight, categoryList } = this.props
+        let { windowHeight, productListHeight, headerHeight, categoriesHeight } = this.props
         return (
             <div className='pos-products-collection' style={{ height: windowHeight }}>
 
@@ -99,7 +99,6 @@ class ProductsSection extends React.Component {
                 // * Product Categories Component
                 */}
                 <Categories 
-                    // categoryList={categoryList}
                     categoriesHeight={categoriesHeight}
                     {...this.props}
                      />
