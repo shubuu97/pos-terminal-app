@@ -87,6 +87,19 @@ class DenominationDetailsForm extends React.Component {
     constructor() {
         super();
         this.state = {
+            pennies:'',
+            nickles:'',
+            dimes:'',
+            quaters:'',
+            fifyCent:'',
+            oneCoin:'',
+            one:'',
+            two:'',
+            five:'',
+            ten:'',
+            twenty:'',
+            fifty:'',
+            hundred:''
 
         }
     }
