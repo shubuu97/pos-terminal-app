@@ -48,7 +48,7 @@ class SessionContainer extends React.Component {
     render() {
         let {sessionList} = this.props;
         return (
-            <div>
+            <div className="session-parent">
                 <div>
                 <Sessions
                 sessionList={sessionList}
