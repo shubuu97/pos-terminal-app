@@ -17,6 +17,7 @@ import ProductsSection from '../Components/ProductsSection/ProductsSection'
 import CheckoutSection from '../Components/CheckoutSection/CheckoutSection'
 import PaymentSection from '../Components/PaymentSection/PaymentSection'
 import HoldDialogue from '../Components/HoldDialogue'
+import OrderHistoryDialog from '../Components/OrderHistoryDialog';
 
 
 
@@ -41,6 +42,7 @@ class HomeContainer extends React.Component {
             isOpenProduct: true,
             isOpenPayment: false,
             openOnHold: false,
+            openOrderHistory: false,
         }
     }
 
@@ -148,6 +150,16 @@ class HomeContainer extends React.Component {
     componentWillReceiveProps(props) {
 
     }
+    handleHistoryOpen = () => {
+        this.setState({
+            openOrderHistory: true,
+        });
+    }
+    handleOrderHistoryClose = () => {
+        this.setState({
+            openOrderHistory: false,
+        });
+    }
 
 
     render() {
@@ -192,6 +204,7 @@ class HomeContainer extends React.Component {
                     // ! Actions
                     toggleViewPayment={this.toggleViewPayment}
                     toggleViewProduct={this.toggleViewProduct}
+                    handleHistoryOpen={this.handleHistoryOpen}
 
                 />
 
@@ -208,6 +221,14 @@ class HomeContainer extends React.Component {
                             handleClose={this.handleClose}
                             open={this.state.openOnHold}
                             holdCartData={this.props.holdCartData}
+                            dispatch={dispatch}
+                        /> : null
+                }
+                {
+                    this.state.openOrderHistory ?
+                        <OrderHistoryDialog
+                            handleClose={this.handleOrderHistoryClose}
+                            open={this.state.openOrderHistory}
                             dispatch={dispatch}
                         /> : null
                 }

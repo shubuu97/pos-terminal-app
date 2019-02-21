@@ -94,6 +94,7 @@ function FullWidthTabs(props) {
             checkoutcalcArea={props.checkoutcalcArea}
             checkoutcartArea={props.checkoutcartArea}
             handleClickOpen={props.handleClickOpen}
+            handleHistoryOpen={props.handleHistoryOpen}
           />
         </TabContainer>
         <TabContainer >
