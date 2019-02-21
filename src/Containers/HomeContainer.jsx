@@ -18,6 +18,7 @@ import CheckoutSection from '../Components/CheckoutSection/CheckoutSection'
 import PaymentSection from '../Components/PaymentSection/PaymentSection'
 import OrderHistoryDialog from '../Components/OrderHistoryDialog';
 import SessionDialogue from '../Components/SessionDialogue'
+import HoldDialogue from '../Components/HoldDialogue';
 
 
 
