@@ -71,7 +71,7 @@ function TemporaryDrawer(props) {
                     <ListItemText primary={'On Hold'} />
                 </ListItem>
                 <Divider />
-                <ListItem button key={1}>
+                <ListItem button key={1} onClick={props.handleClickOpenSessionContainer}>
                     <ListItemIcon>
 
                     </ListItemIcon>
