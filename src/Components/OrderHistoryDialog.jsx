@@ -5,6 +5,7 @@ import moment from "moment";
 import _get from 'lodash/get';
 import _isEmpty from 'lodash/isEmpty';
 import _isArray from 'lodash/isArray';
+import _find from 'lodash/find';
 /* Redux Imports */
 import { commonActionCreater } from '../Redux/commonAction'
 /* Material Imports */
@@ -60,29 +61,134 @@ class OrderHistoryDialog extends React.Component {
 
     populateOrderHistory = () => {
         const { salesList } = this.props;
-        console.log('customer sales data', salesList);
         const orderHistory = !_isEmpty(salesList) && _isArray(salesList) && salesList.map((custData, index) => (
-            <div key={index} className="mdl-cell mdl-cell--6-col mdl-cell--8-col-tablet ">
-                <div className="order-date">
-                    {new Date(_get(custData, 'sale.saleTimeStamp.seconds', 0) * 1000).toISOString()}
-                </div>
-                <div className="demo-grid-3 mdl-grid">
-                    <div className={_get(this.selectedOrder, 'orderId', '') === _get(custData, 'sale.id', '') ? "active" : ""} key={index} onClick={() => this.onSelectOrder(custData)}>
-                        <div className="mdl-cell mdl-cell--1-col">
-                            <label>{_get(custData, 'sale.id', '')}</label>
-                            <span>{_get(custData, 'customer.email', '')}</span>
-                        </div>
-                        <div className="oh-right">
-                            <label>{"$ " + _get(custData, 'sale.paymentAmount', 0)}</label>
-                            <span>{_get(custData, 'sale.paymentMethod', '')}</span>
+            <div onClick={() => this.onSelectOrder(custData)} key={index} className="card">
+                <div className={_get(this.state, 'orderId', '') === _get(custData, 'sale.id', '') ? "active" : ""}>
+                    <div className="mui-col-md-12">
+                        {moment(_get(custData, 'sale.saleTimeStamp.seconds', 0) * 1000).format('MM/DD/YYYY')}
+                    </div>
+                    <div className="mui-row" style={{ paddingLeft: '15px' }}>
+                        <div className="">
+                            <div className="mui-col-md-8">
+                                <label>{`Order Id: ${_get(custData, 'sale.id', '')}`}</label>
+                                <br />
+                                <span>{`Email: ${_get(custData, 'customer.email', '')}`}</span>
+                            </div>
+                            <div className="mui-col-md-8">
+                                <label>{`Amount: $ ${_get(custData, 'sale.paymentAmount', 0)}`}</label>
+                                <br />
+                                <span>{`Payment Method: ${_get(custData, 'sale.paymentMethod', '')}`}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         ));
         return (
-            <div className="demo-grid-3 mdl-grid">
+            <div className="content">
                 {orderHistory}
+            </div>
+        )
+    }
+    showItemList = () => {
+        const { salesList } = this.props;
+        let orderData = _find(salesList, { sale: { id: this.state.orderId } });
+        let listItems = _isArray(orderData.items) ? orderData.items.map((item) => (
+            <React.Fragment>
+                <td>{item.product}</td>
+                <td>{item.originalPrice}</td>
+                <td>{item.price}</td>
+                <td>{item.qty}</td>
+                <td>{item.discount}</td>
+                <td>{item.subTotal}</td>
+                <td>{item.tax}</td>
+                <td>{item.rowTotal}</td>
+            </React.Fragment>
+        )) : (
+                <React.Fragment>
+                    <td>Cell 1-1</td>
+                    <td>Cell 1-2</td>
+                    <td>Cell 1-2</td>
+                    <td>Cell 1-2</td>
+                    <td>Cell 1-2</td>
+                    <td>Cell 1-2</td>
+                    <td>Cell 1-2</td>
+                    <td>Cell 1-2</td>
+                </React.Fragment>
+            )
+        return (
+            <tr>
+                {listItems}
+            </tr>
+        )
+    }
+    populateOrderData = () => {
+        const { salesList } = this.props;
+        let selectedOrder = _find(salesList, { sale: { id: this.state.orderId } });
+        return (
+            <div className="">
+                <div className={"mui-row"} >
+                    <div className="card" style={{ justifyContent: 'center' }}>
+                        {moment(_get(selectedOrder, 'sale.saleTimeStamp.seconds', 0) * 1000).format('MM/DD/YYYY')}
+                        <div className="mui-row">
+                            <div className="mui-col-md-4" style={{ display: 'flex', paddingLeft: '29px' }}>
+                                <label >{` $ ${_get(selectedOrder, 'sale.paymentAmount', 0)}`}</label>
+                            </div>
+                            <div className="mui-col-md-8">
+                                <label >{`Status: Complete`}</label>
+                                <br />
+                                <label >{`Created Date: ${moment(_get(selectedOrder, 'sale.saleTimeStamp.seconds', 0) * 1000).format('MM/DD/YYYY')}`}</label>
+                                <br />
+                                <label >{`Served By ${_get(selectedOrder, 'sale.terminalId', '')}`}</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="card">
+                        <div className="mui-row" style={{ paddingLeft: '5%', paddingRight: '6%' }}>
+                            <table class="mui-table mui-table--bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Original Price</th>
+                                        <th>Price</th>
+                                        <th>Qty</th>
+                                        <th>Discount Amount</th>
+                                        <th>SubTotal</th>
+                                        <th>Tax Amount</th>
+                                        <th>Row Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {this.showItemList()}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div className="card">
+                        <div className="mui-row">
+                            <div className="mui-col-md-6" style={{ display: 'flex', paddingLeft: '29px' }}>
+                            </div>
+                            <div className="mui-col-md-6" style={{ paddingRight: '50px' }}>
+                                <label >{`Tax: `}</label>
+                                <label style={{ float: 'right' }}>{`$ ${_get(selectedOrder, 'sale.tax', '2,62')}`}</label>
+                                <br />
+                                <label >{`Grand Total: `}</label>
+                                <label style={{ float: 'right' }}>{`$ ${_get(selectedOrder, 'sale.total', '31.59')}`}</label>
+                                <br />
+                                <label >{`Total Paid: `}</label>
+                                <label style={{ float: 'right' }}>{`$ ${_get(selectedOrder, 'sale.paymentAmount', '100.00')}`}</label>
+                                <br />
+                                <label >{`Change: `}</label>
+                                <label style={{ float: 'right' }}>{`$ ${_get(selectedOrder, 'sale.change', '0')}`}</label>
+                            </div>
+                        </div>
+                        <div className="mui-row" style={{ display: 'flex', justifyContent: 'center'}}>
+                            <Button variant="contained">ORDER PRINT </Button>
+                            <Button style={{marginLeft: '15px'}} variant="contained">REFUND </Button>
+                        </div>
+                    </div>
+                </div>
             </div>
         )
     }
@@ -96,19 +202,23 @@ class OrderHistoryDialog extends React.Component {
                     onClose={this.props.handleClose}
                     TransitionComponent={Transition}
                 >
-                    <div className='on-hold-section'>
-                        <div className='on-hold-header'>
+                    <div className='history-section'>
+                        <div className='history-header'>
                             <IconButton color="inherit" onClick={this.props.handleClose} aria-label="Close">
                                 <CloseIcon />
                             </IconButton>
                             <span className='ml-20'>Order History</span>
                         </div>
-                        <div className="d-flex">
-                            <div className="col-sm-6 pad-none"  >
-                                <div className="pro-list-section">
-                                    {this.populateOrderHistory()}
-                                </div>
+                        <div className="mui-container-fluid">
+                            <div className="mui-col-md-4 pad-none"  >
+                                {this.populateOrderHistory()}
                             </div>
+                            {
+                                this.state.orderId !== '' &&
+                                <div className="mui-col-md-8 pad-none"  >
+                                    {this.populateOrderData()}
+                                </div>
+                            }
                         </div>
                     </div>
                 </Dialog>
