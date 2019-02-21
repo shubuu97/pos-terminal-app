@@ -2,7 +2,7 @@ import React from 'react';
 import _get from 'lodash/get';
 
 const Category = (props) => {
-    const {id, name, categoryType} = props.category.doc
+    const {id, name, categoryType} = props.category
     
     return (
         <div className='each-tile blue-background'>
