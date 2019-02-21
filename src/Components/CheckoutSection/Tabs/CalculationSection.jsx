@@ -27,34 +27,34 @@ class CalculationSection extends React.Component {
                 <div className="calc-first-part">
                     <div className="cart-details">
                         <div className='cart-each-details'>
-                            <span className='cart-title bold'>Gross Total</span>
-                            <span className='cart-amount bold'>${_get(cart, 'grossTotal', 0)}</span>
+                            <span className='cart-title bold'>Regular Total</span>
+                            <span className='cart-amount bold'>${_get(cart, 'regularTotal', 0)}</span>
                         </div>
                         {
-                            _get(cart, 'cartDiscount', 0) > 0 ?
+                            _get(cart, 'cartDiscountAmount.amount', 0) > 0 ?
                                 <div className='cart-each-details'>
                                     <span className='cart-title flex-row align-center'>
                                         <RemoveCircleIcons style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }} />
                                         Cart Discount
                                     </span>
-                                    <span className='cart-amount'>- ${_get(cart, 'cartDiscount')}</span>
+                                    <span className='cart-amount'>- {_get(cart, 'cartDiscountAmount.currencyCode')}{_get(cart, 'cartDiscountAmount.amount')}</span>
                                 </div> : null
                         }
                         {
-                            _get(cart, 'empDiscount', 0) > 0 ?
+                            _get(cart, 'employeeDiscountAmount.amount', 0) > 0 ?
                                 <div className='cart-each-details'>
                                     <span className='cart-title'>Emp. Discount </span>
-                                    <span className='cart-amount'>- ${_get(cart, 'empDiscount')}</span>
+                                    <span className='cart-amount'>- {_get(cart, 'cartDiscountAmount.currencyCode')}{_get(cart, 'employeeDiscountAmount.amount')}</span>
                                 </div> : null
                         }
                         {
-                            _get(cart, 'itemsDiscount', 0) > 0 ?
+                            _get(cart, 'itemDiscountAmount.amount', 0) > 0 ?
                             <div className='cart-each-details'>
                                 <span className='cart-title flex-row align-center'>
                                     <RemoveCircleIcons style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }} />
                                     Items Discount
                                 </span>
-                                <span className='cart-amount'>- ${_get(cart, 'itemsDiscount')}</span>
+                                <span className='cart-amount'>- {_get(cart, 'itemDiscountAmount.currencyCode')}{_get(cart, 'itemDiscountAmount.amount')}</span>
                             </div> : null
                         }
                     </div>
@@ -67,12 +67,12 @@ class CalculationSection extends React.Component {
                         </div>
                         <div className='cart-each-details'>
                             <span className='cart-title'>Tax</span>
-                            <span className='cart-amount'>0</span>
+                            <span className='cart-amount'>{_get(cart, 'totalTaxAmount.currencyCode')}{_get(cart, 'totalTaxAmount.amount')}</span>
                         </div>
                     </div>
                     <div className="cart-total">
                         <span className='total-text'>Total </span>
-                        <span className='total-amount'>${_get(cart, 'netTotal')}</span>
+                        <span className='total-amount'>{_get(cart, 'totalAmount.currencyCode')}{_get(cart, 'totalAmount.amount')}</span>
                     </div>
                 </div>
             </div>
