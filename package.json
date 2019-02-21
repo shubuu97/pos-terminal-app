@@ -96,6 +96,7 @@
     "react-toastify": "^3.4.3",
     "react-transition-group": "^1.1.2",
     "redux": "^3.5.2",
+    "redux-form": "^8.1.0",
     "redux-form-website-template": "0.0.103",
     "redux-logger": "^3.0.6",
     "redux-persist": "^5.9.1",
