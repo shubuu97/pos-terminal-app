@@ -128,6 +128,12 @@ class Store extends React.Component {
     authSuccess = () => {
      this.props.history.push('/DenominationDetailsForm');
     }
+    handleClose = ()=>
+    {
+        this.setState({
+        showAuthModal:false
+        })
+    }
     render() {
         let { classes } = this.props
         return (

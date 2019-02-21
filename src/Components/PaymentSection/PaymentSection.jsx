@@ -11,9 +11,10 @@ import CardPay from './CardPay';
 import DefaultCardPay from './DefaultCardPay';
 import GiftPay from './GiftPay';
 import Button from '@material-ui/core/Button';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import genericPostData from '../../Global/dataFetch/genericPostData';
-
+import PaymentReceipt from './paymentReceipt';
+import {withRouter} from 'react-router-dom'
 
 /* style */
 
@@ -29,10 +30,14 @@ class PaymentSection extends React.Component {
             cardAmountValue: '',
             defaultcardAmountValue: '',
             cashPayValue: '',
-            giftPayNumberValue: ''
-
+            giftPayNumberValue: '',
+            receiptData: {},
+            showPaymentReceipt: false
         }
+
+
     }
+
     handleCashPayment = () => {
         this.setState({ showCashPay: true })
     }
@@ -66,26 +71,26 @@ class PaymentSection extends React.Component {
         this.setState({ currentFocus: fieldValue })
     }
     onRemovePaymentMethod = (fieldValue) => {
-        if(fieldValue=='showCashPay'){
-            this.setState({ [fieldValue]: false,cashPayValue:'' })
+        if (fieldValue == 'showCashPay') {
+            this.setState({ [fieldValue]: false, cashPayValue: '' })
         }
-        if(fieldValue=='showCardPay'){
-            this.setState({ [fieldValue]: false,cardAmountValue:'' })
+        if (fieldValue == 'showCardPay') {
+            this.setState({ [fieldValue]: false, cardAmountValue: '' })
         }
-        if(fieldValue=='showDefaultCardPay'){
-            this.setState({ [fieldValue]: false,defaultcardAmountValue:'' })
+        if (fieldValue == 'showDefaultCardPay') {
+            this.setState({ [fieldValue]: false, defaultcardAmountValue: '' })
         }
-        if(fieldValue=='showGiftPay'){
-            this.setState({ [fieldValue]: false,giftPayNumberValue:''})
+        if (fieldValue == 'showGiftPay') {
+            this.setState({ [fieldValue]: false, giftPayNumberValue: '' })
         }
     }
-    handleSaleTransaction = ()=>{
+    handleSaleTransaction = () => {
         debugger;
-    let {customer,cartItems,totalAmount,sessionId} = this.props;
-    let {cartDiscountAmount,employeeDiscountAmount,itemDiscountAmount,totalTaxAmount} = this.props.cart
-    let saleItems =   cartItems.map((item)=>{
+        let { customer, cartItems, totalAmount, sessionId } = this.props;
+        let { cartDiscountAmount, employeeDiscountAmount, itemDiscountAmount, totalTaxAmount } = this.props.cart
+        let saleItems = cartItems.map((item) => {
             let obj = {}
-            obj.productId=item.doc.product.id;
+            obj.productId = item.doc.product.id;
             obj.qty = item.qty;
             obj.itemEffectiveTotal = item.itemEffectiveTotal;
             obj.itemRegularTotal = item.itemRegularTotal;
@@ -97,87 +102,104 @@ class PaymentSection extends React.Component {
             return obj;
         });
         let payments = []
-        if((parseFloat(this.state.cashPayValue)||0)){
+        if ((parseFloat(this.state.cashPayValue) || 0)) {
             payments.push({
-                paymentMethod : 'CASH',
-                paymentAmount : {currencyCode:'$',amount:(parseFloat(this.state.cashPayValue)||0)},
-                paymentReference : ""
+                paymentMethod: 'CASH',
+                paymentAmount: { currencyCode: '$', amount: (parseFloat(this.state.cashPayValue) || 0) },
+                paymentReference: ""
             })
         }
-        if((parseFloat(this.state.defaultcardAmountValue)||0)){
+        if ((parseFloat(this.state.defaultcardAmountValue) || 0)) {
             payments.push({
-                paymentMethod : 'EMPLOYEE_PAYROLL_DEDUCT',
-                paymentAmount : {currencyCode:'$',amount:(parseFloat(this.state.defaultcardAmountValue)||0)},
-                paymentReference : ""
+                paymentMethod: 'EMPLOYEE_PAYROLL_DEDUCT',
+                paymentAmount: { currencyCode: '$', amount: (parseFloat(this.state.defaultcardAmountValue) || 0) },
+                paymentReference: ""
             })
         }
-        if((parseFloat(this.state.cardAmountValue)||0)){
+        if ((parseFloat(this.state.cardAmountValue) || 0)) {
             payments.push({
-                paymentMethod : 'CARD',
-                paymentAmount : {currencyCode:'$',amount:(parseFloat(this.state.cardAmountValue)||0)},
-                paymentReference : ""
+                paymentMethod: 'CARD',
+                paymentAmount: { currencyCode: '$', amount: (parseFloat(this.state.cardAmountValue) || 0) },
+                paymentReference: ""
             })
         }
-        
-        let totalAmountPaid = 
-        (parseFloat(this.state.cardAmountValue)||0)+
-        (parseFloat(this.state. defaultcardAmountValue)||0)
-        + (parseFloat(this.state.cashPayValue||0))+
-        (parseFloat(this.state.giftPayNumberValue)||0)
-      let reqObj = {
-        customerId:customer.id,
-        storeId:localStorage.getItem('storeId'),
-        terminalId:localStorage.getItem('terminalId'),
-        operatorId:localStorage.getItem('userId'),
-        retailerId:localStorage.getItem('retailerId'),
-        sessionId,
-        saleItems,
-        payments,
-        miscSaleItems:[],
-        totalAmount,
-        totalAmountPaid:{currencyCode:'$',amount:totalAmountPaid},
-        cartDiscountAmount,
-        employeeDiscountAmount,
-        itemDiscountAmount,
-        totalTaxAmount,
-        offline:false,
-        saleTimeStamp:{seconds:parseInt((new Date().getTime()/1000))},
-        changeDue: { currencyCode : '$', amount : parseFloat(Math.abs(this.calcRemainingAmount()).toFixed(2))}
 
-    };
-    genericPostData({
-        dispatch:this.props.dispatch,
-        reqObj,
-        url:'Sale/CreateSaleTransaction',
-        constants:{
-            init:'POST_SALE_TRANSACTION_INIT',
-            success:'POST_SALE_TRANSACTION_SUCCESS',
-            error:'POST_SALE_TRANSACTION_ERROR'
-        },
-        identifier:'SALE_TRANSACTION_INIT',
-        successCb:this.handleSaleTransactionTransactionSuccess,
-        errorCb:this.handleSaleTransactionTransactionError
+        let totalAmountPaid =
+            (parseFloat(this.state.cardAmountValue) || 0) +
+            (parseFloat(this.state.defaultcardAmountValue) || 0)
+            + (parseFloat(this.state.cashPayValue || 0)) +
+            (parseFloat(this.state.giftPayNumberValue) || 0)
+        let reqObj = {
+            customerId: customer.id,
+            storeId: localStorage.getItem('storeId'),
+            terminalId: localStorage.getItem('terminalId'),
+            operatorId: localStorage.getItem('userId'),
+            retailerId: localStorage.getItem('retailerId'),
+            sessionId,
+            saleItems,
+            payments,
+            miscSaleItems: [],
+            totalAmount,
+            totalAmountPaid: { currencyCode: '$', amount: totalAmountPaid },
+            cartDiscountAmount,
+            employeeDiscountAmount,
+            itemDiscountAmount,
+            totalTaxAmount,
+            offline: false,
+            saleTimeStamp: { seconds: parseInt((new Date().getTime() / 1000)) },
+            changeDue: { currencyCode: '$', amount: parseFloat(Math.abs(this.calcRemainingAmount()).toFixed(2)) }
 
-    })
-    
+        };
+        genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj,
+            url: 'Sale/CreateSaleTransaction',
+            constants: {
+                init: 'POST_SALE_TRANSACTION_INIT',
+                success: 'POST_SALE_TRANSACTION_SUCCESS',
+                error: 'POST_SALE_TRANSACTION_ERROR'
+            },
+            identifier: 'SALE_TRANSACTION_INIT',
+            successCb: this.handleSaleTransactionTransactionSuccess,
+            errorCb: this.handleSaleTransactionTransactionError
+
+        })
+
     }
 
-    handleSaleTransactionTransactionSuccess = ()=>{
+    handleSaleTransactionTransactionSuccess = (data) => {
+        this.setState({ receiptData: data, showPaymentReceipt: true })
+    }
+    handleSaleTransactionTransactionError = () => {
         debugger;
     }
-    handleSaleTransactionTransactionError = ()=>{
-        debugger;
+    calcRemainingAmount = () => {
+        let paymentAmount =
+            (parseFloat(this.state.cardAmountValue) || 0) +
+            (parseFloat(this.state.defaultcardAmountValue) || 0)
+            + (parseFloat(this.state.cashPayValue || 0)) +
+            (parseFloat(this.state.giftPayNumberValue) || 0);
+        let netTotal = _get(this.props, 'cart.netTotal', 0);
+        let remainingAmount = parseFloat(netTotal) - parseFloat(paymentAmount);
+        return (remainingAmount || 0).toFixed(2);
     }
-    calcRemainingAmount = ()=>{
-        let paymentAmount = 
-        (parseFloat(this.state.cardAmountValue)||0)+
-        (parseFloat(this.state. defaultcardAmountValue)||0)
-        + (parseFloat(this.state.cashPayValue||0))+
-        (parseFloat(this.state.giftPayNumberValue)||0);
-        let netTotal = _get(this.props,'cart.netTotal',0);
-        let remainingAmount = parseFloat(netTotal)-parseFloat(paymentAmount);
-        return (remainingAmount||0).toFixed(2);
+    handleClose = () => {
+        this.setState({
+            showPaymentReceipt: false,
+            showCashPay: false,
+            showCardPay: false,
+            showDefaultCardPay: false,
+            showGiftPay: false,
+            cardAmountValue: '',
+            defaultcardAmountValue: '',
+            cashPayValue: '',
+            giftPayNumberValue: '',
+            receiptData: {},
+            showPaymentReceipt: false
+        });
+        this.props.history.push('/?tab==1');
     }
+
     render() {
         return (
             <div className='pos-payment m-50'>
@@ -190,9 +212,9 @@ class PaymentSection extends React.Component {
                         <div onClick={this.handleCardPayment} className='each-payment-method'>
                             Debit/Credit Card
                         </div>
-                        {_get(this.props,'customer.employee')?<div onClick={this.handleDefaultCardPayment} className='each-payment-method'>
+                        {_get(this.props, 'customer.employee') ? <div onClick={this.handleDefaultCardPayment} className='each-payment-method'>
                             Employee
-                        </div>:null}
+                        </div> : null}
                         {/* <div onClick={this.handleGiftCardPayment} className='each-payment-method'>
                             Gift Card
                         </div> */}
@@ -254,15 +276,15 @@ class PaymentSection extends React.Component {
 
                 </div>
                 <div className="Card">
-                 <span>{this.calcRemainingAmount()>0?'Remaining Amount ':'Change Due '}</span>
-                 <span>{Math.abs(this.calcRemainingAmount())}</span>
+                    <span>{this.calcRemainingAmount() > 0 ? 'Remaining Amount ' : 'Change Due '}</span>
+                    <span>{Math.abs(this.calcRemainingAmount())}</span>
                 </div>
                 <div className="flex-row justify-flex-end">
                     <div style={{ width: '48%' }}>
                         <Button
                             color='primary'
                             fullWidth
-                            disabled = {this.calcRemainingAmount()>0}
+                            disabled={this.calcRemainingAmount() > 0}
                             variant='contained'
                             onClick={this.handleSaleTransaction}
                         >
@@ -270,21 +292,26 @@ class PaymentSection extends React.Component {
                     </Button>
                     </div>
                 </div>
+                {this.state.showPaymentReceipt ? <PaymentReceipt
+                    open={this.state.showPaymentReceipt}
+                    receiptData={this.state.receiptData}
+                    handleClose={this.handleClose}
+                /> : null}
             </div>
 
         );
     }
 }
 
-function mapStateToProps(state){
-   let  cartItems = _get(state,'cart.cartItems');
-   let  customer = _get(state,'cart.customer');
-   let  totalAmount = _get(state,'cart.totalAmount');
-   let sessionId = _get(state,'terminalData.lookUpData.sessionId')
-   
-   let  cart = _get(state,'cart');
+function mapStateToProps(state) {
+    let cartItems = _get(state, 'cart.cartItems');
+    let customer = _get(state, 'cart.customer');
+    let totalAmount = _get(state, 'cart.totalAmount');
+    let sessionId = _get(state, 'terminalData.lookUpData.sessionId')
 
-   return {cartItems,customer,totalAmount,cart,sessionId}
+    let cart = _get(state, 'cart');
+
+    return { cartItems, customer, totalAmount, cart, sessionId }
 }
 
-export default connect(mapStateToProps)(PaymentSection);
+export default withRouter(connect(mapStateToProps)(PaymentSection));
