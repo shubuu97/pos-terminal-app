@@ -48,11 +48,7 @@ class HomeContainer extends React.Component {
         }
         this.calcHeight();
         this.getProductData();
-<<<<<<< HEAD
-        this.getCategoryData();
-=======
-
->>>>>>> 48f529dd67d682fb19322ba23765856ceeea14c6
+        // this.getCategoryData();
     }
 
     calcHeight() {
@@ -107,17 +103,6 @@ class HomeContainer extends React.Component {
         this.setState({ openOnHold: false });
     };
 
-    getCategoryData = () => {
-        let categoryDb = new PouchDb('categoryDb');
-        categoryDb.allDocs({
-            include_docs: true
-        }).then((results) => {
-            this.props.dispatch(commonActionCreater(results, 'GET_CATEGORY_DATA_SUCCESS'))
-        }).catch((err) => {
-            console.log(err);
-        })
-    }
-
     getProductData = () => {
         let productsdb = new PouchDb('productsdb');
         productsdb.allDocs({
@@ -127,10 +112,10 @@ class HomeContainer extends React.Component {
             skip: 0
         }).then((result) => {
             this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
-
         }).catch((err) => {
 
         });
+    }
         // genericPostData({
         //     dispatch: this.props.dispatch,
         //     reqObj: {id : storeId},
@@ -144,10 +129,6 @@ class HomeContainer extends React.Component {
         //     // errorCb:()=> this.deleteSuccess(),
         //     successText: 'Product Fetched Successfully',
         // })
-
-    componentWillReceiveProps(props) {
-
-    }
 
 
     render() {
@@ -167,7 +148,7 @@ class HomeContainer extends React.Component {
                                 headerHeight={headerHeight}
                                 categoriesHeight={categoriesHeight}
                                 productList={productList}
-                                categoryList={categoryList}
+                                // categoryList={categoryList}
                                 cart={cart}
                                 dispatch={dispatch}
                                 history={this.props.history}
@@ -216,22 +197,15 @@ class HomeContainer extends React.Component {
 }
 
 function mapStateToProps(state) {
-<<<<<<< HEAD
-   let { productList, cart, categoryList } = state;
-   productList =  _get(productList,'lookUpData.rows',[]);
-   categoryList = _get(categoryList, 'lookUpData.rows', []);
-   let totalCount = _get(productList,'lookUpData.total_rows',0);
-=======
     let { productList, cart, categoryList, cartHoldData } = state;
-    categoryList = _get(categoryList, 'lookUpData.rows', [])
+    // categoryList = _get(categoryList, 'lookUpData.rows', [])
     productList = _get(productList, 'lookUpData.rows', []);
     let totalCount = _get(productList, 'lookUpData.total_rows', 0);
     let holdCartData = _get(cartHoldData, 'holdedItems', []);
->>>>>>> 48f529dd67d682fb19322ba23765856ceeea14c6
 
     return {
         productList,
-        categoryList,
+        // categoryList,
         totalCount,
         cart,
         holdCartData,

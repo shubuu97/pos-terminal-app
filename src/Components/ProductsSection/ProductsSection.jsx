@@ -96,7 +96,7 @@ class ProductsSection extends React.Component {
                 // * Product Categories Component
                 */}
                 <Categories 
-                    categoryList={categoryList}
+                    // categoryList={categoryList}
                     categoriesHeight={categoriesHeight}
                     {...this.props}
                      />
