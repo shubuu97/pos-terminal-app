@@ -11,6 +11,7 @@ import Sessions from '../Components/SessionComponents/Sessions';
 /* global imports */
 import genericPostData from '../Global/dataFetch/genericPostData';
 import AddNewSessionDialog from '../Components/SessionComponents/AddNewSessionDialog';
+import SessionDetail from '../Components/SessionComponents/SessionDetail';
 
 class SessionContainer extends React.Component {
 
@@ -81,7 +82,7 @@ class SessionContainer extends React.Component {
                     </div>
                 </div>
                 <div className="mui-col-sm-8">
-                    Right section will come here
+                    <SessionDetail />
                 </div>
             </div>
         );

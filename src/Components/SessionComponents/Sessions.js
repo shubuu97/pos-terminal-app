@@ -28,8 +28,8 @@ class Sessions extends React.Component {
                     <Session
                         index={index}
                         session={session}
-                    />)
-                } 
+                    />
+                )} 
             </div>
         );
     }

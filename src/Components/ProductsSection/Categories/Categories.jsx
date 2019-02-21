@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Category from './Category';
+import BreadCrumb from './BreadCrumb';
 // Lodash Import
 import _get from 'lodash/get';
 import _isEmpty from 'lodash/isEmpty';
@@ -101,16 +102,19 @@ class Categories extends Component {
 
     render() {
         return (
-            <div className='product-catogories' style={{height:this.props.categoriesHeight}}>
-            <span onClick={this.getProductData}>All</span>
+            <div>
+                <BreadCrumb />
+                <div className='product-catogories' style={{height:this.props.categoriesHeight}}>
+            {/* <span onClick={this.getProductData}>All</span>
             <span onClick={() => this.getCategory(0)}>Root Category</span>
-            <span onClick={() => this.getCategory(1)}>Sub category</span>
+            <span onClick={() => this.getCategory(1)}>Sub category</span> */}
             {_get(this.state,'categoryToDisplay', []).map(category => {
                 return <Category 
                         category={category} 
                         clickHandler={this.handleCategoryClick} /> 
             })}
             </div>
+            </div> 
         )
     }
 }
