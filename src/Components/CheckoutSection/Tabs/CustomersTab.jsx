@@ -73,16 +73,16 @@ class CustomerTab extends React.Component {
         // });
     };
     onChange = (doc) => {
-      let value = _get(doc,'value');
-     //populating cart reducer with customer
-     this.props.dispatch(commonActionCreater(doc.value, 'ADD_CUSTOMER_TO_CART'));
+        let value = _get(doc, 'value');
+        //populating cart reducer with customer
+        this.props.dispatch(commonActionCreater(doc.value, 'ADD_CUSTOMER_TO_CART'));
 
-      //mapped data to state 
-      let billingAddress = value.billingAddress;
-       let customer = value.customer;
-       let email = value.email;
-       let phoneNumber = value.phoneNumber;
-       this.setState({billingAddress,customer,email,phoneNumber});
+        //mapped data to state 
+        let billingAddress = value.billingAddress;
+        let customer = value.customer;
+        let email = value.email;
+        let phoneNumber = value.phoneNumber;
+        this.setState({ billingAddress, customer, email, phoneNumber });
 
     }
 
@@ -90,39 +90,41 @@ class CustomerTab extends React.Component {
         let { checkoutactionArea, checkoutMainPart, checkoutCustomerArea, checkoutcalcArea, checkoutcartArea } = this.props
         return (
             <div className="customer-section" style={{ height: checkoutMainPart }}>
-                <div className="customer-main" style={{ height: checkoutcartArea }}>
-                    <div className='search-section flex-row'>
-                        <ReactSelect
-                            onInputChange={this.onInputChange}
-                            cacheOptions
-                            defaultOptions
-                            onChange={this.onChange}
-                            loadOptions={this.loadOptions}
-                            className='fwidth'
-                        />
-                        <div className='add-customer flex-row align-center justify-center'>
-                            <PersonAdd style={{ fontSize: '1.3em', color: 'rgba(0,0,0,0.5)' }} />
-                        </div>
-                    </div>
-                    <div className='flex-column'>
-                        <div className='customer-info'>
-                            <div className='each-info'>
-                                <div className='info-title'>Name</div>
-                                <div className='info-data'>{_get(this.state,'customer.firstName')} {_get(this.state,'customer.lastName')}</div>
-                            </div>
-                            <div className='each-info'>
-                                <div className='info-title'>Phone</div>
-                                <div className='info-data'>{_get(this.state,'phoneNumber.countryCode')}{_get(this.state,'phoneNumber.phoneNumber')}</div>
-                            </div>
-                            <div className='each-info'>
-                                <div className='info-title'>Email</div>
-                                <div className='info-data'>{this.state.email}</div>
+                <div style={{ height: checkoutcartArea }}>
+                    <div className="customer-main" >
+                        <div className='search-section flex-row'>
+                            <ReactSelect
+                                onInputChange={this.onInputChange}
+                                cacheOptions
+                                defaultOptions
+                                onChange={this.onChange}
+                                loadOptions={this.loadOptions}
+                                className='fwidth'
+                            />
+                            <div className='add-customer flex-row align-center justify-center'>
+                                <PersonAdd style={{ fontSize: '1.3em', color: 'rgba(0,0,0,0.5)' }} />
                             </div>
                         </div>
-                        <div className='customer-billing-info'>
-                            <div className='each-info'>
-                                <div className='info-title'>Billing Address</div>
-                                <div className='info-data'>{_get(this.state,'billingAddress.addressLine1')}, {_get(this.state,'billingAddress.addressLine2')}, {_get(this.state,'billingAddress.city')}, {_get(this.state,'billingAddress.state')}, {_get(this.state,'billingAddress.country')} - {_get(this.state,'billingAddress.postalCode')}</div>
+                        <div className='flex-column'>
+                            <div className='customer-info'>
+                                <div className='each-info'>
+                                    <div className='info-title'>Name</div>
+                                    <div className='info-data'>{_get(this.state, 'customer.firstName')} {_get(this.state, 'customer.lastName')}</div>
+                                </div>
+                                <div className='each-info'>
+                                    <div className='info-title'>Phone</div>
+                                    <div className='info-data'>{_get(this.state, 'phoneNumber.countryCode')}{_get(this.state, 'phoneNumber.phoneNumber')}</div>
+                                </div>
+                                <div className='each-info'>
+                                    <div className='info-title'>Email</div>
+                                    <div className='info-data'>{this.state.email}</div>
+                                </div>
+                            </div>
+                            <div className='customer-billing-info'>
+                                <div className='each-info'>
+                                    <div className='info-title'>Billing Address</div>
+                                    <div className='info-data'>{_get(this.state, 'billingAddress.addressLine1')}, {_get(this.state, 'billingAddress.addressLine2')}, {_get(this.state, 'billingAddress.city')}, {_get(this.state, 'billingAddress.state')}, {_get(this.state, 'billingAddress.country')} - {_get(this.state, 'billingAddress.postalCode')}</div>
+                                </div>
                             </div>
                         </div>
                     </div>
