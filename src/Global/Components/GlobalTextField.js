@@ -25,15 +25,15 @@ const styles = theme => ({
     },
 });
 
-class TextFieldRF extends Field
+class TextFieldRF extends React.Component
 {
 
-    componentWillUnmount() {
-        console.log(this.props,"888")
-        super.componentWillUnmount();
-        this.context._reduxForm.dispatch(
-        clearFields(this.context._reduxForm.form, false, false, this.props.input.name));
-    }
+    // componentWillUnmount() {
+    //     console.log(this.props,"888")
+    //     super.componentWillUnmount();
+    //     this.context._reduxForm.dispatch(
+    //     clearFields(this.context._reduxForm.form, false, false, this.props.input.name));
+    // }
 
 render() {
     const {multiline, classes,field,disabled, InputLabelProps, defaultValue, input, id, variant, fullWidth, autoFocus, label, type, placeholder,required, custom, meta, startAdornment, endAdornment } = this.props;

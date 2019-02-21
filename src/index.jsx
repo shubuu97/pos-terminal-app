@@ -30,8 +30,6 @@ import LoginContainer from './Containers/LoginContainer';
 import StoreContainer from './Containers/StoreContainer';
 import SessionContainer from './Containers/SessionContainer';
 
-
-
 import * as serviceWorker from './serviceWorker';
 
 const generateClassName = createGenerateClassName({
@@ -82,8 +80,6 @@ ReactDOM.render(
         <RouteWithLayout Layout={EmptyLayout} exact path="/login" Component={LoginContainer} />
         <RouteWithLayout Layout={EmptyLayout} exact path="/store" Component={StoreContainer} />
         <RouteWithLayout Layout={EmptyLayout} exact path="/session" Component={SessionContainer} />
-
-
       </Switch>
     </Router>
     {/* </PersistGate> */}

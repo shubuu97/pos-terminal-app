@@ -14,6 +14,7 @@ import genericPostData from '../../../Global/dataFetch/genericPostData';
 import CalculationSection from './CalculationSection';
 import PouchDb from 'pouchdb';
 import { commonActionCreater } from '../../../Redux/commonAction';
+import Customer from '../Customer';
 
 PouchDb.plugin(require('pouchdb-quick-search'));
 let productsdb = new PouchDb('customersdb');
@@ -30,7 +31,7 @@ class CustomerTab extends React.Component {
     constructor() {
         super();
         this.state = {
-
+            open: false,
         }
     }
     onInputChange = (newValue) => {
@@ -86,6 +87,14 @@ class CustomerTab extends React.Component {
 
     }
 
+    handleOpen = () => {
+        this.setState({open: true})
+    }
+
+    handleClose = () => {
+        this.setState({open: false})
+    }
+
     render() {
         let { checkoutactionArea, checkoutMainPart, checkoutCustomerArea, checkoutcalcArea, checkoutcartArea } = this.props
         return (
@@ -101,8 +110,13 @@ class CustomerTab extends React.Component {
                             className='fwidth'
                         />
                         <div className='add-customer flex-row align-center justify-center'>
-                            <PersonAdd style={{ fontSize: '1.3em', color: 'rgba(0,0,0,0.5)' }} />
+                            <PersonAdd onClick={this.handleOpen} style={{ fontSize: '1.3em', color: 'rgba(0,0,0,0.5)', cursor: 'pointer' }} />
                         </div>
+                        <Customer 
+                            open={this.state.open}
+                            closeModal={this.handleClose}
+                            fullScreen={false}
+                        />
                     </div>
                     <div className='flex-column'>
                         <div className='customer-info'>
