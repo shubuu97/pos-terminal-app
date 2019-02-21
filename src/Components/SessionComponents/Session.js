@@ -20,8 +20,8 @@ class Session extends React.Component {
     render() {
         let { session, index } = this.props
         return (
-            <div>
-                session will come here
+            <div className="session">
+            seesion list here
             </div>
         );
     }

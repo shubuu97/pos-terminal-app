@@ -16,7 +16,9 @@ import PouchDb from 'pouchdb';
 import ProductsSection from '../Components/ProductsSection/ProductsSection'
 import CheckoutSection from '../Components/CheckoutSection/CheckoutSection'
 import PaymentSection from '../Components/PaymentSection/PaymentSection'
-import HoldDialogue from '../Components/HoldDialogue'
+import OrderHistoryDialog from '../Components/OrderHistoryDialog';
+import SessionDialogue from '../Components/SessionDialogue'
+import HoldDialogue from '../Components/HoldDialogue';
 
 
 
@@ -41,6 +43,7 @@ class HomeContainer extends React.Component {
             isOpenProduct: true,
             isOpenPayment: false,
             openOnHold: false,
+            openOrderHistory: false,
         }
     }
 
@@ -105,6 +108,16 @@ class HomeContainer extends React.Component {
     handleClose = () => {
         this.setState({ openOnHold: false });
     };
+    handleClickOpenSessionContainer = () => {
+        debugger;
+        this.setState({ openSessionContainer: true });
+    };
+
+    handleCloseSessionContainer = () => {
+        debugger;
+        this.setState({ openSessionContainer: false });
+    };
+   
 
     getCategoryData = () => {
         let categoryDb = new PouchDb('categoryDb');
@@ -148,6 +161,48 @@ class HomeContainer extends React.Component {
     componentWillReceiveProps(props) {
 
     }
+    handleTerminalHistoryOpen = () => {
+        let url = 'Sale/GetByTerminalId';
+        let data = { id: _get(this.props, 'terminal.id', '') }
+        this.getOrderHistory(url, data)
+        this.setState({
+            openOrderHistory: true,
+        });
+    }
+    getOrderHistory = (url, data) => {
+        genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj: data,
+            url: url,
+            constants: {
+                init: 'GET_CUSTOMER_SALE_DATA_INIT',
+                success: 'GET_CUSTOMER_SALE_DATA_SUCCESS',
+                error: 'GET_CUSTOMER_SALE_DATA_ERROR'
+            },
+            identifier: 'GET_CUSTOMER_SALE_DATA',
+            successCb: this.handleGetCustomerSaleData,
+            errorCb: this.handleGetCustomerSaleDataError
+        })
+    }
+    handleHistoryOpen = () => {
+        let url = 'Sale/GetByCustomerId';
+        let data = { id: _get(this.props, 'customer.id', '') }
+        this.getOrderHistory(url, data)
+        this.setState({
+            openOrderHistory: true,
+        });
+    }
+    handleGetCustomerSaleData = (data) => {
+
+    }
+    handleGetCustomerSaleDataError = (error) => {
+
+    }
+    handleOrderHistoryClose = () => {
+        this.setState({
+            openOrderHistory: false,
+        });
+    }
 
 
     render() {
@@ -174,6 +229,8 @@ class HomeContainer extends React.Component {
                                 history={this.props.history}
                                 // ! Actions
                                 handleClickOpen={this.handleClickOpen}
+                                handleHistoryOpen={this.handleTerminalHistoryOpen}
+                                handleClickOpenSessionContainer={this.handleClickOpenSessionContainer}
                             /> : null
                     }
                 </Products>
@@ -192,6 +249,7 @@ class HomeContainer extends React.Component {
                     // ! Actions
                     toggleViewPayment={this.toggleViewPayment}
                     toggleViewProduct={this.toggleViewProduct}
+                    handleHistoryOpen={this.handleHistoryOpen}
 
                 />
 
@@ -211,6 +269,25 @@ class HomeContainer extends React.Component {
                             dispatch={dispatch}
                         /> : null
                 }
+                {
+                    this.state.openOrderHistory ?
+                        <OrderHistoryDialog
+                            handleClose={this.handleOrderHistoryClose}
+                            open={this.state.openOrderHistory}
+                            dispatch={dispatch}
+                        /> : null
+                }
+
+                {
+                    this.state.openSessionContainer ?
+                        <SessionDialogue
+                            handleClickOpen={this.handleClickOpenSessionContainer}
+                            handleClose={this.handleCloseSessionContainer}
+                            open={this.state.openSessionContainer}
+                            holdCartData={this.props.holdCartData}
+                            dispatch={dispatch}
+                        /> : null
+                }
             </div>
         );
     }
@@ -222,6 +299,7 @@ function mapStateToProps(state) {
     productList = _get(productList, 'lookUpData.rows', []);
     let totalCount = _get(productList, 'lookUpData.total_rows', 0);
     let holdCartData = _get(cartHoldData, 'holdedItems', []);
+    let customer = _get(cart, 'customer', {});
 
     return {
         categoryList,
@@ -229,6 +307,7 @@ function mapStateToProps(state) {
         totalCount,
         cart,
         holdCartData,
+        customer,
     }
 }
 export default connect(mapStateToProps)(HomeContainer)

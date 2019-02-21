@@ -10,13 +10,14 @@ import { connect } from 'react-redux';
 import Sessions from '../Components/SessionComponents/Sessions';
 /* global imports */
 import genericPostData from '../Global/dataFetch/genericPostData';
-
+import AddNewSessionDialog from '../Components/SessionComponents/AddNewSessionDialog';
 
 class SessionContainer extends React.Component {
 
     constructor() {
         super();
         this.state = {
+            openNewSessionDialog: false
 
         }
     }
@@ -45,22 +46,42 @@ class SessionContainer extends React.Component {
 
     }
 
+    handleOpenNewSessionDialog = () => {
+        debugger;
+        this.setState({ openNewSessionDialog: true })
+    }
+    handleCloseNewSessionDialog = ()=>{
+        this.setState({ openNewSessionDialog: false })
+    }
+
     render() {
-        let {sessionList} = this.props;
+        let { sessionList } = this.props;
         return (
-            <div>
-                <div>
-                <Sessions
-                sessionList={sessionList}
-                />
-                </div>
-                <div>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                    >
-                       Add New Session
+            <div className="session-parent">
+                <div className="mui-col-sm-4 ">
+                    <div className="flex-column justify-flex-end">
+                        <Sessions
+                            sessionList={sessionList}
+                        />
+                    </div>
+                    <div className="session-button-style">
+                        <Button
+                            onClick={this.handleOpenNewSessionDialog}
+                            variant="contained"
+                            color="primary"
+                        >
+                            Add New Session
                       </Button>
+                        {this.state.openNewSessionDialog ?
+                            <AddNewSessionDialog
+                                open={this.state.openNewSessionDialog}
+                                handleClose = {this.handleCloseNewSessionDialog}
+
+                            /> : null}
+                    </div>
+                </div>
+                <div className="mui-col-sm-8">
+                    Right section will come here
                 </div>
             </div>
         );
@@ -68,8 +89,8 @@ class SessionContainer extends React.Component {
 }
 
 function mapStateToProps(state) {
-    let sessionList = _get(state,'sessionList.lookUpData',[])
-    return {sessionList}
+    let sessionList = _get(state, 'sessionList.lookUpData', [])
+    return { sessionList }
 }
 
 export default connect(mapStateToProps)(SessionContainer);

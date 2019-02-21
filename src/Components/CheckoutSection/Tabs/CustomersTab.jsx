@@ -5,6 +5,7 @@ import _get from 'lodash/get';
 import Button from '@material-ui/core/Button';
 /* Material Icons */
 import PersonAdd from '@material-ui/icons/PersonAddOutlined';
+import History from '@material-ui/icons/History';
 /* Redux Imports */
 import { connect } from 'react-redux';
 /* Global Imports */
@@ -103,6 +104,9 @@ class CustomerTab extends React.Component {
                             />
                             <div className='add-customer flex-row align-center justify-center'>
                                 <PersonAdd style={{ fontSize: '1.3em', color: 'rgba(0,0,0,0.5)' }} />
+                            </div>
+                            <div onClick={this.props.handleHistoryOpen} className='add-customer flex-row align-center justify-center'>
+                                <History style={{ fontSize: '1.3em', color: 'rgba(0,0,0,0.5)' }} />
                             </div>
                         </div>
                         <div className='flex-column'>
