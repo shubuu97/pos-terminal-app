@@ -59,15 +59,14 @@ class ProductsSection extends React.Component {
             skip: 0
           }).then((result)=> {
             this.props.dispatch(commonActionCreater(result,'GET_PRODUCT_DATA_SUCCESS'));
-           
           }).catch((err)=> {
-              
+              console.log(err)
           });
-    }
+        }
     }
 
     render() {
-        let { windowHeight, productListHeight, headerHeight, categoriesHeight } = this.props
+        let { windowHeight, productListHeight, headerHeight, categoriesHeight, categoryList } = this.props
         return (
             <div className='pos-products-collection' style={{ height: windowHeight }}>
 
@@ -95,7 +94,7 @@ class ProductsSection extends React.Component {
                 // * Product Categories Component
                 */}
                 <Categories 
-                    categoryList={_get(this.props,'categoryList', [])}
+                    categoryList={categoryList}
                     categoriesHeight={categoriesHeight}
                     {...this.props}
                      />

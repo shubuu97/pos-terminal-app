@@ -44,6 +44,7 @@ class HomeContainer extends React.Component {
         }
         this.calcHeight();
         this.getProductData();
+        this.getCategoryData();
     }
 
     calcHeight() {
@@ -102,6 +103,18 @@ class HomeContainer extends React.Component {
       }).catch((err)=> {
           
       });
+    }
+
+    getCategoryData = () => {
+        let categoryDb =  new PouchDb('categoryDb');
+        categoryDb.allDocs({
+            include_docs: true 
+        }).then((results) => {
+            this.props.dispatch(commonActionCreater(results,'GET_CATEGORY_DATA_SUCCESS'))
+        }).catch((err) => {
+            this.props.dispatch(commonActionCreater(err,'GET_CATEGORY_DATA_ERROR'))
+        })
+    }
         // genericPostData({
         //     dispatch: this.props.dispatch,
         //     reqObj: {id : storeId},
@@ -115,7 +128,6 @@ class HomeContainer extends React.Component {
         //     // errorCb:()=> this.deleteSuccess(),
         //     successText: 'Product Fetched Successfully',
         // })
-    }
 
     componentWillReceiveProps(props){
         
@@ -171,12 +183,14 @@ class HomeContainer extends React.Component {
 }
 
 function mapStateToProps(state) {
-   let { productList, cart } = state;
+   let { productList, cart, categoryList } = state;
    productList =  _get(productList,'lookUpData.rows',[]);
+   categoryList = _get(categoryList, 'lookUpData.rows', []);
    let totalCount = _get(productList,'lookUpData.total_rows',0);
 
     return {
         productList,
+        categoryList,
         totalCount,
         cart
     }

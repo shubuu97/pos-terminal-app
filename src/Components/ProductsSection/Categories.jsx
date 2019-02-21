@@ -22,32 +22,43 @@ class Categories extends Component {
             categoryToDisplay: [],
             filteredSubCategory: [],
             filteredLeafCategory: [],
+            selectedCategory: '',
             level: 0
         }
     }
-    
-    componentWillReceiveProps(props)  {
-        console.log('receive prop')
-        if(!_isEmpty(props.categoryList)) {
-            let rootCategory = _filter(props.categoryList, category => {
+
+    componentDidMount() {
+        if(!_isEmpty(this.props.categoryList)) {
+            let rootCategory = _filter(this.props.categoryList, category => {
                 if(!_get(category,'doc.categoryType', '')) {
                     return true
                 }        
             })
-            let subCategory = _filter(props.categoryList, category => {
+            let subCategory = _filter(this.props.categoryList, category => {
                 return category.doc.categoryType == 1
             })
-            let leafCategory = _filter(props.categoryList, category => {
+            let leafCategory = _filter(this.props.categoryList, category => {
                 return category.doc.categoryType == 2
             })
-            this.setState({
-               allCategory: props.categoryList, 
-               categoryToDisplay: rootCategory,
-               rootCategory, 
-               subCategory, 
-               leafCategory
+            this.setState({ rootCategory, subCategory, leafCategory, 
+            categoryToDisplay: rootCategory, allCategory: this.props.categoryList })
+        }      
+    }
+    
+    componentWillReceiveProps(props)  {
+        let productsdb = new PouchDb('productsdb') 
+        productsdb.search({
+            query: '',
+            fields: ['product.category1','product.category2','product.category3'],
+            include_docs: true,
+            limit: 20,
+            skip: 0
+            }).then((res)=> {
+            this.props.dispatch(commonActionCreater(res,'GET_PRODUCT_DATA_SUCCESS'));
             })
-        }
+            .catch((err)=>{
+            console.log(err);
+        })
     }
 
     handleCategoryClick = ( id, level) => {
@@ -77,26 +88,14 @@ class Categories extends Component {
           })
     }
 
-    componentDidMount() {
-        let categoryDb =  new PouchDb('categoryDb');
-        categoryDb.allDocs({
-            include_docs: true,
-            
-        }).then((results) => {
-            this.props.dispatch(commonActionCreater(results,'GET_CATEGORY_DATA_SUCCESS'))
-        }).catch((err) => {
-            this.props.dispatch(commonActionCreater(err,'GET_CATEGORY_DATA_ERROR'))
-        })
-    } 
-
     render() {
-        debugger
+        console.log(this.props.categoryList, 'this.props.categoryList')
         return (
             <div className='product-catogories' style={{height:this.props.categoriesHeight}}>
                 {_get(this.state,'categoryToDisplay', []).map(category => {
                     return <Category 
-                        category={category} 
-                        clickHandler={this.handleCategoryClick} 
+                            category={category} 
+                            clickHandler={this.handleCategoryClick} 
                         /> 
                 })}
             </div>
@@ -104,10 +103,4 @@ class Categories extends Component {
     }
 }
 
-const mapStateToProps = state => {
-    let categoryList = _get(categoryList, 'lookUpData.rows',[]);
-    return {categoryList};
-
-}
-
-export default connect(mapStateToProps)((Categories));
+export default Categories;
