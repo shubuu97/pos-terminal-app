@@ -7,7 +7,6 @@ import Breadcrumbs from '@material-ui/lab/Breadcrumbs';
 import Chip from '@material-ui/core/Chip';
 import Avatar from '@material-ui/core/Avatar';
 import HomeIcon from '@material-ui/icons/Home';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 const styles = theme => ({
   root: {
@@ -32,6 +31,7 @@ const styles = theme => ({
   },
 });
 
+
 function handleClick(event) {
   event.preventDefault();
   alert('You clicked a breadcrumb.'); // eslint-disable-line no-alert
@@ -49,29 +49,30 @@ CustomBreadcrumb.propTypes = {
 const StyledBreadcrumb = withStyles(styles)(CustomBreadcrumb);
 
 function CustomizedBreadcrumbs(props) {
-  const { classes } = props;
 
+  const { classes, selectedRootCategory, selectedSubCategory, selectedLeafCategory, selectedCurrentCategory} = props;
   return (
     <Paper className={classes.root}>
       <Breadcrumbs arial-label="Breadcrumb">
+
         <StyledBreadcrumb
-          component="a"
-          href="#"
-          label="Home"
-          avatar={
+            label="Home"
+            avatar={
             <Avatar className={classes.avatar}>
               <HomeIcon />
-            </Avatar>
-          }
-          onClick={handleClick}
+            </Avatar>}
+            onClick={() => props.homeClickHandler()}
         />
-        <StyledBreadcrumb component="a" href="#" label="Catalog" onClick={handleClick} />
-        <StyledBreadcrumb
-          label="Accessories"
-          deleteIcon={<ExpandMoreIcon />}
-          onClick={handleClick}
-          onDelete={handleClick}
-        />
+
+        {selectedCurrentCategory.categoryType >= 0 && <StyledBreadcrumb label={selectedRootCategory.name} onClick={() => props.categoryClickHandler(selectedRootCategory)} />}
+        {selectedCurrentCategory.categoryType >= 1 && <StyledBreadcrumb label={selectedSubCategory.name} onClick={() => props.categoryClickHandler(selectedSubCategory)} />}
+        {selectedCurrentCategory.categoryType >= 2 && <StyledBreadcrumb label={selectedLeafCategory.name} />}
+
+        {/*<StyledBreadcrumb*/}
+          {/*label="Accessories"*/}
+          {/*onClick={handleClick}*/}
+          {/*// onDelete={handleClick}*/}
+        {/*/>*/}
       </Breadcrumbs>
     </Paper>
   );
