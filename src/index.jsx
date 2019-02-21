@@ -31,8 +31,6 @@ import StoreContainer from './Containers/StoreContainer';
 import SessionContainer from './Containers/SessionContainer';
 import DenominationDetailsForm from './Components/SessionComponents/DenominationDetailsForm'
 
-
-
 import * as serviceWorker from './serviceWorker';
 
 const generateClassName = createGenerateClassName({

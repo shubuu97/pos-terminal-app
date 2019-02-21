@@ -43,6 +43,9 @@ class SyncContainer extends Component {
     }
 
     handleCategoryFetchSuccess = (categoryData) => {
+        _get(categoryData, 'data', []).forEach((item,index)=>{
+            item._id = item.id
+        });
         let categoryDb = new PouchDb('categoryDb');
         categoryDb.bulkDocs(_get(categoryData,'data', [])).then((res) => {
             let percentageComplete = this.state.percentageComplete + 100 / this.state.ApiCallCount;

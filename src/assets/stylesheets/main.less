@@ -905,6 +905,44 @@ p {
         font-size: 1.3em;
     }
 
+    
+}
+.session {
+    background: @background-white;
+    border-radius: 2px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    margin: 5px;
+    min-height: 50px;
+    padding: 15px 5px;
+    width: 100%;
+    cursor: pointer;
+
+    .first-row {
+        display: flex;
+        justify-content: space-around;
+    }
+    
+    .second-row {
+        display: flex;
+        justify-content: flex-start;
+        margin: 5px 0px 0px 45px;
+    }
+
+
+    .open-tag {
+        padding: 2px 10px;
+        color: white;
+        background-color: green;
+        border-radius: 2px;
+    }
+}
+
+.session:hover {
+    background-color: green;
+    color: white;
+    .open-tag {
+        background-color: yellow;
+    }
 }
 
 //style for history section
