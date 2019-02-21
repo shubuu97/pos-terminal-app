@@ -21,8 +21,8 @@ import cartHoldData from '../reducers/holdCartItem';
 // import cartOrderDetailsFun from './commonStaticReducer';
 
 
-let loginReducer = loginReducerFun('POST_LOGIN_DATA');
-let  storeReducer = storeReducerFun('GET_STORE_DATA');
+let loginData = loginReducerFun('POST_LOGIN_DATA');
+let  storeData = storeReducerFun('GET_STORE_DATA');
 let productList = productDataFun('GET_PRODUCT_DATA');
 let terminalData = terminalDataFun('GET_TERMINAL_DATA');
 let categoryList = categoryListFun('GET_CATEGORY_DATA');
@@ -33,8 +33,8 @@ let sessionList= sessionListFun('GET_SESSION_DATA');
 
 
 let rootRducer = combineReducers({
-    loginReducer,
-    storeReducer,
+    loginData,
+    storeData,
     categoryList,
     productList,
     staticReducers,

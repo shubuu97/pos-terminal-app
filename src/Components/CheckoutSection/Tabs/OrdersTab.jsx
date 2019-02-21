@@ -39,10 +39,7 @@ class OrdersTab extends React.Component {
         }
     }
 
-    componentDidMount() {
-        this.props.dispatch(commonActionCreater(10, 'ADD_DISCOUNT_TO_CART'));
-
-    }
+    
 
     componentWillReceiveProps(props) {
         let cartItemHeight = document.getElementById('cartItemHeading').offsetHeight;
