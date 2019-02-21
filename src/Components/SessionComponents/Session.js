@@ -21,13 +21,7 @@ class Session extends React.Component {
         let { session, index } = this.props
         return (
             <div className="session">
-
-               <div className="mui-col-sm-4">
-               left section
-               </div>
-               <div className="mui-col-sm-8">
-               right section
-               </div>
+            seesion list here
             </div>
         );
     }

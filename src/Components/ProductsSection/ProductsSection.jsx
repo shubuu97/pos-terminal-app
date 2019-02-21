@@ -78,6 +78,7 @@ class ProductsSection extends React.Component {
                         <SideDrawer
                              // ! Actions
                             handleClickOpen={this.props.handleClickOpen}
+                            handleHistoryOpen={this.props.handleHistoryOpen}
                             handleClickOpenSessionContainer={this.props.handleClickOpenSessionContainer}
                         />
                         <SearchBar

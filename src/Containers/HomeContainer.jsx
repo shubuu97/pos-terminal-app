@@ -146,10 +146,42 @@ class HomeContainer extends React.Component {
     componentWillReceiveProps(props) {
 
     }
-    handleHistoryOpen = () => {
+    handleTerminalHistoryOpen = () => {
+        let url = 'Sale/GetByTerminalId';
+        let data = { id: _get(this.props, 'terminal.id', '') }
+        this.getOrderHistory(url, data)
         this.setState({
             openOrderHistory: true,
         });
+    }
+    getOrderHistory = (url, data) => {
+        genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj: data,
+            url: url,
+            constants: {
+                init: 'GET_CUSTOMER_SALE_DATA_INIT',
+                success: 'GET_CUSTOMER_SALE_DATA_SUCCESS',
+                error: 'GET_CUSTOMER_SALE_DATA_ERROR'
+            },
+            identifier: 'GET_CUSTOMER_SALE_DATA',
+            successCb: this.handleGetCustomerSaleData,
+            errorCb: this.handleGetCustomerSaleDataError
+        })
+    }
+    handleHistoryOpen = () => {
+        let url = 'Sale/GetByCustomerId';
+        let data = { id: _get(this.props, 'customer.id', '') }
+        this.getOrderHistory(url, data)
+        this.setState({
+            openOrderHistory: true,
+        });
+    }
+    handleGetCustomerSaleData = (data) => {
+
+    }
+    handleGetCustomerSaleDataError = (error) => {
+
     }
     handleOrderHistoryClose = () => {
         this.setState({
@@ -180,6 +212,7 @@ class HomeContainer extends React.Component {
                                 dispatch={dispatch}
                                 history={this.props.history}
                                 // ! Actions
+                                handleHistoryOpen={this.handleTerminalHistoryOpen}
                                 handleClickOpen={this.handleClickOpen}
                                 handleClickOpenSessionContainer={this.handleClickOpenSessionContainer}
                             /> : null
@@ -250,6 +283,7 @@ function mapStateToProps(state) {
     productList = _get(productList, 'lookUpData.rows', []);
     let totalCount = _get(productList, 'lookUpData.total_rows', 0);
     let holdCartData = _get(cartHoldData, 'holdedItems', []);
+    let customer = _get(cart, 'customer', {});
 
     return {
         productList,
@@ -257,6 +291,7 @@ function mapStateToProps(state) {
         totalCount,
         cart,
         holdCartData,
+        customer,
     }
 }
 export default connect(mapStateToProps)(HomeContainer)

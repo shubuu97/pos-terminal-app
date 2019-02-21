@@ -39,8 +39,6 @@ class OrdersTab extends React.Component {
         }
     }
 
-    
-
     componentWillReceiveProps(props) {
         let cartItemHeight = document.getElementById('cartItemHeading').offsetHeight;
         let cartListHeight = this.props.checkoutcartArea - cartItemHeight - 30;
@@ -49,29 +47,8 @@ class OrdersTab extends React.Component {
         })
     }
 
-    handleDelete = (item) => {
-        let cartItems = [...this.props.cartItems];
-        let index = _findIndex(cartItems, ['id', item.id]);
-        cartItems.splice(index, 1);
-        this.props.dispatch(commonActionCreater(cartItems, 'CART_ITEM_LIST'));
-    }
 
-    handleIncreaseQuantity = (item) => {
-        let cartItems = [...this.props.cartItems];
-        let index = _findIndex(cartItems, ['id', item.id]);
-        cartItems[index].cartQuantity = cartItems[index].cartQuantity + 1;
-        this.props.dispatch(commonActionCreater(cartItems, 'CART_ITEM_LIST'));
-    }
-    handleDecreseQuantity = (item) => {
-        let cartItems = [...this.props.cartItems];
-        let index = _findIndex(cartItems, ['id', item.id]);
-        cartItems[index].cartQuantity = cartItems[index].cartQuantity - 1;
-        if (cartItems[index].cartQuantity == 0) {
-            cartItems.splice(index, 1);
-        }
-        this.props.dispatch(commonActionCreater(cartItems, 'CART_ITEM_LIST'));
-    }
-
+    // * Minor Functions for Opening closing Modals 
     handleChange = panel => (event, expanded) => {
         this.setState({
             expanded: expanded ? panel : false,
@@ -79,13 +56,13 @@ class OrdersTab extends React.Component {
     };
 
     handleClickOpenDiscount = () => {
-        this.setState({ 
+        this.setState({
             open: true,
             identifier: 'Discount'
         });
     };
     handleClickOpenItemDiscount = (index) => {
-        this.setState({ 
+        this.setState({
             open: true,
             identifier: 'ItemDiscount',
             itemIndex: index,
@@ -96,24 +73,51 @@ class OrdersTab extends React.Component {
         this.setState({ open: false });
     };
 
+
+    // * Functions to Update Cart Reducers 
+    handleDelete = (item) => {
+        let cartItems = [...this.props.cartItems];
+        let index = _findIndex(cartItems, ['id', item.id]);
+        cartItems.splice(index, 1);
+        this.props.dispatch(commonActionCreater(cartItems, 'CART_ITEM_LIST'));
+    };
+    handleIncreaseQuantity = (item) => {
+        let cartItems = [...this.props.cartItems];
+        let index = _findIndex(cartItems, ['id', item.id]);
+        cartItems[index].qty = cartItems[index].qty + 1;
+        this.props.dispatch(commonActionCreater(cartItems, 'CART_ITEM_LIST'));
+    };
+    handleDecreseQuantity = (item) => {
+        let cartItems = [...this.props.cartItems];
+        let index = _findIndex(cartItems, ['id', item.id]);
+        cartItems[index].qty = cartItems[index].qty - 1;
+        if (cartItems[index].qty == 0) {
+            cartItems.splice(index, 1);
+        }
+        this.props.dispatch(commonActionCreater(cartItems, 'CART_ITEM_LIST'));
+    };
     handleDiscount = (data, identifier, index) => {
         let cartItems = _get(this, 'props.cart.cartItems', []);
-
-        if(identifier == 'Discount'){
-            this.props.dispatch(commonActionCreater(data, 'ADD_DISCOUNT_TO_CART'));
-        }
-        else if(identifier == 'ItemDiscount'){
-            let reqObj = [
-                ...cartItems
-            ]
-            reqObj[index].itemDiscount = parseFloat(data);
-            // reqObj[index].subTotal = (cartItems[index].salePrice.price * cartItems[index].cartQuantity) - parseFloat(data);
+        let reqObj = [
+            ...cartItems
+        ]
+        if (identifier == 'Discount') {
+            let cartDiscountPercent = parseFloat(data);
+            this.props.dispatch(commonActionCreater(cartDiscountPercent, 'ADD_DISCOUNT_TO_CART'));
             this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
         }
-        
-    }
+        else if (identifier == 'ItemDiscount') {
+            reqObj[index].itemDiscountPercent = parseFloat(data);
+            this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
+        }
+    };
+    handleClearCart = () => {
+        globalClearCart(this.props.dispatch);
+    };
 
-    mapCartItems = () => {
+
+    // * Populate each Item added to cart
+    populateCartItems = () => {
         let totalCartItems = 0;
         let orderTotal = 0
         let cartItems = this.props.cartItems.map((item, index) => {
@@ -121,17 +125,21 @@ class OrdersTab extends React.Component {
             orderTotal += item.subTotal;
             this.state.orderTotal = this.state.orderTotal + item.subTotal;
             return (
-                <ExpansionPanel className='each-checkout-item' expanded={this.state.expanded === `Panel${_get(item, 'doc.product.sku')}`} onChange={this.handleChange(`Panel${_get(item, 'doc.product.sku')}`)}>
-                    <ExpansionPanelSummary className=''>
+                <ExpansionPanel
+                    className='each-checkout-item'
+                    expanded={this.state.expanded === `Panel${_get(item, 'doc.product.sku')}`}
+                    onChange={this.handleChange(`Panel${_get(item, 'doc.product.sku')}`)}>
+                    <ExpansionPanelSummary>
                         <div className='each-product-des fwidth flex-row justify-space-between'>
                             <div className=' des-first-part flex-row align-center'>
-                                <DeleteIcons onClick={() => this.handleDelete(item)} style={{ color: '#ff000096', fontSize: '1.5em' }} />
-                                <div className='title'>{_get(item,'doc.product.name')}</div>
+                                <DeleteIcons
+                                    onClick={() => this.handleDelete(item)}
+                                    style={{ color: '#ff000096', fontSize: '1.5em' }} />
+                                <div className='title'>{_get(item, 'doc.product.name')}</div>
                             </div>
-
                             <div className='flex-column'>
-                                <div className='each-product-price'>{_get(item, 'doc.product.salePrice.currencyCode')} {item.effectiveTotal.toFixed(2)}</div>
-                                <div className='each-product-reg-price'>Reg Price - ${_get(item, 'doc.product.salePrice.currencyCode')}{_get(item, 'doc.product.salePrice.price')}</div>
+                                <div className='each-product-price'>{_get(item, 'itemSubTotal.currencyCode')} {_get(item, 'itemSubTotal.amount')}</div>
+                                <div className='each-product-reg-price'>Reg Price - {_get(item, 'itemRegularTotal.currencyCode')} {_get(item, 'itemRegularTotal.amount')}</div>
                             </div>
                         </div>
                     </ExpansionPanelSummary>
@@ -141,7 +149,7 @@ class OrdersTab extends React.Component {
                                 <span className='option-title'>Quantity</span>
                                 <div className='flex-row justify-center align-center'>
                                     <RemoveCircleIcons onClick={() => this.handleDecreseQuantity(item)} style={{ fontSize: '1.7em' }} />
-                                    <span className='quantity'>{item.cartQuantity}</span>
+                                    <span className='quantity'>{item.qty}</span>
                                     <AddIcons onClick={() => this.handleIncreaseQuantity(item)} style={{ fontSize: '1.7em' }} />
                                 </div>
                             </div>
@@ -158,23 +166,13 @@ class OrdersTab extends React.Component {
 
             )
         });
-        let reqObj = {};
-        reqObj.orderTotal = orderTotal.toFixed(2);
-        reqObj.totalCartItems = totalCartItems;
-        // this.props.dispatch(commonActionCreater(reqObj, 'ORDER_DETAILS'));
-        this.state.orderTotal = orderTotal.toFixed(2);
-        this.state.totalCartItems = totalCartItems;
         return cartItems
     }
-    clearCart = () => {
-        globalClearCart(this.props.dispatch);
-    }
+
 
 
     render() {
-
         let { checkoutcalcArea, checkoutactionArea, checkoutcartArea, checkoutMainPart } = this.props;
-
         return (
             <div className="orders-section" style={{ height: checkoutMainPart }}>
                 <DiscountDialogue
@@ -191,7 +189,7 @@ class OrdersTab extends React.Component {
                         <Button variant="outlined" onClick={this.handleClickOpenDiscount}>Add Discount</Button>
                     </div>
                     <div className="items-section flex-column" style={{ height: this.state.cartListHeight }} >
-                        {this.mapCartItems()}
+                        {this.populateCartItems()}
                     </div>
                 </div>
 
@@ -201,7 +199,7 @@ class OrdersTab extends React.Component {
                 />
                 <div className='button-section flex-row ' style={{ height: checkoutactionArea }}>
                     <div>
-                        <Button className='mr-20' variant="outlined" onClick={this.clearCart}>Clear</Button>
+                        <Button className='mr-20' variant="outlined" onClick={this.handleClearCart}>Clear</Button>
                         <Button className='mr-20' variant="outlined" onClick={this.props.handleClickOpen}>Hold</Button>
                         <Button variant="contained">Proceed</Button>
                     </div>
