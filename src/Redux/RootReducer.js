@@ -4,7 +4,6 @@ import {reducer as formReducer}  from 'redux-form';
 /* Static Reducer */
 import staticReducers from './staticReducers'
 
-
 /* COMMON Reducers*/ 
 import loginReducerFun from './commonReducer';
 import storeReducerFun from './commonReducer';
@@ -23,7 +22,7 @@ import cartHoldData from '../reducers/holdCartItem';
 
 
 let loginData = loginReducerFun('POST_LOGIN_DATA');
-let  storeData = storeReducerFun('GET_STORE_DATA');
+let storeData = storeReducerFun('GET_STORE_DATA');
 let productList = productDataFun('GET_PRODUCT_DATA');
 let terminalData = terminalDataFun('GET_TERMINAL_DATA');
 let categoryList = categoryListFun('GET_CATEGORY_DATA');
@@ -35,6 +34,7 @@ let customerSalesList = customerSaleListFun('GET_CUSTOMER_SALE_DATA');
 
 
 let rootRducer = combineReducers({
+    form:formReducer,
     loginData,
     storeData,
     categoryList,

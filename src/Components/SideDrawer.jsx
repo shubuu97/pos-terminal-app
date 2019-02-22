@@ -78,6 +78,13 @@ function TemporaryDrawer(props) {
                     <ListItemText primary={'Session Management'} />
                 </ListItem>
                 <Divider />
+                <ListItem button key={1} onClick={props.handleHistoryOpen}>
+                    <ListItemIcon>
+
+                    </ListItemIcon>
+                    <ListItemText primary={'Terminal History'} />
+                </ListItem>
+                <Divider />
                 <ListItem button key={1}>
                     <ListItemIcon>
 

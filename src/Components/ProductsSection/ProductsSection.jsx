@@ -14,14 +14,13 @@ import SideDrawer from '../SideDrawer'
 import Products from './Products';
 import SearchBar from './SearchBar';
 import PouchDb from 'pouchdb';
+import Categories from './Categories/Categories';
 PouchDb.plugin(require('pouchdb-quick-search'));
 let productsdb = new PouchDb('productsdb');
 productsdb.search({
     fields: ['product.name', 'product.description', 'product.sku'],
     build:true
   })
-
-
 
 class ProductsSection extends React.Component {
 
@@ -60,13 +59,10 @@ class ProductsSection extends React.Component {
             skip: 0
           }).then((result)=> {
             this.props.dispatch(commonActionCreater(result,'GET_PRODUCT_DATA_SUCCESS'));
-           
           }).catch((err)=> {
-              
+              console.log(err)
           });
-
-    }
-
+        }
     }
 
     render() {
@@ -82,6 +78,7 @@ class ProductsSection extends React.Component {
                         <SideDrawer
                              // ! Actions
                             handleClickOpen={this.props.handleClickOpen}
+                            handleHistoryOpen={this.props.handleHistoryOpen}
                             handleClickOpenSessionContainer={this.props.handleClickOpenSessionContainer}
                         />
                         <SearchBar
@@ -101,29 +98,10 @@ class ProductsSection extends React.Component {
                 {/* 
                 // * Product Categories Component
                 */}
-                <div className='product-catogories' style={{ height: categoriesHeight }}>
-                    <div className='each-tile blue-background'>
-                        <span className='category-text'>
-                            Hello
-                            </span>
-                    </div>
-                    <div className='each-tile blue-background'>
-                        <span className='category-text'>
-                            Hello
-                            </span>
-                    </div>
-                    <div className='each-tile blue-background'>
-                        <span className='category-text'>
-                            Hello
-                            </span>
-                    </div>
-                    <div className='each-tile blue-background'>
-                        <span className='category-text'>
-                            Hello
-                            </span>
-                    </div>
-                </div>
-
+                <Categories 
+                    categoriesHeight={categoriesHeight}
+                    {...this.props}
+                     />
                 {/* 
                 // * Products List Component
                 */}

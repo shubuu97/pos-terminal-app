@@ -9,7 +9,6 @@ const holdCart = (dispatch, cart, title, customerName) => {
     reqObj.time = new Date();
     dispatch(commonActionCreater(reqObj, 'HOLD_CART_ITEM'));
     clearCart(dispatch);
-    // dispatch(commonActionCreater(0, 'ADD_DISCOUNT_TO_CART'));
 }
 
 export default holdCart;

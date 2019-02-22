@@ -33,7 +33,7 @@ class PaymentTab extends React.Component {
                 <div className='customer-summary fwidth flex-column'>
                     <span className='section-heading'>Customer Summary</span>
                     <div className='card '>
-                        {/* <React.Fragment>
+                        <React.Fragment>
                             {_get(cart, 'customer.email') ? <div>
                                 <span className='summary-title'>Name-</span>
                                 <span>{_get(cart, 'customer.customer.firstName')} {_get(cart, 'customer.customer.lastName')}</span>
@@ -50,7 +50,7 @@ class PaymentTab extends React.Component {
                                 <span className='summary-title'>Phone-</span>
                                 <span>{_get(cart, 'customer.phoneNumber.countryCode')}{_get(cart, 'customer.phoneNumber.phoneNumber')}</span>
                             </div> : null}
-                        </React.Fragment> */}
+                        </React.Fragment>
                     </div>
                 </div>
                 <div className='payment-summary fwidth flex-column'>
@@ -59,24 +59,24 @@ class PaymentTab extends React.Component {
                         <div className='summary-area flex-row flex-wrap fwidth'>
                             <div className='each-detail flex-column align-center'>
                                 <span className='summary-title'>Total Items</span>
-                                <span className='summary-money'>{_get(cart, 'totalQuantity')}</span>
+                                <span className='summary-money'>{_get(cart, 'cartQty')}</span>
                             </div>
                             <div className='each-detail flex-column align-center'>
                                 <span className='summary-title'>Cart Total</span>
-                                <span className='summary-money'>{_get(cart, 'cartTotal')}</span>
+                                <span className='summary-money'>${_get(cart, 'regularTotal')}</span>
                             </div>
                             <div className='each-detail flex-column align-center'>
                                 <span className='summary-title'>Total Discount</span>
-                                <span className='summary-money'>$345</span>
+                                <span className='summary-money'>{_get(cart, 'totalDiscount.currencyCode')}{_get(cart, 'totalDiscount.amount')}</span>
                             </div>
                             <div className='each-detail flex-column align-center'>
                                 <span className='summary-title'>Taxes</span>
-                                <span className='summary-money'>$345</span>
+                                <span className='summary-money'>{_get(cart, 'totalTaxAmount.currencyCode')}{_get(cart, 'totalTaxAmount.amount')}</span>
                             </div>
                         </div>
                         <div className='total-area flex-column '>
                             <span className='summary-title'>Total</span>
-                            <span className='payment-total'>$450.00</span>
+                            <span className='payment-total'>{_get(cart, 'totalAmount.currencyCode')}{_get(cart, 'totalAmount.amount')}</span>
                         </div>
                     </div>
                 </div>

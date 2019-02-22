@@ -12,7 +12,7 @@ import CloseIcon from '@material-ui/icons/Close'
 
 
 class DefaultCardPay extends React.Component {
-
+    
     constructor() {
         super();
         this.state = {
@@ -30,7 +30,7 @@ class DefaultCardPay extends React.Component {
     render() {
         return (
             <div className="default-card-pay">
-                <span>Default Card Pay</span>
+                <span>Employee Pay Deduct</span>
                 <div className="flex-row align-center justify-space-between">
                     <div style={{ width: '50%' }}>
                         <TextField
@@ -38,8 +38,8 @@ class DefaultCardPay extends React.Component {
                             autoFocus
                             id="outlined-name"
                             onFocus={() => this.props.currentFocus('defaultcardAmount')}
-                            label="Refrence Number"
-                            value={this.state.name}
+                            label="Amount"
+                            value={this.state.defaultcardAmount}
                             onChange={this.handleChange('defaultcardAmount')}
                             margin="normal"
                             fullWidth
@@ -47,7 +47,7 @@ class DefaultCardPay extends React.Component {
                         />
                     </div>
                     <span className="pay-button">
-                        pay
+                        {_get(this.props,'customer.employeeId')}
               </span>
                     <CloseIcon
                         onClick={() => this.props.onRemovePaymentMethod('showDefaultCardPay')} />

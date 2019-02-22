@@ -26,11 +26,11 @@ class Product extends React.Component {
         let data = _get(this, `props.data`, {});
 
         if (_find(cartItems, data)) {
-            let cartQuantity = (_find(cartItems, data)).cartQuantity;
-            this.setState({ cartQuantity })
+            let qty = (_find(cartItems, data)).qty;
+            this.setState({ qty })
         }
         else {
-            this.setState({ cartQuantity: 0 })
+            this.setState({ qty: 0 })
         }
     }
 
@@ -43,19 +43,19 @@ class Product extends React.Component {
                 ...cartItems,
                 {
                     ...data,
-                    cartQuantity: 1,
+                    qty: 1,
                 }
             ];
-            this.setState({ cartQuantity: 1 })
+            this.setState({ qty: 1 })
         }
         else {
-            let cartQuantity = (_find(cartItems, data)).cartQuantity + 1
+            let qty = (_find(cartItems, data)).qty + 1
             let index = _findIndex(cartItems, ['id', data.id]);
             reqObj = [
                 ...cartItems
             ]
-            reqObj[index].cartQuantity = cartQuantity;
-            this.setState({ cartQuantity })
+            reqObj[index].qty = qty;
+            this.setState({ qty })
         }
         this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
     }
@@ -101,10 +101,13 @@ class Product extends React.Component {
         let data = this.props.data;
         let index = this.props.index;
         return (
-            <React.Fragment>
-                <div className='each-tile white-background flex-row relative' onClick={() => this.addToCart(index)}>
-                    <div className='absolute added-item-position'>
-                        {this.state.cartQuantity ? <div className='added-item-count'>{this.state.cartQuantity}</div> : null}
+            <div className='each-tile white-background flex-row relative' onClick={() => this.addToCart(index)}>
+                <div className='absolute added-item-position'>
+                    {this.state.qty ? <div className='added-item-count'>{this.state.qty}</div> : null}
+                </div>
+                <div className='flex-column fwidth'>
+                    <div className='truncate'>
+                        <span className="each-card-name">{_get(data, 'doc.product.name', 'undefined')}</span>
                     </div>
                     <div className='flex-column fwidth'>
                         <div className='truncate'>
