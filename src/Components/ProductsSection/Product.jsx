@@ -101,29 +101,31 @@ class Product extends React.Component {
         let data = this.props.data;
         let index = this.props.index;
         return (
-            <div className='each-tile white-background flex-row relative' onClick={() => this.addToCart(index)}>
-                <div className='absolute added-item-position'>
-                    {this.state.qty ? <div className='added-item-count'>{this.state.qty}</div> : null}
-                </div>
-                <div className='flex-column fwidth'>
-                    <div className='truncate'>
-                        <span className="each-card-name">{_get(data, 'doc.product.name', 'undefined')}</span>
+            <React.Fragment>
+                <div className='each-tile white-background flex-row relative' onClick={() => this.addToCart(index)}>
+                    <div className='absolute added-item-position'>
+                        {this.state.qty ? <div className='added-item-count'>{this.state.qty}</div> : null}
                     </div>
                     <div className='flex-column fwidth'>
                         <div className='truncate'>
                             <span className="each-card-name">{_get(data, 'doc.product.name', 'undefined')}</span>
                         </div>
-                        <div className='truncate'>
-                            <span className="each-card-code-head">Code : </span>
-                            <span className='each-card-code'>{_get(data, 'doc.product.id', '')}</span>
+                        <div className='flex-column fwidth'>
+                            <div className='truncate'>
+                                <span className="each-card-name">{_get(data, 'doc.product.name', 'undefined')}</span>
+                            </div>
+                            <div className='truncate'>
+                                <span className="each-card-code-head">Code : </span>
+                                <span className='each-card-code'>{_get(data, 'doc.product.id', '')}</span>
+                            </div>
+                            <div className="each-card-price flex-row">
+                                {_get(data, 'doc.product.salePrice.currencyCode', '')} {_get(data, 'doc.product.salePrice.price', 'NaN')}
+                                <div className='indicator'></div>
+                            </div>
+                            <span onClick={() => this.viewProductDetails(index)} className="quick-view each-card-more" title="View Details">
+                                <Info />
+                            </span>
                         </div>
-                        <div className="each-card-price flex-row">
-                            {_get(data, 'doc.product.salePrice.currencyCode', '')} {_get(data, 'doc.product.salePrice.price', 'NaN')}
-                            <div className='indicator'></div>
-                        </div>
-                        <span onClick={() => this.viewProductDetails(index)} className="quick-view each-card-more" title="View Details">
-                            <Info />
-                        </span>
                     </div>
                 </div>
                 {
