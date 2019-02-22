@@ -17,7 +17,8 @@ class SessionDetail extends React.Component {
         this.state = {
             closeSessionDialog: false,
             realClosingBalance: 0,
-            stateDetails: {}
+            stateDetails: {},
+            transactions:[]
         }
     }
 
@@ -224,6 +225,31 @@ class SessionDetail extends React.Component {
         this.setState({ isLoading: false });
 
     }
+    calcPlusTxnVal = ()=>{
+        let total = 0;
+
+        this.state.transactions.map((transaction) => {
+            if (transaction.adjustmentType == 'SALE' || transaction.adjustmentType == 'CASHIN') {
+                total = total + _get(transaction, 'amount.amount')
+            }})
+            return total;
+
+    }
+    calcNegTxnVal = ()=>{
+        let total = 0;
+
+        this.state.transactions.map((transaction) => {
+            if (transaction.adjustmentType == 'CASHOUT') {
+                total = total + _get(transaction, 'amount.amount')
+            }})
+            return total;
+
+    }
+    calDiffrence = ()=>{
+       let difference =  _get(this.props,'selectedSession.currentBalance.amount',0)-this.state.realClosingBalance
+       return difference;
+    }
+
 
     render() {
         let manager = _get(this.state, 'manager');
@@ -285,15 +311,15 @@ class SessionDetail extends React.Component {
                     </div>
                     <div className='mui-row trans-row-1'>
                         <div className='mui-col-md-3 primary-color' onClick={this.showPlusTransactionDialog}>+ Transactions</div>
-                        <div className='mui-col-md-3'>$128868.8</div>
+                        <div className='mui-col-md-3'>{this.calcPlusTxnVal()}</div>
                         <div className="mui-col-md-6 difference">
-                            <div className='mui-col-md-6 secondary-color'>Difference</div>
-                            <div className='mui-col-md-6'>$74646363636</div>
+                            <div className='mui-col-md-6 secondary-color'>Diffrence</div>
+                            <div className='mui-col-md-6'>{this.calDiffrence()}</div>
                         </div>
                     </div>
                     <div className='mui-row trans-row-2'>
                         <div className='mui-col-md-3 primary-color' onClick={this.showNegativeTransactionDialog}>- Transactions</div>
-                        <div className='mui-col-md-3'>$8675746</div>
+                        <div className='mui-col-md-3'>{this.calcNegTxnVal()}</div>
                         <div className='mui-col-md-6'>
                             {status == 'open' ? <div class="mui-col-md-6 text-right">
                                 <Button
