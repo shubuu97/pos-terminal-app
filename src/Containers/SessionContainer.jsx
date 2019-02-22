@@ -66,13 +66,13 @@ class SessionContainer extends React.Component {
                         />
                     </div>
                     <div className="session-button-style">
-                        <Button
+                        {/* <Button
                             onClick={this.handleOpenNewSessionDialog}
                             variant="contained"
                             color="primary"
                         >
                             Add New Session
-                      </Button>
+                      </Button> */}
                         {this.state.openNewSessionDialog ?
                             <SessionDialog
                                 open={this.state.openNewSessionDialog}
