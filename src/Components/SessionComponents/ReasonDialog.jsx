@@ -21,7 +21,7 @@ function Transition(props) {
     return <Slide direction="up" {...props} />;
 }
 
-class PutMoneyInOut extends React.Component {
+class ReasonDialog extends React.Component {
     constructor() {
         super();
         this.state = {
@@ -43,21 +43,11 @@ class PutMoneyInOut extends React.Component {
                     aria-describedby="alert-dialog-slide-description"
                 >
                     <DialogTitle id="alert-dialog-slide-title">
-                        {this.props. txType=='in'?"Put Money In":'Taking Money Out'}
+                        {"Theory is not same the Closing balance"}
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-slide-description">
-                            <TextField
-                                id="standard-amount"
-                                type="number"
-                                label="amount"
-                                variant = 'outlined'
-                                value={this.state.amount}
-                                onChange={this.handleChange('amount')}
-                                margin="normal"
-                            />
-
-                            <TextField
+                        <TextField
                                 id="standard-multiline-flexible"
                                 label="reason"
                                 multiline
@@ -72,7 +62,7 @@ class PutMoneyInOut extends React.Component {
                     <Button variant='outlined' onClick={this.props.handleClose} color="primary">
                             Close
                     </Button>
-                    <Button variant='primary' onClick={()=>this.props.handlePutMoenyIn(this.state.reason,this.state.amount)} color="primary">
+                    <Button variant='primary' onClick={()=>this.props.specifyReason(this.state.reason)} color="primary">
                             Done
                     </Button>
                     </DialogActions>
@@ -85,4 +75,4 @@ class PutMoneyInOut extends React.Component {
 
 
 
-export default PutMoneyInOut;
+export default ReasonDialog;

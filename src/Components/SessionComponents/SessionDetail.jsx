@@ -9,6 +9,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import TransactionModal from './TransactionModal';
 import closeSession from '../../Global/PosFunctions/closeSession';
 import PutMoneyInOutDialog from './PutMoneyInOut';
+import ReasonDialog from './ReasonDialog';
 
 class SessionDetail extends React.Component {
 
@@ -18,7 +19,8 @@ class SessionDetail extends React.Component {
             closeSessionDialog: false,
             realClosingBalance: 0,
             stateDetails: {},
-            transactions:[]
+            transactions:[],
+            closeReason:''
         }
     }
 
@@ -93,13 +95,17 @@ class SessionDetail extends React.Component {
         this.setState({ showTransactionDialog: false })
     }
     handleEndSession = () => {
+        if(this.calDiffrence()!=0&&this.state.closeReason==''){
+            this.setState({showReasonModal:true});
+            return;
+        }
         if (this.state.realClosingBalance) {
             this.setState({ isLoading: true })
             closeSession({
                 dispatch: this.props.dispatch,
                 handleSuccess: this.handleSessionCloseSuccess,
                 handleError: this.handleSessionCloseError,
-                reason: this.state.closeReson,
+                reason: this.state.closeReason,
                 amount: this.state.realClosingBalance,
                 denominationDetails: this.state.denominationDetails,
                 id: _get(this.state, 'session.id')
@@ -249,6 +255,10 @@ class SessionDetail extends React.Component {
        let difference =  _get(this.props,'selectedSession.currentBalance.amount',0)-this.state.realClosingBalance
        return difference;
     }
+    specifyReason=(closeReason)=>{
+        this.setState({closeReason,showReasonModal:false});
+        this.handleEndSession()
+       }
 
 
     render() {
@@ -401,6 +411,12 @@ class SessionDetail extends React.Component {
                     handleClose={this.closePutMoneyInOutDialog}
                     handlePutMoenyIn={this.handlePutMoenyIn}
                 />
+                <ReasonDialog
+                open={this.state.showReasonModal}
+                handleClose={()=>this.setState({showReasonModal:false})}
+                specifyReason = {this.specifyReason}
+                />
+                
             </div>
         )
     }
