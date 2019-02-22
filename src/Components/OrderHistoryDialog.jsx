@@ -137,24 +137,13 @@ class OrderHistoryDialog extends React.Component {
     }
 
     handlePrint = () => {
-        let variablee = <div className="card">
-            <div className="mui-row" style={{ paddingLeft: '5%', paddingRight: '6%' }}>
-                <table className="mui-table mui-table--bordered">
-                    <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Price</th>
-                            <th>Qty</th>
-                            <th>Discount Amount</th>
-                            <th>SubTotal</th>
-                            <th>Tax Amount</th>
-                            <th>Row Total</th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
-        </div>
-        variablee.print();
+        var content = document.getElementById('printarea');
+        var pri = document.getElementById('ifmcontentstoprint').contentWindow;
+        pri.document.open();
+        pri.document.write(content.innerHTML);
+        pri.document.close();
+        pri.focus();
+        pri.print();
     }
 
     populateOrderData = () => {
@@ -260,6 +249,14 @@ class OrderHistoryDialog extends React.Component {
                         </div>
                     </div>
                 </Dialog>
+                <iframe id="ifmcontentstoprint" style={{
+                    height: '0px',
+                    width: '0px',
+                    position: 'absolute'
+                }}></iframe>
+                <div id='printarea'>
+                    {'hello'}
+                </div>
             </div >
         );
     }
