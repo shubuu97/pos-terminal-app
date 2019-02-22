@@ -146,6 +146,7 @@ class PaymentSection extends React.Component {
             itemDiscountAmount,
             totalTaxAmount,
             offline: false,
+            saleComment: _get(this.props, 'saleComment', ''),
             saleTimeStamp: { seconds: parseInt((new Date().getTime() / 1000)) },
             changeDue: { currencyCode: '$', amount: parseFloat(Math.abs(this.calcRemainingAmount()).toFixed(2)) }
 
@@ -307,11 +308,12 @@ function mapStateToProps(state) {
     let cartItems = _get(state, 'cart.cartItems');
     let customer = _get(state, 'cart.customer');
     let totalAmount = _get(state, 'cart.totalAmount');
-    let sessionId = _get(state, 'terminalData.lookUpData.sessionId')
+    let sessionId = _get(state, 'terminalData.lookUpData.sessionId');
+    let saleComment = _get(state, 'staticReducers.saleComment');
 
     let cart = _get(state, 'cart');
 
-    return { cartItems, customer, totalAmount, cart, sessionId }
+    return { cartItems, customer, totalAmount, cart, sessionId, saleComment }
 }
 
 export default withRouter(connect(mapStateToProps)(PaymentSection));
