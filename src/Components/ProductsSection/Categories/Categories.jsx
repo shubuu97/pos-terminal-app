@@ -79,14 +79,11 @@ class Categories extends Component {
 
   handleHomeClick = () => {
       this.setState({ selectedCategory: {categoryType: -1} });
-
       this.getProductData();
     this.getCategory(0);
   };
 
   handleCategoryClick = category => {
-      console.log('category', category)
-    debugger;
     this.setState({ selectedCategory: category });
 
     if (category.categoryType === 0) {
@@ -132,7 +129,6 @@ class Categories extends Component {
   };
 
   getCategory = level => {
-      debugger;
     categoryDb
       .find({
         selector: { categoryType: level }
