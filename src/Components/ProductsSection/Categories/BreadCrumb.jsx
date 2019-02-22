@@ -67,12 +67,6 @@ function CustomizedBreadcrumbs(props) {
         {selectedCurrentCategory.categoryType >= 0 && <StyledBreadcrumb label={selectedRootCategory.name} onClick={() => props.categoryClickHandler(selectedRootCategory)} />}
         {selectedCurrentCategory.categoryType >= 1 && <StyledBreadcrumb label={selectedSubCategory.name} onClick={() => props.categoryClickHandler(selectedSubCategory)} />}
         {selectedCurrentCategory.categoryType >= 2 && <StyledBreadcrumb label={selectedLeafCategory.name} />}
-
-        {/*<StyledBreadcrumb*/}
-          {/*label="Accessories"*/}
-          {/*onClick={handleClick}*/}
-          {/*// onDelete={handleClick}*/}
-        {/*/>*/}
       </Breadcrumbs>
     </Paper>
   );

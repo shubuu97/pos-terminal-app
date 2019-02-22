@@ -15,6 +15,8 @@ import Products from './Products';
 import SearchBar from './SearchBar';
 import PouchDb from 'pouchdb';
 import Categories from './Categories/Categories';
+import Pagination from './Pagination';
+
 PouchDb.plugin(require('pouchdb-quick-search'));
 let productsdb = new PouchDb('productsdb');
 productsdb.search({
@@ -55,7 +57,7 @@ class ProductsSection extends React.Component {
         productsdb.allDocs({
             include_docs: true,
             attachments: true,
-            limit: 20,
+            limit: 10,
             skip: 0
           }).then((result)=> {
             this.props.dispatch(commonActionCreater(result,'GET_PRODUCT_DATA_SUCCESS'));
@@ -93,20 +95,16 @@ class ProductsSection extends React.Component {
 
                     </div>
                 </div>
+                
+                <Pagination />
 
-
-                {/* 
-                // * Product Categories Component
-                */}
+                {/* Product Categories Component */}
                 <Categories 
                     categoriesHeight={categoriesHeight}
                     {...this.props}
-                     />
-                {/* 
-                // * Products List Component
-                */}
+                />
 
-
+                {/* Products List Component */}
                 <Products
                     {...this.props}
                 />

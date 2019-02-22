@@ -1,11 +1,16 @@
 import React, { Component } from 'react';
-
-//redux imports
-import connect from 'react-redux/lib/connect/connect';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import axiosFetcher from '../../Global/dataFetch/axiosFetcher';
-import PouchDb from 'pouchdb';
+/* Lodash Imports */
 import _get from 'lodash/get'
+/* Redux Imports */
+import connect from 'react-redux/lib/connect/connect';
+/* Material Imports */
+import LinearProgress from '@material-ui/core/LinearProgress';
+/* Global Imports */
+import axiosFetcher from '../../Global/dataFetch/axiosFetcher';
+import globalClearCart from '../../Global/PosFunctions/clearCart'
+/* Pouch Import */
+import PouchDb from 'pouchdb';
+
 class SyncContainer extends Component {
     constructor(props) {
         super(props);
@@ -17,6 +22,7 @@ class SyncContainer extends Component {
     componentDidMount() {
         let storeId = localStorage.getItem('storeId');
         let retailerId = localStorage.getItem('retailerId');
+        globalClearCart(this.props.dispatch);
         axiosFetcher({
             method: 'POST',
             url: 'Inventory/ByStoreId',
@@ -74,9 +80,6 @@ class SyncContainer extends Component {
         }).catch((err) => {
             console.log(err);
         });
-
-
-
     }
     handleProductFetchError = (error) => {
 
