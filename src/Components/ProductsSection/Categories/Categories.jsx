@@ -175,9 +175,6 @@ class Categories extends Component {
           className="product-catogories"
           style={{ height: this.props.categoriesHeight }}
         >
-          {/* <span onClick={this.getProductData}>All</span>
-            <span onClick={() => this.getCategory(0)}>Root Category</span>
-            <span onClick={() => this.getCategory(1)}>Sub category</span> */}
           {_get(this.state, "categoryToDisplay", []).map(category => {
             return (
               <Category
