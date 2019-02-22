@@ -1,15 +1,14 @@
 import genericPostData from '../dataFetch/genericPostData';
-import getDenominationDetails from './getDenominationDetails';
 
-const closeSession = ({dispatch,handleSuccess,handleError,stateObj,reason,amount,id})=>{
+const closeSession = ({dispatch,handleSuccess,handleError,denominationDetails,reason,amount,id})=>{
     let closeSessionBody = {};
     closeSessionBody.terminalId = localStorage.getItem('terminalId');
     closeSessionBody.storeId = localStorage.getItem('storeId');
     closeSessionBody.operatorId = localStorage.getItem('userId');
-    closeSessionBody.closingCashDetails = getDenominationDetails(stateObj);
+    closeSessionBody.closingCashDetails = denominationDetails;
     closeSessionBody.status = 'closed';
     closeSessionBody.closingBalance = {currencyCode:'$',amount};
-    closeSessionBody.id ="0612ed94-f117-40cf-b6f9-36917886966f";
+    closeSessionBody.id = id
     closeSessionBody.reason = reason;
     genericPostData({
         dispatch:dispatch,

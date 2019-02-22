@@ -39,16 +39,16 @@ class PlusTransactionModal extends React.Component {
                 return (
                     <div className="flex flex-row justify-space-between mt-20">
                         <div className="flex flex-column justify-center">
-                            <div className="bold pt-10 pl-10 pr-10 pb-10"> ${_get(transaction, 'amount.amount')}</div>
+                            <div className="bold pt-10 pl-10 pr-10 pb-10"> ${_get(transaction, 'amount.amount').toFixed(2)}</div>
                         </div>
                         <div className="flex flex-column pt-10 pl-10 pr-10 pb-10">
                             <div className="bold">{localStorage.getItem('terminalName')}</div>
                             <div>{adjustmentTime}</div>
-                            <div>{transaction.reason}</div>
+                            <div style={{maxWidth:'220px'}}>{transaction.reason}</div>
                         </div>
                         <div className="flex flex-column pt-10 pl-10 pr-10 pb-10">
                             <div>Balance</div>
-                            <div className="bold">${total}</div>
+                            <div className="bold">${total.toFixed(2)}</div>
                         </div>
                     </div>
                 )
@@ -73,7 +73,7 @@ class PlusTransactionModal extends React.Component {
                         <div className="flex flex-column pt-10 pl-10 pr-10 pb-10">
                             <div className="bold">{localStorage.getItem('terminalName')}</div>
                             <div>{adjustmentTime}</div>
-                            <div>{transaction.reason}</div>
+                            <div style={{maxWidth:'220px'}}>{transaction.reason}</div>
                         </div>
                         <div className="flex flex-column pt-10 pl-10 pr-10 pb-10">
                             <div>Balance</div>

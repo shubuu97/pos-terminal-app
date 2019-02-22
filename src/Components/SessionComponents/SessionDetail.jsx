@@ -7,6 +7,7 @@ import genericPostData from '../../Global/dataFetch/genericPostData';
 import moment from 'moment';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import TransactionModal from './TransactionModal';
+import closeSession from '../../Global/PosFunctions/closeSession';
 
 class SessionDetail extends React.Component {
 
@@ -26,8 +27,8 @@ class SessionDetail extends React.Component {
     handleClose = () => {
         this.setState({ closeSessionDialog: false })
     }
-    setClosingBalnce = (denominatinDetails, stateDetails, realClosingBalance) => {
-        this.setState({ denominatinDetails, stateDetails, realClosingBalance })
+    setClosingBalnce = (denominationDetails, stateDetails, realClosingBalance) => {
+        this.setState({ denominationDetails, stateDetails, realClosingBalance })
     }
 
     componentWillReceiveProps(nextProps) {
@@ -88,6 +89,57 @@ class SessionDetail extends React.Component {
     }
     closePlusTransactionDialog = () => {
         this.setState({ showTransactionDialog: false })
+    }
+    handleEndSession = ()=>{
+        if(this.state.realClosingBalance){
+            this.setState({isLoading:true})
+        closeSession({
+            dispatch:this.props.dispatch,
+            handleSuccess:this.handleSessionCloseSuccess,
+            handleError:this.handleSessionCloseError,
+            reason:this.state.closeReson,
+            amount:this.state.realClosingBalance,
+            denominationDetails:this.state.denominationDetails,
+            id:_get(this.state,'session.id')
+        })
+        }
+        else{
+            this.setState({closeSessionDialog:true})
+        }
+    }
+    handleSessionCloseSuccess = (data)=>{
+        this.setState({isLoading:false});
+        genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj: { id: localStorage.getItem('terminalId') },
+            url: 'Session/ByTerminal',
+            constants: {
+                init: 'GET_SESSION_DATA_INIT',
+                success: 'GET_SESSION_DATA_SUCCESS',
+                error: 'GET_SESSION_DATA_ERROR'
+            },
+            identifier: 'GET_SESSION_DATA',
+            successCb: this.handleGetSessionData,
+            errorCb: this.handleGetSessionDataError
+        });
+        genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj: { id: _get(this.props, 'selectedSession.id') },
+            url: 'Session/AllData',
+            constants: {
+                init: 'GET_SESSION_DATA_BY_ID_INIT',
+                success: 'GET_SESSION_DATA_BY_ID_SUCCESS',
+                error: 'GET_SESSION_DATA_BY_ID_ERROR'
+            },
+            identifier: 'GET_SESSION_DATA_BY_ID',
+            successCb: this.handleSuccessFetchSessionData,
+            errorCb: this.handleErrorFetchSessionData
+        })
+
+
+    }
+    handleSessionCloseError = ()=>{
+        this.setState({isLoading:false});
     }
 
     render() {
@@ -205,7 +257,9 @@ class SessionDetail extends React.Component {
                             </div>
 
                             {status == 'open' ? <div className="mui-col-md-6 text-left">
-                                <Button variant='contained' color='primary' style={{ marginRight: "1%" }} className="printBtn">End of Session</Button>
+                                <Button variant='contained'
+                                onClick={this.handleEndSession}
+                                 color='primary' style={{ marginRight: "1%" }} className="printBtn">End of Session</Button>
                             </div> : null}
 
                         </div>
