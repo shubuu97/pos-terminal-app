@@ -12,8 +12,6 @@ import Divider from '@material-ui/core/Divider';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 /* Redux Imports */
-import connect from 'react-redux/lib/connect/connect';
-import clearCart from '../../Global/PosFunctions/clearCart';
 import moment from "moment";
 /* Component Imports */
 
@@ -21,7 +19,7 @@ function Transition(props) {
     return <Slide direction="up" {...props} />;
 }
 
-class PlusTransactionModal extends React.Component {
+class TransactionModal extends React.Component {
     constructor() {
         super();
         this.state = {
@@ -39,7 +37,7 @@ class PlusTransactionModal extends React.Component {
                 return (
                     <div className="flex flex-row justify-space-between mt-20">
                         <div className="flex flex-column justify-center">
-                            <div className="bold pt-10 pl-10 pr-10 pb-10"> ${_get(transaction, 'amount.amount').toFixed(2)}</div>
+                            <div className="bold pt-10 pl-10 pr-10 pb-10"> ${_get(transaction, 'amount.amount',0).toFixed(2)}</div>
                         </div>
                         <div className="flex flex-column pt-10 pl-10 pr-10 pb-10">
                             <div className="bold">{localStorage.getItem('terminalName')}</div>
@@ -119,13 +117,6 @@ class PlusTransactionModal extends React.Component {
     }
 }
 
-const mapStateToProps = state => {
-    let { storeData } = state;
-    let store = storeData.lookUpData || {};
 
-    return {
-        store
-    }
-}
 
-export default connect(mapStateToProps)(PlusTransactionModal);
+export default TransactionModal;

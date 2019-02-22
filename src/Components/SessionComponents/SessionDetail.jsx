@@ -8,6 +8,7 @@ import moment from 'moment';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import TransactionModal from './TransactionModal';
 import closeSession from '../../Global/PosFunctions/closeSession';
+import PutMoneyInOutDialog from './PutMoneyInOut';
 
 class SessionDetail extends React.Component {
 
@@ -90,25 +91,25 @@ class SessionDetail extends React.Component {
     closePlusTransactionDialog = () => {
         this.setState({ showTransactionDialog: false })
     }
-    handleEndSession = ()=>{
-        if(this.state.realClosingBalance){
-            this.setState({isLoading:true})
-        closeSession({
-            dispatch:this.props.dispatch,
-            handleSuccess:this.handleSessionCloseSuccess,
-            handleError:this.handleSessionCloseError,
-            reason:this.state.closeReson,
-            amount:this.state.realClosingBalance,
-            denominationDetails:this.state.denominationDetails,
-            id:_get(this.state,'session.id')
-        })
+    handleEndSession = () => {
+        if (this.state.realClosingBalance) {
+            this.setState({ isLoading: true })
+            closeSession({
+                dispatch: this.props.dispatch,
+                handleSuccess: this.handleSessionCloseSuccess,
+                handleError: this.handleSessionCloseError,
+                reason: this.state.closeReson,
+                amount: this.state.realClosingBalance,
+                denominationDetails: this.state.denominationDetails,
+                id: _get(this.state, 'session.id')
+            })
         }
-        else{
-            this.setState({closeSessionDialog:true})
+        else {
+            this.setState({ closeSessionDialog: true })
         }
     }
-    handleSessionCloseSuccess = (data)=>{
-        this.setState({isLoading:false});
+    handleSessionCloseSuccess = (data) => {
+        this.setState({ isLoading: false });
         genericPostData({
             dispatch: this.props.dispatch,
             reqObj: { id: localStorage.getItem('terminalId') },
@@ -138,8 +139,77 @@ class SessionDetail extends React.Component {
 
 
     }
-    handleSessionCloseError = ()=>{
-        this.setState({isLoading:false});
+    handleSessionCloseError = () => {
+        this.setState({ isLoading: false });
+    }
+    showPutMoneyInOutDialog = () => {
+        this.setState({
+            openPutMoneyInOutDialog: true,
+            txType: 'in'
+        })
+    }
+    showPutMoneyOutDialog = () => {
+        this.setState({
+            openPutMoneyInOutDialog: true,
+            txType: 'out'
+        })
+    }
+    closePutMoneyInOutDialog = () => {
+        this.setState({ openPutMoneyInOutDialog: false })
+    }
+    handlePutMoenyIn = (reason, amount) => {
+        let reqObj = {};
+        let url
+        reqObj.SessionId = _get(this.state, 'session.id');
+        reqObj.amount = { currencyCode: "$", amount: parseFloat(amount) };
+        reqObj.reason = reason;
+        if (this.state.txType == 'in') {
+        reqObj.adjustmentType = 'CASHIN';
+        url = 'Session/PutMoneyIn';
+        }
+        else
+        {
+         reqObj.adjustmentType = 'CASHOUT';
+         url = 'Session/TakeMoneyOut'
+        }
+        this.closePutMoneyInOutDialog();
+        this.setState({ isLoading: true })
+        genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj,
+            url,
+            constants: {
+                init: 'PUT_MONEY_IN_INIT',
+                success: 'PUT_MONEY_IN_SUCCESS',
+                error: 'PUT_MONEY_IN_ERROR'
+            },
+            identifier: 'PUT_MONEY_IN',
+            successCb: this.handlePutMoneySuccess,
+            errorCb: this.handlePutMoneyError
+        })
+
+    }
+    handlePutMoneySuccess = () => {
+        this.setState({ isLoading: false });
+        genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj: { id: _get(this.props, 'selectedSession.id') },
+            url: 'Session/AllData',
+            constants: {
+                init: 'GET_SESSION_DATA_BY_ID_INIT',
+                success: 'GET_SESSION_DATA_BY_ID_SUCCESS',
+                error: 'GET_SESSION_DATA_BY_ID_ERROR'
+            },
+            identifier: 'GET_SESSION_DATA_BY_ID',
+            successCb: this.handleSuccessFetchSessionData,
+            errorCb: this.handleErrorFetchSessionData
+        })
+
+
+    }
+    handlePutMoneyError = () => {
+        this.setState({ isLoading: false });
+
     }
 
     render() {
@@ -213,10 +283,17 @@ class SessionDetail extends React.Component {
                         <div className='mui-col-md-3'>$8675746</div>
                         <div className='mui-col-md-6'>
                             {status == 'open' ? <div class="mui-col-md-6 text-right">
-                                <Button variant='flat' color='primary'>Put Money In</Button>
+                                <Button
+                                    variant='flat'
+                                    color='primary'
+                                    onClick={this.showPutMoneyInOutDialog}
+                                >Put Money In</Button>
                             </div> : null}
                             {status == 'open' ? <div class="mui-col-md-6 text-left">
-                                <Button variant='flat' color='primary'>Take Money Out</Button>
+                                <Button
+                                    onClick={this.showPutMoneyOutDialog}
+                                    variant='flat'
+                                    color='primary'>Take Money Out</Button>
                             </div> : null}
                         </div>
                     </div>
@@ -243,8 +320,8 @@ class SessionDetail extends React.Component {
                     <div className='mui-row'>
                         <div className="mui-col-md-12 text-center">
                             <Button
-                             variant='outlined'
-                              color='primary' style={{ marginRight: "1%" }}>Open Cash Drawer</Button>
+                                variant='outlined'
+                                color='primary' style={{ marginRight: "1%" }}>Open Cash Drawer</Button>
                             <Button variant='outlined' color='primary'>Go To Checkout</Button>
                         </div>
                     </div>
@@ -252,14 +329,14 @@ class SessionDetail extends React.Component {
                 <div>
                     <div className='mui-row print-row'>
                         <div className="mui-col-md-12">
-                            <div className={status=='open'?"mui-col-md-6 text-left":"mui-col-md-12 text-left"}>
+                            <div className={status == 'open' ? "mui-col-md-6 text-left" : "mui-col-md-12 text-left"}>
                                 <Button variant='outlined' color='primary' style={{ marginRight: "1%" }} className="printBtn">Print</Button>
                             </div>
 
                             {status == 'open' ? <div className="mui-col-md-6 text-left">
                                 <Button variant='contained'
-                                onClick={this.handleEndSession}
-                                 color='primary' style={{ marginRight: "1%" }} className="printBtn">End of Session</Button>
+                                    onClick={this.handleEndSession}
+                                    color='primary' style={{ marginRight: "1%" }} className="printBtn">End of Session</Button>
                             </div> : null}
 
                         </div>
@@ -278,6 +355,12 @@ class SessionDetail extends React.Component {
                     type={this.state.type}
                     handleClose={this.closePlusTransactionDialog}
                     transactions={transactions}
+                />
+                <PutMoneyInOutDialog
+                    txType={this.state.txType}
+                    open={this.state.openPutMoneyInOutDialog}
+                    handleClose={this.closePutMoneyInOutDialog}
+                    handlePutMoenyIn={this.handlePutMoenyIn}
                 />
             </div>
         )
