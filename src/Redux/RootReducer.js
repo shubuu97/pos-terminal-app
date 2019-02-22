@@ -12,6 +12,7 @@ import terminalDataFun from './commonReducer';
 import categoryListFun from './commonReducer';
 import sessionListFun from './commonReducer';
 import customerSaleListFun from './commonReducer';
+import saleRefundFun from './commonReducer';
 /* SPECIFIC Reducers */
 import cart from '../reducers/cartItem';
 import cartHoldData from '../reducers/holdCartItem';
@@ -28,6 +29,7 @@ let terminalData = terminalDataFun('GET_TERMINAL_DATA');
 let categoryList = categoryListFun('GET_CATEGORY_DATA');
 let sessionList= sessionListFun('GET_SESSION_DATA');
 let customerSalesList = customerSaleListFun('GET_CUSTOMER_SALE_DATA');
+let saleRefund = saleRefundFun('SALE_REFUND');
 
 // let cartItems = cartItemFun('CART_ITEM_LIST');
 // let cartOrderDetails = cartOrderDetailsFun('ORDER_DETAILS');
@@ -45,6 +47,7 @@ let rootRducer = combineReducers({
     cartHoldData,
     sessionList,
     customerSalesList,
+    saleRefund,
 })
 
 export default rootRducer;
