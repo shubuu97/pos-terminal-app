@@ -49,6 +49,7 @@ class PutMoneyInOut extends React.Component {
                         <DialogContentText id="alert-dialog-slide-description">
                             <TextField
                                 id="standard-amount"
+                                type="number"
                                 label="amount"
                                 variant = 'outlined'
                                 value={this.state.amount}

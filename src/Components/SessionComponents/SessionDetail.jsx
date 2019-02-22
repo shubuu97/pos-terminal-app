@@ -193,6 +193,19 @@ class SessionDetail extends React.Component {
         this.setState({ isLoading: false });
         genericPostData({
             dispatch: this.props.dispatch,
+            reqObj: { id: localStorage.getItem('terminalId') },
+            url: 'Session/ByTerminal',
+            constants: {
+                init: 'GET_SESSION_DATA_INIT',
+                success: 'GET_SESSION_DATA_SUCCESS',
+                error: 'GET_SESSION_DATA_ERROR'
+            },
+            identifier: 'GET_SESSION_DATA',
+            successCb: this.handleGetSessionData,
+            errorCb: this.handleGetSessionDataError
+        });
+        genericPostData({
+            dispatch: this.props.dispatch,
             reqObj: { id: _get(this.props, 'selectedSession.id') },
             url: 'Session/AllData',
             constants: {
@@ -299,7 +312,7 @@ class SessionDetail extends React.Component {
                     </div>
                     <div className='mui-row closing-bal'>
                         <div className='mui-col-md-3 secondary-color'>Theoratical Closing Balance</div>
-                        <div className='mui-col-md-3'>$968857575</div>
+                        <div className='mui-col-md-3'>${_get(this.props,'selectedSession.currentBalance.amount')}</div>
                         {status == 'open' ? <div className='mui-col-md-6 text-center'>
                             <Button
                                 variant='contained'
