@@ -300,7 +300,7 @@ class OrderHistoryDialog extends React.Component {
                         </div>
                         <div className="mui-row" style={{ display: 'flex', justifyContent: 'center' }}>
                             <Button onClick={() => this.handlePrint()} variant="contained">ORDER PRINT </Button>
-                            <Button style={{ marginLeft: '15px' }} variant="contained">REFUND </Button>
+                            <Button style={{ marginLeft: '15px' }} variant="contained" onClick={() => this.openRefund()}>REFUND </Button>
                         </div>
                     </div>
                 </div>
