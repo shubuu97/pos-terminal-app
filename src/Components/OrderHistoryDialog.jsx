@@ -64,6 +64,13 @@ class OrderHistoryDialog extends React.Component {
             selectedOrder: custData,
         })
     }
+    handleReasonChange = (e, index) => {
+        let selectedOrder = _cloneDeep(this.state.selectedOrder);
+        _set(selectedOrder, `saleParts[${index}].saleItem.returnReason`, _get(e, 'target.value', ''));
+        this.setState({
+            selectedOrder,
+        });
+    }
     updateReturnQuantity = (quantity, index) => {
         let selectedOrder = _cloneDeep(this.state.selectedOrder);
         let item = _get(selectedOrder, `saleParts[${index}]`, {});
@@ -112,10 +119,8 @@ class OrderHistoryDialog extends React.Component {
         data.refundSessionId = _get(selectedOrder, 'sale.sessionId', '');
         data.refundApprovedBy = _get(selectedOrder, 'sale.operatorId', '');
         data.refundTimeStamp = {
-            seconds: new Date().getTime()/1000,
+            seconds: parseInt(new Date().getTime()/1000),
         }
-
-        console.log('data to refund request', data);
 
         genericPostData({
             dispatch: this.props.dispatch,
@@ -127,9 +132,31 @@ class OrderHistoryDialog extends React.Component {
                 error: 'SALE_REFUND_ERROR'
             },
             identifier: 'SALE_REFUND',
-            successCb: ()=>{},
-            errorCb: ()=>{}
+            successCb: this.handleRefundSuccess,
+            errorCb: this.handleRefundError
         })
+    }
+
+    handleRefundSuccess = () => {
+        this.handleRefundClose();
+        let url = 'Sale/GetByCustomerId';
+        let data = { id: _get(this.state, 'selectedOrder.sale.customerId', '') }
+        genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj: data,
+            url: url,
+            constants: {
+                init: 'GET_CUSTOMER_SALE_DATA_INIT',
+                success: 'GET_CUSTOMER_SALE_DATA_SUCCESS',
+                error: 'GET_CUSTOMER_SALE_DATA_ERROR'
+            },
+            identifier: 'GET_CUSTOMER_SALE_DATA',
+            successCb: this.handleGetCustomerSaleData,
+            errorCb: this.handleGetCustomerSaleDataError
+        })
+    }
+    handleRefundError = () => {
+
     }
 
     
@@ -344,6 +371,7 @@ class OrderHistoryDialog extends React.Component {
                             selectedOrder = {this.state.selectedOrder}
                             updateReturnQuantity = {this.updateReturnQuantity}
                             handleRefund={this.handleRefund}
+                            handleReasonChange = {this.handleReasonChange}
                         />
                     }
                 </Dialog>
