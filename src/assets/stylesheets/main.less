@@ -382,23 +382,35 @@ p {
 
     .each-tile {
         position: relative;
-        width: 28%;
+        width: 31%;
         min-width: 28%;
         border-radius: 4px;
         margin: 1%;
-        padding: 10px;
+        // padding: 10px;
         min-height: 50px;
         max-height: fit-content;
         display: flex;
         box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 
-        .each-tile-img {
-            width: 20%;
+        .product-image {
+            width: 25%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            border-radius: 4px 0 0 4px;
+            img{
+                width: 200%;
+            }
+        }
+        .product-info{
+            width: 69%;
+            padding: 3%;
         }
     }
 
     .blue-background {
-        background: @primary-d;
+        background: @primary-d;9
         color: @primary-text;
     }
 

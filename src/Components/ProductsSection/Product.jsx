@@ -9,12 +9,14 @@ import _find from 'lodash/find'
 /* Redux Imports */
 import { commonActionCreater } from '../../Redux/commonAction'
 
+import img1 from '../../assets/images/flowers/flower1.jpg'
+
 class Product extends React.Component {
     constructor(props) {
         super(props);
         this.state = {};
     }
-    
+
     componentWillReceiveProps(props) {
         let cartItems = _get(props, 'cart.cartItems', [])
         let data = _get(this, `props.data`, {});
@@ -61,13 +63,18 @@ class Product extends React.Component {
                 <div className='absolute added-item-position'>
                     {this.state.qty ? <div className='added-item-count'>{this.state.qty}</div> : null}
                 </div>
-                <div className='flex-column fwidth'>
-                    <div className='truncate'>
-                        <span className="each-card-name">{_get(data, 'doc.product.name', 'undefined')}</span>
-                    </div>
-                    <div className='truncate'>
-                        <span className="each-card-code-head">Code : </span>
-                        <span className='each-card-code'>{_get(data, 'doc.product.id', '')}</span>
+                <div className='product-image'>
+                    <img src={_get(data, 'doc.product.image')} alt="" />
+                </div>
+                <div className='flex-column justify-space-between product-info'>
+                    <div>
+                        <div className='truncate'>
+                            <span className="each-card-name">{_get(data, 'doc.product.name', 'undefined')}</span>
+                        </div>
+                        <div className='truncate'>
+                            <span className="each-card-code-head">Code : </span>
+                            <span className='each-card-code'>{_get(data, 'doc.product.id', '')}</span>
+                        </div>
                     </div>
                     <div className="each-card-price flex-row">
                         {_get(data, 'doc.product.salePrice.currencyCode', '')} {_get(data, 'doc.product.salePrice.price', 'NaN')}
