@@ -36,6 +36,8 @@ import DeleteIcons from '@material-ui/icons/DeleteOutline';
 import applyCart from '../Global/PosFunctions/applyCart';
 import genericPostData from '../Global/dataFetch/genericPostData';
 import { isArray } from 'util';
+import TextField from '@material-ui/core/TextField';
+
 
 
 const styles = theme => ({
@@ -86,13 +88,27 @@ class OrderRefund extends React.Component {
         let listItems = _isArray(selectedOrder.saleParts) ? selectedOrder.saleParts.map((item, index) => (
             <tr>
                 <td>{_get(item, 'product.name', '')}</td>
-                <td>{(_get(item, 'saleItem.itemRegularTotal.amount', 0)/_get(item, 'saleItem.qty', 0))}</td>
+                <td>{(_get(item, 'saleItem.itemRegularTotal.amount', 0) / _get(item, 'saleItem.qty', 0))}</td>
                 <td>{_get(item, 'saleItem.qty', 0)}</td>
                 <td>
                     <input name={`returnQty-${index}`} value={_get(item, 'saleItem.returnQty', 0)} onChange={(e) => this.handleChange(e, index)} />
                 </td>
                 <td>{(_get(item, 'saleItem.itemRefundAmount.amount', 0))}</td>
-                <td>{(_get(item, 'saleItem.itemRegularTotal.amount', 0)/_get(item, 'saleItem.qty', 0)) * _get(item, 'saleItem.returnQty', 0) + _get(item, 'product.tax', 0)}</td>
+                <td>{(_get(item, 'saleItem.itemRegularTotal.amount', 0) / _get(item, 'saleItem.qty', 0)) * _get(item, 'saleItem.returnQty', 0) + _get(item, 'product.tax', 0)}</td>
+                <td>
+                    <TextField
+                        id="outlined-multiline-flexible"
+                        label="Reason"
+                        multiline
+                        rowsMax="4"
+                        value={_get(item, 'saleItem.returnReason', '')}
+                        onChange={(e) => this.props.handleReasonChange(e, index)}
+                        className={this.props.classes.textField}
+                        margin="normal"
+                        helperText="Reason"
+                        variant="outlined"
+                    />
+                </td>
             </tr>
         )) : (
                 <tr>
