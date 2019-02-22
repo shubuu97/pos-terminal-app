@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import Sessions from '../Components/SessionComponents/Sessions';
 /* global imports */
 import genericPostData from '../Global/dataFetch/genericPostData';
-import AddNewSessionDialog from '../Components/SessionComponents/AddNewSessionDialog';
+import SessionDialog from '../Components/SessionComponents/SessionDialog';
 import SessionDetail from '../Components/SessionComponents/SessionDetail';
 
 class SessionContainer extends React.Component {
@@ -74,10 +74,10 @@ class SessionContainer extends React.Component {
                             Add New Session
                       </Button>
                         {this.state.openNewSessionDialog ?
-                            <AddNewSessionDialog
+                            <SessionDialog
                                 open={this.state.openNewSessionDialog}
                                 handleClose = {this.handleCloseNewSessionDialog}
-
+                                
                             /> : null}
                     </div>
                 </div>

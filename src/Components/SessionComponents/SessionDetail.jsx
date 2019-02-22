@@ -1,7 +1,30 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
+import SessionDialog from './SessionDialog';
+
 
 class SessionDetail extends Component {
+  
+    constructor(props){
+        super(props);
+        this.state = {
+            closeSessionDialog:false,
+            realClosingBalance:0,
+            stateDetails:{}
+        }
+    }
+
+    handlecloseSessionDialog = () => {
+        debugger;
+        this.setState({ closeSessionDialog: true })
+    }
+    handleClose = ()=>{
+        this.setState({ closeSessionDialog: false })
+    }
+    setClosingBalnce = (denominatinDetails,stateDetails,realClosingBalance)=>{
+        this.setState({denominatinDetails,stateDetails,realClosingBalance})
+    }
+
     render() {
         return (
             <div className="mui-container tertiary-color">
@@ -11,7 +34,7 @@ class SessionDetail extends Component {
                     </div>
                 </div>
 
-                <div className="staff-row">   
+                <div className="staff-row">
                     <div className='mui-row'>
                         <div className='mui-col-md-3 secondary-color'>Staff</div>
                         <div className='mui-col-md-3'>shreveportadmin</div>
@@ -19,19 +42,19 @@ class SessionDetail extends Component {
                         <div className='mui-col-md-3 no-pad'>Wednesday 3 Oct, 2017 1:12 PM</div>
                     </div>
                 </div>
-                <div>   
+                <div>
                     <div className='mui-row pos-row'>
                         <div className='mui-col-md-3 secondary-color'>POS</div>
                         <div className='mui-col-md-3'>shreveportadmin</div>
                     </div>
                 </div>
-                <div>   
+                <div>
                     <div className='mui-row opening-bal-row'>
                         <div className='mui-col-md-3 secondary-color'>Opening Balance</div>
                         <div className='mui-col-md-3'>$200</div>
                         <div className="mui-col-md-6 real-closing-bal">
                             <div className='mui-col-md-6 secondary-color'>Real Closing Balance</div>
-                            <div className='mui-col-md-6'>$1.00</div>
+                            <div className='mui-col-md-6'>${this.state.realClosingBalance}</div>
                         </div>
                     </div>
                     <div className='mui-row trans-row-1'>
@@ -57,7 +80,12 @@ class SessionDetail extends Component {
                     <div className='mui-row closing-bal'>
                         <div className='mui-col-md-3 secondary-color'>Theoratical Closing Balance</div>
                         <div className='mui-col-md-3'>$968857575</div>
-                        <div className='mui-col-md-6 text-center'><Button variant='contained' color='primary'>Set Closing Balance</Button></div>
+                        <div className='mui-col-md-6 text-center'>
+                            <Button
+                                variant='contained'
+                                color='primary'
+                                onClick={this.handlecloseSessionDialog}
+                            >Set Closing Balance</Button></div>
                     </div>
                 </div>
                 <div>
@@ -71,7 +99,7 @@ class SessionDetail extends Component {
                 <div>
                     <div className='mui-row'>
                         <div className="mui-col-md-12 text-center">
-                            <Button variant='contained' color='primary' style={{marginRight:"1%"}}>Open Cash Drawer</Button>
+                            <Button variant='contained' color='primary' style={{ marginRight: "1%" }}>Open Cash Drawer</Button>
                             <Button variant='contained' color='primary'>Go To Checkout</Button>
                         </div>
                     </div>
@@ -80,16 +108,24 @@ class SessionDetail extends Component {
                     <div className='mui-row print-row'>
                         <div className="mui-col-md-12">
                             <div className="mui-col-md-6 text-right">
-                               <Button variant='contained' color='primary' style={{marginRight:"1%"}} className="printBtn">Print</Button>
+                                <Button variant='contained' color='primary' style={{ marginRight: "1%" }} className="printBtn">Print</Button>
                             </div>
 
                             <div className="mui-col-md-6 text-left">
-                               <Button variant='contained' color='primary' style={{marginRight:"1%"}} className="printBtn">End of Session</Button>
+                                <Button variant='contained' color='primary' style={{ marginRight: "1%" }} className="printBtn">End of Session</Button>
                             </div>
-                            
+
                         </div>
                     </div>
                 </div>
+                            <SessionDialog
+                                open={this.state.closeSessionDialog}
+                                handleClose = {this.handleClose}
+                                close={true}
+                                stateDetails = {this.state.stateDetails}
+                                setClosingBalnce={this.setClosingBalnce}
+                                
+                            /> 
             </div>
         )
     }

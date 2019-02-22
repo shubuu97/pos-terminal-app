@@ -35,7 +35,7 @@ class DenominationDetailsForm extends React.Component {
             twenty: '',
             fifty: '',
             hundred: '',
-            amount:0
+            amount: 0
 
         }
     }
@@ -56,7 +56,7 @@ class DenominationDetailsForm extends React.Component {
 
         this.setState({
             [currentFocus]: currenctFocusValue,
-            amount:getDenominationTotal(this.state)
+            amount: getDenominationTotal(this.state)
 
         })
     }
@@ -70,7 +70,6 @@ class DenominationDetailsForm extends React.Component {
         return type.value * (parseFloat(this.state[type.stateName]) || 0)
     }
     mapTablerows = () => {
-
         return currencyTypes.map((type) => {
             return (<tr>
                 <td>{type.name}</td>
@@ -94,8 +93,8 @@ class DenominationDetailsForm extends React.Component {
     startNewSession = () => {
         startSession({
             dispatch: this.props.dispatch,
-            handleSuccess:this.handleSuccess,
-            handleError:this.handleError,
+            handleSuccess: this.handleSuccess,
+            handleError: this.handleError,
             stateObj: this.state,
             amount: this.state.amount
         })
@@ -109,11 +108,46 @@ class DenominationDetailsForm extends React.Component {
         // });
     }
     handleSuccess = (data) => {
-        this.props.dispatch(commonActionCreater(true,'SESSION_START_REDIRECT_TO_LOGIN'));
+        this.props.dispatch(commonActionCreater(true, 'SESSION_START_REDIRECT_TO_LOGIN'));
         this.props.history.push('/login');
     }
     handleError = (error) => {
         debugger
+    }
+
+    setClosingBalnce = ()=>
+    {
+        this.props.setClosingBalnce(
+            getDenominationDetails(this.state),
+            this.state,
+            this.state.amount);
+        this.props.handleClose()
+    }
+    buttonDecider = () => {
+        if (this.props.close) {
+            return (<Button
+                color='secondary'
+                fullWidth
+                variant='raised'
+                onClick={this.setClosingBalnce}>
+                Set Closing Balance
+                </Button>)
+        }
+
+        else {
+            return (<Button
+                color='primary'
+                variant='contained'
+                fullWidth
+                onClick={this.startNewSession}>
+                Start New Session</Button>)
+        }
+    }
+    componentDidMount(){
+        if(this.props.stateDetails)
+        {
+        this.setState(this.props.stateDetails);
+        }
     }
     render() {
         let extraClass = _get(this.props, 'location.pathname', '') == "/DenominationDetailsForm" ? 'session-parent' : ''
@@ -134,14 +168,18 @@ class DenominationDetailsForm extends React.Component {
                             <tbody>
                                 {this.mapTablerows()}
                             </tbody>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>   <span className="bold">{this.state.amount}</span></td>
+                            </tr>
                         </table>
-                        <Button
-                            color='primary'
-                            variant='contained'
-                            onClick={this.startNewSession}
-                        >
-                            Start New Session
-                        </Button>
+                        {/* <div className="flex flex-row justify-space-between">
+                       
+                      
+                        </div> */}
                     </div>
 
                     <div className="mui-col-md-6 numpad-box">
@@ -164,6 +202,9 @@ class DenominationDetailsForm extends React.Component {
                                     <div className='small-key'></div>
                                     <div className='key big-key'>Enter</div>
                                 </div>
+                            </div>
+                            <div className="flex flex-row justify-center mt-16">
+                                {this.buttonDecider()}
                             </div>
                         </div>
 
