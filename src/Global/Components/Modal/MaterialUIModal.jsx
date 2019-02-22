@@ -49,7 +49,9 @@ class SimpleModal extends React.Component {
     }
 
     decrementer = () => {
-        this.setState({ qty: this.state.qty - 1 })
+        if (this.state.qty > 0) {
+            this.setState({ qty: this.state.qty - 1 })
+        }
     }
 
     addToCart = (index, qty) => {
@@ -107,7 +109,7 @@ class SimpleModal extends React.Component {
                                             {_get(this.props.productDetails, 'salePrice.currencyCode', '')} {_get(this.props.productDetails, 'salePrice.price', 'NaN')}
                                             <div className='indicator'></div>
                                         </div>
-                                        {_get(this.props.inventoryDetails, 'quantity', 0) == 0 ?
+                                        {_get(this.props.inventoryDetails, 'quantity', 0) <= 0 ?
                                             <div className='truncate'>
                                                 <span className="each-card-code-head">Out of stock</span>
                                             </div> : ''
