@@ -14,8 +14,8 @@ class Store extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            terminals: [],
-            selectedTerminal: 0,
+            terminals: [''],
+            selectedTerminal: -1,
             isManager: localStorage.getItem('role') == 'manager' ? true : false
         };
 
@@ -71,14 +71,16 @@ class Store extends React.Component {
         this.setState({ terminals: _get(data, 'terminals') })
     }
     mapTermainal = () => {
-        let terminals = this.state.terminals.map((terminal, index) => {
-            console.log(terminal, "here");
-            return <option data-value={terminal} value={index}>{terminal.name}</option>
+        let terminals = [];
+        terminals.push(<option data-value='' value={-1}></option>);
+        this.state.terminals.map((terminal, index) => {
+            terminals.push(<option data-value={terminal} value={index}>{terminal.name}</option>);
         })
         return terminals;
     }
 
     handleChange = (event) => {
+        debugger;
         this.setState({ selectedTerminal: event.target.value });
         let terminalObj = this.state.terminals[event.target.value];
         localStorage.setItem('terminalId', terminalObj.id);
