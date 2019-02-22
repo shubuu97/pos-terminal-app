@@ -111,6 +111,7 @@ class Product extends React.Component {
                             onClose={this.onClose}
                             title={'Product Details'}
                             productDetails={_get(this.props, 'data.doc.product', {})}
+                            inventoryDetails={_get(this.props, 'data.doc.inventory', {})}
                             index={index}
                             addToCart={(index, qty)=>this.addToCart(index, qty)}
                         /> : ''
