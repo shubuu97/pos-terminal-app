@@ -16,7 +16,7 @@ class Session extends React.PureComponent {
     constructor() {
         super();
         this.state = {
-
+            active:false
         }
     }
 
@@ -44,6 +44,7 @@ class Session extends React.PureComponent {
         return returnElement
     }
     selectedSession = ()=>{
+        this.setState({active:true})
         this.props.dispatch(commonActionCreater(this.props.session,'GET_SELECTED_SESSION'))
     }
 
@@ -52,7 +53,7 @@ class Session extends React.PureComponent {
         let openingTime = _get(session, 'openingTimeStamp.seconds') * 1000;
         return (
             <div onClick={this.selectedSession}>
-                <div className="session">
+                <div style={_get(session,'id')==_get(this.props,'id')?{background:'#3f51b5',color:'white'}:null} className="session">
                     <div className="first-row">
                         <label>{moment(openingTime).format('dddd Do MMM')}</label>
                         <label>{this.showCurrentOrCloseBalance()}</label>
@@ -66,7 +67,7 @@ class Session extends React.PureComponent {
     }
 }
 function mapStateToProps(state){
-    return {}
+    return {id:_get(state,'selectedSession.lookUpData.id')}
 }
 
 export default connect(mapStateToProps)(Session);
