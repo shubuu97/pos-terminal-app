@@ -6,6 +6,7 @@ import _get from 'lodash/get';
 import genericPostData from '../../Global/dataFetch/genericPostData';
 import moment from 'moment';
 import CircularProgress  from '@material-ui/core/CircularProgress';
+import PlusTransactionModal from './PlusTransactionModal';
 
 class SessionDetail extends React.Component {
 
@@ -48,6 +49,23 @@ class SessionDetail extends React.Component {
             })
         }
     }
+    componentDidMount(){
+        if (_get(this.props, 'selectedSession.id')){
+            genericPostData({
+                dispatch: this.props.dispatch,
+                reqObj: { id: _get(this.props, 'selectedSession.id') },
+                url: 'Session/AllData',
+                constants: {
+                    init: 'GET_SESSION_DATA_BY_ID_INIT',
+                    success: 'GET_SESSION_DATA_BY_ID_SUCCESS',
+                    error: 'GET_SESSION_DATA_BY_ID_ERROR'
+                },
+                identifier: 'GET_SESSION_DATA_BY_ID',
+                successCb: this.handleSuccessFetchSessionData,
+                errorCb: this.handleErrorFetchSessionData
+            })
+        }
+    }
     handleSuccessFetchSessionData = (data) => {
         debugger;
         this.setState({isLoading:false})
@@ -62,11 +80,17 @@ class SessionDetail extends React.Component {
         this.setState({isLoading:false})
 
     }
+    showPlusTransactionDialog = ()=>{
+        this.setState({showPlusTransactionDialog:true})
+    }
+    closePlusTransactionDialog = ()=>{
+        this.setState({showPlusTransactionDialog:false})
+    }
 
     render() {
         let manager = _get(this.state, 'manager');
         let session = _get(this.state, 'session');
-        let transactions = _get(this.state, 'transactions');
+        let transactions = _get(this.state, 'transactions',[]);
         let person = _get(manager, 'person');
         let staffName = `${_get(person, 'firstName', '')} ${_get(person, 'lastName', '')}`;
         let openingTime = moment(_get(session, 'openingTimeStamp.seconds') * 1000).format('dddd DD MMM,YYYY hh:mm A')
@@ -121,7 +145,7 @@ class SessionDetail extends React.Component {
                         </div>
                     </div>
                     <div className='mui-row trans-row-1'>
-                        <div className='mui-col-md-3 primary-color'>+ Transactions</div>
+                        <div className='mui-col-md-3 primary-color' onClick={this.showPlusTransactionDialog}>+ Transactions</div>
                         <div className='mui-col-md-3'>$128868.8</div>
                         <div className="mui-col-md-6 difference">
                             <div className='mui-col-md-6 secondary-color'>Difference</div>
@@ -189,6 +213,11 @@ class SessionDetail extends React.Component {
                     setClosingBalnce={this.setClosingBalnce}
 
                 />
+                <PlusTransactionModal
+                  open={this.state.showPlusTransactionDialog}
+                  handleClose={this.closePlusTransactionDialog}
+                  transactions={transactions}
+                 />
             </div>
         )
     }
