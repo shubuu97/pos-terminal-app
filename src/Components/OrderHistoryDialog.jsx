@@ -6,6 +6,8 @@ import _get from 'lodash/get';
 import _isEmpty from 'lodash/isEmpty';
 import _isArray from 'lodash/isArray';
 import _find from 'lodash/find';
+import _cloneDeep from 'lodash/cloneDeep';
+import _set from 'lodash/set';
 /* Redux Imports */
 import { commonActionCreater } from '../Redux/commonAction'
 /* Material Imports */
@@ -30,6 +32,7 @@ import DeleteIcons from '@material-ui/icons/DeleteOutline';
 import applyCart from '../Global/PosFunctions/applyCart';
 import genericPostData from '../Global/dataFetch/genericPostData';
 import { isArray } from 'util';
+import OrderRefund from './OrderRefund';
 
 
 const styles = {
@@ -48,6 +51,8 @@ function Transition(props) {
 class OrderHistoryDialog extends React.Component {
     state = {
         orderId: '',
+        openRefund: false,
+        selectedOrder: {},
     }
 
     componentDidMount() {
@@ -56,8 +61,78 @@ class OrderHistoryDialog extends React.Component {
     onSelectOrder = (custData) => {
         this.setState({
             orderId: _get(custData, 'sale.id', ''),
+            selectedOrder: custData,
         })
     }
+    updateReturnQuantity = (quantity, index) => {
+        let selectedOrder = _cloneDeep(this.state.selectedOrder);
+        let item = _get(selectedOrder, `saleParts[${index}]`, {});
+        if (quantity <= _get(selectedOrder, `saleParts[${index}].saleItem.qty`, 0)) {
+            _set(selectedOrder, `saleParts[${index}].saleItem.returnQty`, Number(quantity));
+            if (quantity != '') {
+                let refundAmount = (_get(item, 'saleItem.itemRegularTotal.amount', 0)/_get(item, 'saleItem.qty', 0))*Number(quantity);
+                _set(selectedOrder, `saleParts[${index}].saleItem.itemRefundAmount.amount`, (refundAmount));
+                _set(selectedOrder, `saleParts[${index}].saleItem.itemRefundAmount.currencyCode`, '$');
+            }
+        }
+        this.setState({
+            selectedOrder,
+        });
+    }
+    openRefund = () => {
+        this.setState({
+            openRefund: true,
+        })
+    }
+
+    handleRefundClose = () => {
+        this.setState({
+            openRefund: false,
+        })
+    }
+    handleRefund = () => {
+        const { selectedOrder } = this.state;
+        let data = {};
+        data.saleId = _get(selectedOrder, 'sale.id', '');
+        let saleItems = [];
+        let totalRefundAmount = 0;
+        selectedOrder.saleParts.map((part, index) => {
+            let tempPart = {...part.saleItem};
+            tempPart.productId = _get(part, 'product.id', '');
+            totalRefundAmount += _get(part, 'saleItem.itemRefundAmount.amount', 0);
+            if (tempPart.returnQty && tempPart.returnQty > 0) {
+                saleItems.push(tempPart);
+            }
+        })
+        data.saleItems = saleItems;
+        data.totalRefundAmount = {
+            amount: totalRefundAmount,
+            currencyCode: "$",
+        }
+        data.refundSessionId = _get(selectedOrder, 'sale.sessionId', '');
+        data.refundApprovedBy = _get(selectedOrder, 'sale.operatorId', '');
+        data.refundTimeStamp = {
+            seconds: new Date().getTime()/1000,
+        }
+
+        console.log('data to refund request', data);
+
+        genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj: data,
+            url: 'Sale/Refund',
+            constants: {
+                init: 'SALE_REFUND_INIT',
+                success: 'SALE_REFUND_SUCCESS',
+                error: 'SALE_REFUND_ERROR'
+            },
+            identifier: 'SALE_REFUND',
+            successCb: ()=>{},
+            errorCb: ()=>{}
+        })
+    }
+
+    
 
     showPaymentMethods = (custData) => {
         const paymentMethodsView = !_isEmpty(_get(custData, 'sale.payments', [])) && _get(custData, 'sale.payments', []).map((payment) => (
@@ -111,12 +186,13 @@ class OrderHistoryDialog extends React.Component {
         let listItems = _isArray(orderData.saleParts) ? orderData.saleParts.map((item) => (
             <tr>
                 <td>{_get(item, 'product.name', '')}</td>
-                <td>{_get(item, 'product.salePrice.price', '')}</td>
-                <td>{_get(item, 'qty', 0)}</td>
+                <td>{(_get(item, 'saleItem.itemRegularTotal.amount', 0)/_get(item, 'saleItem.qty', 0))}</td>
+                <td>{_get(item, 'saleItem.qty', 0)}</td>
+                <td>{_get(item, 'saleItem.returnQty', 0)}</td>
                 <td>{_get(item, 'product.discount', 0)}</td>
-                <td>{_get(item, 'product.salePrice.price', '') * _get(item, 'qty', 0)}</td>
+                <td>{(_get(item, 'saleItem.itemSubTotal.amount', ''))}</td>
                 <td>{_get(item, 'product.tax', 0)}</td>
-                <td>{_get(item, 'product.salePrice.price', '') * _get(item, 'qty', 0) - (_get(item, 'product.discount', 0) + _get(item, 'product.tax', 0))}</td>
+                <td>{(_get(item, 'saleItem.itemEffectiveTotal.amount', 0))}</td>
             </tr>
         )) : (
                 <tr>
@@ -174,8 +250,9 @@ class OrderHistoryDialog extends React.Component {
                                 <thead>
                                     <tr>
                                         <th>Product</th>
-                                        <th>Price</th>
+                                        <th>Original Price</th>
                                         <th>Qty</th>
+                                        <th>Return Qty</th>
                                         <th>Discount Amount</th>
                                         <th>SubTotal</th>
                                         <th>Tax Amount</th>
@@ -212,7 +289,7 @@ class OrderHistoryDialog extends React.Component {
                         </div>
                         <div className="mui-row" style={{ display: 'flex', justifyContent: 'center' }}>
                             <Button onClick={() => this.handlePrint()} variant="contained">ORDER PRINT </Button>
-                            <Button style={{ marginLeft: '15px' }} variant="contained">REFUND </Button>
+                            <Button style={{ marginLeft: '15px' }} variant="contained" onClick={() => this.openRefund()}>REFUND </Button>
                         </div>
                     </div>
                 </div>
@@ -248,6 +325,16 @@ class OrderHistoryDialog extends React.Component {
                             }
                         </div>
                     </div>
+                    {
+                        this.state.openRefund &&
+                        <OrderRefund
+                            open={this.state.openRefund}
+                            handleClose = {this.handleRefundClose}
+                            selectedOrder = {this.state.selectedOrder}
+                            updateReturnQuantity = {this.updateReturnQuantity}
+                            handleRefund={this.handleRefund}
+                        />
+                    }
                 </Dialog>
                 <iframe id="ifmcontentstoprint" style={{
                     height: '0px',
