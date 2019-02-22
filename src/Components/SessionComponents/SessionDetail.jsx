@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import _get from 'lodash/get';
 import genericPostData from '../../Global/dataFetch/genericPostData';
 import moment from 'moment';
-import CircularProgress  from '@material-ui/core/CircularProgress';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import TransactionModal from './TransactionModal';
 
 class SessionDetail extends React.Component {
@@ -33,7 +33,7 @@ class SessionDetail extends React.Component {
     componentWillReceiveProps(nextProps) {
         if (_get(this.props, 'selectedSession.id') !== _get(nextProps, 'selectedSession.id')) {
             debugger;
-            this.setState({isLoading:true})
+            this.setState({ isLoading: true })
             genericPostData({
                 dispatch: this.props.dispatch,
                 reqObj: { id: _get(nextProps, 'selectedSession.id') },
@@ -49,8 +49,8 @@ class SessionDetail extends React.Component {
             })
         }
     }
-    componentDidMount(){
-        if (_get(this.props, 'selectedSession.id')){
+    componentDidMount() {
+        if (_get(this.props, 'selectedSession.id')) {
             genericPostData({
                 dispatch: this.props.dispatch,
                 reqObj: { id: _get(this.props, 'selectedSession.id') },
@@ -68,7 +68,7 @@ class SessionDetail extends React.Component {
     }
     handleSuccessFetchSessionData = (data) => {
         debugger;
-        this.setState({isLoading:false})
+        this.setState({ isLoading: false })
         this.setState({
             manager: _get(data, 'manager'),
             session: _get(data, 'session'),
@@ -77,42 +77,43 @@ class SessionDetail extends React.Component {
         })
     }
     handleErrorFetchSessionData = (err) => {
-        this.setState({isLoading:false})
+        this.setState({ isLoading: false })
 
     }
-    showPlusTransactionDialog = ()=>{
-        this.setState({showTransactionDialog:true,type:'positive'})
+    showPlusTransactionDialog = () => {
+        this.setState({ showTransactionDialog: true, type: 'positive' })
     }
-    showNegativeTransactionDialog = ()=>{
-        this.setState({showTransactionDialog:true,type:'negative'})
+    showNegativeTransactionDialog = () => {
+        this.setState({ showTransactionDialog: true, type: 'negative' })
     }
-    closePlusTransactionDialog = ()=>{
-        this.setState({showTransactionDialog:false})
+    closePlusTransactionDialog = () => {
+        this.setState({ showTransactionDialog: false })
     }
 
     render() {
         let manager = _get(this.state, 'manager');
         let session = _get(this.state, 'session');
-        let transactions = _get(this.state, 'transactions',[]);
+        let status = _get(session, 'status');
+        let transactions = _get(this.state, 'transactions', []);
         let person = _get(manager, 'person');
         let staffName = `${_get(person, 'firstName', '')} ${_get(person, 'lastName', '')}`;
         let openingTime = moment(_get(session, 'openingTimeStamp.seconds') * 1000).format('dddd DD MMM,YYYY hh:mm A')
         let terminal = _get(session, 'terminalId');
-        
+
         let closingTime = _get(session, 'closingTimeStamp.seconds') * 1000;
-        if(closingTime){
+        if (closingTime) {
             closingTime = moment(closingTime).format('dddd DD MMM,YYYY hh:mm A');
         }
-        let openingBalance = _get(session,'openingBalance.amount','');
+        let openingBalance = _get(session, 'openingBalance.amount', '');
 
-        if(this.state.isLoading){
-            return <CircularProgress size={300}/>
+        if (this.state.isLoading) {
+            return <CircularProgress size={300} />
         }
         return (
             <div className="mui-container tertiary-color">
                 <div className='mui-row'>
                     <div className='mui-col-md-12 date-header'>
-                        <span className="secondary-color">Wednesday 3 Oct, 2017</span>
+                        <span className="secondary-color">{moment(_get(session, 'openingTimeStamp.seconds') * 1000).format('dddd D MMM,YYYY')}</span>
                     </div>
                 </div>
 
@@ -159,51 +160,53 @@ class SessionDetail extends React.Component {
                         <div className='mui-col-md-3 primary-color' onClick={this.showNegativeTransactionDialog}>- Transactions</div>
                         <div className='mui-col-md-3'>$8675746</div>
                         <div className='mui-col-md-6'>
-                            <div class="mui-col-md-6 text-right">
-                                <Button variant='contained' color='primary'>Put Money In</Button>
-                            </div>
-                            <div class="mui-col-md-6 text-left">
-                                <Button variant='contained' color='primary'>Take Money Out</Button>
-                            </div>
+                            {status == 'open' ? <div class="mui-col-md-6 text-right">
+                                <Button variant='flat' color='primary'>Put Money In</Button>
+                            </div> : null}
+                            {status == 'open' ? <div class="mui-col-md-6 text-left">
+                                <Button variant='flat' color='primary'>Take Money Out</Button>
+                            </div> : null}
                         </div>
                     </div>
                     <div className='mui-row closing-bal'>
                         <div className='mui-col-md-3 secondary-color'>Theoratical Closing Balance</div>
                         <div className='mui-col-md-3'>$968857575</div>
-                        <div className='mui-col-md-6 text-center'>
+                        {status == 'open' ? <div className='mui-col-md-6 text-center'>
                             <Button
                                 variant='contained'
                                 color='primary'
                                 onClick={this.handlecloseSessionDialog}
-                            >Set Closing Balance</Button></div>
+                            >Set Closing Balance</Button></div> : null}
                     </div>
                 </div>
-                <div>
+                {/* <div>
                     <div className='mui-row cash-payment-row'>
                         <div className='mui-col-md-1'>Icon</div>
                         <div className='mui-col-md-3'>Cash Payment</div>
                         <div className='mui-col-md-2'></div>
                         <div className='mui-col-md-6 text-right'>Sale: $857475784</div>
                     </div>
-                </div>
-                <div>
+                </div> */}
+                <div className='mt-10'>
                     <div className='mui-row'>
                         <div className="mui-col-md-12 text-center">
-                            <Button variant='contained' color='primary' style={{ marginRight: "1%" }}>Open Cash Drawer</Button>
-                            <Button variant='contained' color='primary'>Go To Checkout</Button>
+                            <Button
+                             variant='outlined'
+                              color='primary' style={{ marginRight: "1%" }}>Open Cash Drawer</Button>
+                            <Button variant='outlined' color='primary'>Go To Checkout</Button>
                         </div>
                     </div>
                 </div>
                 <div>
                     <div className='mui-row print-row'>
                         <div className="mui-col-md-12">
-                            <div className="mui-col-md-6 text-right">
-                                <Button variant='contained' color='primary' style={{ marginRight: "1%" }} className="printBtn">Print</Button>
+                            <div className={status=='open'?"mui-col-md-6 text-left":"mui-col-md-12 text-left"}>
+                                <Button variant='outlined' color='primary' style={{ marginRight: "1%" }} className="printBtn">Print</Button>
                             </div>
 
-                            <div className="mui-col-md-6 text-left">
+                            {status == 'open' ? <div className="mui-col-md-6 text-left">
                                 <Button variant='contained' color='primary' style={{ marginRight: "1%" }} className="printBtn">End of Session</Button>
-                            </div>
+                            </div> : null}
 
                         </div>
                     </div>
@@ -217,11 +220,11 @@ class SessionDetail extends React.Component {
 
                 />
                 <TransactionModal
-                  open={this.state.showTransactionDialog}
-                  type = {this.state.type}
-                  handleClose={this.closePlusTransactionDialog}
-                  transactions={transactions}
-                 />
+                    open={this.state.showTransactionDialog}
+                    type={this.state.type}
+                    handleClose={this.closePlusTransactionDialog}
+                    transactions={transactions}
+                />
             </div>
         )
     }
