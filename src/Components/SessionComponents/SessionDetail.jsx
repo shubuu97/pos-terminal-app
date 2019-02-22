@@ -371,7 +371,10 @@ class SessionDetail extends React.Component {
                             <Button
                                 variant='outlined'
                                 color='primary' style={{ marginRight: "1%" }}>Open Cash Drawer</Button>
-                            <Button variant='outlined' color='primary'>Go To Checkout</Button>
+                            <Button
+                            onClick={()=>this.props.goBackToCheckOut()}
+                             variant='outlined'
+                              color='primary'>Go To Checkout</Button>
                         </div>
                     </div>
                 </div>

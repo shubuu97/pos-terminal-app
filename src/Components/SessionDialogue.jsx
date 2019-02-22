@@ -53,7 +53,9 @@ class SessionDiaogue extends React.Component {
                             </IconButton>
                             <span className='ml-20'>Session List</span>
                         </div>
-                       <SessionContainer/>
+                       <SessionContainer
+                       goBackToCheckOut = {this.props.handleClose}
+                       />
                     </div>
                 </Dialog>
             </div>

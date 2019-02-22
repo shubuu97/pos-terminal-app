@@ -82,7 +82,9 @@ class SessionContainer extends React.Component {
                     </div>
                 </div>
                 <div className="mui-col-sm-8">
-                    <SessionDetail />
+                    <SessionDetail 
+                    goBackToCheckOut = {this.props.goBackToCheckOut}
+                    />
                 </div>
             </div>
         );
