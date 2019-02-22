@@ -116,8 +116,8 @@ class OrderHistoryDialog extends React.Component {
             amount: totalRefundAmount,
             currencyCode: "$",
         }
-        data.refundSessionId = _get(selectedOrder, 'sale.sessionId', '');
-        data.refundApprovedBy = _get(selectedOrder, 'sale.operatorId', '');
+        data.refundSessionId = localStorage.getItem('sessionId');
+        data.refundApprovedBy = localStorage.getItem('userId');
         data.refundTimeStamp = {
             seconds: parseInt(new Date().getTime()/1000),
         }
@@ -314,6 +314,9 @@ class OrderHistoryDialog extends React.Component {
                                 <label >{`Grand Total: `}</label>
                                 <label style={{ float: 'right' }}>{`${_get(selectedOrder, 'sale.totalAmount.currencyCode', '$')} ${_get(selectedOrder, 'sale.totalAmount.amount', '0')}`}</label>
                                 <br />
+                                <label >{`Returned Amount: `}</label>
+                                <label style={{ float: 'right' }}>{`${_get(selectedOrder, 'sale.totalRefundAmount.currencyCode', '$')} ${_get(selectedOrder, 'sale.totalRefundAmount.amount', '0')}`}</label>
+                                <br />
                                 <label >{`Total Paid: `}</label>
                                 <div style={{ float: 'right' }}>
                                     {this.showPaymentMethods(selectedOrder)}
@@ -322,7 +325,7 @@ class OrderHistoryDialog extends React.Component {
                                 <br />
                                 <br />
                                 <label >{`Change: `}</label>
-                                <label style={{ float: 'right' }}>{`$ ${_get(selectedOrder, 'sale.change', '0')}`}</label>
+                                <label style={{ float: 'right' }}>{`$ ${(_get(selectedOrder, 'sale.totalAmountPaid.amount', 0)-_get(selectedOrder, 'sale.totalAmount.amount', 0)).toFixed(2)}`}</label>
                             </div>
                         </div>
                         <div className="mui-row" style={{ display: 'flex', justifyContent: 'center' }}>
