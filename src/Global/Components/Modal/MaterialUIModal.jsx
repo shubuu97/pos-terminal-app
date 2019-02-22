@@ -69,9 +69,17 @@ class SimpleModal extends React.Component {
                     onClose={this.props.onClose}
                 >
                     <div style={getModalStyle()} className={classes.paper}>
-                        <Typography variant="h6" id="modal-title">
-                            {this.props.title}
-                        </Typography>
+                        <div className="mui-col-md-12">
+
+                            <div className='mui-col-md-4 button-section flex-row '>
+                                <Button className='mr-20' variant="outlined" onClick={() => this.props.onClose()}>Cancel</Button>
+                            </div>
+                            <div className="mui-col-md-8">
+                                <Typography variant="h6" id="modal-title">
+                                    {this.props.title}
+                                </Typography>
+                            </div>
+                        </div>
                         <Typography variant="subtitle1" id="simple-modal-description">
                             <div className="mui-col-md-12">
                                 <div className="mui-col-md-6 pop-img">
@@ -128,7 +136,7 @@ class SimpleModal extends React.Component {
                         </Typography>
                     </div>
                 </Modal>
-            </div>
+            </div >
         );
     }
 }
