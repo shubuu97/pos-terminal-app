@@ -18,7 +18,7 @@ class SessionContainer extends React.Component {
     constructor() {
         super();
         this.state = {
-            openNewSessionDialog: false
+            openNewSessionDialog: false,
 
         }
     }
@@ -59,7 +59,7 @@ class SessionContainer extends React.Component {
         let { sessionList } = this.props;
         return (
             <div className="session-parent">
-                <div className="mui-col-sm-4 ">
+                <div style={{height:document.documentElement.scrollHeight*.8,overflowY:'scroll'}} className="mui-col-sm-4">
                     <div className="flex-column justify-flex-end">
                         <Sessions
                             sessionList={sessionList}
