@@ -6,17 +6,20 @@ import _findIndex from 'lodash/findIndex';
 import _find from 'lodash/find'
 /* Material import */
 import Info from '@material-ui/icons/Info';
-/* Redux Imports */
-import { commonActionCreater } from '../../Redux/commonAction';
 import SimpleModal from '../../Global/Components/Modal/MaterialUIModal.jsx';
 import { Button } from '@material-ui/core';
+import RemoveCircleIcons from '@material-ui/icons/RemoveCircleOutline';
+import AddIcons from '@material-ui/icons/AddCircleOutline';
+/* Redux Imports */
+import { commonActionCreater } from '../../Redux/commonAction';
 
 class Product extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             openModal: false,
-            counter: 0
+            counter: 0,
+            qty: 0
         };
         this.ProductDetails = [];
     }
@@ -34,7 +37,7 @@ class Product extends React.Component {
         }
     }
 
-    addToCart = (index) => {
+    addToCart = (index, quantity) => {
         let cartItems = _get(this, 'props.cart.cartItems', [])
         let data = _get(this, `props.data`, {});
         let reqObj
@@ -49,7 +52,7 @@ class Product extends React.Component {
             this.setState({ qty: 1 })
         }
         else {
-            let qty = (_find(cartItems, data)).qty + 1
+            let qty = (_find(cartItems, data)).qty + (quantity ? quantity : 1)
             let index = _findIndex(cartItems, ['id', data.id]);
             reqObj = [
                 ...cartItems
@@ -62,35 +65,6 @@ class Product extends React.Component {
 
     viewProductDetails = (index) => {
         this.setState({ openModal: true })
-        let productDetails = _get(this.props, 'data.doc.product', {});
-        this.ProductDetails.push(
-            <div className="col-sm-12">
-                <div className="col-sm-6 pop-img">
-                    <img src={_get(productDetails, 'image', '')} alt={_get(productDetails, 'image', '')} />
-                </div>
-
-                <div className="col-sm-6">
-                    <div className='flex-column fwidth'>
-                        <div className='truncate'>
-                            <span className="each-card-name">{_get(productDetails, 'name', '')}</span>
-                        </div>
-                        <div className='truncate'>
-                            <span className="each-card-code-head">Code : </span>
-                            <span className='each-card-code'>{_get(productDetails, 'id', '')}</span>
-                        </div>
-                        <div className="each-card-price flex-row">
-                            {_get(productDetails, 'salePrice.currencyCode', '')} {_get(productDetails, 'salePrice.price', 'NaN')}
-                            <div className='indicator'></div>
-                        </div>
-                        <div className='button-section flex-row '>
-                            <Button className='mr-20' variant="outlined" onClick={() => this.addToCart(index)}>Add To Cart</Button>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-        )
     }
 
     onClose = () => {
@@ -134,7 +108,9 @@ class Product extends React.Component {
                             open={this.state.openModal}
                             onClose={this.onClose}
                             title={'Product Details'}
-                            description={this.ProductDetails}
+                            productDetails={_get(this.props, 'data.doc.product', {})}
+                            index={index}
+                            addToCart={(index, qty)=>this.addToCart(index, qty)}
                         /> : ''
                 }
             </React.Fragment>)
