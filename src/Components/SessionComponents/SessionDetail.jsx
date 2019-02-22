@@ -76,6 +76,7 @@ class SessionDetail extends React.Component {
         if(closingTime){
             closingTime = moment(closingTime).format('dddd DD MMM,YYYY hh:mm A');
         }
+        let openingBalance = _get(session,'openingBalance.amount','');
 
         if(this.state.isLoading){
             return <CircularProgress size={300}/>
@@ -113,7 +114,7 @@ class SessionDetail extends React.Component {
                 <div>
                     <div className='mui-row opening-bal-row'>
                         <div className='mui-col-md-3 secondary-color'>Opening Balance</div>
-                        <div className='mui-col-md-3'>$200</div>
+                        <div className='mui-col-md-3'>${openingBalance}</div>
                         <div className="mui-col-md-6 real-closing-bal">
                             <div className='mui-col-md-6 secondary-color'>Real Closing Balance</div>
                             <div className='mui-col-md-6'>${this.state.realClosingBalance}</div>
