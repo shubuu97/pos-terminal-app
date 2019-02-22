@@ -6,7 +6,7 @@ import _get from 'lodash/get';
 import genericPostData from '../../Global/dataFetch/genericPostData';
 import moment from 'moment';
 import CircularProgress  from '@material-ui/core/CircularProgress';
-import PlusTransactionModal from './PlusTransactionModal';
+import TransactionModal from './TransactionModal';
 
 class SessionDetail extends React.Component {
 
@@ -81,10 +81,13 @@ class SessionDetail extends React.Component {
 
     }
     showPlusTransactionDialog = ()=>{
-        this.setState({showPlusTransactionDialog:true})
+        this.setState({showTransactionDialog:true,type:'positive'})
+    }
+    showNegativeTransactionDialog = ()=>{
+        this.setState({showTransactionDialog:true,type:'negative'})
     }
     closePlusTransactionDialog = ()=>{
-        this.setState({showPlusTransactionDialog:false})
+        this.setState({showTransactionDialog:false})
     }
 
     render() {
@@ -153,7 +156,7 @@ class SessionDetail extends React.Component {
                         </div>
                     </div>
                     <div className='mui-row trans-row-2'>
-                        <div className='mui-col-md-3 primary-color'>- Transactions</div>
+                        <div className='mui-col-md-3 primary-color' onClick={this.showNegativeTransactionDialog}>- Transactions</div>
                         <div className='mui-col-md-3'>$8675746</div>
                         <div className='mui-col-md-6'>
                             <div class="mui-col-md-6 text-right">
@@ -213,8 +216,9 @@ class SessionDetail extends React.Component {
                     setClosingBalnce={this.setClosingBalnce}
 
                 />
-                <PlusTransactionModal
-                  open={this.state.showPlusTransactionDialog}
+                <TransactionModal
+                  open={this.state.showTransactionDialog}
+                  type = {this.state.type}
                   handleClose={this.closePlusTransactionDialog}
                   transactions={transactions}
                  />
