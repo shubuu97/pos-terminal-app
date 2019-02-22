@@ -433,12 +433,12 @@ p {
 
         .added-item-position {
             top: 0;
-            right: 0;
+            left: 0;
         }
 
         .added-item-count {
             background: @primary-l;
-            border-radius: 0 0 0 10px;
+            border-radius: 4px 0 10px 0;
             padding: 10px;
             color: @primary-text;
         }
@@ -949,10 +949,6 @@ p {
     }
 }
 
-.session-detail {
-    background: @background-white;
-}
-
 .session-date {
     padding: 20px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
@@ -964,6 +960,84 @@ p {
     .open-tag {
         background-color: rgb(14, 240, 228);
     }
+}
+
+// style for session details
+
+.secondary-color{
+    color:#777;
+    font-weight:bold;
+}
+
+.tertiary-color{
+    background-color: @background-white;
+    color:#666;
+}
+
+.primary-color{
+    color:blue;
+    font-weight:bold;
+}
+
+.text-right{
+    text-align: right;
+}
+
+.text-left{
+    text-align:left;
+}
+
+.text-center{
+    text-align:center;
+}
+
+.date-header{
+    text-align: center;
+    box-shadow:0px 4px 4px #d8d8d8;
+    padding:2%;
+    font-size:120%;
+    margin-bottom: 2%;
+}
+
+.staff-row{
+    padding:0.2% 2%;
+}
+
+.pos-row{
+    padding:1% 2% 2% 2%;
+    border-bottom:1px solid #d1d1d1;
+}
+
+.opening-bal-row, .trans-row-1{
+    padding:1% 2% 1% 2%;
+   
+}
+
+.real-closing-bal, .difference{
+    border-bottom:1px solid #d1d1d1;
+    padding-bottom: 1.5%;
+}
+
+.trans-row-2{
+    padding:0 2% 0.8% 2%;
+}
+
+.closing-bal{
+    padding:0% 2% 2% 2%;
+    border-bottom: 1px solid #d1d1d1;
+}
+
+.cash-payment-row{
+    padding:2%;
+}
+
+.print-row{
+    margin-top: 2%;
+    margin-bottom: 1%;
+}
+
+.printBtn, .endBtn{
+    width:100%;
 }
 
 //style for history section
@@ -1073,4 +1147,11 @@ p {
             margin: 1%;
         }
     }
+}
+
+.pop-img{
+    border-right:solid 1px #DDD;
+}
+.pop-img img{
+    width:100%;
 }
