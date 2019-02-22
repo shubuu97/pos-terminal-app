@@ -36,7 +36,7 @@ class TextFieldRF extends React.Component
     // }
 
 render() {
-    const {multiline, classes,field,disabled, InputLabelProps, defaultValue, input, id, variant, fullWidth, autoFocus, label, type, placeholder,required, custom, meta, startAdornment, endAdornment } = this.props;
+    const {multiline, className,field,disabled, InputLabelProps, defaultValue, input, id, variant, fullWidth, autoFocus, label, type, placeholder,required, custom, meta, startAdornment, endAdornment , ...others} = this.props;
     console.log(this.props, "globalTextField")
    return (
         [
@@ -52,16 +52,17 @@ render() {
                 error={_get(meta, 'touched', true) && _get(meta, 'error', false)}
                 {...input}
                 {...custom}
+                {...others}
                 InputLabelProps={InputLabelProps}
                 id={id}
-                className={classes.inputspace}
-                variant={'standard'}
+                className={className}
+                variant={variant}
                 required={required}
                 autoFocus={autoFocus}
-                InputProps={{
-                    startAdornment: <InputAdornment position="start">{startAdornment}</InputAdornment>,
-                    endAdornment: <InputAdornment position="end">{endAdornment}</InputAdornment>,
-                }}
+                // InputProps={{
+                //     startAdornment: <InputAdornment position="start">{startAdornment}</InputAdornment>,
+                //     endAdornment: <InputAdornment position="end">{endAdornment}</InputAdornment>,
+                // }}
             />,
             <div className="errormsg">  {_get(meta, 'touched', false) && _get(meta, 'error', '') ? <FormHelperText style={{color:'red'}}>{meta.error}</FormHelperText> : null}</div>
 

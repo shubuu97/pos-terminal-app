@@ -211,6 +211,28 @@ class OrderHistoryDialog extends React.Component {
             </React.Fragment>
         )
     }
+
+    handlePrint = () => {
+        let variablee = <div className="card">
+            <div className="mui-row" style={{ paddingLeft: '5%', paddingRight: '6%' }}>
+                <table className="mui-table mui-table--bordered">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Qty</th>
+                            <th>Discount Amount</th>
+                            <th>SubTotal</th>
+                            <th>Tax Amount</th>
+                            <th>Row Total</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        variablee.print();
+    }
+
     populateOrderData = () => {
         const { salesList } = this.props;
         let selectedOrder = _find(salesList, { sale: { id: this.state.orderId } });
@@ -277,8 +299,8 @@ class OrderHistoryDialog extends React.Component {
                             </div>
                         </div>
                         <div className="mui-row" style={{ display: 'flex', justifyContent: 'center' }}>
-                            <Button variant="contained">ORDER PRINT </Button>
-                            <Button style={{ marginLeft: '15px' }} variant="contained" onClick={() => this.openRefund()}>REFUND </Button>
+                            <Button onClick={() => this.handlePrint()} variant="contained">ORDER PRINT </Button>
+                            <Button style={{ marginLeft: '15px' }} variant="contained">REFUND </Button>
                         </div>
                     </div>
                 </div>
