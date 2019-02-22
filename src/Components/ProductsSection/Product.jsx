@@ -13,6 +13,8 @@ import AddIcons from '@material-ui/icons/AddCircleOutline';
 /* Redux Imports */
 import { commonActionCreater } from '../../Redux/commonAction';
 
+import img1 from '../../assets/images/flowers/flower1.jpg'
+
 class Product extends React.Component {
     constructor(props) {
         super(props);
@@ -80,10 +82,10 @@ class Product extends React.Component {
                     <div className='absolute added-item-position'>
                         {this.state.qty ? <div className='added-item-count'>{this.state.qty}</div> : null}
                     </div>
-                    <div className='flex-column fwidth'>
-                        <div className='truncate'>
-                            <span className="each-card-name">{_get(data, 'doc.product.name', 'undefined')}</span>
-                        </div>
+                    <div className='product-image'>
+                        <img src={_get(data, 'doc.product.image')} alt="" />
+                    </div>
+                    <div className='flex-column justify-space-between product-info'>
                         <div className='flex-column fwidth'>
                             <div className='truncate'>
                                 <span className="each-card-name">{_get(data, 'doc.product.name', 'undefined')}</span>
