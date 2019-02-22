@@ -1,16 +1,19 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import SessionDialog from './SessionDialog';
+import { connect } from 'react-redux';
+import _get from 'lodash/get';
+import genericPostData from '../../Global/dataFetch/genericPostData';
+import moment from 'moment';
 
+class SessionDetail extends React.Component {
 
-class SessionDetail extends Component {
-  
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
-            closeSessionDialog:false,
-            realClosingBalance:0,
-            stateDetails:{}
+            closeSessionDialog: false,
+            realClosingBalance: 0,
+            stateDetails: {}
         }
     }
 
@@ -18,14 +21,59 @@ class SessionDetail extends Component {
         debugger;
         this.setState({ closeSessionDialog: true })
     }
-    handleClose = ()=>{
+    handleClose = () => {
         this.setState({ closeSessionDialog: false })
     }
-    setClosingBalnce = (denominatinDetails,stateDetails,realClosingBalance)=>{
-        this.setState({denominatinDetails,stateDetails,realClosingBalance})
+    setClosingBalnce = (denominatinDetails, stateDetails, realClosingBalance) => {
+        this.setState({ denominatinDetails, stateDetails, realClosingBalance })
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (_get(this.props, 'selectedSession.id') !== _get(nextProps, 'selectedSession.id')) {
+            debugger;
+            genericPostData({
+                dispatch: this.props.dispatch,
+                reqObj: { id: _get(nextProps, 'selectedSession.id') },
+                url: 'Session/AllData',
+                constants: {
+                    init: 'GET_SESSION_DATA_BY_ID_INIT',
+                    success: 'GET_SESSION_DATA_BY_ID_SUCCESS',
+                    error: 'GET_SESSION_DATA_BY_ID_ERROR'
+                },
+                identifier: 'GET_SESSION_DATA_BY_ID',
+                successCb: this.handleSuccessFetchSessionData,
+                errorCb: this.handleErrorFetchSessionData
+            })
+        }
+    }
+    handleSuccessFetchSessionData = (data) => {
+        debugger;
+        this.setState({
+            manager: _get(data, 'manager'),
+            session: _get(data, 'session'),
+            transactions: _get(data, 'transactions')
+
+        })
+    }
+    handleErrorFetchSessionData = (err) => {
+
     }
 
     render() {
+        let manager = _get(this.state, 'manager');
+        let session = _get(this.state, 'session');
+        let transactions = _get(this.state, 'transactions');
+        let person = _get(manager, 'person');
+        let staffName = `${_get(person, 'firstName', '')} ${_get(person, 'lastName', '')}`;
+        let openingTime = moment(_get(session, 'openingTimeStamp.seconds') * 1000).format('dddd DD MMM,YYYY hh:mm A')
+        let terminal = _get(session, 'terminalId');
+        
+        let closingTime = _get(session, 'closingTimeStamp.seconds') * 1000;
+        if(closingTime){
+            closingTime = moment(closingTime).format('dddd DD MMM,YYYY hh:mm A');
+        }
+
+
         return (
             <div className="mui-container tertiary-color">
                 <div className='mui-row'>
@@ -37,15 +85,23 @@ class SessionDetail extends Component {
                 <div className="staff-row">
                     <div className='mui-row'>
                         <div className='mui-col-md-3 secondary-color'>Staff</div>
-                        <div className='mui-col-md-3'>shreveportadmin</div>
+                        <div className='mui-col-md-3'>{staffName}</div>
                         <div className='mui-col-md-3 secondary-color'>Opened</div>
-                        <div className='mui-col-md-3 no-pad'>Wednesday 3 Oct, 2017 1:12 PM</div>
+                        <div className='mui-col-md-3 no-pad'>{openingTime}</div>
                     </div>
                 </div>
                 <div>
                     <div className='mui-row pos-row'>
                         <div className='mui-col-md-3 secondary-color'>POS</div>
-                        <div className='mui-col-md-3'>shreveportadmin</div>
+                        <div className='mui-col-md-3'>{terminal}</div>
+
+                        {closingTime ?
+                            <React.Fragment>
+                                <div className='mui-col-md-3 secondary-color'>Closed</div>
+                                <div className='mui-col-md-3 no-pad'>{closingTime}</div>
+                            </React.Fragment>
+                            : null}
+
                     </div>
                 </div>
                 <div>
@@ -118,17 +174,23 @@ class SessionDetail extends Component {
                         </div>
                     </div>
                 </div>
-                            <SessionDialog
-                                open={this.state.closeSessionDialog}
-                                handleClose = {this.handleClose}
-                                close={true}
-                                stateDetails = {this.state.stateDetails}
-                                setClosingBalnce={this.setClosingBalnce}
-                                
-                            /> 
+                <SessionDialog
+                    open={this.state.closeSessionDialog}
+                    handleClose={this.handleClose}
+                    close={true}
+                    stateDetails={this.state.stateDetails}
+                    setClosingBalnce={this.setClosingBalnce}
+
+                />
             </div>
         )
     }
 }
 
-export default SessionDetail;
+function mapStateToProps(state) {
+    return {
+        selectedSession: _get(state, 'selectedSession.lookUpData')
+    }
+}
+
+export default connect(mapStateToProps)(SessionDetail);
