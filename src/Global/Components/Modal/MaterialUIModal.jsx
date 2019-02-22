@@ -119,6 +119,12 @@ class SimpleModal extends React.Component {
                                 </div>
 
                             </div>
+                            <div className="mui-col-md-12">
+                                <div className='truncate'>
+                                    <span className="each-card-code-head">Description : </span>
+                                    <span className='each-card-code'>{_get(this.props.productDetails, 'description', '')}</span>
+                                </div>
+                            </div>
                         </Typography>
                     </div>
                 </Modal>
