@@ -163,7 +163,7 @@ class HomeContainer extends React.Component {
     }
     handleTerminalHistoryOpen = () => {
         let url = 'Sale/GetByTerminalId';
-        let data = { id: _get(this.props, 'terminal.id', '') }
+        let data = { id: localStorage.getItem('terminalId') }
         this.getOrderHistory(url, data)
         this.setState({
             openOrderHistory: true,
