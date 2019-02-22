@@ -7,7 +7,7 @@ import _isEmpty from 'lodash/isEmpty'
 /* Redux Imports */
 import { connect } from 'react-redux';
 import genericPostData from '../Global/dataFetch/genericPostData';
-import { commonActionCreater } from '../Redux/commonAction';
+import setProduct from '../Redux/setProduct';
 /* React Pose */
 import posed from 'react-pose';
 /* Pouch DB */
@@ -65,7 +65,6 @@ class HomeContainer extends React.Component {
         }
         this.calcHeight();
         this.getProductData();
-        // this.getCategoryData();
     }
 
     calcHeight() {
@@ -135,32 +134,16 @@ class HomeContainer extends React.Component {
         productsdb.allDocs({
             include_docs: true,
             attachments: true,
-            limit: 20,
+            limit: 10,
             skip: 0
         }).then((result) => {
-            this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+            let lastItemId = result.rows[result.rows.length - 1].id
+            this.props.dispatch(setProduct(result, lastItemId, 'GET_PRODUCT_DATA_SUCCESS'));
         }).catch((err) => {
-
+            console.log(err)
         });
     }
     
-    // genericPostData({
-    //     dispatch: this.props.dispatch,
-    //     reqObj: {id : storeId},
-    //     url: 'Product/ByStoreId',
-    //     constants: {
-    //         init: 'GET_PRODUCT_DATA_INIT',
-    //         success: 'GET_PRODUCT_DATA_SUCCESS',
-    //         error: 'GET_PRODUCT_DATA_ERROR'
-    //     },
-    //     // successCb:()=> this.deleteSuccess(),
-    //     // errorCb:()=> this.deleteSuccess(),
-    //     successText: 'Product Fetched Successfully',
-    // })
-
-    componentWillReceiveProps(props) {
-
-    }
     handleTerminalHistoryOpen = () => {
         let url = 'Sale/GetByTerminalId';
         let data = { id: localStorage.getItem('terminalId') }

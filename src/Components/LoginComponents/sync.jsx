@@ -80,9 +80,6 @@ class SyncContainer extends Component {
         }).catch((err) => {
             console.log(err);
         });
-
-
-
     }
     handleProductFetchError = (error) => {
 

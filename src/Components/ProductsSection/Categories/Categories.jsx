@@ -79,14 +79,11 @@ class Categories extends Component {
 
   handleHomeClick = () => {
       this.setState({ selectedCategory: {categoryType: -1} });
-
       this.getProductData();
     this.getCategory(0);
   };
 
   handleCategoryClick = category => {
-      console.log('category', category)
-    debugger;
     this.setState({ selectedCategory: category });
 
     if (category.categoryType === 0) {
@@ -132,7 +129,6 @@ class Categories extends Component {
   };
 
   getCategory = level => {
-      debugger;
     categoryDb
       .find({
         selector: { categoryType: level }
@@ -179,9 +175,6 @@ class Categories extends Component {
           className="product-catogories"
           style={{ height: this.props.categoriesHeight }}
         >
-          {/* <span onClick={this.getProductData}>All</span>
-            <span onClick={() => this.getCategory(0)}>Root Category</span>
-            <span onClick={() => this.getCategory(1)}>Sub category</span> */}
           {_get(this.state, "categoryToDisplay", []).map(category => {
             return (
               <Category
