@@ -13,6 +13,9 @@ import genericPostData from '../../../Global/dataFetch/genericPostData';
 /* Component Imports */
 import CalculationSection from './CalculationSection';
 import { connect } from 'react-redux'
+import TextField from '@material-ui/core/TextField';
+import { commonActionCreater } from '../../../Redux/commonAction';
+
 
 
 
@@ -21,8 +24,16 @@ class PaymentTab extends React.Component {
     constructor() {
         super();
         this.state = {
-
+            saleComments: '',
         }
+    }
+
+    handleReasonChange = (e) => {
+        let value = _get(e, 'target.value', '');
+        this.setState({
+            saleComments: value,
+        })
+        this.props.dispatch(commonActionCreater(value, 'SALE_COMMENT'));
     }
 
 
@@ -78,6 +89,23 @@ class PaymentTab extends React.Component {
                             <span className='summary-title'>Total</span>
                             <span className='payment-total'>{_get(cart, 'totalAmount.currencyCode')}{_get(cart, 'totalAmount.amount')}</span>
                         </div>
+                    </div>
+                </div>
+                <div className='payment-summary fwidth flex-column'>
+                    <span className='section-heading'>Sale Comment</span>
+                    <div className='card flex-column flex-wrap'>
+                        <TextField
+                            id="outlined-multiline-flexible"
+                            label="Reason"
+                            multiline
+                            rowsMax="4"
+                            value={_get(this.state, 'saleComments', '')}
+                            onChange={(e) => this.handleReasonChange(e)}
+                            className={''}
+                            margin="normal"
+                            // helperText="Reason"
+                            variant="outlined"
+                        />
                     </div>
                 </div>
             </div>

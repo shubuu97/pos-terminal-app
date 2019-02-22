@@ -113,6 +113,7 @@ class Store extends React.Component {
         let loggedInDate = moment(_get(data, 'loginTime.seconds') * 1000).format('MMMM Do YYYY');
         localStorage.setItem('loggedInTime', loggedInTime);
         localStorage.setItem('loggedInDate', loggedInDate);
+        localStorage.setItem('sessionId', _get(data, 'sessionId', 'nil'));
         if (_get(data, 'sessionId', 'nil') == 'nil') {
             if (this.state.isManager) {
                 this.props.history.push('/DenominationDetailsForm');

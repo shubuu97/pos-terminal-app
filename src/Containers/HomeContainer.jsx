@@ -146,7 +146,7 @@ class HomeContainer extends React.Component {
     
     handleTerminalHistoryOpen = () => {
         let url = 'Sale/GetByTerminalId';
-        let data = { id: _get(this.props, 'terminal.id', '') }
+        let data = { id: localStorage.getItem('terminalId') }
         this.getOrderHistory(url, data)
         this.setState({
             openOrderHistory: true,
@@ -196,24 +196,21 @@ class HomeContainer extends React.Component {
         return (
             <div className='main pos-body'>
                 <Products pose={isOpenProduct ? 'open' : 'closed'}>
-                    {
-                        isOpenProduct ?
-                            <ProductsSection
-                                // * Css Specific props
-                                windowHeight={windowHeight}
-                                productListHeight={productListHeight}
-                                headerHeight={headerHeight}
-                                categoriesHeight={categoriesHeight}
-                                productList={productList}
-                                cart={cart}
-                                dispatch={dispatch}
-                                history={this.props.history}
-                                // ! Actions
-                                handleHistoryOpen={this.handleTerminalHistoryOpen}
-                                handleClickOpen={this.handleClickOpen}
-                                handleClickOpenSessionContainer={this.handleClickOpenSessionContainer}
-                            /> : null
-                    }
+                    <ProductsSection
+                        // * Css Specific props
+                        windowHeight={windowHeight}
+                        productListHeight={productListHeight}
+                        headerHeight={headerHeight}
+                        categoriesHeight={categoriesHeight}
+                        productList={productList}
+                        cart={cart}
+                        dispatch={dispatch}
+                        history={this.props.history}
+                        // ! Actions
+                        handleHistoryOpen={this.handleTerminalHistoryOpen}
+                        handleClickOpen={this.handleClickOpen}
+                        handleClickOpenSessionContainer={this.handleClickOpenSessionContainer}
+                    />
                 </Products>
 
                 <CheckoutSection
