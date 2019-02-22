@@ -26,7 +26,7 @@ function getModalStyle() {
 const styles = theme => ({
     paper: {
         position: 'absolute',
-        width: theme.spacing.unit * 50,
+        width: theme.spacing.unit * 100,
         backgroundColor: theme.palette.background.paper,
         boxShadow: theme.shadows[5],
         padding: theme.spacing.unit * 4,
@@ -73,24 +73,37 @@ class SimpleModal extends React.Component {
                             {this.props.title}
                         </Typography>
                         <Typography variant="subtitle1" id="simple-modal-description">
-                            <div className="col-sm-12">
-                                <div className="col-sm-6 pop-img">
+                            <div className="mui-col-md-12">
+                                <div className="mui-col-md-6 pop-img">
                                     <img src={_get(this.props.productDetails, 'image', '')} alt={_get(this.props.productDetails, 'image', '')} />
                                 </div>
 
-                                <div className="col-sm-6">
+                                <div className="mui-col-md-6">
                                     <div className='flex-column fwidth'>
                                         <div className='truncate'>
                                             <span className="each-card-name">{_get(this.props.productDetails, 'name', '')}</span>
                                         </div>
                                         <div className='truncate'>
-                                            <span className="each-card-code-head">Code : </span>
-                                            <span className='each-card-code'>{_get(this.props.productDetails, 'id', '')}</span>
+                                            <span className="each-card-code-head">SKU : </span>
+                                            <span className='each-card-code'>{_get(this.props.productDetails, 'sku', '')}</span>
+                                        </div>
+                                        <div className='truncate'>
+                                            <span className="each-card-code-head">UPC : </span>
+                                            <span className='each-card-code'>{_get(this.props.productDetails, 'upcCode', '')}</span>
+                                        </div>
+                                        <div className='truncate'>
+                                            <span className="each-card-code-head">Availability : </span>
+                                            <span className='each-card-code'>{_get(this.props.inventoryDetails, 'quantity', 0)} item(s) </span>
                                         </div>
                                         <div className="each-card-price flex-row">
                                             {_get(this.props.productDetails, 'salePrice.currencyCode', '')} {_get(this.props.productDetails, 'salePrice.price', 'NaN')}
                                             <div className='indicator'></div>
                                         </div>
+                                        {_get(this.props.inventoryDetails, 'quantity', 0) == 0 ?
+                                            <div className='truncate'>
+                                                <span className="each-card-code-head">Out of stock</span>
+                                            </div> : ''
+                                        }
                                         <div className='expanded-options'>
                                             <span className='option-title'>Quantity</span>
                                             <div className='flex-row justify-center align-center'>
