@@ -14,6 +14,8 @@ import genericPostData from '../../Global/dataFetch/genericPostData';
 import { connect } from 'react-redux'
 import startSession from '../../Global/PosFunctions/startSession';
 import getDenominationTotal from '../../Global/PosFunctions/getDenominationTotal';
+import { commonActionCreater } from '../../Redux/commonAction';
+import closeSession from '../../Global/PosFunctions/closeSession';
 
 class DenominationDetailsForm extends React.Component {
 
@@ -97,9 +99,18 @@ class DenominationDetailsForm extends React.Component {
             stateObj: this.state,
             amount: this.state.amount
         })
+        // closeSession({
+        //     dispatch: this.props.dispatch,
+        //     handleSuccess:this.handleSuccess,
+        //     handleError:this.handleError,
+        //     stateObj: this.state,
+        //     amount: this.state.amount,
+        //     reason:'some reason'
+        // });
     }
     handleSuccess = (data) => {
-        debugger
+        this.props.dispatch(commonActionCreater(true,'SESSION_START_REDIRECT_TO_LOGIN'));
+        this.props.history.push('/login');
     }
     handleError = (error) => {
         debugger

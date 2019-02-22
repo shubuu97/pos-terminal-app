@@ -17,7 +17,7 @@ import cart from '../reducers/cartItem';
 import cartHoldData from '../reducers/holdCartItem';
 
 
-// import cartItemFun from './commonStaticReducer';
+import sessionRedirectToLoginFun from './commonStaticReducer';
 // import cartOrderDetailsFun from './commonStaticReducer';
 
 
@@ -29,7 +29,7 @@ let categoryList = categoryListFun('GET_CATEGORY_DATA');
 let sessionList= sessionListFun('GET_SESSION_DATA');
 let customerSalesList = customerSaleListFun('GET_CUSTOMER_SALE_DATA');
 
-// let cartItems = cartItemFun('CART_ITEM_LIST');
+let sessionRedirectToLogin = sessionRedirectToLoginFun('SESSION_START_REDIRECT_TO_LOGIN');
 // let cartOrderDetails = cartOrderDetailsFun('ORDER_DETAILS');
 
 
@@ -45,6 +45,7 @@ let rootRducer = combineReducers({
     cartHoldData,
     sessionList,
     customerSalesList,
+    sessionRedirectToLogin
 })
 
 export default rootRducer;
