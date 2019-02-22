@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import _get from 'lodash/get';
 import genericPostData from '../../Global/dataFetch/genericPostData';
 import moment from 'moment';
+import CircularProgress  from '@material-ui/core/CircularProgress';
 
 class SessionDetail extends React.Component {
 
@@ -31,6 +32,7 @@ class SessionDetail extends React.Component {
     componentWillReceiveProps(nextProps) {
         if (_get(this.props, 'selectedSession.id') !== _get(nextProps, 'selectedSession.id')) {
             debugger;
+            this.setState({isLoading:true})
             genericPostData({
                 dispatch: this.props.dispatch,
                 reqObj: { id: _get(nextProps, 'selectedSession.id') },
@@ -48,6 +50,7 @@ class SessionDetail extends React.Component {
     }
     handleSuccessFetchSessionData = (data) => {
         debugger;
+        this.setState({isLoading:false})
         this.setState({
             manager: _get(data, 'manager'),
             session: _get(data, 'session'),
@@ -56,6 +59,7 @@ class SessionDetail extends React.Component {
         })
     }
     handleErrorFetchSessionData = (err) => {
+        this.setState({isLoading:false})
 
     }
 
@@ -73,7 +77,9 @@ class SessionDetail extends React.Component {
             closingTime = moment(closingTime).format('dddd DD MMM,YYYY hh:mm A');
         }
 
-
+        if(this.state.isLoading){
+            return <CircularProgress size={300}/>
+        }
         return (
             <div className="mui-container tertiary-color">
                 <div className='mui-row'>
