@@ -12,6 +12,7 @@ export default class WithPromises extends Component {
   render() {
     return (
       <AsyncSelect 
+       value = {this.props.value}
        onChange = {this.props.onChange}
        cacheOptions={this.props.cacheOptions}
        defaultOptions={this.props.defaultOptions}

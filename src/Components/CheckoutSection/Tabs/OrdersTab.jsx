@@ -21,6 +21,7 @@ import DiscountDialogue from '../DiscountDialogue/DiscountDialogue'
 
 /* Global Function import */
 import globalClearCart from '../../../Global/PosFunctions/clearCart';
+import addGuestToCart from '../../../Global/PosFunctions/addGuestToCart';
 
 
 
@@ -113,6 +114,7 @@ class OrdersTab extends React.Component {
     };
     handleClearCart = () => {
         globalClearCart(this.props.dispatch);
+        addGuestToCart(this.props.dispatch);
     };
 
 
@@ -168,6 +170,9 @@ class OrdersTab extends React.Component {
         });
         return cartItems
     }
+    handleProceedToCustomer = ()=>{
+        this.props.dispatch(commonActionCreater(2,'SWITCH_TAB_NUMBER'))
+    }
 
 
 
@@ -201,7 +206,9 @@ class OrdersTab extends React.Component {
                     <div>
                         <Button className='mr-20' variant="outlined" onClick={this.handleClearCart}>Clear</Button>
                         <Button className='mr-20' variant="outlined" onClick={this.props.handleClickOpen}>Hold</Button>
-                        <Button variant="contained">Proceed</Button>
+                        <Button
+                        onClick = {this.handleProceedToCustomer}
+                         variant="contained">Proceed</Button>
                     </div>
 
                 </div>

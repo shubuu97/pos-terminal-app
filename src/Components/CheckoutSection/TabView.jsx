@@ -57,9 +57,14 @@ class FullWidthTabs extends React.Component {
     }
     componentDidUpdate(){
       if(this.props.afterSellRedirectToCart){
-        this.setState({ value:0 });
-        this.props.toggleViewProduct();
-        this.props.dispatch(commonActionCreater(false,'REDIRECT_TO_CART'))
+        this.setState({ value:this.props.afterSellRedirectToCart-1});
+        if(this.props.afterSellRedirectToCart==1||this.props.afterSellRedirectToCart==2){
+            this.props.toggleViewProduct();
+        }
+        if(this.props.afterSellRedirectToCart==3){
+            this.props.toggleViewPayment();
+        }
+        this.props.dispatch(commonActionCreater(0,'SWITCH_TAB_NUMBER'))
       }
     }
 

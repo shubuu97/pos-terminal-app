@@ -53,7 +53,8 @@ class AddNewSessionDialog extends React.Component {
                 >
                     <div className='session-parent'>
                         <div className='session-header'>
-                            <IconButton color="inherit" onClick={this.props.handleClose} aria-label="Close">
+                            <IconButton color="inherit"
+                             onClick={this.props.handleClose} aria-label="Close">
                                 <CloseIcon />
                             </IconButton>
                             <span className='ml-20'>{this.headingDecider()}</span>

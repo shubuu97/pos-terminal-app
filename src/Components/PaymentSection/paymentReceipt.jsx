@@ -15,6 +15,7 @@ import connect from 'react-redux/lib/connect/connect';
 import clearCart from '../../Global/PosFunctions/clearCart';
 import moment from "moment";
 import { commonActionCreater } from '../../Redux/commonAction';
+import addGuestToCart from '../../Global/PosFunctions/addGuestToCart';
 /* Component Imports */
 
 function Transition(props) {
@@ -34,8 +35,10 @@ class PaymentReceipt extends React.Component {
     }
     handleNewOrder = () => {
         clearCart(this.props.dispatch);
+        addGuestToCart(this.props.dispatch);
+
         this.props.handleClose();
-        this.props.dispatch(commonActionCreater(true,'REDIRECT_TO_CART'));
+        this.props.dispatch(commonActionCreater(1,'SWITCH_TAB_NUMBER'));
     }
     handlePrint = () => {
         var content = document.getElementById('printarea');
