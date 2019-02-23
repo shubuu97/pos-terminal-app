@@ -64,6 +64,7 @@ class DenominationDetailsForm extends React.Component {
 
         this.setState({
             [name]: event.target.value,
+            amount: getDenominationTotal({...this.state,[name]: event.target.value})
         });
     };
     calculateTotalValue = (type) => {
@@ -79,6 +80,7 @@ class DenominationDetailsForm extends React.Component {
                         autoFocus={type.id == 7 ? true : false}
                         onFocus={() => this.currentFocus(type.stateName)}
                         id={type.id}
+                        type='number'
                         value={this.state[type.stateName]}
                         onChange={this.handleChange(type.stateName)}
                     />
