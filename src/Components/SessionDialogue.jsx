@@ -33,8 +33,8 @@ function Transition(props) {
 
 class SessionDiaogue extends React.Component {
 
-    
-  
+
+
 
     render() {
         const { classes } = this.props;
@@ -48,14 +48,17 @@ class SessionDiaogue extends React.Component {
                 >
                     <div className='session-section'>
                         <div className='session-header'>
-                            <IconButton color="inherit" onClick={this.props.handleClose} aria-label="Close">
+                            <IconButton
+                                color="inherit"
+                                onClick={this.props.handleClose}
+                                aria-label="Close">
                                 <CloseIcon />
                             </IconButton>
                             <span className='ml-20'>Session List</span>
                         </div>
-                       <SessionContainer
-                       goBackToCheckOut = {this.props.handleClose}
-                       />
+                        <SessionContainer
+                            goBackToCheckOut={this.props.handleClose}
+                        />
                     </div>
                 </Dialog>
             </div>

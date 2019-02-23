@@ -12,6 +12,7 @@ import Sessions from '../Components/SessionComponents/Sessions';
 import genericPostData from '../Global/dataFetch/genericPostData';
 import SessionDialog from '../Components/SessionComponents/SessionDialog';
 import SessionDetail from '../Components/SessionComponents/SessionDetail';
+import { commonActionCreater } from '../Redux/commonAction';
 
 class SessionContainer extends React.Component {
 
@@ -24,6 +25,8 @@ class SessionContainer extends React.Component {
     }
     componentDidMount() {
         this.getTerminalBySessionByData();
+        this.props.dispatch(commonActionCreater({id:localStorage.getItem('sessionId')},'GET_SELECTED_SESSION'))
+
     }
     getTerminalBySessionByData = () => {
         genericPostData({

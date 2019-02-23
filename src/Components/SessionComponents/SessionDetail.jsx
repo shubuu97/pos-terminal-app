@@ -117,6 +117,7 @@ class SessionDetail extends React.Component {
     }
     handleSessionCloseSuccess = (data) => {
         this.setState({ isLoading: false });
+        localStorage.setItem('sessionId','nil');
         genericPostData({
             dispatch: this.props.dispatch,
             reqObj: { id: localStorage.getItem('terminalId') },
@@ -252,7 +253,7 @@ class SessionDetail extends React.Component {
 
     }
     calDiffrence = ()=>{
-       let difference =  _get(this.props,'selectedSession.currentBalance.amount',0)-this.state.realClosingBalance
+       let difference =  _get(this.state,'session.currentBalance.amount',0)-this.state.realClosingBalance
        return difference;
     }
     specifyReason=(closeReason)=>{
@@ -348,7 +349,7 @@ class SessionDetail extends React.Component {
                     </div>
                     <div className='mui-row closing-bal'>
                         <div className='mui-col-md-3 secondary-color'>Theoratical Closing Balance</div>
-                        <div className='mui-col-md-3'>${_get(this.props,'selectedSession.currentBalance.amount')}</div>
+                        <div className='mui-col-md-3'>${_get(this.state,'session.currentBalance.amount')}</div>
                         {status == 'open' ? <div className='mui-col-md-6 text-center'>
                             <Button
                                 variant='contained'

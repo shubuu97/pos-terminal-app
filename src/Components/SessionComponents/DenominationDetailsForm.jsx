@@ -53,7 +53,6 @@ class DenominationDetailsForm extends React.Component {
             currenctFocusValue = ''
         }
         this.state[currentFocus] = currenctFocusValue;
-
         this.setState({
             [currentFocus]: currenctFocusValue,
             amount: getDenominationTotal(this.state)
