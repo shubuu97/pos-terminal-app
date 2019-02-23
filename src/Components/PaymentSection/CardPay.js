@@ -16,7 +16,7 @@ class CardPay extends React.Component {
         debugger;
         super(props);
         this.state = {
-            cardAmount:props.initialValue
+            cardAmount:''
         }
     }
     handleChange = name => event => {
@@ -27,6 +27,9 @@ class CardPay extends React.Component {
     };
     componentWillReceiveProps(props){
         this.setState({cardAmount:props.value})
+    }
+    componentDidMount(){
+        this.props.handleKeyBoardValue('cardAmountValue',this.props.initialValue)
     }
 
     render() {

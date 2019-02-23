@@ -251,6 +251,7 @@ class PaymentSection extends React.Component {
                                 customer={this.props.customer}
                                 value={this.state.defaultcardAmountValue}
                                 currentFocus={this.currentFocus}
+                                initialValue = {this.calcRemainingAmount()}
                                 onRemovePaymentMethod={this.onRemovePaymentMethod}
                             /> : null}
                         {this.state.showGiftPay ?

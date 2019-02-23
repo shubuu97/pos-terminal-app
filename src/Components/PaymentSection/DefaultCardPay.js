@@ -29,6 +29,9 @@ class DefaultCardPay extends React.Component {
     componentWillReceiveProps(props){
         this.setState({defaultcardAmount:props.value})
     }
+    componentDidMount(){
+        this.props.handleKeyBoardValue('defaultcardAmountValue',this.props.initialValue)
+    }
     render() {
         return (
             <div className="default-card-pay">
