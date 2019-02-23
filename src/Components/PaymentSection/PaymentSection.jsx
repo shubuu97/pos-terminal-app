@@ -310,7 +310,7 @@ function mapStateToProps(state) {
     let customer = _get(state, 'cart.customer');
     let totalAmount = _get(state, 'cart.totalAmount');
     let sessionId = _get(state, 'terminalData.lookUpData.sessionId');
-    let saleComment = _get(state, 'staticReducers.saleComment');
+    let saleComment = _get(state, 'cart.saleComment');
 
     let cart = _get(state, 'cart');
 
