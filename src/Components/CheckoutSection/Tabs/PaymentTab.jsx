@@ -99,7 +99,7 @@ class PaymentTab extends React.Component {
                             label="Reason"
                             multiline
                             rowsMax="4"
-                            value={_get(this.state, 'saleComments', '')}
+                            value={_get(this.props, 'saleComment', '')}
                             onChange={(e) => this.handleReasonChange(e)}
                             className={''}
                             margin="normal"
@@ -115,6 +115,7 @@ class PaymentTab extends React.Component {
 
 function mapStateToProps(state) {
     let cart = _get(state, 'cart');
-    return { cart }
+    let saleComment = _get(state, 'staticReducers.saleComment');
+    return { cart, saleComment }
 }
 export default connect(mapStateToProps)(PaymentTab);
