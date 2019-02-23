@@ -8,6 +8,7 @@ import moment from 'moment';
 import AuthModal from './authModal';
 import Redirect from "react-router/Redirect";
 import InputLabel from '@material-ui/core/InputLabel';
+import SessionDialog from '../SessionComponents/SessionDialog';
 
 
 
@@ -123,7 +124,8 @@ class Store extends React.Component {
         localStorage.setItem('sessionId', _get(data, 'sessionId', 'nil'));
         if (_get(data, 'sessionId', 'nil') == 'nil') {
             if (this.state.isManager) {
-                this.props.history.push('/DenominationDetailsForm');
+                // this.props.history.push('/DenominationDetailsForm');
+                this.setState({showAddSessionDialog:true})
             }
             else {
                this.setState({showAuthModal:true})
@@ -134,13 +136,22 @@ class Store extends React.Component {
         }
     }
     authSuccess = () => {
-     this.props.history.push('/DenominationDetailsForm');
+    //  this.props.history.push('/DenominationDetailsForm');
+    this.setState({showAddSessionDialog:true})
+
     }
     handleClose = ()=>
     {
         this.setState({
         showAuthModal:false
         })
+    }
+    handleSuccessAddSession = (data)=>{
+        debugger;
+        localStorage.setItem('sessionId', data.id);
+        this.props.handleStepChange(3)
+        // this.props.dispatch(commonActionCreater(true, 'SESSION_START_REDIRECT_TO_LOGIN'));
+        // this.props.history.push('/login');
     }
     render() {
         let { classes } = this.props
@@ -174,6 +185,11 @@ class Store extends React.Component {
                     dispatch={this.props.dispatch}
                     authSuccess={this.authSuccess}
                 /> : null}
+                {this.state.showAddSessionDialog?<SessionDialog
+                    open={this.state.showAddSessionDialog}
+                    handleSuccessAddSession = {this.handleSuccessAddSession}
+                    handleClose={()=>this.setState({showAddSessionDialog:false})}
+                    />:null}
             </React.Fragment>)
     }
 }

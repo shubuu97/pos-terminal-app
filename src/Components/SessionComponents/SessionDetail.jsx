@@ -95,11 +95,11 @@ class SessionDetail extends React.Component {
         this.setState({ showTransactionDialog: false })
     }
     handleEndSession = () => {
-        if(this.calDiffrence()!=0&&this.state.closeReason==''){
-            this.setState({showReasonModal:true});
-            return;
-        }
         if (this.state.realClosingBalance) {
+            if(this.calDiffrence()!=0&&this.state.closeReason==''){
+                this.setState({showReasonModal:true});
+                return;
+            }
             this.setState({ isLoading: true })
             closeSession({
                 dispatch: this.props.dispatch,

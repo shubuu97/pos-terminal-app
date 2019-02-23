@@ -37,7 +37,7 @@ class AddNewSessionDialog extends React.Component {
             return <span>Set Closing Balance</span>
         }
         else{
-            return <span>Set Opening Balance</span>
+            return <span>Set Opening Balance for {localStorage.getItem('terminalName')}</span>
         }
     }
     render() {

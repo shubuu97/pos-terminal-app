@@ -15,7 +15,7 @@ import { connect } from 'react-redux'
 import startSession from '../../Global/PosFunctions/startSession';
 import getDenominationTotal from '../../Global/PosFunctions/getDenominationTotal';
 import { commonActionCreater } from '../../Redux/commonAction';
-import closeSession from '../../Global/PosFunctions/closeSession';
+import closeSession from '../../Global/PosFunctions/closeSession'; 
 
 class DenominationDetailsForm extends React.Component {
 
@@ -93,7 +93,7 @@ class DenominationDetailsForm extends React.Component {
     startNewSession = () => {
         startSession({
             dispatch: this.props.dispatch,
-            handleSuccess: this.handleSuccess,
+            handleSuccess: this.props.handleSuccessAddSession,
             handleError: this.handleError,
             stateObj: this.state,
             amount: this.state.amount
@@ -108,6 +108,8 @@ class DenominationDetailsForm extends React.Component {
         // });
     }
     handleSuccess = (data) => {
+        debugger;
+        localStorage.setItem('sessionId', 'data.id')
         this.props.dispatch(commonActionCreater(true, 'SESSION_START_REDIRECT_TO_LOGIN'));
         this.props.history.push('/login');
     }
@@ -115,8 +117,7 @@ class DenominationDetailsForm extends React.Component {
         debugger
     }
 
-    setClosingBalnce = ()=>
-    {
+    setClosingBalnce = () => {
         this.props.setClosingBalnce(
             getDenominationDetails(this.state),
             this.state,

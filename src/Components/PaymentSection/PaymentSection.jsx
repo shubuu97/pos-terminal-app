@@ -136,7 +136,7 @@ class PaymentSection extends React.Component {
             terminalId: localStorage.getItem('terminalId'),
             operatorId: localStorage.getItem('userId'),
             retailerId: localStorage.getItem('retailerId'),
-            sessionId,
+            sessionId:localStorage.getItem('sessionId'),
             saleItems,
             payments,
             miscSaleItems: [],
