@@ -76,10 +76,13 @@ class CustomerTab extends React.Component {
         // });
     };
     onChange = (doc) => {
+        debugger;
         let value = _get(doc, 'value');
+        let employeeDiscount = _get(doc,'value.employeeDiscount',0);
         //populating cart reducer with customer
         this.setState({value:''})
-
+        this.props.dispatch(commonActionCreater(employeeDiscount, 'ADD_EMPLOYEE_DISCOUNT'));
+        this.props.dispatch(commonActionCreater(_get(this.props,'cart.cartItems',[]), 'CART_ITEM_LIST'));
         this.props.dispatch(commonActionCreater(doc.value, 'ADD_CUSTOMER_TO_CART'));
 
         //mapped data to state 
@@ -183,7 +186,8 @@ class CustomerTab extends React.Component {
 
 function mapStateToProps(state) {
     let customer = _get(state, 'cart.customer');
-    return { ...customer }
+    let cart = _get(state,'cart');
+    return { ...customer,cart }
 }
 
 export default connect(mapStateToProps)(CustomerTab);
