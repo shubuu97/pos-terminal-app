@@ -23,6 +23,8 @@ class DefaultCardPay extends React.Component {
         this.setState({
             [name]: event.target.value,
         });
+        this.props.handleKeyBoardValue('defaultcardAmountValue',event.target.value)
+
     };
     componentWillReceiveProps(props){
         this.setState({defaultcardAmount:props.value})
@@ -37,6 +39,7 @@ class DefaultCardPay extends React.Component {
                         InputLabelProps={{ shrink: true }}
                             autoFocus
                             id="outlined-name"
+                            type = "number"
                             onFocus={() => this.props.currentFocus('defaultcardAmount')}
                             label="Amount"
                             value={this.state.defaultcardAmount}

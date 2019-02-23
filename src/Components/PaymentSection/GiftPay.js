@@ -24,6 +24,8 @@ class GiftPay extends React.Component {
         this.setState({
             [name]: event.target.value,
         });
+        this.props.handleKeyBoardValue('giftPayNumberValue',event.target.value)
+
     };
     componentWillReceiveProps(props){
         this.setState({giftPayNumber:props.value})
@@ -40,6 +42,7 @@ class GiftPay extends React.Component {
                             onFocus={() => this.props.currentFocus('giftPayNumber')}
                             id="giftPayNumber"
                             label="Gift Card Number"
+                            type = "number"
                             value={this.state.giftPayNumber}
                             onChange={this.handleChange('giftPayNumber')}
                             margin="normal"
