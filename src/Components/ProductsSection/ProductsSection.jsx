@@ -87,7 +87,7 @@ class ProductsSection extends React.Component {
                 {/* 
                 // * Header Component
                 */}
-                <div className='pos-header' style={{ height: headerHeight }}>
+                <div className='pos-header'>
                     <div className="header-top flex-row align-center justify-space-between pl-10 pr-10" >
                         <SideDrawer
                              // ! Actions
@@ -103,19 +103,15 @@ class ProductsSection extends React.Component {
                             <ExitToApp style={{color: 'white', padding:'0 10px', fontSize: 30}} onClick={this.logout}/>
                         </div>
                     </div>
-                    <div className='header-bottom'>
-
-                    </div>
                 </div>
-                
-                <Pagination />
 
-                {/* Product Categories Component */}
                 <Categories 
                     categoriesHeight={categoriesHeight}
                     {...this.props}
                 />
-
+                {/* Product Categories Component */}
+                
+                <Pagination />
                 {/* Products List Component */}
                 <Products
                     {...this.props}
