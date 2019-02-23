@@ -166,10 +166,11 @@ class PaymentSection extends React.Component {
             errorCb: this.handleSaleTransactionTransactionError
 
         })
-
+        
     }
 
     handleSaleTransactionTransactionSuccess = (data) => {
+        this.props.dispatch(commonActionCreater('', 'SALE_COMMENT'));
         this.setState({ receiptData: data, showPaymentReceipt: true })
     }
     handleSaleTransactionTransactionError = () => {
