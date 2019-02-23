@@ -342,6 +342,13 @@ p {
     background: @background;
 }
 
+.page-no {
+    text-align: right;
+    margin-right: 20px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
 .pos-products-collection {
 
     //width: 60%;
@@ -355,26 +362,27 @@ p {
             height: 65%;
             padding: 0 1%;
         }
+    }
 
-        .header-bottom {
-            width: 100%;
-            height: 35%;
-            background: @primary-l;
-        }
+    .breadcrumbs {
+        width: 100%;
+        height: 35%;
+        background: @primary-l;
     }
 
     .product-catogories {
-        margin: 10px 0;
+        // margin: 10px 0;
         display: flex;
         overflow-x: auto;
         padding-bottom: 10px;
 
         .each-tile {
-            min-height: 30px;
-            height: 30px;
+            min-height: 40px;
+            height: 40px;
         }
 
         .category-text {
+            font-size: 16px;
             margin: 0 auto;
             align-self: center;
         }

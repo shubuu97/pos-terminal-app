@@ -168,17 +168,19 @@ class Categories extends Component {
   render() {
     return (
       <div>
-        <BreadCrumb
-          homeClickHandler={this.handleHomeClick}
-          categoryClickHandler={this.handleCategoryClick}
-          selectedRootCategory={this.state.rootCategory}
-          selectedSubCategory={this.state.subCategory}
-          selectedLeafCategory={this.state.leafCategory}
-          selectedCurrentCategory={this.state.selectedCategory}
-        />
+        <div className="breadcrumbs">
+          <BreadCrumb
+            homeClickHandler={this.handleHomeClick}
+            categoryClickHandler={this.handleCategoryClick}
+            selectedRootCategory={this.state.rootCategory}
+            selectedSubCategory={this.state.subCategory}
+            selectedLeafCategory={this.state.leafCategory}
+            selectedCurrentCategory={this.state.selectedCategory}
+          />
+        </div>
         <div
           className="product-catogories"
-          style={{ height: this.props.categoriesHeight }}
+          // style={{ height: this.props.categoriesHeight }}
         >
           {_get(this.state, "categoryToDisplay", []).map(category => {
             return (

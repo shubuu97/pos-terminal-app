@@ -79,29 +79,38 @@ class PaginationComponent extends React.Component {
 
     return (
       <div>
-          <div>
-            <div>Page No: <span>{this.props.pageNo}</span></div>
-            <label>Showing {this.props.startVal} - {this.props.endVal} products of {productCount} products.</label>
+          <div className="mui-row">
+            <div className="mui-col-md-6">
+              <span className="product-no">Showing {this.props.startVal} - {this.props.endVal} products of {productCount} products.</span>
+            </div>
+            <div className="mui-col-md-6"  style={{textAlign: 'right'}}>
+              <span className="page-no">Page {this.props.pageNo}</span>
+            </div>
           </div>
-          <div>
-          {this.props.pageNo == 1 ? '' : 
-            <IconButton
-              color="inherit"
-              onClick={this.getPrevProducts}
-              aria-label="Previous Page"
-            >
-              <KeyboardArrowLeft />
-            </IconButton>
-          }
-          {isLastPage ? '' : 
-            <IconButton
-              color="inherit"
-              onClick={this.getNextProducts}
-              aria-label="Next Page"
-            >
-              <KeyboardArrowRight />
-            </IconButton>
-          }
+
+          <div className="mui-row">
+            <div className="mui-col-md-6" style={{textAlign: 'left'}}>
+            {this.props.pageNo == 1 ? '' : 
+              <IconButton
+                color="inherit"
+                onClick={this.getPrevProducts}
+                aria-label="Previous Page"
+              >
+                <KeyboardArrowLeft />
+              </IconButton>
+            }
+            </div>
+            <div  className="mui-col-md-6" style={{textAlign: 'right'}}>
+            {isLastPage ? '' : 
+              <IconButton
+                color="inherit"
+                onClick={this.getNextProducts}
+                aria-label="Next Page"
+              >
+                <KeyboardArrowRight />
+              </IconButton>
+            }
+            </div>
           </div>
       </div>
     );
