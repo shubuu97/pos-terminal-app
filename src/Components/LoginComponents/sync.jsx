@@ -10,6 +10,7 @@ import axiosFetcher from '../../Global/dataFetch/axiosFetcher';
 import globalClearCart from '../../Global/PosFunctions/clearCart'
 /* Pouch Import */
 import PouchDb from 'pouchdb';
+import addGuestToCart from '../../Global/PosFunctions/addGuestToCart';
 
 class SyncContainer extends Component {
     constructor(props) {
@@ -91,6 +92,7 @@ class SyncContainer extends Component {
         });
         let customersdb = new PouchDb('customersdb');
         customersdb.bulkDocs(_get(customerData, 'data', [])).then((result) => {
+            addGuestToCart(this.props.dispatch);
             let percentageComplete = this.state.percentageComplete + 100 / this.state.ApiCallCount;
             this.setState({ percentageComplete });
             PouchDb.replicate('customersdb', `http://localhost:5984/customersdb`, {

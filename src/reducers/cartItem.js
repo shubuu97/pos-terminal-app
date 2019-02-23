@@ -44,6 +44,10 @@ const cartItem = (state = { cartItems: [], }, action) => {
             return Object.assign({}, state, {
                 saleComment: action.data,
             });
+        case 'ADD_EMPLOYEE_DISCOUNT':
+        return Object.assign({}, state, {
+            empDiscount: action.data,
+        });
         case 'CART_ITEM_LIST':
             let employeeDiscountPercent = _get(state, 'empDiscount', 0)
             let regularTotal = 0
