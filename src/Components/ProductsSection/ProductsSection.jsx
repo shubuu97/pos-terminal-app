@@ -46,8 +46,14 @@ class ProductsSection extends React.Component {
         include_docs: true,
         limit: 20,
         skip: 0
-      }).then((res)=> {
-        this.props.dispatch(commonActionCreater(res,'GET_PRODUCT_DATA_SUCCESS'));
+      }).then((result)=> {
+        result.pagination = {}
+        result.pagination.firstItemId = result.rows[0].id
+        result.pagination.lastItemId = result.rows[result.rows.length - 1].id
+        result.pagination.pageNo = 1
+        result.pagination.startVal = 1
+        result.pagination.endVal = result.rows.length
+        this.props.dispatch(commonActionCreater(result,'GET_PRODUCT_DATA_SUCCESS'));
       })
       .catch((err)=>{
       console.log(err);
@@ -60,6 +66,12 @@ class ProductsSection extends React.Component {
             limit: 10,
             skip: 0
           }).then((result)=> {
+            result.pagination = {}
+            result.pagination.firstItemId = result.rows[0].id
+            result.pagination.lastItemId = result.rows[result.rows.length - 1].id
+            result.pagination.pageNo = 1
+            result.pagination.startVal = 1
+            result.pagination.endVal = result.rows.length
             this.props.dispatch(commonActionCreater(result,'GET_PRODUCT_DATA_SUCCESS'));
           }).catch((err)=> {
               console.log(err)

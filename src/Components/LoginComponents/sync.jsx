@@ -50,6 +50,7 @@ class SyncContainer extends Component {
     }
 
     handleCategoryFetchSuccess = (categoryData) => {
+        console.log(categoryData.data, 'categoryData.data')
         _get(categoryData, 'data', []).forEach((item,index)=>{
             item._id = item.id
         });
