@@ -7,6 +7,8 @@ import _get from 'lodash/get';
 import moment from 'moment';
 import AuthModal from './authModal';
 import Redirect from "react-router/Redirect";
+import InputLabel from '@material-ui/core/InputLabel';
+
 
 
 
@@ -82,9 +84,12 @@ class Store extends React.Component {
     handleChange = (event) => {
         debugger;
         this.setState({ selectedTerminal: event.target.value });
+        if(event.target.value!=-1)
+        {
         let terminalObj = this.state.terminals[event.target.value];
         localStorage.setItem('terminalId', terminalObj.id);
         localStorage.setItem('terminalName', terminalObj.name);
+        }
     }
 
     handleLoginToPos = () => {
@@ -142,7 +147,9 @@ class Store extends React.Component {
         return (
             <React.Fragment>
                 <FormControl margin="normal" required fullWidth>
+                <InputLabel htmlFor="age-simple">Select Terminal</InputLabel>
                     <Select
+                        placeholder="Please Select terminal"
                         native
                         value={this.state.selectedTerminal}
                         onChange={this.handleChange}
@@ -155,6 +162,7 @@ class Store extends React.Component {
                     fullWidth
                     isFetching={this.state.isFetching}
                     variant="contained"
+                    disabled={this.state.selectedTerminal==-1}
                     color="primary"
                     className={classes.submit}
                 >
