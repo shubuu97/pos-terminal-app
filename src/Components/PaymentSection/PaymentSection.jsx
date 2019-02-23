@@ -15,6 +15,7 @@ import { connect } from 'react-redux';
 import genericPostData from '../../Global/dataFetch/genericPostData';
 import PaymentReceipt from './paymentReceipt';
 import {withRouter} from 'react-router-dom'
+import { commonActionCreater } from '../../Redux/commonAction';
 
 /* style */
 

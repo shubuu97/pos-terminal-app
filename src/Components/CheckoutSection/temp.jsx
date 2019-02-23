@@ -14,7 +14,6 @@ import Typography from '@material-ui/core/Typography';
 import OrdersTab from './Tabs/OrdersTab';
 import CustomersTab from './Tabs/CustomersTab';
 import PaymentTab from './Tabs/PaymentTab';
-import { commonActionCreater } from '../../Redux/commonAction';
 
 function TabContainer({ children, dir }) {
     return (
@@ -49,22 +48,15 @@ class FullWidthTabs extends React.Component {
         this.setState({ value: index });
     };
     toggleViewPayment = () => {
-        this.props.toggleViewPayment()
+        props.toggleViewPayment()
     }
 
     toggleViewProduct = () => {
-        this.props.toggleViewProduct()
-    }
-    componentDidUpdate(){
-      if(this.props.afterSellRedirectToCart){
-        this.setState({ value:0 });
-        this.props.toggleViewProduct();
-        this.props.dispatch(commonActionCreater(false,'REDIRECT_TO_CART'))
-      }
+        props.toggleViewProduct()
     }
 
     render() {
-        const { cart,cartItems } = this.props;
+        const { classes, theme } = this.props;
 
         return (
             <div className=''>
@@ -76,9 +68,9 @@ class FullWidthTabs extends React.Component {
                         textColor="primary"
                         variant="fullWidth"
                     >
-                        <Tab label="Cart" onClick={this.toggleViewProduct} />
-                        <Tab label="Customer" onClick={this.toggleViewProduct} />
-                        <Tab label="Payment" onClick={this.toggleViewPayment} />
+                        <Tab label="Cart" onClick={toggleViewProduct} />
+                        <Tab label="Customer" onClick={toggleViewProduct} />
+                        <Tab label="Payment" onClick={toggleViewPayment} />
                     </Tabs>
                 </AppBar>
                 <SwipeableViews
@@ -90,30 +82,30 @@ class FullWidthTabs extends React.Component {
                         <OrdersTab
                             cartItems={cartItems}
                             cart={cart}
-                            dispatch={this.props.dispatch}
-                            checkoutMainPart={this.props.checkoutMainPart}
-                            checkoutcalcArea={this.props.checkoutcalcArea}
-                            checkoutactionArea={this.props.checkoutactionArea}
-                            checkoutcartArea={this.props.checkoutcartArea}
-                            handleClickOpen={this.props.handleClickOpen}
+                            dispatch={props.dispatch}
+                            checkoutMainPart={props.checkoutMainPart}
+                            checkoutcalcArea={props.checkoutcalcArea}
+                            checkoutactionArea={props.checkoutactionArea}
+                            checkoutcartArea={props.checkoutcartArea}
+                            handleClickOpen={props.handleClickOpen}
                         />
                     </TabContainer>
 
                     <TabContainer >
                         <CustomersTab
-                            {...this.props}
-                            checkoutMainPart={this.props.checkoutMainPart}
-                            checkoutactionArea={this.props.checkoutactionArea}
-                            checkoutCustomerArea={this.props.checkoutCustomerArea}
-                            checkoutcalcArea={this.props.checkoutcalcArea}
-                            checkoutcartArea={this.props.checkoutcartArea}
-                            handleClickOpen={this.props.handleClickOpen}
-                            handleHistoryOpen={this.props.handleHistoryOpen}
+                            {...props}
+                            checkoutMainPart={props.checkoutMainPart}
+                            checkoutactionArea={props.checkoutactionArea}
+                            checkoutCustomerArea={props.checkoutCustomerArea}
+                            checkoutcalcArea={props.checkoutcalcArea}
+                            checkoutcartArea={props.checkoutcartArea}
+                            handleClickOpen={props.handleClickOpen}
+                            handleHistoryOpen={props.handleHistoryOpen}
                         />
                     </TabContainer>
                     <TabContainer >
                         <PaymentTab
-                            checkoutMainPart={this.props.checkoutMainPart}
+                            checkoutMainPart={props.checkoutMainPart}
                         />
                     </TabContainer>
                 </SwipeableViews>
