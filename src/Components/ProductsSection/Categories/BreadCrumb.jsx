@@ -10,11 +10,11 @@ import HomeIcon from '@material-ui/icons/Home';
 
 const styles = theme => ({
   root: {
-    padding: theme.spacing.unit,
+    padding: '5px',
   },
   chip: {
-    backgroundColor: theme.palette.grey[100],
-    height: 24,
+    // backgroundColor: theme.palette.grey[100],
+    height: 20,
     color: theme.palette.grey[800],
     fontWeight: theme.typography.fontWeightRegular,
     '&:hover, &:focus': {
@@ -30,12 +30,6 @@ const styles = theme => ({
     marginRight: -theme.spacing.unit * 1.5,
   },
 });
-
-
-function handleClick(event) {
-  event.preventDefault();
-  alert('You clicked a breadcrumb.'); // eslint-disable-line no-alert
-}
 
 function CustomBreadcrumb(props) {
   const { classes, ...rest } = props;
