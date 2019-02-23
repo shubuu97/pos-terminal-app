@@ -118,9 +118,14 @@ class Categories extends Component {
         limit: 20,
         skip: 0
       })
-      .then(res => {
-        this.props.dispatch(
-          commonActionCreater(res, "GET_PRODUCT_DATA_SUCCESS")
+      .then(result => {
+        result.pagination = {}
+        result.pagination.firstItemId = result.rows[0].id
+        result.pagination.lastItemId = result.rows[result.rows.length - 1].id
+        result.pagination.pageNo = 1
+        result.pagination.startVal = 1
+        result.pagination.endVal = result.rows.length
+        this.props.dispatch(commonActionCreater(result, "GET_PRODUCT_DATA_SUCCESS")
         );
       })
       .catch(err => {

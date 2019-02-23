@@ -7,7 +7,7 @@ import _isEmpty from 'lodash/isEmpty'
 /* Redux Imports */
 import { connect } from 'react-redux';
 import genericPostData from '../Global/dataFetch/genericPostData';
-import setProduct from '../Redux/setProduct';
+import {commonActionCreater} from '../Redux/commonAction';
 /* React Pose */
 import posed from 'react-pose';
 /* Pouch DB */
@@ -119,7 +119,6 @@ class HomeContainer extends React.Component {
         this.setState({ openOnHold: false });
     };
     handleClickOpenSessionContainer = () => {
-        debugger;
         this.setState({ openSessionContainer: true });
     };
 
@@ -137,11 +136,16 @@ class HomeContainer extends React.Component {
         productsdb.allDocs({
             include_docs: true,
             attachments: true,
-            limit: 10,
+            limit: 9,
             skip: 0
         }).then((result) => {
-            let lastItemId = result.rows[result.rows.length - 1].id
-            this.props.dispatch(setProduct(result, lastItemId, 'GET_PRODUCT_DATA_SUCCESS'));
+            result.pagination = {}
+            result.pagination.firstItemId = result.rows[0].id
+            result.pagination.lastItemId = result.rows[result.rows.length - 1].id
+            result.pagination.pageNo = 1
+            result.pagination.startVal = 1
+            result.pagination.endVal = result.rows.length
+            this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
         }).catch((err) => {
             console.log(err)
         });
@@ -277,13 +281,11 @@ class HomeContainer extends React.Component {
 function mapStateToProps(state) {
     let { productList, cart, cartHoldData } = state;
     productList = _get(productList, 'lookUpData.rows', []);
-    let totalCount = _get(productList, 'lookUpData.total_rows', 0);
     let holdCartData = _get(cartHoldData, 'holdedItems', []);
     let customer = _get(cart, 'customer', {});
 
     return {
         productList,
-        totalCount,
         cart,
         holdCartData,
         customer,
