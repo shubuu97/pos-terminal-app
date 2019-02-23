@@ -14,6 +14,7 @@ import Slide from '@material-ui/core/Slide';
 import connect from 'react-redux/lib/connect/connect';
 import clearCart from '../../Global/PosFunctions/clearCart';
 import moment from "moment";
+import { commonActionCreater } from '../../Redux/commonAction';
 /* Component Imports */
 
 function Transition(props) {
@@ -34,6 +35,7 @@ class PaymentReceipt extends React.Component {
     handleNewOrder = () => {
         clearCart(this.props.dispatch);
         this.props.handleClose();
+        this.props.dispatch(commonActionCreater(true,'REDIRECT_TO_CART'));
     }
     handlePrint = () => {
         var content = document.getElementById('printarea');

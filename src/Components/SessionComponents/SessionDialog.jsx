@@ -32,7 +32,14 @@ class AddNewSessionDialog extends React.Component {
 
     
   
-
+    headingDecider = ()=>{
+        if(this.props.close){
+            return <span>Set Closing Balance</span>
+        }
+        else{
+            return <span>Set Opening Balance for {localStorage.getItem('terminalName')}</span>
+        }
+    }
     render() {
         debugger;
         const { classes } = this.props;
@@ -49,9 +56,11 @@ class AddNewSessionDialog extends React.Component {
                             <IconButton color="inherit" onClick={this.props.handleClose} aria-label="Close">
                                 <CloseIcon />
                             </IconButton>
-                            <span className='ml-20'>Set Opening Balance</span>
+                            <span className='ml-20'>{this.headingDecider()}</span>
                         </div>
-                        <DenominationDetailsForm/>
+                        <DenominationDetailsForm
+                        {...this.props}
+                        />
                     </div>
                 </Dialog>
             </div>

@@ -11,6 +11,7 @@ import _get from 'lodash/get';
 import LoginComponent from '../Components/LoginComponents/login';
 import StoreComponent from '../Components/LoginComponents/store';
 import SyncComponent from '../Components/LoginComponents/sync';
+import { commonActionCreater } from '../Redux/commonAction';
 
 const styles = theme => ({
     main: {
@@ -56,7 +57,15 @@ class SignIn extends React.Component {
           this.props.history.push('/');
         }
         this.setState({ currentStep })
+    };
+    componentDidMount(){
+        if(this.props.sessionRedirectToLogin){
+            debugger;
+            this.setState({currentStep:3});
+            this.props.dispatch(commonActionCreater(false,'SESSION_START_REDIRECT_TO_LOGIN'));
+        }
     }
+
     render() {
         const { classes } = this.props;
 
@@ -107,6 +116,7 @@ SignIn.propTypes = {
 
 
 function mapStateToProps(state) {
-
+let sessionRedirectToLogin = _get(state,'sessionRedirectToLogin.lookUpData');
+return {sessionRedirectToLogin}
 }
 export default connect(mapStateToProps)(withStyles(styles)(SignIn));

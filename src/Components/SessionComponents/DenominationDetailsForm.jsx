@@ -8,98 +8,34 @@ import Button from '@material-ui/core/Button'
 /* Redux Imports */
 
 /* Component Imports */;
-const denominationTypes = [{
-    id: 1,
-    name: "Pennies",
-    stateName: 'pennies',
-    value: 0.01
-}, {
-    id: 2,
-    name: "Nickles",
-    stateName: 'nickles',
-    value: 0.05
-},
-{
-    id: 3,
-    name: "Dimes",
-    stateName: 'dimes',
-    value: 0.1
-},
-{
-    id: 4,
-    name: "Quarters",
-    stateName: 'quaters',
-    value: 0.25
-},
-{
-    id: 5,
-    name: "Fifty Cent",
-    stateName: 'fifyCent',
-    value: 0.5
-},
-{
-    id: 6,
-    name: "1 Dollar Coin",
-    stateName: 'oneCoin',
-    value: 1
-},
-{
-    id: 7,
-    name: "$1 Bill",
-    stateName: 'one',
-    value: 1
-},
-{
-    id: 8,
-    name: "$2 Bill",
-    stateName: 'two',
-    value: 2
-}, {
-    id: 9,
-    name: "$5 Bill",
-    stateName: 'five',
-    value: 5
-}, {
-    id: 10,
-    name: "$10 Bill",
-    stateName: 'ten',
-    value: 10
-}, {
-    id: 11,
-    name: "$20 Bill",
-    stateName: 'twenty',
-    value: 20
-}, {
-    id: 12,
-    name: "$50 Bill",
-    stateName: 'fifty',
-    value: 50
-}, {
-    id: 13,
-    name: "$100 Bill",
-    stateName: 'hundred',
-    value: 100
-}];
-
+import currencyTypes from '../../Global/PosFunctions/currencyTypes';
+import getDenominationDetails from '../../Global/PosFunctions/getDenominationDetails'
+import genericPostData from '../../Global/dataFetch/genericPostData';
+import { connect } from 'react-redux'
+import startSession from '../../Global/PosFunctions/startSession';
+import getDenominationTotal from '../../Global/PosFunctions/getDenominationTotal';
+import { commonActionCreater } from '../../Redux/commonAction';
+import closeSession from '../../Global/PosFunctions/closeSession'; 
 
 class DenominationDetailsForm extends React.Component {
 
     constructor() {
         super();
         this.state = {
-            pennies:'',
-            nickles:'',
-            dimes:'',
-            quaters:'',
-            fifyCent:'',
-            oneCoin:'',
-            one:'',
-            two:'',
-            five:'',
-            ten:'',
-            twenty:'',
-            fifty:'',
-            hundred:''
+            pennies: '',
+            nickles: '',
+            dimes: '',
+            quaters: '',
+            fifyCent: '',
+            oneCoin: '',
+            one: '',
+            two: '',
+            five: '',
+            ten: '',
+            twenty: '',
+            fifty: '',
+            hundred: '',
+            amount: 0
 
         }
     }
@@ -116,123 +52,107 @@ class DenominationDetailsForm extends React.Component {
         else {
             currenctFocusValue = ''
         }
-
+        this.state[currentFocus] = currenctFocusValue;
         this.setState({
             [currentFocus]: currenctFocusValue,
+            amount: getDenominationTotal(this.state)
+
         })
     }
     handleChange = name => event => {
 
         this.setState({
             [name]: event.target.value,
+            amount: getDenominationTotal({...this.state,[name]: event.target.value})
         });
     };
-    calculateTotalValue = (type)=>{
-        return type.value*(parseFloat(this.state[type.stateName])||0)
+    calculateTotalValue = (type) => {
+        return type.value * (parseFloat(this.state[type.stateName]) || 0)
     }
     mapTablerows = () => {
-
-        return denominationTypes.map((type) => {
+        return currencyTypes.map((type) => {
             return (<tr>
                 <td>{type.name}</td>
                 <td>*</td>
-                <td> 
+                <td>
                     <input
-                    autoFocus = {type.id==7?true:false}
-                    onFocus={() => this.currentFocus(type.stateName)}
-                    id={type.id}
-                    value={this.state[type.stateName]}
-                    onChange={this.handleChange(type.stateName)} 
-                />
+                        autoFocus={type.id == 7 ? true : false}
+                        onFocus={() => this.currentFocus(type.stateName)}
+                        id={type.id}
+                        type='number'
+                        value={this.state[type.stateName]}
+                        onChange={this.handleChange(type.stateName)}
+                    />
                 </td>
                 <td>=</td>
                 <td>{this.calculateTotalValue(type)}</td>
             </tr>)
         })
 
-    }
-    startNewSession = ()=>{
-        let session = {};
-       let  openingCashDetails  = Object.keys(this.state).map((denomination)=>
-    {
-        let obj = {};
-        if (denomination == "pennies") {
-        obj.denomination = '0.01'
-        obj.quantity = parseInt(this.state[denomination])||0
-        obj.cashType = 1
-        }
-        else if ( denomination== "nickles") {
-            obj.denomination = '0.01'
-            obj.quantity = parseInt(this.state[denomination])||0
-            obj.cashType = 1
-        }
-        else if ( denomination== "dimes") {
-            obj.denomination = '0.1'
-            obj.quantity = parseInt(this.state[denomination])||0
-            obj.cashType = 1
-        }
-        else if ( denomination== "quaters") {
-            obj.denomination = '0.25'
-            obj.quantity = parseInt(this.state[denomination])||0
-            obj.cashType = 1
-        }
-        else if ( denomination== "fifyCent") {
-            obj.denomination = '0.5'
-            obj.quantity = parseInt(this.state[denomination])||0
-            obj.cashType = 1
-        }
-        else if ( denomination== "oneCoin") {
-            obj.denomination = '1'
-            obj.quantity = parseInt(this.state[denomination])||0
-            obj.cashType = 1
-        }
-        else if ( denomination== "one") {
-            obj.denomination = '1'
-            obj.quantity = parseInt(this.state[denomination])||0
-            obj.cashType = 0
+    };
 
+    startNewSession = () => {
+        startSession({
+            dispatch: this.props.dispatch,
+            handleSuccess: this.props.handleSuccessAddSession,
+            handleError: this.handleError,
+            stateObj: this.state,
+            amount: this.state.amount
+        })
+        // closeSession({
+        //     dispatch: this.props.dispatch,
+        //     handleSuccess:this.handleSuccess,
+        //     handleError:this.handleError,
+        //     stateObj: this.state,
+        //     amount: this.state.amount,
+        //     reason:'some reason'
+        // });
+    }
+    handleSuccess = (data) => {
+        debugger;
+        localStorage.setItem('sessionId', 'data.id')
+        this.props.dispatch(commonActionCreater(true, 'SESSION_START_REDIRECT_TO_LOGIN'));
+        this.props.history.push('/login');
+    }
+    handleError = (error) => {
+        debugger
+    }
+
+    setClosingBalnce = () => {
+        this.props.setClosingBalnce(
+            getDenominationDetails(this.state),
+            this.state,
+            this.state.amount);
+        this.props.handleClose()
+    }
+    buttonDecider = () => {
+        if (this.props.close) {
+            return (<Button
+                color='secondary'
+                fullWidth
+                variant='raised'
+                onClick={this.setClosingBalnce}>
+                Set Closing Balance
+                </Button>)
         }
-        else if ( denomination== "two") {
-            obj.denomination = '2'
-            obj.quantity = parseInt(this.state[denomination])||0
-            obj.cashType = 0
+
+        else {
+            return (<Button
+                color='primary'
+                variant='contained'
+                fullWidth
+                onClick={this.startNewSession}>
+                Start New Session</Button>)
         }
-        else if ( denomination== "five") {
-            obj.denomination = '5'
-            obj.quantity = parseInt(this.state[denomination])||0
-            obj.cashType = 0
+    }
+    componentDidMount(){
+        if(this.props.stateDetails)
+        {
+        this.setState(this.props.stateDetails);
         }
-        else if ( denomination== "ten") {
-            obj.denomination = '10'
-            obj.quantity = parseInt(this.state[denomination])||0
-            obj.cashType = 0
-        }
-        else if ( denomination== "twenty") {
-            obj.denomination = '20'
-            obj.quantity = parseInt(this.state[denomination])||0
-            obj.cashType = 0
-        }
-        else if ( denomination== "fifty") {
-            obj.denomination = '50'
-            obj.quantity = parseInt(this.state[denomination])||0
-            obj.cashType = 0
-        }
-        else if (denomination== "hundred") {
-            obj.denomination = '100'
-            obj.quantity = parseInt(this.state[denomination])||0
-            obj.cashType = 0
-        }
-        return obj
-    })
-        session.terminalId = localStorage.getItem('terminalId');
-        session.storeId = localStorage.getItem('storeId');
-        session.operatorId = localStorage.getItem('userId');
-        session.openingCashDetails = openingCashDetails;
-        session.status = 'open';
-        session.openingBalance = {currencyCode:'$',amount:this.totalValue};
     }
     render() {
-       let extraClass =  _get(this.props,'location.pathname','')=="/DenominationDetailsForm"?'session-parent':''
+        let extraClass = _get(this.props, 'location.pathname', '') == "/DenominationDetailsForm" ? 'session-parent' : ''
         return (
             <div className={`mui-container-fluid ${extraClass}`}>
                 <div class="mui-row">
@@ -250,39 +170,46 @@ class DenominationDetailsForm extends React.Component {
                             <tbody>
                                 {this.mapTablerows()}
                             </tbody>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>   <span className="bold">{this.state.amount}</span></td>
+                            </tr>
                         </table>
-                        <Button
-                        color='primary'
-                        variant='contained'
-                        onclick={this.startNewSession}
-                        >
-                        Start New Session
-                        </Button>
+                        {/* <div className="flex flex-row justify-space-between">
+                       
+                      
+                        </div> */}
                     </div>
-            
+
                     <div className="mui-col-md-6 numpad-box">
-                    <div className="middle">
-                    <div className='card numpad-card'>
-                        <span className='card-title'>Numpad</span>
-                        <div className='flex-row flex-wrap justify-center pt-15'>
-                            <div className='key small-key' onClick={this.handleInputChange('1')}>1</div>
-                            <div className='key small-key' onClick={this.handleInputChange('2')}>2</div>
-                            <div className='key small-key' onClick={this.handleInputChange('3')}>3</div>
-                            <div className='key small-key' onClick={this.handleInputChange('4')}>4</div>
-                            <div className='key small-key' onClick={this.handleInputChange('5')}>5</div>
-                            <div className='key small-key' onClick={this.handleInputChange('6')}>6</div>
-                            <div className='key small-key' onClick={this.handleInputChange('7')}>7</div>
-                            <div className='key small-key' onClick={this.handleInputChange('8')}>8</div>
-                            <div className='key small-key' onClick={this.handleInputChange('9')}>9</div>
-                            <div className='key small-key' onClick={this.handleInputChange('.')}>.</div>
-                            <div className='key small-key' onClick={this.handleInputChange('0')}>0</div>
-                            <div className='key small-key' onClick={this.handleInputChange('<')}>clr</div>
-                            <div className='small-key'></div>
-                            <div className='key big-key'>Enter</div>
+                        <div className="middle">
+                            <div className='card numpad-card'>
+                                <span className='card-title'>Numpad</span>
+                                <div className='flex-row flex-wrap justify-center pt-15'>
+                                    <div className='key small-key' onClick={this.handleInputChange('1')}>1</div>
+                                    <div className='key small-key' onClick={this.handleInputChange('2')}>2</div>
+                                    <div className='key small-key' onClick={this.handleInputChange('3')}>3</div>
+                                    <div className='key small-key' onClick={this.handleInputChange('4')}>4</div>
+                                    <div className='key small-key' onClick={this.handleInputChange('5')}>5</div>
+                                    <div className='key small-key' onClick={this.handleInputChange('6')}>6</div>
+                                    <div className='key small-key' onClick={this.handleInputChange('7')}>7</div>
+                                    <div className='key small-key' onClick={this.handleInputChange('8')}>8</div>
+                                    <div className='key small-key' onClick={this.handleInputChange('9')}>9</div>
+                                    <div className='key small-key' onClick={this.handleInputChange('.')}>.</div>
+                                    <div className='key small-key' onClick={this.handleInputChange('0')}>0</div>
+                                    <div className='key small-key' onClick={this.handleInputChange('<')}>clr</div>
+                                    <div className='small-key'></div>
+                                    <div className='key big-key'>Enter</div>
+                                </div>
+                            </div>
+                            <div className="flex flex-row justify-center mt-16">
+                                {this.buttonDecider()}
+                            </div>
                         </div>
-                    </div>
-                    </div>
-                    
+
                     </div>
                 </div>
             </div>
@@ -290,5 +217,9 @@ class DenominationDetailsForm extends React.Component {
     }
 }
 
-export default DenominationDetailsForm;
+function mapStateToProps() {
+    return {};
+}
+
+export default connect(mapStateToProps)(DenominationDetailsForm);
 

@@ -7,6 +7,9 @@ import _get from 'lodash/get';
 import moment from 'moment';
 import AuthModal from './authModal';
 import Redirect from "react-router/Redirect";
+import InputLabel from '@material-ui/core/InputLabel';
+import SessionDialog from '../SessionComponents/SessionDialog';
+
 
 
 
@@ -14,8 +17,8 @@ class Store extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            terminals: [],
-            selectedTerminal: 0,
+            terminals: [''],
+            selectedTerminal: -1,
             isManager: localStorage.getItem('role') == 'manager' ? true : false
         };
 
@@ -71,18 +74,23 @@ class Store extends React.Component {
         this.setState({ terminals: _get(data, 'terminals') })
     }
     mapTermainal = () => {
-        let terminals = this.state.terminals.map((terminal, index) => {
-            console.log(terminal, "here");
-            return <option data-value={terminal} value={index}>{terminal.name}</option>
+        let terminals = [];
+        terminals.push(<option data-value='' value={-1}></option>);
+        this.state.terminals.map((terminal, index) => {
+            terminals.push(<option data-value={terminal} value={index}>{terminal.name}</option>);
         })
         return terminals;
     }
 
     handleChange = (event) => {
+        debugger;
         this.setState({ selectedTerminal: event.target.value });
+        if(event.target.value!=-1)
+        {
         let terminalObj = this.state.terminals[event.target.value];
         localStorage.setItem('terminalId', terminalObj.id);
         localStorage.setItem('terminalName', terminalObj.name);
+        }
     }
 
     handleLoginToPos = () => {
@@ -116,7 +124,8 @@ class Store extends React.Component {
         localStorage.setItem('sessionId', _get(data, 'sessionId', 'nil'));
         if (_get(data, 'sessionId', 'nil') == 'nil') {
             if (this.state.isManager) {
-                this.props.history.push('/DenominationDetailsForm');
+                // this.props.history.push('/DenominationDetailsForm');
+                this.setState({showAddSessionDialog:true})
             }
             else {
                this.setState({showAuthModal:true})
@@ -127,7 +136,9 @@ class Store extends React.Component {
         }
     }
     authSuccess = () => {
-     this.props.history.push('/DenominationDetailsForm');
+    //  this.props.history.push('/DenominationDetailsForm');
+    this.setState({showAddSessionDialog:true})
+
     }
     handleClose = ()=>
     {
@@ -135,12 +146,21 @@ class Store extends React.Component {
         showAuthModal:false
         })
     }
+    handleSuccessAddSession = (data)=>{
+        debugger;
+        localStorage.setItem('sessionId', data.id);
+        this.props.handleStepChange(3)
+        // this.props.dispatch(commonActionCreater(true, 'SESSION_START_REDIRECT_TO_LOGIN'));
+        // this.props.history.push('/login');
+    }
     render() {
         let { classes } = this.props
         return (
             <React.Fragment>
                 <FormControl margin="normal" required fullWidth>
+                <InputLabel htmlFor="age-simple">Select Terminal</InputLabel>
                     <Select
+                        placeholder="Please Select terminal"
                         native
                         value={this.state.selectedTerminal}
                         onChange={this.handleChange}
@@ -153,6 +173,7 @@ class Store extends React.Component {
                     fullWidth
                     isFetching={this.state.isFetching}
                     variant="contained"
+                    disabled={this.state.selectedTerminal==-1}
                     color="primary"
                     className={classes.submit}
                 >
@@ -164,6 +185,11 @@ class Store extends React.Component {
                     dispatch={this.props.dispatch}
                     authSuccess={this.authSuccess}
                 /> : null}
+                {this.state.showAddSessionDialog?<SessionDialog
+                    open={this.state.showAddSessionDialog}
+                    handleSuccessAddSession = {this.handleSuccessAddSession}
+                    handleClose={()=>this.setState({showAddSessionDialog:false})}
+                    />:null}
             </React.Fragment>)
     }
 }

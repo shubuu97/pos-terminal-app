@@ -24,15 +24,14 @@ class PaymentTab extends React.Component {
     constructor() {
         super();
         this.state = {
-            saleComments: '',
         }
     }
 
     handleReasonChange = (e) => {
         let value = _get(e, 'target.value', '');
-        this.setState({
-            saleComments: value,
-        })
+        // this.setState({
+        //     saleComments: value,
+        // })
         this.props.dispatch(commonActionCreater(value, 'SALE_COMMENT'));
     }
 
@@ -96,10 +95,10 @@ class PaymentTab extends React.Component {
                     <div className='card flex-column flex-wrap'>
                         <TextField
                             id="outlined-multiline-flexible"
-                            label="Reason"
+                            label="Comments"
                             multiline
                             rowsMax="4"
-                            value={_get(this.state, 'saleComments', '')}
+                            value={_get(cart, 'saleComment', '')}
                             onChange={(e) => this.handleReasonChange(e)}
                             className={''}
                             margin="normal"

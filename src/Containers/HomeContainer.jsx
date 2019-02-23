@@ -123,6 +123,10 @@ class HomeContainer extends React.Component {
     };
 
     handleCloseSessionContainer = () => {
+        if(localStorage.getItem('sessionId')=='nil'){
+            localStorage.clear();
+            this.props.history.push('/login')
+        }
         this.setState({ openSessionContainer: false });
     };
 

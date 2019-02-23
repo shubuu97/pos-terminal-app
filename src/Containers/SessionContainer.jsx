@@ -10,20 +10,23 @@ import { connect } from 'react-redux';
 import Sessions from '../Components/SessionComponents/Sessions';
 /* global imports */
 import genericPostData from '../Global/dataFetch/genericPostData';
-import AddNewSessionDialog from '../Components/SessionComponents/AddNewSessionDialog';
+import SessionDialog from '../Components/SessionComponents/SessionDialog';
 import SessionDetail from '../Components/SessionComponents/SessionDetail';
+import { commonActionCreater } from '../Redux/commonAction';
 
 class SessionContainer extends React.Component {
 
     constructor() {
         super();
         this.state = {
-            openNewSessionDialog: false
+            openNewSessionDialog: false,
 
         }
     }
     componentDidMount() {
         this.getTerminalBySessionByData();
+        this.props.dispatch(commonActionCreater({id:localStorage.getItem('sessionId')},'GET_SELECTED_SESSION'))
+
     }
     getTerminalBySessionByData = () => {
         genericPostData({
@@ -59,30 +62,32 @@ class SessionContainer extends React.Component {
         let { sessionList } = this.props;
         return (
             <div className="session-parent">
-                <div className="mui-col-sm-4 ">
+                <div style={{height:document.documentElement.scrollHeight*.8,overflowY:'scroll'}} className="mui-col-sm-4">
                     <div className="flex-column justify-flex-end">
                         <Sessions
                             sessionList={sessionList}
                         />
                     </div>
                     <div className="session-button-style">
-                        <Button
+                        {/* <Button
                             onClick={this.handleOpenNewSessionDialog}
                             variant="contained"
                             color="primary"
                         >
                             Add New Session
-                      </Button>
+                      </Button> */}
                         {this.state.openNewSessionDialog ?
-                            <AddNewSessionDialog
+                            <SessionDialog
                                 open={this.state.openNewSessionDialog}
                                 handleClose = {this.handleCloseNewSessionDialog}
-
+                                
                             /> : null}
                     </div>
                 </div>
                 <div className="mui-col-sm-8">
-                    <SessionDetail />
+                    <SessionDetail 
+                    goBackToCheckOut = {this.props.goBackToCheckOut}
+                    />
                 </div>
             </div>
         );
