@@ -214,7 +214,7 @@ class PaymentSection extends React.Component {
                         <div onClick={this.handleCardPayment} className='each-payment-method'>
                             Debit/Credit Card
                         </div>
-                        {_get(this.props, 'customer.employee') ? <div onClick={this.handleDefaultCardPayment} className='each-payment-method'>
+                        {_get(this.props, 'customer.isEmpPayEnabled') ? <div onClick={this.handleDefaultCardPayment} className='each-payment-method'>
                             Employee
                         </div> : null}
                         {/* <div onClick={this.handleGiftCardPayment} className='each-payment-method'>
