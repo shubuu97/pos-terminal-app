@@ -9,7 +9,7 @@ import AuthModal from './authModal';
 import Redirect from "react-router/Redirect";
 import InputLabel from '@material-ui/core/InputLabel';
 import SessionDialog from '../SessionComponents/SessionDialog';
-
+import showMessage from '../../Redux/toastAction';
 
 
 
@@ -124,6 +124,7 @@ class Store extends React.Component {
         localStorage.setItem('loggedInTime', loggedInTime);
         localStorage.setItem('loggedInDate', loggedInDate);
         localStorage.setItem('sessionId', _get(data, 'sessionId', 'nil'));
+       
         if (_get(data, 'sessionId', 'nil') == 'nil') {
             if (this.state.isManager) {
                 // this.props.history.push('/DenominationDetailsForm');
