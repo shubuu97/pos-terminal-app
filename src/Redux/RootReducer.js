@@ -13,6 +13,7 @@ import categoryListFun from './commonReducer';
 import sessionListFun from './commonReducer';
 import customerSaleListFun from './commonReducer';
 import saleRefundFun from './commonReducer';
+import giftCardDataFun from './commonReducer';
 /* SPECIFIC Reducers */
 import cart from '../reducers/cartItem';
 import cartHoldData from '../reducers/holdCartItem';
@@ -34,6 +35,7 @@ let selectedSession = selectedSessionFun('GET_SELECTED_SESSION')
 let sessionRedirectToLogin = sessionRedirectToLoginFun('SESSION_START_REDIRECT_TO_LOGIN');
 let afterSellRedirectToCart = afterSellRedirectToCartFun('SWITCH_TAB_NUMBER')
 let saleRefund = saleRefundFun('SALE_REFUND');
+let giftCardData = giftCardDataFun('GET_GIFT_CARD__DATA');
 
 // let cartItems = cartItemFun('CART_ITEM_LIST');
 // let cartOrderDetails = cartOrderDetailsFun('ORDER_DETAILS');
@@ -54,7 +56,8 @@ let rootRducer = combineReducers({
     sessionRedirectToLogin,
     selectedSession,
     saleRefund,
-    afterSellRedirectToCart
+    afterSellRedirectToCart,
+    giftCardData,
 })
 
 export default rootRducer;

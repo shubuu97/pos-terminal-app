@@ -2,6 +2,7 @@ import React from 'react';
 /* Lodash Imports */
 import _get from 'lodash/get';
 import _findIndex from 'lodash/findIndex';
+import _isArray from 'lodash/isArray';
 
 /* Material import */
 import Button from '@material-ui/core/Button';
@@ -36,7 +37,8 @@ class OrdersTab extends React.Component {
             cartListHeight: 0,
             open: false,
             identifier: '',
-            itemIndex: ''
+            itemIndex: '',
+            forCart: false,
         }
     }
 
@@ -57,9 +59,16 @@ class OrdersTab extends React.Component {
     };
 
     handleClickOpenDiscount = () => {
+        let cartItems = _get(this, 'props.cart.cartItems', []);
+        let cartTotal = 0;
+            _isArray(cartItems) && cartItems.map((cartItem) => {
+                cartTotal += Number(_get(cartItem, 'itemRegularTotal.amount', 0));
+            })
         this.setState({
             open: true,
-            identifier: 'Discount'
+            identifier: 'Discount',
+            forCart: true,
+            cartTotal: cartTotal,
         });
     };
     handleClickOpenItemDiscount = (index) => {
@@ -97,15 +106,33 @@ class OrdersTab extends React.Component {
         }
         this.props.dispatch(commonActionCreater(cartItems, 'CART_ITEM_LIST'));
     };
-    handleDiscount = (data, identifier, index) => {
+    handleDiscount = (data, identifier, index, type) => {
         let cartItems = _get(this, 'props.cart.cartItems', []);
+        console.log('cartitems', cartItems);
+        let cartDiscountPercent = 0;
+        // let maxDiscount = 80;
+        if (type === '$') {
+            let cartTotal = 0;
+            _isArray(cartItems) && cartItems.map((cartItem) => {
+                cartTotal += Number(_get(cartItem, 'itemRegularTotal.amount', 0));
+            })
+            let discountDoll = parseFloat(data);
+            let absolutePer = Number(discountDoll/cartTotal);
+            cartDiscountPercent = parseFloat((absolutePer*100).toFixed(2));
+        } else {
+            cartDiscountPercent = parseFloat(data);
+        }
         let reqObj = [
             ...cartItems
         ]
         if (identifier == 'Discount') {
-            let cartDiscountPercent = parseFloat(data);
-            this.props.dispatch(commonActionCreater(cartDiscountPercent, 'ADD_DISCOUNT_TO_CART'));
-            this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
+            // if(cartDiscountPercent < maxDiscount) {
+                this.props.dispatch(commonActionCreater(cartDiscountPercent, 'ADD_DISCOUNT_TO_CART'));
+                this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
+            // } else {
+            //     alert('discount should be less than 80%');
+            // }
+            
         }
         else if (identifier == 'ItemDiscount') {
             reqObj[index].itemDiscountPercent = parseFloat(data);
@@ -186,6 +213,8 @@ class OrdersTab extends React.Component {
                     handleClose={this.handleClose}
                     handleDiscount={this.handleDiscount}
                     itemIndex={this.state.itemIndex}
+                    forCart={this.state.forCart}
+                    cartTotal={this.state.cartTotal}
                 />
 
                 <div style={{ height: checkoutcartArea }}>

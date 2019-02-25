@@ -19,6 +19,7 @@ import PaymentSection from '../Components/PaymentSection/PaymentSection'
 import OrderHistoryDialog from '../Components/OrderHistoryDialog';
 import SessionDialogue from '../Components/SessionDialogue'
 import HoldDialogue from '../Components/HoldDialogue';
+import GiftCardModel from '../Components/ProductsSection/GiftCardModel';
 
 
 
@@ -193,6 +194,11 @@ class HomeContainer extends React.Component {
             openOrderHistory: false,
         });
     }
+    handleGiftCard = (open) => {
+        this.setState({
+            openGiftCard: open,
+        });
+    }
 
 
     render() {
@@ -213,6 +219,7 @@ class HomeContainer extends React.Component {
                         cart={cart}
                         dispatch={dispatch}
                         history={this.props.history}
+                        handleGiftCard={() => this.handleGiftCard(true)}
                         // ! Actions
                         handleHistoryOpen={this.handleTerminalHistoryOpen}
                         handleClickOpen={this.handleClickOpen}
@@ -272,6 +279,13 @@ class HomeContainer extends React.Component {
                             holdCartData={this.props.holdCartData}
                             dispatch={dispatch}
                         /> : null
+                }
+                {
+                    this.state.openGiftCard &&
+                    <GiftCardModel
+                        open={this.state.openGiftCard}
+                        handleClose={() => this.handleGiftCard(false)}
+                    />
                 }
             </div>
         );

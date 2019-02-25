@@ -7,6 +7,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 import Slide from '@material-ui/core/Slide';
+import _get from 'lodash/get';
 
 function Transition(props) {
     return <Slide direction="up" {...props} />;
@@ -17,7 +18,8 @@ class AlertDialogSlide extends React.Component {
     constructor() {
         super();
         this.state = {
-            discount: ''
+            discount: '',
+            type: '%',
         }
     }
 
@@ -33,6 +35,14 @@ class AlertDialogSlide extends React.Component {
         else {
             discount = ''
         }
+        let cartDiscountPercent = 0;
+        let maxDiscount = 80;
+        if(this.state.type === '$') {
+            maxDiscount = _get(this.props, 'cartTotal', 0) * 80/100;
+        }
+        if (parseFloat(discount) > maxDiscount) {
+            discount = maxDiscount.toFixed(2);
+        }
 
         this.setState({
             discount: discount,
@@ -40,11 +50,17 @@ class AlertDialogSlide extends React.Component {
     }
 
     handleDiscount = () => {
-        this.props.handleDiscount(this.state.discount, this.props.identifier, this.props.itemIndex)
+        this.props.handleDiscount(this.state.discount, this.props.identifier, this.props.itemIndex, this.state.type)
         this.setState({
             discount: ''
         })
         this.props.handleClose()
+    }
+
+    handleDiscountType = (type) => {
+        this.setState({
+            type,
+        });
     }
 
     render() {
@@ -61,37 +77,46 @@ class AlertDialogSlide extends React.Component {
                     aria-describedby="alert-dialog-slide-description"
                 >
                     <DialogTitle id="alert-dialog-slide-title">
-                        {"Add Discount"}
+                        {`Add Discount (Max Discount to be given 80%)`}
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-slide-description">
                             Warning! This action will require manager's approval.
-                            <TextField
-                                id="discount"
-                                label="Discount"
-                                value={this.state.discount}
-                                onChange={this.handleTextChange('discount')}
-                                margin="outline"
-                                fullWidth
-                                type='text'
-                                variant="outlined"
-                                className='mt-10'
-                            />
+                            <div className="mui-col-md-6">
+                                <TextField
+                                    id="discount"
+                                    label="Discount"
+                                    value={this.state.discount}
+                                    onChange={() => { }}
+                                    margin="outline"
+                                    fullWidth
+                                    type='text'
+                                    variant="outlined"
+                                    className='mt-10'
+                                />
+                            </div>
+                            <div className="mui-col-md-6">
+                                <div className='discount-keypad'>
+                                    <div className={this.state.type === '%' ? 'discount-keys active': 'discount-keys'} onClick={() => this.handleDiscountType('%')}>%</div>
+                                    <div className={this.state.type === '$' ? 'discount-keys active': 'discount-keys'} onClick={() => this.handleDiscountType('$')}>$</div>
+                                </div>
+                            </div>
                         </DialogContentText>
-
-                        <div className='discount-keypad'>
-                            <div className='discount-keys' onClick={this.handleInputChange('1')}>1</div>
-                            <div className='discount-keys' onClick={this.handleInputChange('2')}>2</div>
-                            <div className='discount-keys' onClick={this.handleInputChange('3')}>3</div>
-                            <div className='discount-keys' onClick={this.handleInputChange('4')}>4</div>
-                            <div className='discount-keys' onClick={this.handleInputChange('5')}>5</div>
-                            <div className='discount-keys' onClick={this.handleInputChange('6')}>6</div>
-                            <div className='discount-keys' onClick={this.handleInputChange('7')}>7</div>
-                            <div className='discount-keys' onClick={this.handleInputChange('8')}>8</div>
-                            <div className='discount-keys' onClick={this.handleInputChange('9')}>9</div>
-                            <div className='discount-keys' onClick={this.handleInputChange('.')}>.</div>
-                            <div className='discount-keys' onClick={this.handleInputChange('0')}>0</div>
-                            <div className='discount-keys' onClick={this.handleInputChange('<')}>clear</div>
+                        <div className="mui-col-md-12">
+                            <div className='discount-keypad'>
+                                <div className='discount-keys' onClick={this.handleInputChange('1')}>1</div>
+                                <div className='discount-keys' onClick={this.handleInputChange('2')}>2</div>
+                                <div className='discount-keys' onClick={this.handleInputChange('3')}>3</div>
+                                <div className='discount-keys' onClick={this.handleInputChange('4')}>4</div>
+                                <div className='discount-keys' onClick={this.handleInputChange('5')}>5</div>
+                                <div className='discount-keys' onClick={this.handleInputChange('6')}>6</div>
+                                <div className='discount-keys' onClick={this.handleInputChange('7')}>7</div>
+                                <div className='discount-keys' onClick={this.handleInputChange('8')}>8</div>
+                                <div className='discount-keys' onClick={this.handleInputChange('9')}>9</div>
+                                <div className='discount-keys' onClick={this.handleInputChange('.')}>.</div>
+                                <div className='discount-keys' onClick={this.handleInputChange('0')}>0</div>
+                                <div className='discount-keys' onClick={this.handleInputChange('<')}>clear</div>
+                            </div>
                         </div>
                     </DialogContent>
                     <DialogActions>

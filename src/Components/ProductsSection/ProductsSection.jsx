@@ -7,6 +7,7 @@ import _find from 'lodash/find'
 /* Material import */
 import LockIcon from '@material-ui/icons/Lock';
 import ExitToApp from '@material-ui/icons/ExitToApp';
+import CardGiftCard from '@material-ui/icons/CardGiftcard';
 /* Redux Imports */
 import { commonActionCreater } from '../../Redux/commonAction'
 /* Component Imports */
@@ -21,8 +22,8 @@ PouchDb.plugin(require('pouchdb-quick-search'));
 let productsdb = new PouchDb('productsdb');
 productsdb.search({
     fields: ['product.name', 'product.description', 'product.sku'],
-    build:true
-  })
+    build: true
+})
 
 class ProductsSection extends React.Component {
 
@@ -37,45 +38,44 @@ class ProductsSection extends React.Component {
         localStorage.clear();
         this.props.history.push('/login')
     }
-    handleChange = (searchText)=>{
-     if(searchText.length>3)
-     {
-     productsdb.search({
-        query: searchText,
-        fields: ['product.name', 'product.description', 'product.sku'],
-        include_docs: true,
-        limit: 9,
-        skip: 0
-      }).then((result)=> {
-        result.pagination = {}
-        result.pagination.firstItemId = result.rows[0].id
-        result.pagination.lastItemId = result.rows[result.rows.length - 1].id
-        result.pagination.pageNo = 1
-        result.pagination.startVal = 1
-        result.pagination.endVal = result.rows.length
-        this.props.dispatch(commonActionCreater(result,'GET_PRODUCT_DATA_SUCCESS'));
-      })
-      .catch((err)=>{
-      console.log(err);
-      })
-    }
-    else if(searchText==''){
-        productsdb.allDocs({
-            include_docs: true,
-            attachments: true,
-            limit: 10,
-            skip: 0
-          }).then((result)=> {
-            result.pagination = {}
-            result.pagination.firstItemId = result.rows[0].id
-            result.pagination.lastItemId = result.rows[result.rows.length - 1].id
-            result.pagination.pageNo = 1
-            result.pagination.startVal = 1
-            result.pagination.endVal = result.rows.length
-            this.props.dispatch(commonActionCreater(result,'GET_PRODUCT_DATA_SUCCESS'));
-          }).catch((err)=> {
-              console.log(err)
-          });
+    handleChange = (searchText) => {
+        if (searchText.length > 3) {
+            productsdb.search({
+                query: searchText,
+                fields: ['product.name', 'product.description', 'product.sku'],
+                include_docs: true,
+                limit: 9,
+                skip: 0
+            }).then((result) => {
+                result.pagination = {}
+                result.pagination.firstItemId = result.rows[0].id
+                result.pagination.lastItemId = result.rows[result.rows.length - 1].id
+                result.pagination.pageNo = 1
+                result.pagination.startVal = 1
+                result.pagination.endVal = result.rows.length
+                this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+            })
+                .catch((err) => {
+                    console.log(err);
+                })
+        }
+        else if (searchText == '') {
+            productsdb.allDocs({
+                include_docs: true,
+                attachments: true,
+                limit: 10,
+                skip: 0
+            }).then((result) => {
+                result.pagination = {}
+                result.pagination.firstItemId = result.rows[0].id
+                result.pagination.lastItemId = result.rows[result.rows.length - 1].id
+                result.pagination.pageNo = 1
+                result.pagination.startVal = 1
+                result.pagination.endVal = result.rows.length
+                this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+            }).catch((err) => {
+                console.log(err)
+            });
         }
     }
 
@@ -90,27 +90,28 @@ class ProductsSection extends React.Component {
                 <div className='pos-header'>
                     <div className="header-top flex-row align-center justify-space-between pl-10 pr-10" >
                         <SideDrawer
-                             // ! Actions
+                            // ! Actions
                             handleClickOpen={this.props.handleClickOpen}
                             handleHistoryOpen={this.props.handleHistoryOpen}
                             handleClickOpenSessionContainer={this.props.handleClickOpenSessionContainer}
                         />
                         <SearchBar
-                        handleChange = {this.handleChange}
+                            handleChange={this.handleChange}
                         />
                         <div>
-                            <LockIcon style={{color: 'white', padding:'0 10px', fontSize: 30}}/>
-                            <ExitToApp style={{color: 'white', padding:'0 10px', fontSize: 30}} onClick={this.logout}/>
+                            <CardGiftCard style={{ color: 'white', padding: '0 10px', fontSize: 30 }} onClick={this.props.handleGiftCard} />
+                            <LockIcon style={{ color: 'white', padding: '0 10px', fontSize: 30 }} />
+                            <ExitToApp style={{ color: 'white', padding: '0 10px', fontSize: 30 }} onClick={this.logout} />
                         </div>
                     </div>
                 </div>
 
-                <Categories 
+                <Categories
                     categoriesHeight={categoriesHeight}
                     {...this.props}
                 />
                 {/* Product Categories Component */}
-                
+
                 <Pagination />
                 {/* Products List Component */}
                 <Products
