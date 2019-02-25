@@ -44,7 +44,7 @@ class ProductsSection extends React.Component {
         query: searchText,
         fields: ['product.name', 'product.description', 'product.sku'],
         include_docs: true,
-        limit: 20,
+        limit: 9,
         skip: 0
       }).then((result)=> {
         result.pagination = {}

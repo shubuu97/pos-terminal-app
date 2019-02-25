@@ -115,7 +115,7 @@ class Categories extends Component {
         query: category.id,
         fields: ["product.category1", "product.category2", "product.category3"],
         include_docs: true,
-        limit: 20,
+        limit: 9,
         skip: 0
       })
       .then(result => {
@@ -154,10 +154,16 @@ class Categories extends Component {
       .allDocs({
         include_docs: true,
         attachments: true,
-        limit: 20,
+        limit: 9,
         skip: 0
       })
       .then(result => {
+        result.pagination = {}
+        result.pagination.firstItemId = result.rows[0].id
+        result.pagination.lastItemId = result.rows[result.rows.length - 1].id
+        result.pagination.pageNo = 1
+        result.pagination.startVal = 1
+        result.pagination.endVal = result.rows.length
         this.props.dispatch(
           commonActionCreater(result, "GET_PRODUCT_DATA_SUCCESS")
         );
