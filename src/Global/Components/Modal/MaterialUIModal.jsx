@@ -37,7 +37,8 @@ const styles = theme => ({
 class SimpleModal extends React.Component {
     state = {
         open: false,
-        qty: 0
+        qty: 0,
+        fromInfoView: false
     };
 
     handleClose = () => {
@@ -56,7 +57,7 @@ class SimpleModal extends React.Component {
 
     addToCart = (index, qty) => {
         this.props.addToCart(index, qty);
-        this.setState({ qty: 0 })
+        this.setState({ qty: 0, fromInfoView: true })
     }
 
     render() {
@@ -122,9 +123,11 @@ class SimpleModal extends React.Component {
                                                 <AddIcons onClick={() => this.incrementer()} style={{ fontSize: '1.7em' }} />
                                             </div>
                                         </div>
-                                        <div className='button-section flex-row '>
-                                            <Button className='mr-20' variant="outlined" onClick={() => this.addToCart(this.props.index, this.state.qty)}>Add To Cart</Button>
-                                        </div>
+                                        {this.state.qty > 0 ?
+                                            <div className='button-section flex-row '>
+                                                <Button className='mr-20' variant="outlined" onClick={() => this.addToCart(this.props.index, this.state.qty, this.state.fromInfoView)}>Add To Cart</Button>
+                                            </div> : ''
+                                        }
                                     </div>
                                 </div>
 
