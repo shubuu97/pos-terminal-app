@@ -9,7 +9,7 @@ import AuthModal from './authModal';
 import Redirect from "react-router/Redirect";
 import InputLabel from '@material-ui/core/InputLabel';
 import SessionDialog from '../SessionComponents/SessionDialog';
-
+import showMessage from '../../Redux/toastAction';
 
 
 
@@ -59,6 +59,7 @@ class Store extends React.Component {
                 error: 'GET_STORE_DATA_ERROR'
             },
             identifier: 'GET_STORE_DATA',
+            dontShowMessage:true,
             successCb: this.afterStoreSuccess,
             errorCb: () => this.setState({ isFetching: false })
         })
@@ -111,6 +112,7 @@ class Store extends React.Component {
             },
             identifier: 'GET_TERMINAL_DATA',
             successCb: this.afterLoginSuccess,
+            dontShowMessage:true,
             errorCb: () => this.setState({ isFetching: false })
         })
     }
@@ -122,6 +124,7 @@ class Store extends React.Component {
         localStorage.setItem('loggedInTime', loggedInTime);
         localStorage.setItem('loggedInDate', loggedInDate);
         localStorage.setItem('sessionId', _get(data, 'sessionId', 'nil'));
+       
         if (_get(data, 'sessionId', 'nil') == 'nil') {
             if (this.state.isManager) {
                 // this.props.history.push('/DenominationDetailsForm');

@@ -31,7 +31,8 @@ class Login extends React.Component {
             },
             identifier: 'POST_LOGIN_DATA',
             successCb: this.afterLoginSuccess,
-            errorCb: () => this.setState({ isFetching: false })
+            errorCb: this.handleLoginError,
+            successText:'Logged in succesfully'
         })
     }
 
@@ -50,6 +51,11 @@ class Login extends React.Component {
         // this.props.history.push('/store');
         this.props.handleStepChange(2)
     }
+
+   handleLoginError =  (error) =>{
+    console.log(error,"error is here");
+    this.setState({ isFetching: false });
+   }
     render() {
         let { classes } = this.props
         return (

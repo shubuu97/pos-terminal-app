@@ -17,6 +17,8 @@ import giftCardDataFun from './commonReducer';
 /* SPECIFIC Reducers */
 import cart from '../reducers/cartItem';
 import cartHoldData from '../reducers/holdCartItem';
+import ShowToast from './toastReducer';
+
 
 import sessionRedirectToLoginFun from './commonStaticReducer';
 import afterSellRedirectToCartFun from './commonStaticReducer'
@@ -58,6 +60,7 @@ let rootRducer = combineReducers({
     saleRefund,
     afterSellRedirectToCart,
     giftCardData,
+    ShowToast
 })
 
 export default rootRducer;

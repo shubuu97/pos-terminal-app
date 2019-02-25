@@ -6,7 +6,8 @@ import _get from 'lodash/get'
 PouchDb.plugin(Find);
 let customersdb = new PouchDb('customersdb');
 
-const addGuestToCart = (dispatch) => {
+const addGuestToCart = async(dispatch) => {
+    let customersdb = new PouchDb('customersdb');
     customersdb.find({selector:{guest:true}}).then((data)=>{
         dispatch(commonActionCreater(_get(data,'docs[0]',[]), 'ADD_CUSTOMER_TO_CART'));
     })

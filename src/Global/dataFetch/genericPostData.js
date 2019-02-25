@@ -9,7 +9,9 @@ function genericPostData({dispatch,reqObj,url,constants,identifier,successText,s
         postData(`${APPLICATION_BFF_URL}${url}`, reqObj,identifier ,constants)
     ).then((data) => {
         if(!dontShowMessage)
+        {
         dispatch(showMessage({ text: successText||'Updated SuccessFully', isSuccess: true }));
+        }
         if(successCb)
         successCb(data);
         // this.basicDataFetcher();
@@ -22,9 +24,19 @@ function genericPostData({dispatch,reqObj,url,constants,identifier,successText,s
 
     })
         .catch((err) => {
-        dispatch(showMessage({ text: err.msg, isSuccess: false }));
+            debugger;
+            if(typeof err=='string')
+            dispatch(showMessage({ text: err, isSuccess: false }));
+            console.log(err);
+            if(err.code==500)
+            {
+            if(err.detail)
+            dispatch(showMessage({ text: err.detail, isSuccess: false }));
+
+        }
+
             if(errorCb)
-            errorCb()
+            errorCb(err)
             setTimeout(() => {
                 dispatch(showMessage({}));
                 if(errorTimeOutCb)

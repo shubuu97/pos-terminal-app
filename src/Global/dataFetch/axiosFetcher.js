@@ -3,7 +3,13 @@ import generateV1uuid from '../Uuid';
 import {APPLICATION_BFF_URL} from '../../Redux/urlConstants'
 
 
-const axiosFetcher = ({method,url,reqObj,successCb,errorCb})=>
+const axiosFetcher = ({method,
+  url,
+  reqObj,
+  successCb,
+  successText,
+  dispatch,
+  errorCb})=>
 {
 let requestObject = {};
   requestObject.method = method;

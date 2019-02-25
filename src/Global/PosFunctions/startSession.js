@@ -19,6 +19,7 @@ const startSession = ({dispatch,handleSuccess,handleError,stateObj,amount})=>{
         success:'START_SEESION_success',
         error:'START_SESSION_ERROR'
     },
+    successText:'Session Created SuccesFully',
     successCb:handleSuccess,
     error:handleError,
     })
