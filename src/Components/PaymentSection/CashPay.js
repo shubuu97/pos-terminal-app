@@ -23,6 +23,8 @@ class CashPay extends React.Component {
         this.setState({
             [name]: event.target.value,
         });
+        this.props.handleKeyBoardValue('cashPayValue',event.target.value)
+
     };
     componentWillReceiveProps(props){
         this.setState({cashPay:props.value})
@@ -37,6 +39,7 @@ class CashPay extends React.Component {
                         InputLabelProps={{ shrink: true }}
                             id="cashPay"
                             label="Amount"
+                            type = "number"
                             value={this.state.cashPay}
                             onChange={this.handleChange('cashPay')}
                             margin="outline"

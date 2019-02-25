@@ -53,6 +53,10 @@ class PaymentSection extends React.Component {
         this.setState({ showGiftPay: true })
     }
 
+    handleKeyBoardValue=(field,value)=>{
+       this.setState({[field]:value});
+    }
+
     handleInputChange = num => event => {
         debugger;
         let currentFocus = this.state.currentFocus;
@@ -206,16 +210,16 @@ class PaymentSection extends React.Component {
     render() {
         return (
             <div className='pos-payment m-50'>
-                <div className='card payment-card'>
+                <div  className='card payment-card'>
                     <span className='card-title soft-text'>Payment Methods</span>
                     <div className='flex-row justify-center'>
-                        <div onClick={this.handleCashPayment} className='each-payment-method'>
+                        <div style={this.calcRemainingAmount()<0?{pointerEvents:'none'}:null} onClick={this.handleCashPayment} className='each-payment-method'>
                             Cash Payment
                         </div>
-                        <div onClick={this.handleCardPayment} className='each-payment-method'>
+                        <div  style={this.calcRemainingAmount()<0?{pointerEvents:'none'}:null} onClick={this.handleCardPayment} className='each-payment-method'>
                             Debit/Credit Card
                         </div>
-                        {_get(this.props, 'customer.isEmpPayEnabled') ? <div onClick={this.handleDefaultCardPayment} className='each-payment-method'>
+                        {_get(this.props, 'customer.isEmpPayEnabled') ? <div  style={this.calcRemainingAmount()<0?{pointerEvents:'none'}:null} onClick={this.handleDefaultCardPayment} className='each-payment-method'>
                             Employee
                         </div> : null}
                         {/* <div onClick={this.handleGiftCardPayment} className='each-payment-method'>
@@ -228,25 +232,31 @@ class PaymentSection extends React.Component {
                         <span className='card-title soft-text'>Transactions</span>
                         {this.state.showCashPay ?
                             <CashPay
+                                handleKeyBoardValue = {this.handleKeyBoardValue}
                                 currentFocus={this.currentFocus}
                                 value={this.state.cashPayValue}
                                 onRemovePaymentMethod={this.onRemovePaymentMethod}
                             /> : null}
                         {this.state.showCardPay ?
                             <CardPay
+                             handleKeyBoardValue = {this.handleKeyBoardValue}
                                 currentFocus={this.currentFocus}
                                 value={this.state.cardAmountValue}
+                                initialValue = {this.calcRemainingAmount()}
                                 onRemovePaymentMethod={this.onRemovePaymentMethod}
                             /> : null}
                         {this.state.showDefaultCardPay ?
                             <DefaultCardPay
+                                handleKeyBoardValue = {this.handleKeyBoardValue}
                                 customer={this.props.customer}
                                 value={this.state.defaultcardAmountValue}
                                 currentFocus={this.currentFocus}
+                                initialValue = {this.calcRemainingAmount()}
                                 onRemovePaymentMethod={this.onRemovePaymentMethod}
                             /> : null}
                         {this.state.showGiftPay ?
                             <GiftPay
+                               handleKeyBoardValue = {this.handleKeyBoardValue}
                                 value={this.state.giftPayNumberValue}
                                 currentFocus={this.currentFocus}
                                 onRemovePaymentMethod={this.onRemovePaymentMethod}

@@ -12,19 +12,24 @@ import CloseIcon from '@material-ui/icons/Close'
 
 class CardPay extends React.Component {
 
-    constructor() {
-        super();
+    constructor(props) {
+        debugger;
+        super(props);
         this.state = {
-
+            cardAmount:''
         }
     }
     handleChange = name => event => {
         this.setState({
             [name]: event.target.value,
         });
+        this.props.handleKeyBoardValue('cardAmountValue',event.target.value)
     };
     componentWillReceiveProps(props){
         this.setState({cardAmount:props.value})
+    }
+    componentDidMount(){
+        this.props.handleKeyBoardValue('cardAmountValue',this.props.initialValue)
     }
 
     render() {
@@ -39,6 +44,7 @@ class CardPay extends React.Component {
                             onFocus={() => this.props.currentFocus('cardAmount')}
                             id="outlined-name"
                             label="Amount"
+                            type = "number"
                             value={this.state.cardAmount}
                             onChange={this.handleChange('cardAmount')}
                             margin="normal"
