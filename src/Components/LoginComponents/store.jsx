@@ -59,6 +59,7 @@ class Store extends React.Component {
                 error: 'GET_STORE_DATA_ERROR'
             },
             identifier: 'GET_STORE_DATA',
+            dontShowMessage:true,
             successCb: this.afterStoreSuccess,
             errorCb: () => this.setState({ isFetching: false })
         })
@@ -111,6 +112,7 @@ class Store extends React.Component {
             },
             identifier: 'GET_TERMINAL_DATA',
             successCb: this.afterLoginSuccess,
+            dontShowMessage:true,
             errorCb: () => this.setState({ isFetching: false })
         })
     }

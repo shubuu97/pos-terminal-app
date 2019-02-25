@@ -46,6 +46,7 @@ class AuthModal extends React.Component {
                 error: 'GET_MANAGERS_LIST_ERROR'
             },
             identifier: 'GET_MANAGERS_LIST',
+            dontShowMessage:true,
             successCb: this.handleManagerListSuccess,
             errorCb: this.handleManagerListError
         })
@@ -75,6 +76,7 @@ class AuthModal extends React.Component {
             },
             identifier: 'POST_MANAGER_LOGIN',
             successCb: this.handleManagerLoginSuccess,
+            successText:'Pin Verified Succesfully',
             errorCb: this.handleManagerLoginError
         })
     }
