@@ -10,7 +10,7 @@ const holdCart = (dispatch, cart, title, customerName) => {
     reqObj.time = new Date();
     dispatch(commonActionCreater(reqObj, 'HOLD_CART_ITEM'));
     clearCart(dispatch);
-    addGuestToCart(this.props.dispatch);
+    addGuestToCart(dispatch);
 
 
 }
