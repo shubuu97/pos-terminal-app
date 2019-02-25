@@ -88,13 +88,13 @@ class OrderRefund extends React.Component {
         let listItems = _isArray(selectedOrder.saleParts) ? selectedOrder.saleParts.map((item, index) => (
             <tr>
                 <td>{_get(item, 'product.name', '')}</td>
-                <td>{(_get(item, 'saleItem.itemRegularTotal.amount', 0) / _get(item, 'saleItem.qty', 0))}</td>
+                <td>{(_get(item, 'saleItem.itemRegularTotal.amount', 0) / _get(item, 'saleItem.qty', 0)).toFixed(2)}</td>
                 <td>{_get(item, 'saleItem.qty', 0)}</td>
                 <td>
                     <input name={`returnQty-${index}`} value={_get(item, 'saleItem.returnQty', 0)} onChange={(e) => this.handleChange(e, index)} />
                 </td>
                 <td>{(_get(item, 'saleItem.itemRefundAmount.amount', 0))}</td>
-                <td>{(_get(item, 'saleItem.itemRegularTotal.amount', 0) / _get(item, 'saleItem.qty', 0)) * _get(item, 'saleItem.returnQty', 0) + _get(item, 'product.tax', 0)}</td>
+                <td>{((_get(item, 'saleItem.itemRegularTotal.amount', 0) / _get(item, 'saleItem.qty', 0)) * _get(item, 'saleItem.returnQty', 0)).toFixed(2) + _get(item, 'product.tax', 0)}</td>
                 <td>
                     <TextField
                         id="outlined-multiline-flexible"

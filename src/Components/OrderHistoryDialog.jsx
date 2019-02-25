@@ -78,7 +78,7 @@ class OrderHistoryDialog extends React.Component {
             _set(selectedOrder, `saleParts[${index}].saleItem.returnQty`, Number(quantity));
             if (quantity != '') {
                 let refundAmount = (_get(item, 'saleItem.itemRegularTotal.amount', 0) / _get(item, 'saleItem.qty', 0)) * Number(quantity);
-                _set(selectedOrder, `saleParts[${index}].saleItem.itemRefundAmount.amount`, (refundAmount));
+                _set(selectedOrder, `saleParts[${index}].saleItem.itemRefundAmount.amount`, Number(refundAmount.toFixed(2)));
                 _set(selectedOrder, `saleParts[${index}].saleItem.itemRefundAmount.currencyCode`, '$');
             }
         }
@@ -106,7 +106,7 @@ class OrderHistoryDialog extends React.Component {
         selectedOrder.saleParts.map((part, index) => {
             let tempPart = { ...part.saleItem };
             tempPart.productId = _get(part, 'product.id', '');
-            totalRefundAmount += _get(part, 'saleItem.itemRefundAmount.amount', 0);
+            totalRefundAmount += Number(_get(part, 'saleItem.itemRefundAmount.amount', 0));
             if (tempPart.returnQty && tempPart.returnQty > 0) {
                 saleItems.push(tempPart);
             }
@@ -119,7 +119,7 @@ class OrderHistoryDialog extends React.Component {
         data.refundSessionId = localStorage.getItem('sessionId');
         data.refundApprovedBy = localStorage.getItem('userId');
         data.refundTimeStamp = {
-            seconds: parseInt(new Date().getTime()/1000),
+            seconds: parseInt(new Date().getTime() / 1000),
         }
 
         genericPostData({
@@ -159,7 +159,7 @@ class OrderHistoryDialog extends React.Component {
 
     }
 
-    
+
 
 
     showPaymentMethods = (custData) => {
@@ -210,7 +210,7 @@ class OrderHistoryDialog extends React.Component {
     }
 
     showRecieptOrderList = () => {
-        {console.log('orderrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr', this.state.selectedOrder)}
+        { console.log('orderrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr', this.state.selectedOrder) }
         let listItems = !_isEmpty(_get(this.state, 'selectedOrder.saleParts', [])) ? this.state.selectedOrder.saleParts.map((item) => (
             <tr>
                 <td>{_get(item, 'product.name', '')}</td>
@@ -222,6 +222,40 @@ class OrderHistoryDialog extends React.Component {
         )) : (
                 <tr>
                     <td>Cell 1-1</td>
+                    <td>Cell 1-2</td>
+                    <td>Cell 1-2</td>
+                    <td>Cell 1-2</td>
+                    <td>Cell 1-2</td>
+                </tr>
+            )
+        return (
+            <React.Fragment>
+                {listItems}
+            </React.Fragment>
+        )
+    }
+
+    showRefundOrderList = () => {
+        const { selectedOrder } = this.props;
+        // let orderData = _find(salesList, { sale: { id: this.state.orderId } });
+        let listItems = !_isEmpty(_get(this.state, 'selectedOrder.saleParts', [])) ? this.state.selectedOrder.saleParts.map((item, index) => (
+            <tr>
+                <td>{_get(item, 'product.name', '')}</td>
+                {/* <td>{(_get(item, 'saleItem.itemRegularTotal.amount', 0) / _get(item, 'saleItem.qty', 0)).toFixed(2)}</td> */}
+                {/* <td>{_get(item, 'saleItem.qty', 0)}</td> */}
+                <td>
+                    <input name={`returnQty-${index}`} value={_get(item, 'saleItem.returnQty', 0)} onChange={(e) => this.handleChange(e, index)} />
+                </td>
+                <td>{(_get(item, 'saleItem.itemRefundAmount.amount', 0))}</td>
+                <td>{(_get(item, 'saleItem.returnReason', ''))}</td>
+                {/* <td>{((_get(item, 'saleItem.itemRegularTotal.amount', 0) / _get(item, 'saleItem.qty', 0)) * _get(item, 'saleItem.returnQty', 0)).toFixed(2) + _get(item, 'product.tax', 0)}</td> */}
+
+            </tr>
+        )) : (
+                <tr>
+                    <td>Cell 1-1</td>
+                    <td>Cell 1-2</td>
+                    <td>Cell 1-2</td>
                     <td>Cell 1-2</td>
                     <td>Cell 1-2</td>
                     <td>Cell 1-2</td>
@@ -270,6 +304,16 @@ class OrderHistoryDialog extends React.Component {
     handlePrint = () => {
         var content = document.getElementById('printarea');
         var pri = document.getElementById('ifmcontentstoprint').contentWindow;
+        pri.document.open();
+        pri.document.write(content.innerHTML);
+        pri.document.close();
+        pri.focus();
+        pri.print();
+    }
+
+    handlePrintRefund = () => {
+        var content = document.getElementById('printareaRefund');
+        var pri = document.getElementById('ifmcontentstoprintRefund').contentWindow;
         pri.document.open();
         pri.document.write(content.innerHTML);
         pri.document.close();
@@ -342,11 +386,14 @@ class OrderHistoryDialog extends React.Component {
                                 <br />
                                 <br />
                                 <label >{`Change: `}</label>
-                                <label style={{ float: 'right' }}>{`$ ${(_get(selectedOrder, 'sale.totalAmountPaid.amount', 0)-_get(selectedOrder, 'sale.totalAmount.amount', 0)).toFixed(2)}`}</label>
+                                <label style={{ float: 'right' }}>{`$ ${(_get(selectedOrder, 'sale.totalAmountPaid.amount', 0) - _get(selectedOrder, 'sale.totalAmount.amount', 0)).toFixed(2)}`}</label>
                             </div>
                         </div>
                         <div className="mui-row" style={{ display: 'flex', justifyContent: 'center' }}>
                             <Button onClick={() => this.handlePrint()} variant="contained">ORDER PRINT </Button>
+                            {_get(selectedOrder, 'sale.totalRefundAmount') ?
+                                <Button style={{ marginLeft: '15px' }} onClick={() => this.handlePrintRefund()} variant="contained">REFUND PRINT </Button> : ''
+                            }
                             <Button style={{ marginLeft: '15px' }} variant="contained" onClick={() => this.openRefund()}>REFUND </Button>
                         </div>
                     </div>
@@ -357,6 +404,8 @@ class OrderHistoryDialog extends React.Component {
 
     render() {
         const { classes, store } = this.props;
+        const { selectedOrder } = this.state;
+        console.log('storeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', store, 'selectedstoreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', this.state.selectedOrder)
         return (
             <div className='hold-dialogue'>
                 <Dialog
@@ -392,7 +441,7 @@ class OrderHistoryDialog extends React.Component {
                             selectedOrder={this.state.selectedOrder}
                             updateReturnQuantity={this.updateReturnQuantity}
                             handleRefund={this.handleRefund}
-                            handleReasonChange = {this.handleReasonChange}
+                            handleReasonChange={this.handleReasonChange}
                         />
                     }
                 </Dialog>
@@ -404,10 +453,13 @@ class OrderHistoryDialog extends React.Component {
                 <div id='printarea'>
                     <div>
                         <h3> <span>{_get(store, 'store.address.addressLine1', '') + ' ' + _get(store, 'store.address.city', '') + ' ' + _get(store, 'store.address.state', '') + ' ' + _get(store, 'store.address.country', '') + ' ' + _get(store, 'store.address.postalCode', '')}</span> </h3>
-                        <h4> #<span>{_get(this.state, 'selectedOrder.sale.id', '')}</span> </h4>
-                        <h4> <span>{moment().format('LLLL')}</span> </h4>
-                        <h4> <span>CASHIER:</span> <span>{_get(this.state, 'selectedOrder.sale.operatorId', '')}</span> </h4>
                         <h4> <span>CUSTOMER:</span> <span>{_get(this.state, 'selectedOrder.customer.customer.firstName', '') + ' ' + _get(this.state, 'selectedOrder.customer.customer.lastName', '')}</span> </h4>
+                        <h3> <span>STORE:</span> <span>{_get(store, 'store.name', '')}</span> </h3>
+                        <h3> <span>TERMINAL:</span> <span>{_get(store, 'terminals[0].name', '')}</span> </h3>
+                        <h4> <span>CASHIER:</span> <span>{_get(this.state, 'selectedOrder.sale.operatorId', '')}</span> </h4>
+                        {/* <h4> #<span>{_get(this.state, 'selectedOrder.sale.id', '')}</span> </h4> */}
+                        <h4> <span>{moment().format('LLLL')}</span> </h4>
+
                         <div className="card">
                             <div className="mui-row" style={{ paddingLeft: '5%', paddingRight: '6%' }}>
                                 <table className="mui-table mui-table--bordered">
@@ -427,28 +479,88 @@ class OrderHistoryDialog extends React.Component {
                             </div>
                         </div>
                         <div className="mui-row">
-                            <div className="mui-col-md-6" style={{ display: 'flex', paddingLeft: '29px' }}>
-                            </div>
                             <div className="mui-col-md-6" style={{ paddingRight: '50px' }}>
-                                <label >{`Tax: `}</label>
-                                <label style={{ float: 'right' }}>{`$ ${_get(this.state.selectedOrder, 'sale.tax', '0')}`}</label>
+                                <label >{`Sale Comment: `}</label>
+                                <label style={{ float: 'right' }}>{`${_get(selectedOrder, 'sale.saleComment', '')}`}</label>
                                 <br />
-                                <label >{`Grand Total: `}</label>
-                                <label style={{ float: 'right' }}>{`${_get(this.state.selectedOrder, 'sale.totalAmount.currencyCode', '$')} ${_get(this.state.selectedOrder, 'sale.totalAmount.amount', '0')}`}</label>
+                                <label >{`Subtotal: `}</label>
+                                <label style={{ float: 'right' }}>{`$ ${_get(selectedOrder, 'saleItems.itemSubTotal', '0')}`}</label>
+                                <br />
+                                {_get(selectedOrder, 'saleItems.itemTotalDiscountAmount', '0') != '0' ?
+                                    <div>
+                                        <label >{`Item Discount: `}</label>
+                                        <label style={{ float: 'right' }}>{`$ ${_get(selectedOrder, 'saleItems.itemTotalDiscountAmount', '0')}`}</label>
+                                        <br />
+                                    </div> : ''
+                                }
+                                {_get(selectedOrder, 'saleItems.cartDiscountAmount', '0') != '0' ?
+                                    <div>
+                                        <label >{`Cart Discounts: `}</label>
+                                        <label style={{ float: 'right' }}>{`$ ${_get(selectedOrder, 'sale.cartDiscountAmount.amount', '0')}`}</label>
+                                        <br />
+                                    </div> : ''
+                                }
+                                {_get(selectedOrder, 'saleItems.employeeDiscountAmount', '0') != '0' ?
+                                    <div>
+                                        <label >{`Employee Discount: `}</label>
+                                        <label style={{ float: 'right' }}>{`$ ${_get(selectedOrder, 'sale.employeeDiscountAmount.amount', '0')}`}</label>
+                                        <br />
+                                    </div> : ''
+                                }
+                                <label >{`Tax: `}</label>
+                                <label style={{ float: 'right' }}>{`$ ${_get(selectedOrder, 'sale.totalTaxAmount.amount', '0')}`}</label>
                                 <br />
                                 <label >{`Total Paid: `}</label>
-                                <div style={{ float: 'right' }}>
+                                <label style={{ float: 'right' }}>{`$ ${_get(selectedOrder, 'sale.totalAmountPaid.amount', '0')}`}</label>
+                                {/* <div style={{ float: 'right' }}>
                                     {this.showPaymentMethods(this.state.selectedOrder)}
-                                </div>
-                                {/* <label style={{ float: 'right' }}>{`$ ${_get(selectedOrder, 'sale.paymentAmount', '100.00')}`}</label> */}
-                                <br />
-                                <br />
-                                <label >{`Change: `}</label>
-                                <label style={{ float: 'right' }}>{`$ ${_get(this.state.selectedOrder, 'sale.change', '0')}`}</label>
+                                </div> */}
                             </div>
                         </div>
                     </div>
-                    
+
+                </div>
+
+                <iframe id="ifmcontentstoprintRefund" style={{
+                    height: '0px',
+                    width: '0px',
+                    position: 'absolute'
+                }}></iframe>
+                <div id='printareaRefund'>
+                    <div>
+                        <h3> <span>{_get(store, 'store.address.addressLine1', '') + ' ' + _get(store, 'store.address.city', '') + ' ' + _get(store, 'store.address.state', '') + ' ' + _get(store, 'store.address.country', '') + ' ' + _get(store, 'store.address.postalCode', '')}</span> </h3>
+                        <h4> <span>CUSTOMER:</span> <span>{_get(this.state, 'selectedOrder.customer.customer.firstName', '') + ' ' + _get(this.state, 'selectedOrder.customer.customer.lastName', '')}</span> </h4>
+                        <h3> <span>STORE:</span> <span>{_get(store, 'store.name', '')}</span> </h3>
+                        <h3> <span>TERMINAL:</span> <span>{_get(store, 'terminals[0].name', '')}</span> </h3>
+                        <h4> <span>CASHIER:</span> <span>{_get(this.state, 'selectedOrder.sale.operatorId', '')}</span> </h4>
+                        <h4> <span>{moment().format('LLLL')}</span> </h4>
+
+                        <div className="card">
+                            <div className="mui-row" style={{ paddingLeft: '5%', paddingRight: '6%' }}>
+                                <table className="mui-table mui-table--bordered">
+                                    <thead>
+                                        <tr>
+                                            <th style={{ paddingRight: '50px' }}>ITEM</th>
+                                            <th style={{ paddingRight: '50px' }}>RETURN QTY</th>
+                                            <th style={{ paddingRight: '50px' }}>RETURN AMOUNT</th>
+                                            <th style={{ paddingRight: '50px' }}>REASON</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {this.showRefundOrderList()}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div className="mui-row">
+                            <div className="mui-col-md-6" style={{ paddingRight: '50px' }}>
+                                <label >{`Total Refund: `}</label>
+                                <label style={{ float: 'right' }}>{`$ ${_get(selectedOrder, 'sale.totalRefundAmount.amount', 0)}`}</label>
+                                <br />
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div >
         );
