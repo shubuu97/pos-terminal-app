@@ -17,11 +17,13 @@ class PaginationComponent extends React.Component {
       productList: [],
       pageNo: 1,
       startKey: '' ,
-      itemCount: 9
+      itemCount: 9,
+      disable: false
     };
   }
  
   getPrevProducts = () => {
+    this.setState({ disable: true })
     let startkey = this.props.firstItemId 
     let productsdb = new PouchDb('productsdb');
       productsdb.allDocs({
@@ -40,33 +42,36 @@ class PaginationComponent extends React.Component {
           result.pagination.startVal = this.props.startVal - this.state.itemCount
           result.pagination.endVal = result.pagination.pageNo * this.state.itemCount
           this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+          this.setState({ disable: false })
       }).catch((err) => {
           console.log(err)
     });
   }
 
   getNextProducts = () => {
-      let startkey = this.props.lastItemId  
-      let productsdb = new PouchDb('productsdb');
-        productsdb.allDocs({
-            include_docs: true,
-            startkey,
-            limit: this.state.itemCount,
-            skip: 1
-        }).then((result) => {
-            result.pagination = {}
-            result.pagination.firstItemId = result.rows[0].id
-            result.pagination.lastItemId = result.rows[result.rows.length - 1].id
-            result.pagination.pageNo = this.props.pageNo + 1
-            result.pagination.startVal = this.props.endVal + 1
-            result.pagination.endVal = result.pagination.pageNo * this.state.itemCount
-            if(result.pagination.endVal > this.props.productCount) {
-              result.pagination.endVal = this.props.productCount
-            }
-            this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
-        }).catch((err) => {
-            console.log(err)
-      });
+    this.setState({ disable: true })
+    let startkey = this.props.lastItemId  
+    let productsdb = new PouchDb('productsdb');
+      productsdb.allDocs({
+          include_docs: true,
+          startkey,
+          limit: this.state.itemCount,
+          skip: 1
+      }).then((result) => {
+          result.pagination = {}
+          result.pagination.firstItemId = result.rows[0].id
+          result.pagination.lastItemId = result.rows[result.rows.length - 1].id
+          result.pagination.pageNo = this.props.pageNo + 1
+          result.pagination.startVal = this.props.endVal + 1
+          result.pagination.endVal = result.pagination.pageNo * this.state.itemCount
+          if(result.pagination.endVal > this.props.productCount) {
+            result.pagination.endVal = this.props.productCount
+          }
+          this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+          this.setState({ disable: false })
+      }).catch((err) => {
+          console.log(err)
+    });
   }
  
   render() {
@@ -93,6 +98,7 @@ class PaginationComponent extends React.Component {
             {this.props.pageNo == 1 ? '' : 
               <IconButton
                 color="inherit"
+                disabled={this.state.disable}
                 onClick={this.getPrevProducts}
                 aria-label="Previous Page"
               >
@@ -104,6 +110,7 @@ class PaginationComponent extends React.Component {
             {isLastPage ? '' : 
               <IconButton
                 color="inherit"
+                disabled={this.state.disable}
                 onClick={this.getNextProducts}
                 aria-label="Next Page"
               >
@@ -119,19 +126,22 @@ class PaginationComponent extends React.Component {
 
 const mapStateToProps = state => {
   let { productList } = state
+  productList = _get(productList, 'lookUpData.rows', [])
   let productCount = _get(productList, 'lookUpData.total_rows', '')
   let lastItemId = _get(productList, 'lookUpData.pagination.lastItemId', '')
   let firstItemId = _get(productList, 'lookUpData.pagination.firstItemId', '')
   let pageNo =  _get(productList, 'lookUpData.pagination.pageNo', '')
   let startVal =  _get(productList, 'lookUpData.pagination.startVal', '')
   let endVal =  _get(productList, 'lookUpData.pagination.endVal', '')
+  
   return {
     productCount,
     lastItemId,
     firstItemId,
     pageNo,
     startVal,
-    endVal
+    endVal,
+    productList
   }
 }
   
