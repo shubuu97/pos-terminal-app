@@ -61,9 +61,9 @@ class OrdersTab extends React.Component {
     handleClickOpenDiscount = () => {
         let cartItems = _get(this, 'props.cart.cartItems', []);
         let cartTotal = 0;
-            _isArray(cartItems) && cartItems.map((cartItem) => {
-                cartTotal += Number(_get(cartItem, 'itemRegularTotal.amount', 0));
-            })
+        _isArray(cartItems) && cartItems.map((cartItem) => {
+            cartTotal += Number(_get(cartItem, 'itemRegularTotal.amount', 0));
+        })
         this.setState({
             open: true,
             identifier: 'Discount',
@@ -117,8 +117,8 @@ class OrdersTab extends React.Component {
                 cartTotal += Number(_get(cartItem, 'itemRegularTotal.amount', 0));
             })
             let discountDoll = parseFloat(data);
-            let absolutePer = Number(discountDoll/cartTotal);
-            cartDiscountPercent = parseFloat((absolutePer*100).toFixed(2));
+            let absolutePer = Number(discountDoll / cartTotal);
+            cartDiscountPercent = parseFloat((absolutePer * 100).toFixed(2));
         } else {
             cartDiscountPercent = parseFloat(data);
         }
@@ -127,12 +127,12 @@ class OrdersTab extends React.Component {
         ]
         if (identifier == 'Discount') {
             // if(cartDiscountPercent < maxDiscount) {
-                this.props.dispatch(commonActionCreater(cartDiscountPercent, 'ADD_DISCOUNT_TO_CART'));
-                this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
+            this.props.dispatch(commonActionCreater(cartDiscountPercent, 'ADD_DISCOUNT_TO_CART'));
+            this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
             // } else {
             //     alert('discount should be less than 80%');
             // }
-            
+
         }
         else if (identifier == 'ItemDiscount') {
             reqObj[index].itemDiscountPercent = parseFloat(data);
@@ -174,14 +174,18 @@ class OrdersTab extends React.Component {
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails>
                         <div className='fwidth flex-row justify-space-between'>
-                            <div className='expanded-options'>
-                                <span className='option-title'>Quantity</span>
-                                <div className='flex-row justify-center align-center'>
-                                    <RemoveCircleIcons onClick={() => this.handleDecreseQuantity(item)} style={{ fontSize: '1.7em' }} />
-                                    <span className='quantity'>{item.qty}</span>
-                                    <AddIcons onClick={() => this.handleIncreaseQuantity(item)} style={{ fontSize: '1.7em' }} />
+                            {
+                                item.saleType === 0 &&
+                                <div className='expanded-options'>
+                                    <span className='option-title'>Quantity</span>
+                                    <div className='flex-row justify-center align-center'>
+                                        <RemoveCircleIcons onClick={() => this.handleDecreseQuantity(item)} style={{ fontSize: '1.7em' }} />
+                                        <span className='quantity'>{item.qty}</span>
+                                        <AddIcons onClick={() => this.handleIncreaseQuantity(item)} style={{ fontSize: '1.7em' }} />
+                                    </div>
                                 </div>
-                            </div>
+                            }
+
                             <div className='expanded-options'>
                                 <span className='option-title'>Item Discount</span>
                                 <div className='flex-row justify-center align-center'>
@@ -197,8 +201,8 @@ class OrdersTab extends React.Component {
         });
         return cartItems
     }
-    handleProceedToCustomer = ()=>{
-        this.props.dispatch(commonActionCreater(2,'SWITCH_TAB_NUMBER'))
+    handleProceedToCustomer = () => {
+        this.props.dispatch(commonActionCreater(2, 'SWITCH_TAB_NUMBER'))
     }
 
 
@@ -236,8 +240,8 @@ class OrdersTab extends React.Component {
                         <Button className='mr-20' variant="outlined" onClick={this.handleClearCart}>Clear</Button>
                         <Button className='mr-20' variant="outlined" onClick={this.props.handleClickOpen}>Hold</Button>
                         <Button
-                        onClick = {this.handleProceedToCustomer}
-                         variant="contained">Proceed</Button>
+                            onClick={this.handleProceedToCustomer}
+                            variant="contained">Proceed</Button>
                     </div>
 
                 </div>

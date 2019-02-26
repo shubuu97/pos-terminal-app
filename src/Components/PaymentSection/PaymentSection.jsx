@@ -71,6 +71,31 @@ class PaymentSection extends React.Component {
             giftCardUsedValue: value,
         })
     }
+    onPayWithGiftCard = () => {
+        let url = 'Sale/RedeemValueFromGiftCard';
+        let value = {};
+        let paymentTimeStamp = {
+            seconds: parseInt(new Date().getTime()/1000),
+        }
+        _set(value, 'amount', parseFloat(this.state.giftCardUsedValue));
+        _set(value, 'currencyCode', '$');
+        let data = {
+            giftCardId: _get(this.state, 'giftCard.id', ''),
+            value: value,
+            customerId: _get(this.props, 'customer.id', ''),
+            sessionId: localStorage.getItem('sessionId'),
+            retailerId: localStorage.getItem('retailerId'),
+            paymentTimeStamp: paymentTimeStamp,
+            
+        }
+        this.paymentWithGiftCard(url, data, this.handleGiftCardPaymentSuccess, this.handleGiftCardPaymentError)
+    }
+    handleGiftCardPaymentSuccess = (data) => {
+        console.log('came in payment success', data);
+    }
+    handleGiftCardPaymentError = (err) => {
+        console.log('came in payment error', err);
+    }
     getGiftCardDetail = (field, value) => {
         let url = 'GiftCard/GetByCodeAndStore';
         let data = {
@@ -78,6 +103,21 @@ class PaymentSection extends React.Component {
             code: value,
         }
         this.getExistingGiftCard(url, data, this.handleGetGiftcardDataSuccess, this.handleGetGiftCardDataError);
+    }
+    paymentWithGiftCard = (url, data, successMethod, errorMethod) => {
+        genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj: data,
+            url: url,
+            constants: {
+                init: 'GET_GIFT_CARD_PAYMENT_DATA_INIT',
+                success: 'GET_GIFT_CARD_PAYMENT_DATA_SUCCESS',
+                error: 'GET_GIFT_CARD_PAYMENT_DATA_ERROR'
+            },
+            identifier: 'GET_GIFT_CARD_PAYMENT_DATA',
+            successCb: successMethod,
+            errorCb: errorMethod
+        })
     }
     getExistingGiftCard = (url, data, successMethod, errorMethod) => {
         genericPostData({
@@ -186,12 +226,19 @@ class PaymentSection extends React.Component {
                 paymentReference: ""
             })
         }
+        if ((parseFloat(this.state.giftCardUsedValue) || 0)) {
+            payments.push({
+                paymentMethod: 'GIFT_CARD',
+                paymentAmount: { currencyCode: '$', amount: (parseFloat(this.state.giftCardUsedValue) || 0) },
+                paymentReference: _get(this.props, 'giftCardPayment', ''),
+            })
+        }
 
         let totalAmountPaid =
             (parseFloat(this.state.cardAmountValue) || 0) +
             (parseFloat(this.state.defaultcardAmountValue) || 0)
             + (parseFloat(this.state.cashPayValue || 0)) +
-            (parseFloat(this.state.giftPayNumberValue) || 0)
+            (parseFloat(this.state.giftCardUsedValue) || 0)
         let reqObj = {
             customerId: customer.id,
             storeId: localStorage.getItem('storeId'),
@@ -322,6 +369,7 @@ class PaymentSection extends React.Component {
                                 giftCard={this.state.giftCard}
                                 originalGiftCard={this.state.originalGiftCard}
                                 onRemovePaymentMethod={this.onRemovePaymentMethod}
+                                onPayWithGiftCard={this.onPayWithGiftCard}
                             /> : null}
 
                     </div>
@@ -385,10 +433,11 @@ function mapStateToProps(state) {
     let sessionId = _get(state, 'terminalData.lookUpData.sessionId');
     let saleComment = _get(state, 'cart.saleComment');
     let giftCard = _get(state, 'giftCardData.lookUpData', {});
+    let giftCardPayment = _get(state, 'giftCardPaymentData.lookUpData', {});
 
     let cart = _get(state, 'cart');
 
-    return { cartItems, customer, totalAmount, cart, sessionId, saleComment, giftCard }
+    return { cartItems, customer, totalAmount, cart, sessionId, saleComment, giftCard, giftCardPayment }
 }
 
 export default withRouter(connect(mapStateToProps)(PaymentSection));

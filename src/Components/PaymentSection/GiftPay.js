@@ -64,7 +64,7 @@ class GiftPay extends React.Component {
                         />
                     </div>
                     
-                    <span className="pay-button">
+                    <span className="pay-button" onClick={this.props.onPayWithGiftCard}>
                         pay
                     </span>
                     <CloseIcon
