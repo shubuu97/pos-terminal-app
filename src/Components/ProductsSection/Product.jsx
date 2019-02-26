@@ -51,7 +51,7 @@ class Product extends React.Component {
                     {
                         ...data,
                         qty: quantity ? quantity : 1,
-                        type: 0,
+                        saleType: 0,
                     }
                 ];
                 this.setState({ qty: quantity ? quantity : 1 })

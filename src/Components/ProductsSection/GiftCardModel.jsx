@@ -146,7 +146,7 @@ class GiftCardModel extends React.Component {
             {
                 ...data,
                 qty: 1,
-                type: 1,
+                saleType: 1,
             }
         ];
         this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
