@@ -1,6 +1,8 @@
 import React from 'react';
 /* Lodash Imports */
 import _get from 'lodash/get';
+import _set from 'lodash/set';
+import _cloneDeep from 'lodash/cloneDeep';
 /* Material import */
 
 /* Redux Imports */
@@ -14,7 +16,7 @@ import Button from '@material-ui/core/Button';
 import { connect } from 'react-redux';
 import genericPostData from '../../Global/dataFetch/genericPostData';
 import PaymentReceipt from './paymentReceipt';
-import {withRouter} from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 import { commonActionCreater } from '../../Redux/commonAction';
 
 /* style */
@@ -33,7 +35,10 @@ class PaymentSection extends React.Component {
             cashPayValue: '',
             giftPayNumberValue: '',
             receiptData: {},
-            showPaymentReceipt: false
+            showPaymentReceipt: false,
+            giftCard: {},
+            originalGiftCard: {},
+            giftCardUsedValue: 0,
         }
 
 
@@ -53,8 +58,60 @@ class PaymentSection extends React.Component {
         this.setState({ showGiftPay: true })
     }
 
-    handleKeyBoardValue=(field,value)=>{
-       this.setState({[field]:value});
+    handleKeyBoardValue = (field, value) => {
+        this.setState({ [field]: value });
+    }
+    handleGiftCardValue = (field, value) => {
+        let giftCard = _get(this.state, 'giftCard', {});
+        let originalGiftCard = _get(this.state, 'originalGiftCard', {});
+        let existingValue = _get(this.state, 'originalGiftCard.value.amount', 0);
+        _set(giftCard, 'value.amount', (value == 0 || value == '' ? _get(originalGiftCard, 'value.amount', 0) : existingValue - value));
+        this.setState({
+            giftCard: giftCard,
+            giftCardUsedValue: value,
+        })
+    }
+    getGiftCardDetail = (field, value) => {
+        let url = 'GiftCard/GetByCodeAndStore';
+        let data = {
+            storeId: localStorage.getItem('storeId'),
+            code: value,
+        }
+        this.getExistingGiftCard(url, data, this.handleGetGiftcardDataSuccess, this.handleGetGiftCardDataError);
+    }
+    getExistingGiftCard = (url, data, successMethod, errorMethod) => {
+        genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj: data,
+            url: url,
+            constants: {
+                init: 'GET_GIFT_CARD_DATA_INIT',
+                success: 'GET_GIFT_CARD__DATA_SUCCESS',
+                error: 'GET_GIFT_CARD__DATA_ERROR'
+            },
+            identifier: 'GET_GIFT_CARD__DATA',
+            successCb: successMethod,
+            errorCb: errorMethod
+        })
+    }
+    handleGetGiftcardDataSuccess = () => {
+        console.log('came in success of gift card get');
+        let { giftCard } = this.props;
+        let status = _get(giftCard, 'status', 0);
+        if (_get(giftCard, 'giftCode') && status === 1) {
+            this.setState({
+                giftCard: giftCard,
+                originalGiftCard: _cloneDeep(giftCard),
+            });
+        } else {
+            this.setState({
+                giftCard: {},
+            });
+            alert('this gift card is not available/active.')
+        }
+    }
+    handleGetGiftCardDataError = () => {
+        console.log('came in error of gift card get');
     }
 
     handleInputChange = num => event => {
@@ -104,6 +161,7 @@ class PaymentSection extends React.Component {
             obj.itemTotalDiscountAmount = item.itemTotalDiscountAmount;
             obj.itemSubTotal = item.itemSubTotal;
             obj.taxPercentage = item.taxPercentage;
+            obj.saleType = item.saleType;
             return obj;
         });
         let payments = []
@@ -140,7 +198,7 @@ class PaymentSection extends React.Component {
             terminalId: localStorage.getItem('terminalId'),
             operatorId: localStorage.getItem('userId'),
             retailerId: localStorage.getItem('retailerId'),
-            sessionId:localStorage.getItem('sessionId'),
+            sessionId: localStorage.getItem('sessionId'),
             saleItems,
             payments,
             miscSaleItems: [],
@@ -170,7 +228,7 @@ class PaymentSection extends React.Component {
             errorCb: this.handleSaleTransactionTransactionError
 
         })
-        
+
     }
 
     handleSaleTransactionTransactionSuccess = (data) => {
@@ -185,7 +243,7 @@ class PaymentSection extends React.Component {
             (parseFloat(this.state.cardAmountValue) || 0) +
             (parseFloat(this.state.defaultcardAmountValue) || 0)
             + (parseFloat(this.state.cashPayValue || 0)) +
-            (parseFloat(this.state.giftPayNumberValue) || 0);
+            (parseFloat(_get(this.state, 'giftCardUsedValue', 0)));
         let netTotal = _get(this.props, 'cart.netTotal', 0);
         let remainingAmount = parseFloat(netTotal) - parseFloat(paymentAmount);
         return (remainingAmount || 0).toFixed(2);
@@ -210,21 +268,21 @@ class PaymentSection extends React.Component {
     render() {
         return (
             <div className='pos-payment m-50'>
-                <div  className='card payment-card'>
+                <div className='card payment-card'>
                     <span className='card-title soft-text'>Payment Methods</span>
                     <div className='flex-row justify-center'>
-                        <div style={this.calcRemainingAmount()<0?{pointerEvents:'none'}:null} onClick={this.handleCashPayment} className='each-payment-method'>
+                        <div style={this.calcRemainingAmount() < 0 ? { pointerEvents: 'none' } : null} onClick={this.handleCashPayment} className='each-payment-method'>
                             Cash Payment
                         </div>
-                        <div  style={this.calcRemainingAmount()<0?{pointerEvents:'none'}:null} onClick={this.handleCardPayment} className='each-payment-method'>
+                        <div style={this.calcRemainingAmount() < 0 ? { pointerEvents: 'none' } : null} onClick={this.handleCardPayment} className='each-payment-method'>
                             Debit/Credit Card
                         </div>
-                        {_get(this.props, 'customer.isEmpPayEnabled') ? <div  style={this.calcRemainingAmount()<0?{pointerEvents:'none'}:null} onClick={this.handleDefaultCardPayment} className='each-payment-method'>
+                        {_get(this.props, 'customer.isEmpPayEnabled') ? <div style={this.calcRemainingAmount() < 0 ? { pointerEvents: 'none' } : null} onClick={this.handleDefaultCardPayment} className='each-payment-method'>
                             Employee
                         </div> : null}
-                        {/* <div onClick={this.handleGiftCardPayment} className='each-payment-method'>
+                        <div onClick={this.handleGiftCardPayment} className='each-payment-method'>
                             Gift Card
-                        </div> */}
+                        </div>
                     </div>
                 </div>
                 <div className='flex-row'>
@@ -232,33 +290,37 @@ class PaymentSection extends React.Component {
                         <span className='card-title soft-text'>Transactions</span>
                         {this.state.showCashPay ?
                             <CashPay
-                                handleKeyBoardValue = {this.handleKeyBoardValue}
+                                handleKeyBoardValue={this.handleKeyBoardValue}
                                 currentFocus={this.currentFocus}
                                 value={this.state.cashPayValue}
                                 onRemovePaymentMethod={this.onRemovePaymentMethod}
                             /> : null}
                         {this.state.showCardPay ?
                             <CardPay
-                             handleKeyBoardValue = {this.handleKeyBoardValue}
+                                handleKeyBoardValue={this.handleKeyBoardValue}
                                 currentFocus={this.currentFocus}
                                 value={this.state.cardAmountValue}
-                                initialValue = {this.calcRemainingAmount()}
+                                initialValue={this.calcRemainingAmount()}
                                 onRemovePaymentMethod={this.onRemovePaymentMethod}
                             /> : null}
                         {this.state.showDefaultCardPay ?
                             <DefaultCardPay
-                                handleKeyBoardValue = {this.handleKeyBoardValue}
+                                handleKeyBoardValue={this.handleKeyBoardValue}
                                 customer={this.props.customer}
                                 value={this.state.defaultcardAmountValue}
                                 currentFocus={this.currentFocus}
-                                initialValue = {this.calcRemainingAmount()}
+                                initialValue={this.calcRemainingAmount()}
                                 onRemovePaymentMethod={this.onRemovePaymentMethod}
                             /> : null}
                         {this.state.showGiftPay ?
                             <GiftPay
-                               handleKeyBoardValue = {this.handleKeyBoardValue}
+                                handleKeyBoardValue={this.handleKeyBoardValue}
+                                handleGiftCardValue={this.handleGiftCardValue}
+                                getGiftCardDetail={this.getGiftCardDetail}
                                 value={this.state.giftPayNumberValue}
                                 currentFocus={this.currentFocus}
+                                giftCard={this.state.giftCard}
+                                originalGiftCard={this.state.originalGiftCard}
                                 onRemovePaymentMethod={this.onRemovePaymentMethod}
                             /> : null}
 
@@ -322,10 +384,11 @@ function mapStateToProps(state) {
     let totalAmount = _get(state, 'cart.totalAmount');
     let sessionId = _get(state, 'terminalData.lookUpData.sessionId');
     let saleComment = _get(state, 'cart.saleComment');
+    let giftCard = _get(state, 'giftCardData.lookUpData', {});
 
     let cart = _get(state, 'cart');
 
-    return { cartItems, customer, totalAmount, cart, sessionId, saleComment }
+    return { cartItems, customer, totalAmount, cart, sessionId, saleComment, giftCard }
 }
 
 export default withRouter(connect(mapStateToProps)(PaymentSection));
