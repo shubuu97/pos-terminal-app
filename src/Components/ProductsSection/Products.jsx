@@ -8,6 +8,7 @@ const Products = (props) => {
     products =  productList.map((data, index) => {
         return <Product
          data={data}
+         key={index}
          index={index}
          productList = {props.productList}
          cart={_get(props,'cart',[])}

@@ -21,27 +21,14 @@ class Product extends React.Component {
         this.state = {
             openModal: false,
             counter: 0,
-            qty: 0,
-            fromInfoView: false
+            qty: 0
         };
         this.ProductDetails = [];
     }
 
-    componentWillReceiveProps(props) {
-        let cartItems = _get(props, 'cart.cartItems', [])
-        let data = _get(this, `props.data`, {});
 
-        if (_find(cartItems, data)) {
-            let qty = (_find(cartItems, data)).qty;
-            this.setState({ qty })
-        }
-        else {
-            this.setState({ qty: 0 })
-        }
-    }
-
-    addToCart = (index, quantity, fromInfoView) => {
-        if (this.state.fromInfoView || fromInfoView) {
+    addToCart = (index, quantity) => {
+        if (!this.state.iconSelected) {
             let cartItems = _get(this, 'props.cart.cartItems', [])
             let data = _get(this, `props.data`, {});
             let reqObj
@@ -54,7 +41,7 @@ class Product extends React.Component {
                         saleType: 0,
                     }
                 ];
-                this.setState({ qty: quantity ? quantity : 1 })
+                // this.setState({ qty: quantity ? quantity : 1 })
             }
             else {
                 let qty = (_find(cartItems, data)).qty + (quantity ? quantity : 1)
@@ -63,31 +50,30 @@ class Product extends React.Component {
                     ...cartItems
                 ]
                 reqObj[index].qty = qty;
-                this.setState({ qty })
+                // this.setState({ qty })
             }
             this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
         }
-        else {
-
-        }
     }
 
+
     viewProductDetails = (index) => {
-        this.setState({ openModal: true, fromInfoView: true })
+        this.setState({ openModal: true })
     }
 
     onClose = () => {
-        this.setState({ openModal: false, fromInfoView: false })
+        this.setState({ openModal: false })
     }
 
     render() {
-        let data = this.props.data;
         let index = this.props.index;
+        let cartItems = _get(this.props, 'cart.cartItems', [])
+        let data = _get(this.props, `data`, {});
         return (
             <React.Fragment>
                 <div className='each-tile white-background flex-row relative' onClick={() => this.addToCart(index)}>
                     <div className='absolute added-item-position'>
-                        {this.state.qty ? <div className='added-item-count'>{this.state.qty}</div> : null}
+                        {(_find(cartItems, {id:data.id}))? <div className='added-item-count'>{(_find(cartItems, {id:data.id})).qty}</div> : null}
                     </div>
                     <div className='product-image'>
                         <img src={_get(data, 'doc.product.image')} alt="" />
@@ -105,7 +91,12 @@ class Product extends React.Component {
                                 {_get(data, 'doc.product.salePrice.currencyCode', '')} {_get(data, 'doc.product.salePrice.price', 'NaN')}
                                 <div className='indicator'></div>
                             </div>
-                            <span onClick={() => this.viewProductDetails(index)} className="quick-view each-card-more" title="View Details">
+                            <span
+                                onMouseLeave={() => this.setState({ iconSelected: false })}
+                                onMouseEnter={() => this.setState({ iconSelected: true })}
+                                onClick={() => this.viewProductDetails(index)}
+                                className="quick-view each-card-more"
+                                title="View Details">
                                 <Info />
                             </span>
                         </div>
@@ -120,11 +111,15 @@ class Product extends React.Component {
                             productDetails={_get(this.props, 'data.doc.product', {})}
                             inventoryDetails={_get(this.props, 'data.doc.inventory', {})}
                             index={index}
-                            addToCart={(index, qty, fromInfoView) => this.addToCart(index, qty, fromInfoView)}
+                            addToCart={(index, qty) => this.addToCart(index, qty)}
                         /> : ''
                 }
             </React.Fragment>)
     }
 }
 
+
 export default Product;
+
+
+

@@ -126,7 +126,7 @@ class PaginationComponent extends React.Component {
 
 const mapStateToProps = state => {
   let { productList } = state
-  productList = _get(productList, 'lookUpData.rows', [])
+  // productList = _get(productList, 'lookUpData.rows', [])
   let productCount = _get(productList, 'lookUpData.total_rows', '')
   let lastItemId = _get(productList, 'lookUpData.pagination.lastItemId', '')
   let firstItemId = _get(productList, 'lookUpData.pagination.firstItemId', '')
