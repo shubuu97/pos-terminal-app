@@ -17,11 +17,28 @@ import SearchBar from './SearchBar';
 import PouchDb from 'pouchdb';
 import Categories from './Categories/Categories';
 import Pagination from './Pagination';
+// import Find from "pouchdb-find";
+
+// PouchDb.plugin(Find);
+
+// let productsdb = new PouchDb("productsdb");
+// productsdb
+//   .createIndex({
+//     index: {
+//       fields: ["product.name"]
+//     }
+//   })
+//   .then(function(result) {
+//     console.log(result);
+//   })
+//   .catch(function(err) {
+//     console.log(err);
+//   });
 
 PouchDb.plugin(require('pouchdb-quick-search'));
-let productsdb = new PouchDb('productsdb');
+let productsdb = new PouchDb("productsdb");
 productsdb.search({
-    fields: ['product.name', 'product.description', 'product.sku'],
+    fields: ['product.name', 'product.description', 'product.sku', 'product.upcCode'],
     build: true
 })
 
@@ -58,8 +75,7 @@ class ProductsSection extends React.Component {
                 .catch((err) => {
                     console.log(err);
                 })
-        }
-        else if (searchText == '') {
+        } else if (searchText == '') {
             productsdb.allDocs({
                 include_docs: true,
                 attachments: true,
@@ -77,6 +93,41 @@ class ProductsSection extends React.Component {
                 console.log(err)
             });
         }
+        if (searchText.length > 14) {
+            productsdb.search({
+                query: searchText,
+                fields: ['product.upcCode'],
+                include_docs: true,
+                limit: 9,
+                skip: 0
+            }).then((result) => {
+                console.log(result, 'result is here')
+                let cartItems = _get(this, 'props.cart.cartItems', [])
+                let data = result.rows[0]
+                let reqObj
+                if (_isEmpty(_find(cartItems, data))) {
+                    reqObj = [
+                        ...cartItems,
+                        {
+                            ...data,
+                            qty: 1,
+                            saleType: 0,
+                        }
+                    ];
+                    // this.setState({ qty: quantity ? quantity : 1 })
+                }
+                else {
+                    let qty = (_find(cartItems, data)).qty + 1
+                    let index = _findIndex(cartItems, ['id', data.id]);
+                    reqObj = [
+                        ...cartItems
+                    ]
+                    reqObj[index].qty = qty;
+                    // this.setState({ qty })
+                }
+                this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
+            })
+        } 
     }
 
     render() {
