@@ -5,6 +5,7 @@ import _isEmpty from 'lodash/isEmpty';
 import _findIndex from 'lodash/findIndex';
 import _find from 'lodash/find'
 /* Material import */
+import Button from '@material-ui/core/Button';
 import LockIcon from '@material-ui/icons/Lock';
 import ExitToApp from '@material-ui/icons/ExitToApp';
 import CardGiftCard from '@material-ui/icons/CardGiftcard';
@@ -18,6 +19,7 @@ import PouchDb from 'pouchdb';
 import Categories from './Categories/Categories';
 import Pagination from './Pagination';
 import Find from "pouchdb-find";
+import CircularProgress  from '@material-ui/core/CircularProgress';
 
 PouchDb.plugin(Find);
 PouchDb.plugin(require('pouchdb-quick-search'));
@@ -53,8 +55,18 @@ class ProductsSection extends React.Component {
     }
 
     logout = () => {
+        debugger
         localStorage.clear();
-        this.props.history.push('/login')
+        //logic to destory the dbs
+        let p1 = new PouchDb('customersdb').destroy();
+        let p2 = new PouchDb('productsdb').destroy();
+        let p3 = new PouchDb('categoryDb').destroy();
+        this.setState({ isLoading: true })
+        Promise.all([p1, p2, p3]).then((data) => {
+            debugger;
+            this.setState({ isLoading: false })
+            this.props.history.push('/login')
+        });
     }
     handleChange = (searchText) => {
         this.setState({ clearInput: false })
@@ -132,6 +144,9 @@ class ProductsSection extends React.Component {
     }
 
     render() {
+        if(this.state.isLoading){
+            return <CircularProgress size={24}/>
+        }
         let { windowHeight, productListHeight, headerHeight, categoriesHeight } = this.props
         return (
             <div className='pos-products-collection' style={{ height: windowHeight }}>
@@ -152,6 +167,7 @@ class ProductsSection extends React.Component {
                             handleInput={this.state.clearInput}
                         />
                         <div>
+                            <Button variant="contained" onClick={this.props.handleMiscProduct}>Misc Product</Button>
                             <CardGiftCard style={{ color: 'white', padding: '0 10px', fontSize: 30 }} onClick={this.props.handleGiftCard} />
                             <LockIcon style={{ color: 'white', padding: '0 10px', fontSize: 30 }} />
                             <ExitToApp style={{ color: 'white', padding: '0 10px', fontSize: 30 }} onClick={this.logout} />

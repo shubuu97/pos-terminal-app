@@ -4,42 +4,38 @@ import {reducer as formReducer}  from 'redux-form';
 /* Static Reducer */
 import staticReducers from './staticReducers'
 
-/* COMMON Reducers*/ 
-import loginReducerFun from './commonReducer';
-import storeReducerFun from './commonReducer';
-import productDataFun from './commonReducer';
-import terminalDataFun from './commonReducer';
-import categoryListFun from './commonReducer';
-import sessionListFun from './commonReducer';
-import customerSaleListFun from './commonReducer';
-import saleRefundFun from './commonReducer';
-import giftCardDataFun from './commonReducer';
-import giftCardPaymentDataFun from './commonReducer';
+/* COMMON Reducer*/ 
+import commonReducer from './commonReducer';
+
+/* COMMON Static Reducer */
+import commonStaticReducer from './commonStaticReducer';
+
 /* SPECIFIC Reducers */
 import cart from '../reducers/cartItem';
 import cartHoldData from '../reducers/holdCartItem';
 import ShowToast from './toastReducer';
 
-
-import sessionRedirectToLoginFun from './commonStaticReducer';
-import afterSellRedirectToCartFun from './commonStaticReducer'
-import selectedSessionFun from './commonStaticReducer'
 // import cartOrderDetailsFun from './commonStaticReducer';
 
 
-let loginData = loginReducerFun('POST_LOGIN_DATA');
-let storeData = storeReducerFun('GET_STORE_DATA');
-let productList = productDataFun('GET_PRODUCT_DATA');
-let terminalData = terminalDataFun('GET_TERMINAL_DATA');
-let categoryList = categoryListFun('GET_CATEGORY_DATA');
-let sessionList= sessionListFun('GET_SESSION_DATA');
-let customerSalesList = customerSaleListFun('GET_CUSTOMER_SALE_DATA');
-let selectedSession = selectedSessionFun('GET_SELECTED_SESSION')
-let sessionRedirectToLogin = sessionRedirectToLoginFun('SESSION_START_REDIRECT_TO_LOGIN');
-let afterSellRedirectToCart = afterSellRedirectToCartFun('SWITCH_TAB_NUMBER')
-let saleRefund = saleRefundFun('SALE_REFUND');
-let giftCardData = giftCardDataFun('GET_GIFT_CARD__DATA');
-let giftCardPaymentData = giftCardPaymentDataFun('GET_GIFT_CARD_PAYMENT_DATA');
+let loginData = commonReducer('POST_LOGIN_DATA');
+let storeData = commonReducer('GET_STORE_DATA');
+let productList = commonReducer('GET_PRODUCT_DATA');
+let terminalData = commonReducer('GET_TERMINAL_DATA');
+let categoryList = commonReducer('GET_CATEGORY_DATA');
+let sessionList= commonReducer('GET_SESSION_DATA');
+let customerSalesList = commonReducer('GET_CUSTOMER_SALE_DATA');
+let saleRefund = commonReducer('SALE_REFUND');
+let giftCardData = commonReducer('GET_GIFT_CARD__DATA');
+let giftCardPaymentData = commonReducer('GET_GIFT_CARD_PAYMENT_DATA');
+let saveMiscProductData = commonReducer('SAVE_MISC_PRODUCT_DATA');
+
+let selectedSession = commonStaticReducer('GET_SELECTED_SESSION')
+let sessionRedirectToLogin = commonStaticReducer('SESSION_START_REDIRECT_TO_LOGIN');
+let afterSellRedirectToCart = commonStaticReducer('SWITCH_TAB_NUMBER')
+
+
+
 
 // let cartItems = cartItemFun('CART_ITEM_LIST');
 // let cartOrderDetails = cartOrderDetailsFun('ORDER_DETAILS');
@@ -63,6 +59,7 @@ let rootRducer = combineReducers({
     afterSellRedirectToCart,
     giftCardData,
     giftCardPaymentData,
+    saveMiscProductData,
     ShowToast
 })
 

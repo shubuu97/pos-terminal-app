@@ -1,4 +1,11 @@
 import React from 'react';
+/* Lodash Imports */
+import _get from 'lodash/get';
+import _isEmpty from 'lodash/isEmpty'
+/* Redux Imports */
+import { connect } from 'react-redux';
+import {commonActionCreater} from '../../../Redux/commonAction';
+/* Material Imports */
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -21,6 +28,16 @@ class HoldCartDialogue extends React.Component {
         }
     }
 
+    componentDidMount(){
+        debugger
+        if(_get(this, 'props.unHoldedItem')){
+            this.setState({
+                Title: _get(this, 'props.unHoldedItem.title'),
+                default: _get(this, 'props.unHoldedItem.title'),
+            })
+        }
+    }
+
     handleChange = name => event => {
         this.setState({
             [name]: event.target.value,
@@ -29,8 +46,11 @@ class HoldCartDialogue extends React.Component {
 
     handleHold = () => {
         this.props.handleHold(this.state.Title);
+        let unHoldedCart = {}
+        this.props.dispatch(commonActionCreater(unHoldedCart, 'ON_HOLD_DATA'));
         this.props.handleClose();
     };
+
 
     render() {
         return (
@@ -53,7 +73,7 @@ class HoldCartDialogue extends React.Component {
                         <TextField
                             id="outlined-name"
                             label="Title"
-                            value={this.state.name}
+                            defaultValue={this.state.default}
                             onChange={this.handleChange('Title')}
                             margin="normal"
                             variant="outlined"
@@ -73,4 +93,13 @@ class HoldCartDialogue extends React.Component {
     }
 }
 
-export default HoldCartDialogue;
+function mapStateToProps(state) {
+    let { cartHoldData } = state;
+    let unHoldedItem = _get(cartHoldData, 'unHoldedItem', []);
+
+    return {
+        unHoldedItem,
+    }
+}
+
+export default connect(mapStateToProps)(HoldCartDialogue);
