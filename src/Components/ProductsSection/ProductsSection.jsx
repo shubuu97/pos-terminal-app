@@ -18,12 +18,30 @@ import SearchBar from './SearchBar';
 import PouchDb from 'pouchdb';
 import Categories from './Categories/Categories';
 import Pagination from './Pagination';
+import Find from "pouchdb-find";
 import CircularProgress  from '@material-ui/core/CircularProgress';
 
+PouchDb.plugin(Find);
 PouchDb.plugin(require('pouchdb-quick-search'));
-let productsdb = new PouchDb('productsdb');
+
+let productsdb = new PouchDb("productsdb");
+productsdb
+    .createIndex({
+        index: {
+            fields: ["product.upcCode"]
+        }
+    })
+    .then(function (result) {
+        console.log(result, 'result of yes');
+    })
+    .catch(function (err) {
+        console.log(err, 'result of no');
+    });
+
+
+// let productsdb = new PouchDb("productsdb");
 productsdb.search({
-    fields: ['product.name', 'product.description', 'product.sku'],
+    fields: ['product.name', 'product.description', 'product.sku', 'product.upcCode'],
     build: true
 })
 
@@ -32,7 +50,7 @@ class ProductsSection extends React.Component {
     constructor() {
         super();
         this.state = {
-
+            clearInput: false
         }
     }
 
@@ -49,6 +67,7 @@ class ProductsSection extends React.Component {
         });
     }
     handleChange = (searchText) => {
+        this.setState({ clearInput: false })
         if (searchText.length > 3) {
             productsdb.search({
                 query: searchText,
@@ -57,6 +76,7 @@ class ProductsSection extends React.Component {
                 limit: 9,
                 skip: 0
             }).then((result) => {
+                this.setState({ clearInput: false })
                 result.pagination = {}
                 result.pagination.firstItemId = result.rows[0].id
                 result.pagination.lastItemId = result.rows[result.rows.length - 1].id
@@ -68,14 +88,15 @@ class ProductsSection extends React.Component {
                 .catch((err) => {
                     console.log(err);
                 })
-        }
-        else if (searchText == '') {
+        } else if (searchText == '') {
+            this.setState({ clearInput: false })
             productsdb.allDocs({
                 include_docs: true,
                 attachments: true,
                 limit: 10,
                 skip: 0
             }).then((result) => {
+                this.setState({ clearInput: false })
                 result.pagination = {}
                 result.pagination.firstItemId = result.rows[0].id
                 result.pagination.lastItemId = result.rows[result.rows.length - 1].id
@@ -86,6 +107,37 @@ class ProductsSection extends React.Component {
             }).catch((err) => {
                 console.log(err)
             });
+        }
+        if (searchText.length == 12) {
+            let noSearchText = Number(searchText)
+            productsdb.find({
+                selector: { "product.upcCode": noSearchText }
+            }).then((result) => {
+                debugger
+                if (!_isEmpty(result.docs)) {
+                    this.setState({ clearInput: true })
+                    let cartItems = _get(this, 'props.cart.cartItems', [])
+                    let productDataDoc = { doc: result.docs[0] };
+                    let productId = productDataDoc.doc._id;
+                    let foundProduct = _find(cartItems, { id:productId });
+                    let cartObj;
+                    if (_isEmpty(foundProduct)) {
+                        let newCartItem = {
+                            ...productDataDoc,
+                            qty: 1,
+                            saleType: 0,
+                            id:productId
+                        }
+                        cartObj = [...cartItems, newCartItem];
+                    } else {
+                        let qty = foundProduct.qty + 1
+                        let index = _findIndex(cartItems, ['id',productId]);
+                        cartObj = [...cartItems]
+                        cartObj[index].qty = qty;
+                    }
+                    this.props.dispatch(commonActionCreater(cartObj, 'CART_ITEM_LIST'));
+                }
+            })
         }
     }
 
@@ -110,6 +162,7 @@ class ProductsSection extends React.Component {
                         />
                         <SearchBar
                             handleChange={this.handleChange}
+                            handleInput={this.state.clearInput}
                         />
                         <div>
                             <Button variant="contained" onClick={this.props.handleMiscProduct}>Misc Product</Button>

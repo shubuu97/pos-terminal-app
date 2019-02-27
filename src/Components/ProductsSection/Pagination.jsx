@@ -1,7 +1,6 @@
 import React from "react";
 import _get from 'lodash/get';
 import {connect} from 'react-redux'; 
-import Button from '@material-ui/core/Button';
 import PouchDb from 'pouchdb';
 import {commonActionCreater} from '../../Redux/commonAction';
 import _isEmpty from 'lodash/isEmpty';
@@ -133,7 +132,7 @@ const mapStateToProps = state => {
   let pageNo =  _get(productList, 'lookUpData.pagination.pageNo', '')
   let startVal =  _get(productList, 'lookUpData.pagination.startVal', '')
   let endVal =  _get(productList, 'lookUpData.pagination.endVal', '')
-  
+  console.log(lastItemId, 'lastItemId', firstItemId, 'firstItemId', pageNo, 'pageNo', startVal, 'startVal', endVal, 'endVal')
   return {
     productCount,
     lastItemId,
@@ -141,7 +140,7 @@ const mapStateToProps = state => {
     pageNo,
     startVal,
     endVal,
-    productList
+    // productList
   }
 }
   
