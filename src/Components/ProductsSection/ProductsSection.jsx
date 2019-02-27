@@ -5,6 +5,7 @@ import _isEmpty from 'lodash/isEmpty';
 import _findIndex from 'lodash/findIndex';
 import _find from 'lodash/find'
 /* Material import */
+import Button from '@material-ui/core/Button';
 import LockIcon from '@material-ui/icons/Lock';
 import ExitToApp from '@material-ui/icons/ExitToApp';
 import CardGiftCard from '@material-ui/icons/CardGiftcard';
@@ -99,6 +100,7 @@ class ProductsSection extends React.Component {
                             handleChange={this.handleChange}
                         />
                         <div>
+                            <Button variant="contained" onClick={this.props.handleMiscProduct}>Misc Product</Button>
                             <CardGiftCard style={{ color: 'white', padding: '0 10px', fontSize: 30 }} onClick={this.props.handleGiftCard} />
                             <LockIcon style={{ color: 'white', padding: '0 10px', fontSize: 30 }} />
                             <ExitToApp style={{ color: 'white', padding: '0 10px', fontSize: 30 }} onClick={this.logout} />

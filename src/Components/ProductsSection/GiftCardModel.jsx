@@ -229,7 +229,7 @@ class GiftCardModel extends React.Component {
                     </div>
                     <div className="mui-row" style={{ display: 'flex', justifyContent: 'center' }}>
                         <Button variant="contained" onClick={() => this.props.handleClose()}>CANCEL </Button>
-                        <Button style={{ marginLeft: '15px' }} variant="contained" onClick={() => this.addGiftCard()}>Add To Card </Button>
+                        <Button style={{ marginLeft: '15px' }} variant="contained" onClick={() => this.addGiftCard()}>Add To Cart </Button>
                     </div>
                 </div>
             </Modal>

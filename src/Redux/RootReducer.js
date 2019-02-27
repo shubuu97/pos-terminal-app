@@ -15,6 +15,7 @@ import customerSaleListFun from './commonReducer';
 import saleRefundFun from './commonReducer';
 import giftCardDataFun from './commonReducer';
 import giftCardPaymentDataFun from './commonReducer';
+import saveMiscProductDataFun from './commonReducer';
 /* SPECIFIC Reducers */
 import cart from '../reducers/cartItem';
 import cartHoldData from '../reducers/holdCartItem';
@@ -40,6 +41,7 @@ let afterSellRedirectToCart = afterSellRedirectToCartFun('SWITCH_TAB_NUMBER')
 let saleRefund = saleRefundFun('SALE_REFUND');
 let giftCardData = giftCardDataFun('GET_GIFT_CARD__DATA');
 let giftCardPaymentData = giftCardPaymentDataFun('GET_GIFT_CARD_PAYMENT_DATA');
+let saveMiscProductData = saveMiscProductDataFun('SAVE_MISC_PRODUCT_DATA');
 
 // let cartItems = cartItemFun('CART_ITEM_LIST');
 // let cartOrderDetails = cartOrderDetailsFun('ORDER_DETAILS');
@@ -63,6 +65,7 @@ let rootRducer = combineReducers({
     afterSellRedirectToCart,
     giftCardData,
     giftCardPaymentData,
+    saveMiscProductData,
     ShowToast
 })
 

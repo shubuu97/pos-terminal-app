@@ -282,6 +282,7 @@ class OrderHistoryDialog extends React.Component {
                 <td>{(_get(item, 'saleItem.itemSubTotal.amount', ''))}</td>
                 <td>{_get(item, 'product.tax', 0)}</td>
                 <td>{(_get(item, 'saleItem.itemEffectiveTotal.amount', 0))}</td>
+                <td>{(_get(item, 'saleItem.itemRefundAmount.amount', ''))}</td>
             </tr>
         )) : (
                 <tr>
@@ -355,7 +356,8 @@ class OrderHistoryDialog extends React.Component {
                                         <th>Discount Amount</th>
                                         <th>SubTotal</th>
                                         <th>Tax Amount</th>
-                                        <th>Row Total</th>
+                                        <th>Sale Total</th>
+                                        <th>Return Total</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -394,7 +396,10 @@ class OrderHistoryDialog extends React.Component {
                             {_get(selectedOrder, 'sale.totalRefundAmount') ?
                                 <Button style={{ marginLeft: '15px' }} onClick={() => this.handlePrintRefund()} variant="contained">REFUND PRINT </Button> : ''
                             }
-                            <Button style={{ marginLeft: '15px' }} variant="contained" onClick={() => this.openRefund()}>REFUND </Button>
+                            {
+                                !_get(selectedOrder, 'sale.refund', false) &&
+                                    <Button style={{ marginLeft: '15px' }} variant="contained" onClick={() => this.openRefund()}>REFUND </Button>
+                            }
                         </div>
                     </div>
                 </div>
@@ -405,7 +410,6 @@ class OrderHistoryDialog extends React.Component {
     render() {
         const { classes, store } = this.props;
         const { selectedOrder } = this.state;
-        console.log('storeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', store, 'selectedstoreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', this.state.selectedOrder)
         return (
             <div className='hold-dialogue'>
                 <Dialog
