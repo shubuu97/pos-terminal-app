@@ -11,6 +11,11 @@ const holdCartItem = (state = { holdedItems: [], }, action) => {
                 holdedItems: action.data
             });
             break;
+        case 'ON_HOLD_DATA':
+            return Object.assign({}, state, {
+                unHoldedItem: action.data
+            });
+            break;
     }
     return state;
 }

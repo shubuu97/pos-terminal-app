@@ -4,7 +4,7 @@ import _get from 'lodash/get';
 import _isEmpty from 'lodash/isEmpty'
 /* Redux Imports */
 import { connect } from 'react-redux';
-import {commonActionCreater} from '../../../Redux/commonAction';
+import {commonActionCreater} from '../Redux/commonAction';
 /* Material Imports */
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -19,22 +19,12 @@ function Transition(props) {
     return <Slide direction="up" {...props} />;
 }
 
-class HoldCartDialogue extends React.Component {
+class AlertCartClear extends React.Component {
 
     constructor(){
         super();
         this.state = {
             Title: ''
-        }
-    }
-
-    componentDidMount(){
-        debugger
-        if(_get(this, 'props.unHoldedItem')){
-            this.setState({
-                Title: _get(this, 'props.unHoldedItem.title'),
-                default: _get(this, 'props.unHoldedItem.title'),
-            })
         }
     }
 
@@ -51,6 +41,10 @@ class HoldCartDialogue extends React.Component {
         this.props.handleClose();
     };
 
+    handleClearCart = () => {
+
+    }
+
 
     render() {
         return (
@@ -64,11 +58,11 @@ class HoldCartDialogue extends React.Component {
                     aria-describedby="alert-dialog-slide-description"
                 >
                     <DialogTitle id="alert-dialog-slide-title">
-                        {"Put this cart on hold?"}
+                        {"Cart is not Empty"}
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-slide-description">
-                            Please enter a title
+                            Would you like to hold or clear the cart
                         </DialogContentText>
                         <TextField
                             id="outlined-name"
@@ -80,11 +74,11 @@ class HoldCartDialogue extends React.Component {
                         />
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={this.props.handleClose} color="primary">
-                            Disagree
+                        <Button onClick={this.handleClearCart} color="primary">
+                            Clear Cart
                         </Button>
                         <Button onClick={this.handleHold} color="primary">
-                            Agree
+                            Hold Cart
                         </Button>
                     </DialogActions>
                 </Dialog>
@@ -102,4 +96,4 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps)(HoldCartDialogue);
+export default connect(mapStateToProps)(AlertCartClear);

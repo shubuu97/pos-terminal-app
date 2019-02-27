@@ -7,16 +7,8 @@ import _get from 'lodash/get';
 import { commonActionCreater } from '../Redux/commonAction'
 /* Material Imports */
 import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItem from '@material-ui/core/ListItem';
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 /* Material Icons */
@@ -41,9 +33,17 @@ class HoldDialogue extends React.Component {
 
     UnHoldCart = (index) => {
         let holdCartData = this.props.holdCartData
-        applyCart(this.props.dispatch, holdCartData[index].cart)
-        this.deleteHold(index);
-        this.props.handleClose()
+        if (_get(this, 'props.cart.cartItems', []).length) {
+            debugger
+        }
+        else {
+            debugger
+            applyCart(this.props.dispatch, holdCartData[index].cart)
+            let unHoldedCart = holdCartData[index]
+            this.props.dispatch(commonActionCreater(unHoldedCart, 'ON_HOLD_DATA'));
+            this.deleteHold(index);
+            this.props.handleClose()
+        }
     }
 
     deleteHold = (index) => {
@@ -54,7 +54,7 @@ class HoldDialogue extends React.Component {
         ]
         this.props.dispatch(commonActionCreater(reqObj, 'DELETE_HOLD_CART_ITEM'));
     }
-    
+
     populateHoldCards = () => {
         let holdCartData = this.props.holdCartData
         let cards = []
@@ -64,10 +64,10 @@ class HoldDialogue extends React.Component {
                     <div className='flex-row justify-space-between'>
                         <span className='card-title'>{_get(data, 'title')}</span>
                         <span>
-                            <DeleteIcons style={{ color: '#ff000096', fontSize: '1.5em' }} onClick={()=>this.deleteHold(index)}/>
+                            <DeleteIcons style={{ color: '#ff000096', fontSize: '1.5em' }} onClick={() => this.deleteHold(index)} />
                         </span>
                     </div>
-                    <div className='flex-row ' onClick={()=>this.UnHoldCart(index)}>
+                    <div className='flex-row ' onClick={() => this.UnHoldCart(index)}>
                         <div className='flex-column des'>
                             <span className='des-title'>Items</span>
                             <span>{_get(data, 'cart.cartItems', []).length}</span>
@@ -75,7 +75,7 @@ class HoldDialogue extends React.Component {
                         <div className='flex-column des'>
                             <span className='des-title'>Time</span>
                             <span>{moment(_get(data, 'time')).format("hh:mm:ss a")}</span>
-                            
+
                         </div>
                         <div className='flex-column des'>
                             <span className='des-title'>Customer</span>

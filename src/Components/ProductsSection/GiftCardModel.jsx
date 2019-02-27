@@ -133,11 +133,12 @@ class GiftCardModel extends React.Component {
     handleAddToCart = () => {
         let cartItems = _get(this, 'props.cart.cartItems', []);
         let doc = {};
+        _set(doc, 'product.id', _get(this.props, 'giftCard.id', ''));
         _set(doc, 'product.name', _get(this.state, 'giftCard.giftCode', ''));
         _set(doc, 'product.salePrice.currencyCode', _get(this.state, 'giftCard.value.currencyCode', ''));
         _set(doc, 'product.salePrice.price', _get(this.state, 'giftCard.value.amount', 0));
         let data = {
-            id: _get(this.state, 'giftCard.id', ''),
+            id: _get(this.props, 'giftCard.id', ''),
             value: _get(this.state, 'giftCard.value', {}),
             doc: doc,
         }
@@ -228,7 +229,7 @@ class GiftCardModel extends React.Component {
                     </div>
                     <div className="mui-row" style={{ display: 'flex', justifyContent: 'center' }}>
                         <Button variant="contained" onClick={() => this.props.handleClose()}>CANCEL </Button>
-                        <Button style={{ marginLeft: '15px' }} variant="contained" onClick={() => this.addGiftCard()}>Add To Card </Button>
+                        <Button style={{ marginLeft: '15px' }} variant="contained" onClick={() => this.addGiftCard()}>Add To Cart </Button>
                     </div>
                 </div>
             </Modal>
