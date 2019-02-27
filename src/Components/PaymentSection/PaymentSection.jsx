@@ -288,7 +288,7 @@ class PaymentSection extends React.Component {
         }).then((data)=>{
             debugger;
             this.setState({isLoadingTransaction:false});
-            this.setState({ receiptData: data,showPaymentReceipt: true,transactionStatus:'offline' })
+            this.setState({ receiptData: reqObj,showPaymentReceipt: true,transactionStatus:'offline' })
             PouchDb.replicate('transactiondb', `http://localhost:5984/transactiondb`, {
                 live: true,
                 retry: true
@@ -477,7 +477,7 @@ class PaymentSection extends React.Component {
                 </div>
                 {this.state.showPaymentReceipt ? <PaymentReceipt
                     open={this.state.showPaymentReceipt}
-                    transactionStatus = {this.props.transactionStatus}
+                    transactionStatus = {this.state.transactionStatus}
                     receiptData={this.state.receiptData}
                     handleClose={this.handleClose}
                 /> : null}

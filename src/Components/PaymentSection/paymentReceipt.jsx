@@ -94,6 +94,28 @@ class PaymentReceipt extends React.Component {
                 </table>
             </React.Fragment>)
     }
+    showOfflineTransactionData = ()=>{
+        return (
+            <React.Fragment>
+                <span>
+                    <span>We have created an offline transaction order and will try to sync  in background</span>
+                </span>
+                <table class="mui-table">
+                    <tr>
+                        <td> <span>Total Amount</span></td>
+                        <td>  <span>${_get(this.props, 'receiptData.totalAmount.amount')}</span></td>
+                    </tr>
+                    <tr>
+                        <td> <span>Total Amount Paid</span></td>
+                        <td> <span>${_get(this.props, 'receiptData.totalAmountPaid.amount')}</span></td>
+                    </tr>
+                    <tr>
+                        <td> <span>Change Due</span></td>
+                        <td> <span>${_get(this.props, 'receiptData.changeDue.amount')}</span></td>
+                    </tr>
+                </table>
+            </React.Fragment>)
+    }
     render() {
         const { store } = this.props;
         console.log('receiptdataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', this.props.receiptData)
@@ -112,7 +134,7 @@ class PaymentReceipt extends React.Component {
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-slide-description">
-                            {this.props.transactionStatus == 'online' ? this.showOnlineTransactionData() : "Transaction done offline we are synching in background"}
+                            {this.props.transactionStatus == 'online' ? this.showOnlineTransactionData() : this.showOfflineTransactionData()}
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
