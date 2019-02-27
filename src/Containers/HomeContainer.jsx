@@ -257,6 +257,7 @@ class HomeContainer extends React.Component {
                             handleClickOpen={this.handleClickOpen}
                             handleClose={this.handleClose}
                             open={this.state.openOnHold}
+                            cart={this.props.cart}
                             holdCartData={this.props.holdCartData}
                             dispatch={dispatch}
                         /> : null
