@@ -7,7 +7,7 @@ import _isEmpty from 'lodash/isEmpty'
 /* Redux Imports */
 import { connect } from 'react-redux';
 import genericPostData from '../Global/dataFetch/genericPostData';
-import {commonActionCreater} from '../Redux/commonAction';
+import { commonActionCreater } from '../Redux/commonAction';
 /* React Pose */
 import posed from 'react-pose';
 /* Pouch DB */
@@ -19,6 +19,7 @@ import PaymentSection from '../Components/PaymentSection/PaymentSection'
 import OrderHistoryDialog from '../Components/OrderHistoryDialog';
 import SessionDialogue from '../Components/SessionDialogue'
 import HoldDialogue from '../Components/HoldDialogue';
+import AlertCartClear from '../Components/AlertCartClear';
 import GiftCardModel from '../Components/ProductsSection/GiftCardModel';
 import MiscProductModal from '../Components/ProductsSection/MiscProductModal';
 
@@ -26,7 +27,7 @@ import MiscProductModal from '../Components/ProductsSection/MiscProductModal';
 
 /* Pose Animation Configs */
 const Config = {
-    open: { width: '60%', opacity: 1 },
+    open: { width: '65%', opacity: 1 },
     closed: { width: '0px', opacity: 0 }
 }
 
@@ -44,22 +45,9 @@ class HomeContainer extends React.Component {
             openOnHold: false,
             openOrderHistory: false,
             openMiscProduct: false,
+            openCartOnHoldOrClear: false,
         }
     }
-
-    // componentWillUpdate(){
-    //     debugger;
-    //     const params = new URLSearchParams(this.props.location.search);
-    //     if(params)
-    //     {
-    //     const tab = params.get('tab');
-    //     if(tab=="=1"){
-    //         this.state.isOpenPayment = false;
-    //         // this.setState({isOpenProduct:true});
-    //     }
-    //   console.log(tab);
-    //     } // bar
-    // }
 
     componentDidMount() {
         let token = localStorage.getItem('Token')
@@ -114,19 +102,19 @@ class HomeContainer extends React.Component {
         })
     }
 
-    handleClickOpen = () => {
-        this.setState({ openOnHold: true });
+    handleClickOpen = (name) => {
+        this.setState({ [name]: true });
     };
 
-    handleClose = () => {
-        this.setState({ openOnHold: false });
+    handleClose = (name) => {
+        this.setState({ [name]: false });
     };
     handleClickOpenSessionContainer = () => {
         this.setState({ openSessionContainer: true });
     };
 
     handleCloseSessionContainer = () => {
-        if(localStorage.getItem('sessionId')=='nil'){
+        if (localStorage.getItem('sessionId') == 'nil') {
             localStorage.clear();
             this.props.history.push('/login')
         }
@@ -153,7 +141,7 @@ class HomeContainer extends React.Component {
             console.log(err)
         });
     }
-    
+
     handleTerminalHistoryOpen = () => {
         let url = 'Sale/GetByTerminalId';
         let data = { id: localStorage.getItem('terminalId') }
@@ -262,9 +250,20 @@ class HomeContainer extends React.Component {
                 {
                     this.state.openOnHold ?
                         <HoldDialogue
-                            handleClickOpen={this.handleClickOpen}
-                            handleClose={this.handleClose}
+                            handleClickOpen={()=>this.handleClickOpen('openOnHold')}
+                            handleClose={()=>this.handleClose('openOnHold')}
                             open={this.state.openOnHold}
+                            cart={this.props.cart}
+                            holdCartData={this.props.holdCartData}
+                            dispatch={dispatch}
+                        /> : null
+                }
+                {
+                    this.state.openCartOnHoldOrClear ?
+                        <AlertCartClear
+                            handleClickOpen={()=>this.handleClickOpen('openCartOnHoldOrClear')}
+                            handleClose={()=>this.handleClose('openCartOnHoldOrClear')}
+                            open={this.state.openCartOnHoldOrClear}
                             cart={this.props.cart}
                             holdCartData={this.props.holdCartData}
                             dispatch={dispatch}

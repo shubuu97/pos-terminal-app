@@ -37,7 +37,6 @@ class ProductsSection extends React.Component {
     }
 
     logout = () => {
-        debugger
         localStorage.clear();
         //logic to destory the dbs
         let p1 = new PouchDb('customersdb').destroy();
@@ -45,7 +44,6 @@ class ProductsSection extends React.Component {
         let p3 = new PouchDb('categoryDb').destroy();
         this.setState({ isLoading: true })
         Promise.all([p1, p2, p3]).then((data) => {
-            debugger;
             this.setState({ isLoading: false })
             this.props.history.push('/login')
         });
@@ -95,7 +93,7 @@ class ProductsSection extends React.Component {
         if(this.state.isLoading){
             return <CircularProgress size={24}/>
         }
-        let { windowHeight, productListHeight, headerHeight, categoriesHeight } = this.props
+        let { windowHeight, categoriesHeight } = this.props
         return (
             <div className='pos-products-collection' style={{ height: windowHeight }}>
 
