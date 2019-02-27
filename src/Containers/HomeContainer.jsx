@@ -20,6 +20,7 @@ import OrderHistoryDialog from '../Components/OrderHistoryDialog';
 import SessionDialogue from '../Components/SessionDialogue'
 import HoldDialogue from '../Components/HoldDialogue';
 import GiftCardModel from '../Components/ProductsSection/GiftCardModel';
+import MiscProductModal from '../Components/ProductsSection/MiscProductModal';
 
 
 
@@ -42,6 +43,7 @@ class HomeContainer extends React.Component {
             isOpenPayment: false,
             openOnHold: false,
             openOrderHistory: false,
+            openMiscProduct: false,
         }
     }
 
@@ -199,6 +201,11 @@ class HomeContainer extends React.Component {
             openGiftCard: open,
         });
     }
+    handleMiscProduct = (open) => {
+        this.setState({
+            openMiscProduct: open,
+        })
+    }
 
 
     render() {
@@ -220,6 +227,7 @@ class HomeContainer extends React.Component {
                         dispatch={dispatch}
                         history={this.props.history}
                         handleGiftCard={() => this.handleGiftCard(true)}
+                        handleMiscProduct={() => this.handleMiscProduct(true)}
                         // ! Actions
                         handleHistoryOpen={this.handleTerminalHistoryOpen}
                         handleClickOpen={this.handleClickOpen}
@@ -286,6 +294,13 @@ class HomeContainer extends React.Component {
                     <GiftCardModel
                         open={this.state.openGiftCard}
                         handleClose={() => this.handleGiftCard(false)}
+                    />
+                }
+                {
+                    this.state.openMiscProduct &&
+                    <MiscProductModal
+                        open={this.state.openMiscProduct}
+                        handleClose={() => this.handleMiscProduct(false)}
                     />
                 }
             </div>
