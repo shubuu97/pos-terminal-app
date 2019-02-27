@@ -35,14 +35,15 @@ class HoldDialogue extends React.Component {
         let holdCartData = this.props.holdCartData
         if (_get(this, 'props.cart.cartItems', []).length) {
             debugger
+            this.props.handleHoldIndex(index)
+            this.props.handleClickOpenAlertCartClear()
         }
         else {
-            debugger
             applyCart(this.props.dispatch, holdCartData[index].cart)
             let unHoldedCart = holdCartData[index]
             this.props.dispatch(commonActionCreater(unHoldedCart, 'ON_HOLD_DATA'));
             this.deleteHold(index);
-            this.props.handleClose()
+            this.props.handleCloseOnHold()
         }
     }
 
@@ -99,12 +100,12 @@ class HoldDialogue extends React.Component {
                 <Dialog
                     fullScreen
                     open={this.props.open}
-                    onClose={this.props.handleClose}
+                    onClose={this.props.handleCloseOnHold}
                     TransitionComponent={Transition}
                 >
                     <div className='on-hold-section'>
                         <div className='on-hold-header'>
-                            <IconButton color="inherit" onClick={this.props.handleClose} aria-label="Close">
+                            <IconButton color="inherit" onClick={this.props.handleCloseOnHold} aria-label="Close">
                                 <CloseIcon />
                             </IconButton>
                             <span className='ml-20'>Carts On Hold</span>

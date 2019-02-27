@@ -29,7 +29,6 @@ class HoldCartDialogue extends React.Component {
     }
 
     componentDidMount(){
-        debugger
         if(_get(this, 'props.unHoldedItem')){
             this.setState({
                 Title: _get(this, 'props.unHoldedItem.title'),

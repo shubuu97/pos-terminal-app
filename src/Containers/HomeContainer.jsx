@@ -103,7 +103,6 @@ class HomeContainer extends React.Component {
     }
 
     handleClickOpen = (name) => {
-        debugger
         this.setState({ [name]: true });
     };
 
@@ -121,6 +120,12 @@ class HomeContainer extends React.Component {
         }
         this.setState({ openSessionContainer: false });
     };
+
+    handleHoldIndex = (index) => {
+        this.setState({
+            holdIndex: index
+        })
+    }
 
 
     getProductData = () => {
@@ -219,7 +224,7 @@ class HomeContainer extends React.Component {
                         handleMiscProduct={() => this.handleMiscProduct(true)}
                         // ! Actions
                         handleHistoryOpen={this.handleTerminalHistoryOpen}
-                        handleClickOpenOnHold={()=>this.handleClickOpen('openOnHold')}
+                        handleClickOpenOnHold={() => this.handleClickOpen('openOnHold')}
                         handleClickOpenSessionContainer={this.handleClickOpenSessionContainer}
                     />
                 </Products>
@@ -239,7 +244,6 @@ class HomeContainer extends React.Component {
                     toggleViewPayment={this.toggleViewPayment}
                     toggleViewProduct={this.toggleViewProduct}
                     handleHistoryOpen={this.handleHistoryOpen}
-
                 />
 
                 <Payment pose={isOpenPayment ? 'open' : 'closed'}>
@@ -251,8 +255,11 @@ class HomeContainer extends React.Component {
                 {
                     this.state.openOnHold ?
                         <HoldDialogue
-                            handleClickOpen={()=>this.handleClickOpen('openOnHold')}
-                            handleClose={()=>this.handleClose('openOnHold')}
+                            handleClickOpenOnHold={() => this.handleClickOpen('openOnHold')}
+                            handleCloseOnHold={() => this.handleClose('openOnHold')}
+                            handleClickOpenAlertCartClear={() => this.handleClickOpen('openCartOnHoldOrClear')}
+                            handleCloseAlertCartClear={() => this.handleClose('openCartOnHoldOrClear')}
+                            handleHoldIndex={this.handleHoldIndex}
                             open={this.state.openOnHold}
                             cart={this.props.cart}
                             holdCartData={this.props.holdCartData}
@@ -262,12 +269,15 @@ class HomeContainer extends React.Component {
                 {
                     this.state.openCartOnHoldOrClear ?
                         <AlertCartClear
-                            handleClickOpen={()=>this.handleClickOpen('openCartOnHoldOrClear')}
-                            handleClose={()=>this.handleClose('openCartOnHoldOrClear')}
+                            //handleClickOpenOnHold={() => this.handleClickOpen('openOnHold')}
+                            handleCloseOnHold={() => this.handleClose('openOnHold')}
+                            //handleClickOpenAlertCartClear={() => this.handleClickOpen('openCartOnHoldOrClear')}
+                            handleCloseAlertCartClear={() => this.handleClose('openCartOnHoldOrClear')}
                             open={this.state.openCartOnHoldOrClear}
                             cart={this.props.cart}
                             holdCartData={this.props.holdCartData}
                             dispatch={dispatch}
+                            index={this.state.holdIndex}
                         /> : null
                 }
                 {
