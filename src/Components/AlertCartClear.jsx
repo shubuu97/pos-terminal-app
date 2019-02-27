@@ -4,7 +4,7 @@ import _get from 'lodash/get';
 import _isEmpty from 'lodash/isEmpty'
 /* Redux Imports */
 import { connect } from 'react-redux';
-import {commonActionCreater} from '../Redux/commonAction';
+import { commonActionCreater } from '../Redux/commonAction';
 /* Material Imports */
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -14,6 +14,11 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import TextField from '@material-ui/core/TextField';
+/* Global Imports */
+import globalClearCart from '../Global/PosFunctions/clearCart'
+import globalHoldCart from '../Global/PosFunctions/holdCart'
+import globalApplyCart from '../Global/PosFunctions/applyCart'
+
 
 function Transition(props) {
     return <Slide direction="up" {...props} />;
@@ -21,10 +26,11 @@ function Transition(props) {
 
 class AlertCartClear extends React.Component {
 
-    constructor(){
+    constructor() {
         super();
         this.state = {
-            Title: ''
+            Title: '',
+            holdedItems: []
         }
     }
 
@@ -35,15 +41,54 @@ class AlertCartClear extends React.Component {
     };
 
     handleHold = () => {
-        this.props.handleHold(this.state.Title);
-        let unHoldedCart = {}
-        this.props.dispatch(commonActionCreater(unHoldedCart, 'ON_HOLD_DATA'));
-        this.props.handleClose();
+        debugger
+        let title = this.state.Title
+        globalHoldCart(this.props.dispatch, this.props.cart, (title || ''), 'Harry Potter');
+
+        let newHoldObj = {};
+        newHoldObj.cart = this.props.cart
+        newHoldObj.title = title;
+        newHoldObj.customerName = 'customerName';
+
+        this.setState({
+            holdedItems: [...this.props.holdCartData, newHoldObj]
+        }, () => {
+            this.applyCart()
+            this.props.handleCloseAlertCartClear();
+            this.props.handleCloseOnHold();
+        })
+
     };
 
     handleClearCart = () => {
-
+        debugger
+        globalClearCart(this.props.dispatch);
+        this.applyCart()
+        this.props.handleCloseAlertCartClear();
+        this.props.handleCloseOnHold();
     }
+
+    applyCart = () => {
+        let holdCartData = this.props.holdCartData
+        globalApplyCart(this.props.dispatch, holdCartData[this.props.index].cart)
+        let unHoldedCart = holdCartData[this.props.index]
+        this.props.dispatch(commonActionCreater(unHoldedCart, 'ON_HOLD_DATA'));
+        this.deleteHold(this.props.index);
+    }
+
+    deleteHold = (index) => {
+        let holdCartData = this.state.holdedItems
+        debugger
+        holdCartData.splice(index, 1);
+        let reqObj = [
+            ...holdCartData
+        ]
+        this.props.dispatch(commonActionCreater(reqObj, 'DELETE_HOLD_CART_ITEM'));
+    }
+
+    // componentWillReceiveProps(props) {
+    //     if ()
+    // }
 
 
     render() {
@@ -53,7 +98,7 @@ class AlertCartClear extends React.Component {
                     open={this.props.open}
                     TransitionComponent={Transition}
                     keepMounted
-                    onClose={this.props.handleClose}
+                    onClose={this.props.handleCloseAlertCartClear}
                     aria-labelledby="alert-dialog-slide-title"
                     aria-describedby="alert-dialog-slide-description"
                 >
@@ -88,11 +133,12 @@ class AlertCartClear extends React.Component {
 }
 
 function mapStateToProps(state) {
-    let { cartHoldData } = state;
+    let { cartHoldData, type } = state;
     let unHoldedItem = _get(cartHoldData, 'unHoldedItem', []);
 
     return {
         unHoldedItem,
+        type
     }
 }
 
