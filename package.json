@@ -106,6 +106,7 @@
     "resolve": "1.8.1",
     "sass-loader": "7.1.0",
     "slick-carousel": "^1.8.1",
+    "source-map-explorer": "^1.7.0",
     "style-loader": "0.23.0",
     "terser-webpack-plugin": "1.1.0",
     "uniqid": "^4.1.1",
@@ -120,7 +121,8 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js"
+    "test": "node scripts/test.js",
+    "analyze": "source-map-explorer build/static/js/main.*"
   },
   "eslintConfig": {
     "extends": "react-app"
