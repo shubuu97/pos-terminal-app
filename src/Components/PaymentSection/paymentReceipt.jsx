@@ -71,6 +71,29 @@ class PaymentReceipt extends React.Component {
             </React.Fragment>
         )
     }
+    showOnlineTransactionData = () => {
+        return (
+            <React.Fragment>
+                <span>
+                    <span>Order has been created succesfully</span>
+                    <span className="bold">{_get(this.props, 'receiptData.id')}</span>
+                </span>
+                <table class="mui-table">
+                    <tr>
+                        <td> <span>Total Amount</span></td>
+                        <td>  <span>${_get(this.props, 'receiptData.totalAmount.amount')}</span></td>
+                    </tr>
+                    <tr>
+                        <td> <span>Total Amount Paid</span></td>
+                        <td> <span>${_get(this.props, 'receiptData.totalAmountPaid.amount')}</span></td>
+                    </tr>
+                    <tr>
+                        <td> <span>Change Due</span></td>
+                        <td> <span>${_get(this.props, 'receiptData.changeDue.amount')}</span></td>
+                    </tr>
+                </table>
+            </React.Fragment>)
+    }
     render() {
         const { store } = this.props;
         console.log('receiptdataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', this.props.receiptData)
@@ -89,21 +112,7 @@ class PaymentReceipt extends React.Component {
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-slide-description">
-                            Order has been created succesfully <span className="bold">{_get(this.props, 'receiptData.id')}</span>
-                            <table class="mui-table">
-                                <tr>
-                                    <td> <span>Total Amount</span></td>
-                                    <td>  <span>${_get(this.props, 'receiptData.totalAmount.amount')}</span></td>
-                                </tr>
-                                <tr>
-                                    <td> <span>Total Amount Paid</span></td>
-                                    <td> <span>${_get(this.props, 'receiptData.totalAmountPaid.amount')}</span></td>
-                                </tr>
-                                <tr>
-                                    <td> <span>Change Due</span></td>
-                                    <td> <span>${_get(this.props, 'receiptData.changeDue.amount')}</span></td>
-                                </tr>
-                            </table>
+                            {this.props.transactionStatus == 'online' ? this.showOnlineTransactionData() : "Transaction done offline we are synching in background"}
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
@@ -163,8 +172,8 @@ class PaymentReceipt extends React.Component {
                                         <label style={{ float: 'right' }}>{`${_get(this.props, 'receiptData.saleComment', '')}`}</label>
                                         <br />
                                         {/* <label >{`Subtotal: `}</label>
-                                        <label style={{ float: 'right' }}>{`$ ${_get(this.props, 'receiptData.saleItems.itemSubTotal', '0')}`}</label>
-                                        <br /> */}
+                <label style={{ float: 'right' }}>{`$ ${_get(this.props, 'receiptData.saleItems.itemSubTotal', '0')}`}</label>
+                <br /> */}
                                         {_get(this.props, 'receiptData.itemTotalDiscountAmount', '0') != '0' ?
                                             <div>
                                                 <label >{`Item Discount: `}</label>

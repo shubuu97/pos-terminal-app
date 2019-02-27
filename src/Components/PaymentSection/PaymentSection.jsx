@@ -18,7 +18,11 @@ import genericPostData from '../../Global/dataFetch/genericPostData';
 import PaymentReceipt from './paymentReceipt';
 import { withRouter } from 'react-router-dom'
 import { commonActionCreater } from '../../Redux/commonAction';
-
+import { Detector } from 'react-detect-offline';
+import PouchDb from 'pouchdb';
+import generateV1uuid from '../../Global/Uuid';
+import LoaderButton from '../../Global/Components/LoaderButton';
+let transactiondb =  new PouchDb('transactiondb')
 /* style */
 
 class PaymentSection extends React.Component {
@@ -75,7 +79,7 @@ class PaymentSection extends React.Component {
         let url = 'Sale/RedeemValueFromGiftCard';
         let value = {};
         let paymentTimeStamp = {
-            seconds: parseInt(new Date().getTime()/1000),
+            seconds: parseInt(new Date().getTime() / 1000),
         }
         _set(value, 'amount', parseFloat(this.state.giftCardUsedValue));
         _set(value, 'currencyCode', '$');
@@ -86,7 +90,7 @@ class PaymentSection extends React.Component {
             sessionId: localStorage.getItem('sessionId'),
             retailerId: localStorage.getItem('retailerId'),
             paymentTimeStamp: paymentTimeStamp,
-            
+
         }
         this.paymentWithGiftCard(url, data, this.handleGiftCardPaymentSuccess, this.handleGiftCardPaymentError)
     }
@@ -186,7 +190,8 @@ class PaymentSection extends React.Component {
             this.setState({ [fieldValue]: false, giftPayNumberValue: '' })
         }
     }
-    handleSaleTransaction = () => {
+
+    makReqObj = (offline) => {
         debugger;
         let { customer, cartItems, totalAmount, sessionId } = this.props;
         let { cartDiscountAmount, employeeDiscountAmount, itemDiscountAmount, totalTaxAmount } = this.props.cart
@@ -255,12 +260,46 @@ class PaymentSection extends React.Component {
             employeeDiscountAmount,
             itemDiscountAmount,
             totalTaxAmount,
-            offline: false,
+            offline,
             saleComment: _get(this.props, 'saleComment', ''),
             saleTimeStamp: { seconds: parseInt((new Date().getTime() / 1000)) },
             changeDue: { currencyCode: '$', amount: parseFloat(Math.abs(this.calcRemainingAmount()).toFixed(2)) }
 
         };
+        return reqObj;
+
+    }
+    handleSaleTransaction = (offline) => {
+        let reqObj = this.makReqObj(offline);
+        this.setState({isLoadingTransaction:true})
+        if (offline) {
+            this.handleSaleTransactionOffline(reqObj);
+        }
+        else {
+            this.handleSaleTransactionOnline(reqObj);
+        }
+
+
+    }
+    handleSaleTransactionOffline = (reqObj) => {
+        transactiondb.put({
+            _id:generateV1uuid(),
+            transactionDoc:reqObj
+        }).then((data)=>{
+            debugger;
+            this.setState({isLoadingTransaction:false});
+            this.setState({ receiptData: data,showPaymentReceipt: true,transactionStatus:'offline' })
+            PouchDb.replicate('transactiondb', `http://localhost:5984/transactiondb`, {
+                live: true,
+                retry: true
+            })
+        })
+        .catch((err)=>{
+            this.setState({isLoadingTransaction:false})
+        })
+    }
+
+    handleSaleTransactionOnline = (reqObj) => {
         genericPostData({
             dispatch: this.props.dispatch,
             reqObj,
@@ -271,18 +310,19 @@ class PaymentSection extends React.Component {
                 error: 'POST_SALE_TRANSACTION_ERROR'
             },
             identifier: 'SALE_TRANSACTION_INIT',
-            successCb: this.handleSaleTransactionTransactionSuccess,
-            errorCb: this.handleSaleTransactionTransactionError
+            successCb: this.handleSaleOnlineTransactionSuccess,
+            errorCb: this.handleSaleOnlineTransactionError
 
         })
-
     }
 
-    handleSaleTransactionTransactionSuccess = (data) => {
+    handleSaleOnlineTransactionSuccess = (data) => {
+        this.setState({isLoadingTransaction:false})
         this.props.dispatch(commonActionCreater('', 'SALE_COMMENT'));
-        this.setState({ receiptData: data, showPaymentReceipt: true })
+        this.setState({ receiptData: data, showPaymentReceipt: true,transactionStatus:'online' })
     }
-    handleSaleTransactionTransactionError = () => {
+    handleSaleOnlineTransactionError = () => {
+        this.setState({isLoadingTransaction:false})
         debugger;
     }
     calcRemainingAmount = () => {
@@ -310,6 +350,30 @@ class PaymentSection extends React.Component {
             showPaymentReceipt: false
         });
         this.props.history.push('/?tab==1');
+    }
+
+    buttonToRender = ({ online }) => {
+        if (online)
+            return (<LoaderButton
+                color='primary'
+                isFetching = {this.state.isLoadingTransaction}
+                fullWidth
+                disabled={this.calcRemainingAmount() > 0}
+                variant='contained'
+                onClick={() => this.handleSaleTransaction(!online)}
+            >  Submit Transaction
+        </LoaderButton>)
+        else {
+            return (<LoaderButton
+                style={{ color: 'red' }}
+                fullWidth
+                isFetching = {this.state.isLoadingTransaction}
+                disabled={this.calcRemainingAmount() > 0}
+                variant='contained'
+                onClick={() => this.handleSaleTransaction(!online)}
+            >  Submit Transaction Offline
+        </LoaderButton>)
+        }
     }
 
     render() {
@@ -404,19 +468,16 @@ class PaymentSection extends React.Component {
                 </div>
                 <div className="flex-row justify-flex-end">
                     <div style={{ width: '48%' }}>
-                        <Button
-                            color='primary'
-                            fullWidth
-                            disabled={this.calcRemainingAmount() > 0}
-                            variant='contained'
-                            onClick={this.handleSaleTransaction}
-                        >
-                            Submit Transaction
-                    </Button>
+
+                        <Detector
+                            render={this.buttonToRender} />
+
+
                     </div>
                 </div>
                 {this.state.showPaymentReceipt ? <PaymentReceipt
                     open={this.state.showPaymentReceipt}
+                    transactionStatus = {this.props.transactionStatus}
                     receiptData={this.state.receiptData}
                     handleClose={this.handleClose}
                 /> : null}
