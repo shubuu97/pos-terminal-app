@@ -70,23 +70,25 @@ ReactDOM.render(
   //   <div>
   //     <Favicon url="/src/assets/images/favicon.ico" />
 
-  <Provider store={store}>
-    {/* <PersistGate loading={null} persistor={persistor}> */}
+  <JssProvider generateClassName={generateClassName}>
+    <Provider store={store}>
+      {/* <PersistGate loading={null} persistor={persistor}> */}
 
-    <Router>
-      <Switch>
-      <RouteWithLayout Layout={EmptyLayout} exact path="/" Component={HomeContainer} />
-        <RouteWithLayout Layout={EmptyLayout} exact path="/boilerplate/pos" Component={pos} />
-        <RouteWithLayout Layout={EmptyLayout} exact path="/login" Component={LoginContainer} />
-        <RouteWithLayout Layout={EmptyLayout} exact path="/store" Component={StoreContainer} />
-        <RouteWithLayout Layout={EmptyLayout} exact path="/session" Component={SessionContainer} />
-        <RouteWithLayout Layout={EmptyLayout} exact path="/DenominationDetailsForm" Component={DenominationDetailsForm} />
+      <Router>
+        <Switch>
+          <RouteWithLayout Layout={EmptyLayout} exact path="/" Component={HomeContainer} />
+          <RouteWithLayout Layout={EmptyLayout} exact path="/boilerplate/pos" Component={pos} />
+          <RouteWithLayout Layout={EmptyLayout} exact path="/login" Component={LoginContainer} />
+          <RouteWithLayout Layout={EmptyLayout} exact path="/store" Component={StoreContainer} />
+          <RouteWithLayout Layout={EmptyLayout} exact path="/session" Component={SessionContainer} />
+          <RouteWithLayout Layout={EmptyLayout} exact path="/DenominationDetailsForm" Component={DenominationDetailsForm} />
 
-      </Switch>
-    </Router>
-    {/* </PersistGate> */}
+        </Switch>
+      </Router>
+      {/* </PersistGate> */}
 
-  </Provider>,
+    </Provider>
+  </JssProvider>,
   //   </div>,
   document.getElementById('root')
 )
