@@ -43,7 +43,8 @@ function CustomizedInputBase(props) {
       autoFocus
       className={classes.input} 
       placeholder="Search For Item"
-      onChange = {(event)=>props.handleChange(event.target.value)} />
+      onChange = {(event)=>props.handleChange(event.target.value)}
+      />
       <IconButton className={classes.iconButton} aria-label="Search">
         <SearchIcon />
       </IconButton>
