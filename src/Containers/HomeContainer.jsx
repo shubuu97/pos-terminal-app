@@ -103,6 +103,7 @@ class HomeContainer extends React.Component {
     }
 
     handleClickOpen = (name) => {
+        debugger
         this.setState({ [name]: true });
     };
 
@@ -218,7 +219,7 @@ class HomeContainer extends React.Component {
                         handleMiscProduct={() => this.handleMiscProduct(true)}
                         // ! Actions
                         handleHistoryOpen={this.handleTerminalHistoryOpen}
-                        handleClickOpen={this.handleClickOpen}
+                        handleClickOpenOnHold={()=>this.handleClickOpen('openOnHold')}
                         handleClickOpenSessionContainer={this.handleClickOpenSessionContainer}
                     />
                 </Products>

@@ -64,7 +64,7 @@ function TemporaryDrawer(props) {
                     <ListItemText primary={'Home'} />
                 </ListItem>
                 <Divider />
-                <ListItem button key={1} onClick={props.handleClickOpen}>
+                <ListItem button key={1} onClick={props.handleClickOpenOnHold}>
                     <ListItemIcon>
 
                     </ListItemIcon>
