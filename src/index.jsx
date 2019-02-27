@@ -30,6 +30,8 @@ import LoginContainer from './Containers/LoginContainer';
 import StoreContainer from './Containers/StoreContainer';
 import SessionContainer from './Containers/SessionContainer';
 import DenominationDetailsForm from './Components/SessionComponents/DenominationDetailsForm'
+import OfflineTransactions from './Containers/OfflineTransactionContainer';
+
 import * as serviceWorker from './serviceWorker';
 
 const generateClassName = createGenerateClassName({
@@ -82,6 +84,7 @@ ReactDOM.render(
           <RouteWithLayout Layout={EmptyLayout} exact path="/store" Component={StoreContainer} />
           <RouteWithLayout Layout={EmptyLayout} exact path="/session" Component={SessionContainer} />
           <RouteWithLayout Layout={EmptyLayout} exact path="/DenominationDetailsForm" Component={DenominationDetailsForm} />
+          <RouteWithLayout Layout={EmptyLayout} exact path="/OfflineTransactions" Component={OfflineTransactions} />
 
         </Switch>
       </Router>
