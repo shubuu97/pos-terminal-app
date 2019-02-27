@@ -31,6 +31,7 @@ class Product extends React.Component {
         if (!this.state.iconSelected) {
             let cartItems = _get(this, 'props.cart.cartItems', [])
             let data = _get(this, `props.data`, {});
+            console.log(data, 'is here')
             let reqObj
             if (_isEmpty(_find(cartItems, data))) {
                 reqObj = [

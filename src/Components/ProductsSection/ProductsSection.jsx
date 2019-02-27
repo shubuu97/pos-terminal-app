@@ -17,26 +17,27 @@ import SearchBar from './SearchBar';
 import PouchDb from 'pouchdb';
 import Categories from './Categories/Categories';
 import Pagination from './Pagination';
-// import Find from "pouchdb-find";
+import Find from "pouchdb-find";
 
-// PouchDb.plugin(Find);
+PouchDb.plugin(Find);
+PouchDb.plugin(require('pouchdb-quick-search'));
+
+let productsdb = new PouchDb("productsdb");
+productsdb
+    .createIndex({
+        index: {
+            fields: ["product.upcCode"]
+        }
+    })
+    .then(function (result) {
+        console.log(result, 'result of yes');
+    })
+    .catch(function (err) {
+        console.log(err, 'result of no');
+    });
+
 
 // let productsdb = new PouchDb("productsdb");
-// productsdb
-//   .createIndex({
-//     index: {
-//       fields: ["product.name"]
-//     }
-//   })
-//   .then(function(result) {
-//     console.log(result);
-//   })
-//   .catch(function(err) {
-//     console.log(err);
-//   });
-
-PouchDb.plugin(require('pouchdb-quick-search'));
-let productsdb = new PouchDb("productsdb");
 productsdb.search({
     fields: ['product.name', 'product.description', 'product.sku', 'product.upcCode'],
     build: true
@@ -47,7 +48,7 @@ class ProductsSection extends React.Component {
     constructor() {
         super();
         this.state = {
-
+            clearInput: false
         }
     }
 
@@ -56,6 +57,7 @@ class ProductsSection extends React.Component {
         this.props.history.push('/login')
     }
     handleChange = (searchText) => {
+        this.setState({ clearInput: false })
         if (searchText.length > 3) {
             productsdb.search({
                 query: searchText,
@@ -64,6 +66,7 @@ class ProductsSection extends React.Component {
                 limit: 9,
                 skip: 0
             }).then((result) => {
+                this.setState({ clearInput: false })
                 result.pagination = {}
                 result.pagination.firstItemId = result.rows[0].id
                 result.pagination.lastItemId = result.rows[result.rows.length - 1].id
@@ -76,12 +79,14 @@ class ProductsSection extends React.Component {
                     console.log(err);
                 })
         } else if (searchText == '') {
+            this.setState({ clearInput: false })
             productsdb.allDocs({
                 include_docs: true,
                 attachments: true,
                 limit: 10,
                 skip: 0
             }).then((result) => {
+                this.setState({ clearInput: false })
                 result.pagination = {}
                 result.pagination.firstItemId = result.rows[0].id
                 result.pagination.lastItemId = result.rows[result.rows.length - 1].id
@@ -93,41 +98,37 @@ class ProductsSection extends React.Component {
                 console.log(err)
             });
         }
-        if (searchText.length > 14) {
-            productsdb.search({
-                query: searchText,
-                fields: ['product.upcCode'],
-                include_docs: true,
-                limit: 9,
-                skip: 0
+        if (searchText.length == 12) {
+            let noSearchText = Number(searchText)
+            productsdb.find({
+                selector: { "product.upcCode": noSearchText }
             }).then((result) => {
-                console.log(result, 'result is here')
-                let cartItems = _get(this, 'props.cart.cartItems', [])
-                let data = result.rows[0]
-                let reqObj
-                if (_isEmpty(_find(cartItems, data))) {
-                    reqObj = [
-                        ...cartItems,
-                        {
-                            ...data,
+                debugger
+                if (!_isEmpty(result.docs)) {
+                    this.setState({ clearInput: true })
+                    let cartItems = _get(this, 'props.cart.cartItems', [])
+                    let productDataDoc = { doc: result.docs[0] };
+                    let productId = productDataDoc.doc._id;
+                    let foundProduct = _find(cartItems, { id:productId });
+                    let cartObj;
+                    if (_isEmpty(foundProduct)) {
+                        let newCartItem = {
+                            ...productDataDoc,
                             qty: 1,
                             saleType: 0,
+                            id:productId
                         }
-                    ];
-                    // this.setState({ qty: quantity ? quantity : 1 })
+                        cartObj = [...cartItems, newCartItem];
+                    } else {
+                        let qty = foundProduct.qty + 1
+                        let index = _findIndex(cartItems, ['id',productId]);
+                        cartObj = [...cartItems]
+                        cartObj[index].qty = qty;
+                    }
+                    this.props.dispatch(commonActionCreater(cartObj, 'CART_ITEM_LIST'));
                 }
-                else {
-                    let qty = (_find(cartItems, data)).qty + 1
-                    let index = _findIndex(cartItems, ['id', data.id]);
-                    reqObj = [
-                        ...cartItems
-                    ]
-                    reqObj[index].qty = qty;
-                    // this.setState({ qty })
-                }
-                this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
             })
-        } 
+        }
     }
 
     render() {
@@ -148,6 +149,7 @@ class ProductsSection extends React.Component {
                         />
                         <SearchBar
                             handleChange={this.handleChange}
+                            handleInput={this.state.clearInput}
                         />
                         <div>
                             <CardGiftCard style={{ color: 'white', padding: '0 10px', fontSize: 30 }} onClick={this.props.handleGiftCard} />
