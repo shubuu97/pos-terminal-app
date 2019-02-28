@@ -1,19 +1,52 @@
 import React from 'react';
+/* Lodash Imports */
+import _get from 'lodash/get';
+/* Material Imports */
+import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 import Slide from '@material-ui/core/Slide';
-import _get from 'lodash/get';
+import MuiDialogTitle from '@material-ui/core/DialogTitle';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import Typography from '@material-ui/core/Typography';
 
 function Transition(props) {
     return <Slide direction="up" {...props} />;
 }
 
-class AlertDialogSlide extends React.Component {
+const DialogTitle = withStyles(theme => ({
+    root: {
+        borderBottom: `1px solid ${theme.palette.divider}`,
+        margin: 0,
+        padding: theme.spacing.unit * 2,
+    },
+    closeButton: {
+        position: 'absolute',
+        right: theme.spacing.unit,
+        top: theme.spacing.unit,
+        color: theme.palette.grey[500],
+    },
+}))(props => {
+    const { children, classes, onClose } = props;
+    return (
+        <MuiDialogTitle disableTypography className={classes.root}>
+            <Typography variant="h6">{children}</Typography>
+            {onClose ? (
+                <IconButton aria-label="Close" className={classes.closeButton} onClick={onClose}>
+                    <CloseIcon />
+                </IconButton>
+            ) : null}
+        </MuiDialogTitle>
+    );
+});
+
+
+class DiscountDialogue extends React.Component {
 
     constructor() {
         super();
@@ -37,8 +70,8 @@ class AlertDialogSlide extends React.Component {
         }
         let cartDiscountPercent = 0;
         let maxDiscount = 80;
-        if(this.state.type === '$') {
-            maxDiscount = _get(this.props, 'cartTotal', 0) * 80/100;
+        if (this.state.type === '$') {
+            maxDiscount = _get(this.props, 'cartTotal', 0) * 80 / 100;
         }
         if (parseFloat(discount) > maxDiscount) {
             discount = maxDiscount.toFixed(2);
@@ -76,29 +109,30 @@ class AlertDialogSlide extends React.Component {
                     aria-labelledby="alert-dialog-slide-title"
                     aria-describedby="alert-dialog-slide-description"
                 >
-                    <DialogTitle id="alert-dialog-slide-title">
-                        {`Add Discount (Max Discount to be given 80%)`}
+                    <DialogTitle id="customized-dialog-title" onClose={this.props.handleClose}>
+                        Add Discount
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-slide-description">
                             Warning! This action will require manager's approval.
-                            <div className="mui-col-md-6">
-                                <TextField
-                                    id="discount"
-                                    label="Discount"
-                                    value={this.state.discount}
-                                    onChange={() => { }}
-                                    margin="outline"
-                                    fullWidth
-                                    type='text'
-                                    variant="outlined"
-                                    className='mt-10'
-                                />
-                            </div>
-                            <div className="mui-col-md-6">
-                                <div className='discount-keypad'>
-                                    <div className={this.state.type === '%' ? 'discount-keys active': 'discount-keys'} onClick={() => this.handleDiscountType('%')}>%</div>
-                                    <div className={this.state.type === '$' ? 'discount-keys active': 'discount-keys'} onClick={() => this.handleDiscountType('$')}>$</div>
+                            <div className="d-flex align-items-center mt-20">
+                                <div className="mui-col-md-6">
+                                    <TextField
+                                        id="discount"
+                                        label="Discount"
+                                        value={this.state.discount}
+                                        onChange={() => { }}
+                                        margin="outline"
+                                        fullWidth
+                                        type='text'
+                                        variant="outlined"
+                                    />
+                                </div>
+                                <div className="mui-col-md-6">
+                                    <div className='d-flex justify-content-end'>
+                                        <div className={this.state.type === '%' ? 'discount-keys-top  active' : 'discount-keys-top '} onClick={() => this.handleDiscountType('%')}>%</div>
+                                        <div className={this.state.type === '$' ? 'discount-keys-top ml-10  active' : 'discount-keys-top ml-10 '} onClick={() => this.handleDiscountType('$')}>$</div>
+                                    </div>
                                 </div>
                             </div>
                         </DialogContentText>
@@ -120,10 +154,10 @@ class AlertDialogSlide extends React.Component {
                         </div>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={this.props.handleClose} color="primary">
+                        <Button onClick={this.props.handleClose} className='btnmodalsecondary' variant="outlined">
                             Disagree
                     </Button>
-                        <Button onClick={this.handleDiscount} color="primary">
+                        <Button onClick={this.handleDiscount} className='btnmodalprimary' variant="outlined">
                             Agree
                     </Button>
                     </DialogActions>
@@ -133,4 +167,4 @@ class AlertDialogSlide extends React.Component {
     }
 }
 
-export default AlertDialogSlide;
+export default DiscountDialogue;

@@ -76,13 +76,14 @@ class HoldCartDialogue extends React.Component {
                             onChange={this.handleChange('Title')}
                             margin="normal"
                             variant="outlined"
+                            fullWidth
                         />
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={this.props.handleClose} color="primary">
+                        <Button onClick={this.props.handleClose} className='btnmodalsecondary' variant="outlined">
                             Disagree
                         </Button>
-                        <Button onClick={this.handleHold} color="primary">
+                        <Button onClick={this.handleHold} className='btnmodalprimary' variant="outlined">
                             Agree
                         </Button>
                     </DialogActions>

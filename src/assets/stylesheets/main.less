@@ -1,6 +1,7 @@
-@primary : #37474f;
+// Color Set 1
+@primary : #0caeca;
 @primary-l: #62727b;
-@primary-d: #102027;
+@primary-d: #0f8fad;
 @primary-text: #ffffff;
 
 @secondary: #e91e63;
@@ -11,9 +12,27 @@
 @soft-text: rgba(0, 0, 0, 0.8);
 @softer-text: rgba(0, 0, 0, 0.5);
 
-@background: #E1E2E1;
+@background: #f9f9f9;
 @background-l: #EEEEEE;
 @background-white: #fff;
+
+// Color Set 2 
+// @primary : #2196f3;
+// @primary-l: #6ec6ff;
+// @primary-d: #0069c0;
+// @primary-text: #000000;
+
+// @secondary: #ffab00;
+// @secondary-l: #ffdd4b;
+// @secondary-d: #c67c00;
+// @secondary-text: #000000;
+
+// @soft-text: rgba(0, 0, 0, 0.8);
+// @softer-text: rgba(0, 0, 0, 0.5);
+
+// @background: #f9f9f9;
+// @background-l: #EEEEEE;
+// @background-white: #fff;
 
 @font-face {
     font-family: 'GTWalsheimMedium';
@@ -67,6 +86,8 @@ select:-webkit-autofill {
 
 }
 
+
+
 input,
 textarea,
 select form {
@@ -115,7 +136,9 @@ p {
 .fwidth {
     width: 100%;
 }
-
+.fheight {
+    height: 100%;
+}
 /* Global */
 
 .flex-row {
@@ -177,6 +200,10 @@ p {
 
 .m-50 {
     margin: 50px !important;
+}
+
+.ml-10{
+    margin-left: 10px;
 }
 
 .m-10 {
@@ -325,6 +352,38 @@ p {
     }
 }
 
+.text-titlehead{
+    opacity: .7;
+    font-size: .8rem;
+}
+
+
+.btnmodalprimary{
+    background-color: #0f8fad!important;
+    box-shadow: none!important;
+    border: none!important;
+    color: rgba(255, 255, 255, 1)!important;
+    padding: 10px 30px!important;
+    font-size: .87rem!important;
+}
+
+.btnmodalsecondary{
+    background-color: #444343!important;
+    box-shadow: none!important;
+    border: none!important;
+    color: rgba(255, 255, 255, 1)!important;
+    padding: 10px 30px!important;
+    font-size: .87rem!important;
+}
+.MuiDialog-paper{
+    min-width: 500px;
+}
+.align-items-center{
+    align-items: center;
+}
+.justify-content-end{
+    justify-content: flex-end;
+}
 
 
 
@@ -336,8 +395,10 @@ p {
 
 
 /* Home Styles */
+.d-flex{
+    display: flex;
+}
 .pos-body {
-    overflow-x: auto;
     display: flex;
     background: @background;
 }
@@ -351,6 +412,10 @@ p {
 
 .pos-products-collection {
 
+    .MuiPaper-rounded {
+        border-radius: 0;
+    }
+
     //width: 60%;
     .pos-header {
         width: 100%;
@@ -358,9 +423,14 @@ p {
 
         .header-top {
             background: @primary;
-            width: 98%;
-            height: 65%;
-            padding: 0 1%;
+            width:auto;  
+            display: flex;
+            align-items: center;     
+            
+            .header-right-sec{
+                display: flex;
+            align-items: center;    
+            }
         }
     }
 
@@ -373,12 +443,11 @@ p {
     .product-catogories {
         // margin: 10px 0;
         display: flex;
-        overflow-x: auto;
-        padding-bottom: 10px;
+        overflow-x: auto;        
 
         .each-tile {
-            min-height: 40px;
-            height: 40px;
+            min-height: 45px;
+            height: 45px;
         }
 
         .category-text {
@@ -432,6 +501,7 @@ p {
         display: flex;
         flex-wrap: wrap;
         overflow: auto;
+        align-content: flex-start;
 
         .truncate {
             width: 80%;
@@ -496,8 +566,54 @@ p {
 .pos-checkout {
     width: 35%;
     background: @background-white;
-    border-left: 2px solid rgba(0, 0, 0, 0.2);
-    border-right: 2px solid rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 0px 6px 3px #afafaf;
+    position: relative;   
+
+    .order-amount-section{
+        position: absolute;
+        padding: 10px 15px 15px;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #f7f5ff;
+    }
+
+    .MuiTabs-root {
+        height: 60px;
+        min-height: 60px;    
+        
+        .MuiTab-fullWidth{
+            min-height: 60px;
+        }
+    }
+    
+    .btnprimary{
+        background-color: #15ab79;
+        box-shadow: none;
+        border: none;
+        color: rgba(255, 255, 255, 1);
+        padding: 15px 30px;
+        font-size: 1rem;
+    }
+
+    .btnsecondary{
+        background-color: #444343;
+        box-shadow: none;
+        border: none;
+        color: rgba(255, 255, 255, 1);
+        padding: 15px 30px;
+        font-size: 1rem;
+    }
+    
+
+    .MuiTab-textColorPrimary.MuiTab-selected {
+        color: #fff;
+        background: #267b8a;
+    }
+
+    .MuiPrivateTabIndicator-colorPrimary{
+        display: none;
+    }
 
     .pos-header {
         width: 100%;
@@ -519,24 +635,33 @@ p {
         }
     }
 
+    
+
     .button-section {
         justify-content: flex-end;
         align-items: center;
+        margin-top: 10px;
+    }
+
+    .MuiTypography-root{
+        padding: 0 !important;
     }
 
     .orders-section {
+        position: relative;
+        height: calc(100vh - 57px);
         .cart-items {
             display: flex;
             justify-content: space-between;
             font-size: 1.3em;
             padding: 15px;
             align-items: center;
+           
         }
 
         .items-section {
             overflow-y: auto;
-            padding: 10px;
-            background: @background-l;
+            padding: 15px;            
 
             .each-checkout-item {
                 .each-product-des {
@@ -660,14 +785,35 @@ p {
     }
 
     .customer-section {
+        position: relative;
+        height: calc(100vh - 57px);
+
+        .order-amount-section{
+            position: absolute;
+            padding: 10px 15px 15px;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #f7f5ff;
+        }
+    
+        .MuiTabs-root {
+            height: 60px;
+            min-height: 60px;    
+            
+            .MuiTab-fullWidth{
+                min-height: 60px;
+            }
+        }
         .customer-main {
-            padding: 10px;
+            padding: 20px;
 
             .search-section {
                 .add-customer {
-                    width: 20%;
+                    width: 10%;
                     font-size: 2em;
                     font-weight: bold;
+                    padding-left:10px;
                 }
             }
 
@@ -675,12 +821,14 @@ p {
                 margin: 20px 0;
                 display: flex;
                 flex-wrap: wrap;
+                flex:1;
 
                 .each-info {
-                    padding: 10px 0;
-                    margin-right: 10%;
-                    width: 40%;
-                    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+                    padding: 5px 13px;
+                    margin-right: 5%;
+                    width: 90%;
+                    border-right: 1px solid rgba(0, 0, 0, 0.1);
+                    background: #f5f6ff;
 
                     .info-title {
                         color: @softer-text;
@@ -824,15 +972,25 @@ p {
 
 .discount-keys {
     display: flex;
-    justify-content: c2nter;
+    justify-content: center;
     align-items: center;
     width: 25%;
     margin: 5px;
-    padding: 15px;
+    padding: 20px 15px;
     border: 1px solid #000;
     font-size: 1.2em;
     font-weight: bold;
+}
 
+.discount-keys-top {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 25%;   
+    padding: 13px;
+    border: 1px solid #000;
+    font-size: 1.2em;
+    font-weight: bold;
 }
 
 .pos-payment {
@@ -1331,4 +1489,48 @@ p {
     background: #dddddd36;
     padding: 15px;
     margin: 0px 10px;
+}
+
+.product-details-modal{
+
+    .each-card-name{
+        font-size: 1.3rem;
+    }
+
+    .each-card-price{
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    .pro-description{
+        font-size: .8rem;
+        line-height: .9rem;
+    }
+    .expanded-options{
+        display: flex;
+        align-items: center;
+        margin: 10px 0;
+
+        .qty-block{
+            display: flex;
+            align-items: center;
+            margin-right: 10px;
+           
+        }
+    }
+
+    .qty-btn{
+        display: flex;
+        align-items: center;
+        margin-left: 10px;
+        width: 110px;
+        height: 44px;
+    }
+
+    .quantity{       
+    font-size: 1.2rem;
+    width: 30px;
+    text-align: center;
+    }
 }

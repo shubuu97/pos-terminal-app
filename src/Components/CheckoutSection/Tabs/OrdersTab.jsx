@@ -3,7 +3,6 @@ import React from 'react';
 import _get from 'lodash/get';
 import _findIndex from 'lodash/findIndex';
 import _isArray from 'lodash/isArray';
-
 /* Material import */
 import Button from '@material-ui/core/Button';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
@@ -18,12 +17,11 @@ import { commonActionCreater } from '../../../Redux/commonAction';
 /* Component Imports */
 import CalculationSection from './CalculationSection'
 import DiscountDialogue from '../DiscountDialogue/DiscountDialogue'
-/* style */
-
 /* Global Function import */
 import globalClearCart from '../../../Global/PosFunctions/clearCart';
 import addGuestToCart from '../../../Global/PosFunctions/addGuestToCart';
-
+/* Asset Import  */
+import EmptyCartImg from '../../../assets/images/pos/empty_cart.png'
 
 
 class OrdersTab extends React.Component {
@@ -210,7 +208,8 @@ class OrdersTab extends React.Component {
     render() {
         let { checkoutcalcArea, checkoutactionArea, checkoutcartArea, checkoutMainPart } = this.props;
         return (
-            <div className="orders-section" style={{ height: checkoutMainPart }}>
+
+            <div className="orders-section" >
                 <DiscountDialogue
                     open={this.state.open}
                     identifier={this.state.identifier}
@@ -227,25 +226,31 @@ class OrdersTab extends React.Component {
                         <Button variant="outlined" onClick={this.handleClickOpenDiscount}>Add Discount</Button>
                     </div>
                     <div className="items-section flex-column" style={{ height: this.state.cartListHeight }} >
-                        {this.populateCartItems()}
+                        {
+                            _get(this, 'props.cartItems', []).length ?
+                                this.populateCartItems() :
+                                <div className='flex-row justify-center align-center fheight' >
+                                    <img src={EmptyCartImg} style={{height: '70%'}} alt="" />
+                                </div>
+                        }
                     </div>
                 </div>
 
 
-                <CalculationSection
-                    checkoutcalcArea={checkoutcalcArea}
-                />
-                <div className='button-section flex-row ' style={{ height: checkoutactionArea }}>
-                    <div>
-                        <Button className='mr-20' variant="outlined" onClick={this.handleClearCart}>Clear</Button>
-                        <Button className='mr-20' variant="outlined" onClick={this.props.handleClickOpen}>Hold</Button>
-                        <Button
-                            onClick={this.handleProceedToCustomer}
-                            variant="contained">Proceed</Button>
+                <div className="order-amount-section">
+                    <CalculationSection
+                        checkoutcalcArea={checkoutcalcArea}
+                    />
+                    <div className='button-section flex-row ' style={{ height: checkoutactionArea }}>
+                        <Button className='mr-20 btnsecondary' variant="outlined" onClick={this.handleClearCart}>Clear</Button>
+                        <Button className='mr-20 btnsecondary' variant="outlined" onClick={this.props.handleClickOpen}>Hold</Button>
+                        <Button className="btnprimary" style={{ flex: 1 }} onClick={this.handleProceedToCustomer} variant="contained">Proceed</Button>
                     </div>
-
                 </div>
             </div>
+
+
+
         );
     }
 }

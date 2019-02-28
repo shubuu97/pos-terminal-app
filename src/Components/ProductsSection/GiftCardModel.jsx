@@ -1,6 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import moment from "moment";
 /* Lodash Imports */
 import _get from 'lodash/get';
 import _set from 'lodash/set';
@@ -9,36 +7,52 @@ import _find from 'lodash/find';
 /* Redux Imports */
 import { commonActionCreater } from '../../Redux/commonAction';
 import genericPostData from '../../Global/dataFetch/genericPostData';
-
-/* Material Imports */
-import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import { connect } from 'react-redux';
-import Modal from '@material-ui/core/Modal';
-
-import Typography from '@material-ui/core/Typography';
-import Slide from '@material-ui/core/Slide';
+/* Material Imports */
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
 import TextField from '@material-ui/core/TextField';
-/* Material Icons */
-
-
-
-const styles = theme => ({
-    paper: {
-        position: 'relative',
-        width: '90%',
-        backgroundColor: theme.palette.background.paper,
-        boxShadow: theme.shadows[5],
-        padding: theme.spacing.unit * 4,
-        outline: 'none',
-    },
-});
+import Slide from '@material-ui/core/Slide';
+import Typography from '@material-ui/core/Typography';
+import MuiDialogTitle from '@material-ui/core/DialogTitle';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import { withStyles } from '@material-ui/core/styles';
 
 function Transition(props) {
     return <Slide direction="up" {...props} />;
 }
 
-class GiftCardModel extends React.Component {
+const DialogTitle = withStyles(theme => ({
+    root: {
+        borderBottom: `1px solid ${theme.palette.divider}`,
+        margin: 0,
+        padding: theme.spacing.unit * 2,
+    },
+    closeButton: {
+        position: 'absolute',
+        right: theme.spacing.unit,
+        top: theme.spacing.unit,
+        color: theme.palette.grey[500],
+    },
+}))(props => {
+    const { children, classes, onClose } = props;
+    return (
+        <MuiDialogTitle disableTypography className={classes.root}>
+            <Typography variant="h6">{children}</Typography>
+            {onClose ? (
+                <IconButton aria-label="Close" className={classes.closeButton} onClick={onClose}>
+                    <CloseIcon />
+                </IconButton>
+            ) : null}
+        </MuiDialogTitle>
+    );
+});
+
+class GiftCardModal extends React.Component {
+
     state = {
         giftCard: {
             giftCode: '',
@@ -49,12 +63,10 @@ class GiftCardModel extends React.Component {
         },
     }
 
-    componentDidMount() {
-
-    }
     rand() {
         return Math.round(Math.random() * 20) - 10;
     }
+
     getExistingGiftCard = (url, data, successMethod, errorMethod) => {
         genericPostData({
             dispatch: this.props.dispatch,
@@ -70,6 +82,7 @@ class GiftCardModel extends React.Component {
             errorCb: errorMethod
         })
     }
+
     handleGetGiftcardDataSuccess = () => {
         console.log('came in success of gift card get');
         let { giftCard } = this.props;
@@ -91,6 +104,7 @@ class GiftCardModel extends React.Component {
             }
         }
     }
+
     handleGetGiftCardDataError = () => {
         console.log('came in error of gift card get');
     }
@@ -115,6 +129,7 @@ class GiftCardModel extends React.Component {
             // transform: `translate(-${top}%, -${left}%)`,
         };
     }
+
     addGiftCard = (e, index) => {
         let data = { ...this.state.giftCard };
         if (!data.id) {
@@ -153,6 +168,7 @@ class GiftCardModel extends React.Component {
         this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
         this.props.handleClose();
     }
+
     handleBlur = (e) => {
         let val = _get(e, 'target.value', '');
         let url = 'GiftCard/GetByCodeAndStore';
@@ -162,6 +178,7 @@ class GiftCardModel extends React.Component {
         }
         this.getExistingGiftCard(url, data, this.handleGetGiftcardDataSuccess, this.handleGetGiftCardDataError);
     }
+
     handleChange = (e, name) => {
         let val = _get(e, 'target.value', '');
         if (name === 'giftCode') {
@@ -184,73 +201,70 @@ class GiftCardModel extends React.Component {
     }
 
     render() {
-        const { classes } = this.props;
         return (
-            <Modal
-                aria-labelledby="simple-modal-title"
-                aria-describedby="simple-modal-description"
-                open={this.props.open}
-                onClose={this.props.handleClose}
-                disableBackdropClick={true}
-            >
-                <div
-                    style={this.getModalStyle()}
-                    className={classes.paper}>
-                    <Typography variant="h6" id="modal-title">
-                        Open Gift Card
-                    </Typography>
-                    <div className="mui-row">
-                        <TextField
-                            id="giftCode"
-                            label="Gift Code"
-                            value={_get(this.state, 'giftCard.giftCode', '')}
-                            onChange={(e) => this.handleChange(e, 'giftCode')}
-                            onBlur={(e) => this.handleBlur(e)}
-                            margin="outline"
-                            fullWidth
-                            type='text'
-                            variant="outlined"
-                            className='mt-10'
-                        />
-                    </div>
-                    <div className="mui-row">
-                        <TextField
-                            id="value"
-                            label="Value"
-                            value={_get(this.state, 'giftCard.value.amount', '')}
-                            type='number'
-                            onChange={(e) => this.handleChange(e, 'value')}
-                            margin="outline"
-                            fullWidth
-                            helperText='Between 5$-100$'
-                            variant="outlined"
-                            className='mt-10'
-                        />
-                    </div>
-                    <div className="mui-row" style={{ display: 'flex', justifyContent: 'center' }}>
-                        <Button variant="contained" onClick={() => this.props.handleClose()}>CANCEL </Button>
-                        <Button style={{ marginLeft: '15px' }} variant="contained" onClick={() => this.addGiftCard()}>Add To Cart </Button>
-                    </div>
-                </div>
-            </Modal>
-
+            <div>
+                <Dialog
+                    open={this.props.open}
+                    TransitionComponent={Transition}
+                    keepMounted
+                    fullWidth
+                    onClose={this.props.handleClose}
+                    aria-labelledby="alert-dialog-slide-title"
+                    aria-describedby="alert-dialog-slide-description"
+                >
+                    <DialogTitle id="customized-dialog-title" onClose={this.props.handleClose}>
+                        Create Gift Card
+                    </DialogTitle>
+                    <DialogContent>
+                        <div style={this.getModalStyle()}>
+                            <div className="">
+                                <TextField
+                                    id="giftCode"
+                                    label="Gift Code"
+                                    value={_get(this.state, 'giftCard.giftCode', '')}
+                                    onChange={(e) => this.handleChange(e, 'giftCode')}
+                                    onBlur={(e) => this.handleBlur(e)}
+                                    margin="outline"
+                                    fullWidth
+                                    type='text'
+                                    variant="outlined"
+                                    className='mt-10'
+                                />
+                            </div>
+                            <div className="">
+                                <TextField
+                                    id="value"
+                                    label="Value"
+                                    value={_get(this.state, 'giftCard.value.amount', '')}
+                                    type='number'
+                                    onChange={(e) => this.handleChange(e, 'value')}
+                                    margin="outline"
+                                    fullWidth
+                                    helperText='Between 5$-100$'
+                                    variant="outlined"
+                                    className='mt-10'
+                                />
+                            </div>
+                        </div>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => this.props.handleClose()} className='btnmodalsecondary' variant="outlined">Cancel</Button>
+                        <Button onClick={() => this.addGiftCard()} className='btnmodalprimary' variant="outlined">Add To Cart</Button>
+                    </DialogActions>
+                </Dialog>
+            </div>
         );
     }
 }
 
-GiftCardModel.propTypes = {
-    classes: PropTypes.object.isRequired,
-};
-
 function mapStateToProps(state) {
-    let { cart, giftCardData } = state;
-    let giftCard = _get(giftCardData, 'lookUpData', {});
+    let { cart, saveMiscProductData } = state;
+    let miscProduct = _get(saveMiscProductData, 'lookUpData', {});
 
     return {
         cart,
-        giftCard,
+        miscProduct,
     }
 }
 
-
-export default connect(mapStateToProps)(withStyles(styles)(GiftCardModel));
+export default connect(mapStateToProps)(GiftCardModal);

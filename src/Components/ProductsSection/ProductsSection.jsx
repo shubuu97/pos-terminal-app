@@ -6,9 +6,10 @@ import _findIndex from 'lodash/findIndex';
 import _find from 'lodash/find'
 /* Material import */
 import Button from '@material-ui/core/Button';
-import LockIcon from '@material-ui/icons/Lock';
+import LockIcon from '@material-ui/icons/LockOutlined';
 import ExitToApp from '@material-ui/icons/ExitToApp';
 import CardGiftCard from '@material-ui/icons/CardGiftcard';
+import LibraryAdd from '@material-ui/icons/LibraryAddOutlined';
 /* Redux Imports */
 import { commonActionCreater } from '../../Redux/commonAction'
 /* Component Imports */
@@ -146,14 +147,12 @@ class ProductsSection extends React.Component {
         if(this.state.isLoading){
             return <CircularProgress size={24}/>
         }
-        let { windowHeight, categoriesHeight } = this.props
+        let { windowHeight,headerHeight, categoriesHeight } = this.props
         return (
             <div className='pos-products-collection' style={{ height: windowHeight }}>
 
-                {/* 
-                // * Header Component
-                */}
-                <div className='pos-header'>
+                {/* Header Component */}
+                <div className='pos-header' style={{height: headerHeight}}>
                     <div className="header-top flex-row align-center justify-space-between pl-10 pr-10" >
                         <SideDrawer
                             // ! Actions
@@ -166,8 +165,8 @@ class ProductsSection extends React.Component {
                             handleChange={this.handleChange}
                             handleInput={this.state.clearInput}
                         />
-                        <div>
-                            <Button variant="contained" onClick={this.props.handleMiscProduct}>Misc Product</Button>
+                        <div className="header-right-sec">
+                            <LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 30 }} onClick={this.props.handleMiscProduct}/>
                             <CardGiftCard style={{ color: 'white', padding: '0 10px', fontSize: 30 }} onClick={this.props.handleGiftCard} />
                             <LockIcon style={{ color: 'white', padding: '0 10px', fontSize: 30 }} />
                             <ExitToApp style={{ color: 'white', padding: '0 10px', fontSize: 30 }} onClick={this.logout} />
@@ -175,14 +174,16 @@ class ProductsSection extends React.Component {
                     </div>
                 </div>
 
+                {/* Product Categories Component */}
                 <Categories
                     categoriesHeight={categoriesHeight}
                     {...this.props}
                 />
-                {/* Product Categories Component */}
+                
 
                 {/* // ! Note - Hiding Pagination */}
                 {/* <Pagination /> */}
+
                 {/* Products List Component */}
                 <Products
                     {...this.props}

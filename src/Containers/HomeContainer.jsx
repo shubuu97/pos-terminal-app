@@ -30,8 +30,8 @@ let QuickBookDialog = withDialog(QuickBookContainer)
 
 /* Pose Animation Configs */
 const Config = {
-    open: { width: '65%', opacity: 1 },
-    closed: { width: '0px', opacity: 0 }
+    open: { width: '65%', opacity: 1, flip: true },
+    closed: { width: '0px', opacity: 0, flip: true }
 }
 
 const Products = posed.div(Config)
@@ -64,9 +64,9 @@ class HomeContainer extends React.Component {
     calcHeight() {
         let windowHeight = document.documentElement.scrollHeight
         // * Product Section Calculations
-        let headerHeight = 80;
+        let headerHeight = 60;
         let categoriesHeight = 90;
-        let productListHeight = windowHeight - (headerHeight + categoriesHeight + 50)
+        let productListHeight = windowHeight - (headerHeight + categoriesHeight + 25)
         // * Checkout Section Calculations
         let checkoutHeader = headerHeight * 0.65;
         let checkoutMainPart = windowHeight - (checkoutHeader + 80);
