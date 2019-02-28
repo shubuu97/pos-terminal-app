@@ -137,39 +137,28 @@ class CustomerTab extends React.Component {
                             fullScreen={false}
                         />
                     </div>
-                    <div className='flex-column'>
-                        <div className='customer-info'>
-                            <div className='each-info'>
-                                <div className='info-title'>Name</div>
-                                <div className='info-data'>{_get(this.props, 'customer.firstName')} {_get(this.props, 'customer.lastName')}</div>
-                            </div>
-                            <div onClick={this.props.handleHistoryOpen} className='add-customer flex-row align-center justify-center'>
-                                <History style={{ fontSize: '1.3em', color: 'rgba(0,0,0,0.5)' }} />
-                            </div>
-                        </div>
-                        <div className='flex-column'>
-                            <div className='customer-info'>
+                    <div className='d-flex mt-20'>
+                             <div className='customer-info'>
                                 <div className='each-info'>
                                     <div className='info-title'>Name</div>
                                     <div className='info-data'>{_get(this.props, 'customer.firstName')} {_get(this.props, 'customer.lastName')}</div>
                                 </div>
                                 <div className='each-info'>
                                     <div className='info-title'>Phone</div>
-                                    <div className='info-data'>{_get(this.props, 'phoneNumber.countryCode')}{_get(this.props, 'phoneNumber.phoneNumber')}</div>
+                                    <div className='info-data'>+{_get(this.props, 'phoneNumber.countryCode')} {_get(this.props, 'phoneNumber.phoneNumber')}</div>
                                 </div>
                                 <div className='each-info'>
                                     <div className='info-title'>Email</div>
                                     <div className='info-data'>{this.props.email}</div>
                                 </div>
                             </div>
-                            {/* <div className='customer-billing-info'>
-                                <div className='each-info'>
-                                    <div className='info-title'>Billing Address</div>
-                                    <div className='info-data'>{_get(this.props, 'billingAddress.addressLine1')}, {_get(this.props, 'billingAddress.addressLine2')}, {_get(this.props, 'billingAddress.city')}, {_get(this.props, 'billingAddress.props')}, {_get(this.props, 'billingAddress.country')} - {_get(this.props, 'billingAddress.postalCode')}</div>
-                                </div>
-                            </div> */}
-                        </div>
-                    </div>
+                           
+                            <div onClick={this.props.handleHistoryOpen} className='add-customer flex-row align-center justify-center'>
+                                <History style={{ fontSize: '2.3em', color: 'rgba(0,0,0,0.5)' }} />
+                            </div>
+                     </div>
+                        
+                  
                 </div>
                 <div className="order-amount-section">
                     <CalculationSection
