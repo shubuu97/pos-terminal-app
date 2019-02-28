@@ -166,7 +166,7 @@ class ProductsSection extends React.Component {
                             handleChange={this.handleChange}
                             handleInput={this.state.clearInput}
                         />
-                        <div>
+                        <div className="header-right-sec">
                             <LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 30 }} onClick={this.props.handleMiscProduct}/>
                             <CardGiftCard style={{ color: 'white', padding: '0 10px', fontSize: 30 }} onClick={this.props.handleGiftCard} />
                             <LockIcon style={{ color: 'white', padding: '0 10px', fontSize: 30 }} />
