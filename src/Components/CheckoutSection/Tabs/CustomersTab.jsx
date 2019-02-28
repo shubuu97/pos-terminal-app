@@ -109,7 +109,7 @@ class CustomerTab extends React.Component {
     render() {
         let { checkoutactionArea, checkoutMainPart, checkoutCustomerArea, checkoutcalcArea, checkoutcartArea } = this.props
         return (
-            <div className="customer-section" style={{ height: checkoutMainPart }}>
+            <div className="customer-section" >
                 <div className="customer-main" style={{ height: checkoutcartArea }}>
                     <div className='search-section flex-row'>
                         <ReactSelect
@@ -163,21 +163,23 @@ class CustomerTab extends React.Component {
                         </div>
                     </div>
                 </div>
-
+                <div className="order-amount-section">
                 <CalculationSection
                     checkoutcalcArea={checkoutcalcArea}
                 />
 
                 <div className='button-section flex-row ' style={{ height: checkoutactionArea }}>
                     <div>
-                        <Button className='mr-20' variant="outlined" onClick={this.props.handleClickOpen}>Hold</Button>
+                        <Button className='mr-20 btnsecondary' variant="outlined" onClick={this.props.handleClickOpen}>Hold</Button>
                         {/* <Button className='mr-20' variant="outlined">Proceed as Guest</Button> */}
                         <Button 
+                        className="btnprimary"
                         onClick={this.handleClickProceed}
                         variant="contained"
                         >Proceed</Button>
                     </div>
 
+                </div>
                 </div>
             </div>
         );
@@ -191,3 +193,4 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps)(CustomerTab);
+

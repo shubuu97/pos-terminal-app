@@ -210,7 +210,7 @@ class OrdersTab extends React.Component {
     render() {
         let { checkoutcalcArea, checkoutactionArea, checkoutcartArea, checkoutMainPart } = this.props;
         return (
-            <React.Fragment>
+          
             <div className="orders-section" >
                 <DiscountDialogue
                     open={this.state.open}
@@ -251,7 +251,7 @@ class OrdersTab extends React.Component {
             </div>
 
                
-                </React.Fragment>
+              
         );
     }
 }
