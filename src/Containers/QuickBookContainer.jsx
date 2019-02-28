@@ -28,6 +28,7 @@ import quickBookImg from '../assets/images/quickbooks-logo.jpg';
 import queryString from 'query-string';
 import generateV1uuid from '../db_utills/uuid';
 import { commonActionCreater } from '../Redux/commonAction';
+import {withRouter}  from 'react-router-dom';
 var jwtDecode = require('jwt-decode');
 
 
@@ -86,16 +87,16 @@ class QuickBookContainer extends Component {
             <React.Fragment>
                 <div className="user-table-section loan-request">
                     <div className="mui-row align-items-center">
-                        <div className="mui-col-xs-12">
+                        {/* <div className="mui-col-xs-12">
                             <h1>{this.props.companyName} - Accounting Monitoring Activation</h1>
-                        </div>
+                        </div> */}
                         {/* <div className="col-sm-6 d-flex justify-content-end "></div> */}
                     </div>
                     <div className="cardwrapper">
-                        <div className="text-center mt-30 header-20px-600">Activate your accounting monitoring</div>
-                        <div className="text-center">Securely connect your accounting system in your transcations</div>
+                        <div className="text-center mt-30 header-20px-600">Connect with your Accounting Service</div>
+                        <div className="text-center">Securely connect your accounting system with your Sale transcations</div>
                         {/* Block for serching Account Monitoring system */}
-                        <div className="text-center mt-20">
+                        {/* <div className="text-center mt-20">
                             <Input
                                 placeholder="Enter your accounting system name"
                                 style={{ width: '45%' }}
@@ -111,8 +112,8 @@ class QuickBookContainer extends Component {
                                     </InputAdornment>
                                 }
                             />
-                        </div>
-                        <div className="text-center mt-30">or select one from list</div>
+                        </div> */}
+                        {/* <div className="text-center mt-30">or select one from list</div> */}
                         <div className="flex-row justify-center">
                             <div className="accounting-images m-10 cursor-pointer"
                                 onClick={this.connectToQuickBook}>
@@ -158,4 +159,4 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps)(QuickBookContainer)
+export default connect(mapStateToProps)(withRouter(QuickBookContainer))

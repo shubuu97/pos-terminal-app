@@ -17,12 +17,15 @@ import ProductsSection from '../Components/ProductsSection/ProductsSection'
 import CheckoutSection from '../Components/CheckoutSection/CheckoutSection'
 import PaymentSection from '../Components/PaymentSection/PaymentSection'
 import OrderHistoryDialog from '../Components/OrderHistoryDialog';
-import SessionDialogue from '../Components/SessionDialogue'
+import withDialog from '../Components/DialogHoc'
 import HoldDialogue from '../Components/HoldDialogue';
 import AlertCartClear from '../Components/AlertCartClear';
 import GiftCardModel from '../Components/ProductsSection/GiftCardModel';
 import MiscProductModal from '../Components/ProductsSection/MiscProductModal';
-
+import SessionContainer from './SessionContainer';
+import QuickBookContainer from './QuickBookContainer';
+let SessionDialog = withDialog(SessionContainer)
+let QuickBookDialog = withDialog(QuickBookContainer)
 
 
 /* Pose Animation Configs */
@@ -228,6 +231,7 @@ class HomeContainer extends React.Component {
                         handleHistoryOpen={this.handleTerminalHistoryOpen}
                         handleClickOpenOnHold={() => this.handleClickOpen('openOnHold')}
                         handleClickOpenSessionContainer={this.handleClickOpenSessionContainer}
+                        handleClickQuickBook = {()=>this.setState({openQuickBookContainer:true})}
                     />
                 </Products>
 
@@ -246,6 +250,7 @@ class HomeContainer extends React.Component {
                     toggleViewPayment={this.toggleViewPayment}
                     toggleViewProduct={this.toggleViewProduct}
                     handleHistoryOpen={this.handleHistoryOpen}
+
                 />
 
                 <Payment pose={isOpenPayment ? 'open' : 'closed'}>
@@ -293,7 +298,8 @@ class HomeContainer extends React.Component {
 
                 {
                     this.state.openSessionContainer ?
-                        <SessionDialogue
+                        <SessionDialog
+                            title = "Sesssion List"
                             handleClickOpen={this.handleClickOpenSessionContainer}
                             handleClose={this.handleCloseSessionContainer}
                             open={this.state.openSessionContainer}
@@ -301,6 +307,19 @@ class HomeContainer extends React.Component {
                             dispatch={dispatch}
                         /> : null
                 }
+                {
+                    this.state.openQuickBookContainer ?
+                        <QuickBookDialog
+                            title = "Quick Book Integration"
+                            handleClickOpen={()=>this.setState({openQuickBookContainer:true})}
+                            handleClose={()=>this.setState({openQuickBookContainer:false})}
+                            open={this.state.openQuickBookContainer}
+                            holdCartData={this.props.holdCartData}
+                            dispatch={dispatch}
+                            {...this.propos}
+                        /> : null
+                }
+                QuickBookDialog
                 {
                     this.state.openGiftCard &&
                     <GiftCardModel

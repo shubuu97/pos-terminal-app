@@ -160,6 +160,7 @@ class ProductsSection extends React.Component {
                             handleClickOpenOnHold={this.props.handleClickOpenOnHold}
                             handleHistoryOpen={this.props.handleHistoryOpen}
                             handleClickOpenSessionContainer={this.props.handleClickOpenSessionContainer}
+                            handleClickQuickBook = {this.props.handleClickQuickBook}
                         />
                         <SearchBar
                             handleChange={this.handleChange}
