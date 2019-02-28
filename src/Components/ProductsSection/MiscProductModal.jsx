@@ -208,10 +208,10 @@ class MiscProductModal extends React.Component {
                         </div>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={() => this.props.handleClose()} color="primary">
+                        <Button onClick={() => this.props.handleClose()} className='btnmodalsecondary' variant="outlined">
                             Cancel
                     </Button>
-                        <Button onClick={() => this.addMiscProduct()} color="primary">
+                        <Button onClick={() => this.addMiscProduct()} className='btnmodalprimary' variant="outlined">
                             Add To Cart
                     </Button>
                     </DialogActions>
