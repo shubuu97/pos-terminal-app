@@ -245,22 +245,11 @@ class Customer extends React.Component {
                     fullWidth
                 >
                     <DialogTitle id="customized-dialog-title" onClose={this.props.handleClose}>
-                        Create Customer
+                    {this.props.title}
                     </DialogTitle>
                     <DialogContent>
-                        <div style={getModalStyle()}>
-                            <div className="mui-col-md-12">
-                                <div className='mui-col-md-4 button-section flex-row '>
-                                    <Button className='mr-20' variant="outlined" onClick={() => this.props.onClose()}>Cancel</Button>
-                                </div>
-                                <div className="mui-col-md-8">
-                                    <Typography variant="h6" id="modal-title">
-                                        {this.props.title}
-                                    </Typography>
-                                </div>
-                            </div>
-                            <Typography variant="subtitle1" id="simple-modal-description">
-                                <div className="mui-col-md-12">
+                            
+                                <div className="mui-row mt-20 product-details-modal">
                                     <div className="mui-col-md-6 pop-img">
                                         <img src={_get(this.props.productDetails, 'image', '')} alt={_get(this.props.productDetails, 'image', '')} />
                                     </div>
@@ -270,17 +259,9 @@ class Customer extends React.Component {
                                             <div className='truncate'>
                                                 <span className="each-card-name">{_get(this.props.productDetails, 'name', '')}</span>
                                             </div>
-                                            <div className='truncate'>
-                                                <span className="each-card-code-head">SKU : </span>
+                                            <div className='truncate mt-5'>
+                                                <span className="each-card-code-head text-titlehead">SKU : </span>
                                                 <span className='each-card-code'>{_get(this.props.productDetails, 'sku', '')}</span>
-                                            </div>
-                                            <div className='truncate'>
-                                                <span className="each-card-code-head">UPC : </span>
-                                                <span className='each-card-code'>{_get(this.props.productDetails, 'upcCode', '')}</span>
-                                            </div>
-                                            <div className='truncate'>
-                                                <span className="each-card-code-head">Availability : </span>
-                                                <span className='each-card-code'>{_get(this.props.inventoryDetails, 'quantity', 0)} item(s) </span>
                                             </div>
                                             <div className="each-card-price flex-row">
                                                 {_get(this.props.productDetails, 'salePrice.currencyCode', '')} {_get(this.props.productDetails, 'salePrice.price', 'NaN')}
@@ -291,31 +272,44 @@ class Customer extends React.Component {
                                                     <span className="each-card-code-head">Out of stock</span>
                                                 </div> : ''
                                             }
+
                                             <div className='expanded-options'>
-                                                <span className='option-title'>Quantity</span>
-                                                <div className='flex-row justify-center align-center'>
-                                                    <RemoveCircleIcons onClick={() => this.decrementer()} style={{ fontSize: '1.7em' }} />
+                                            <div className="qty-block">
+                                                <span className='option-title'>Qty:</span>
+                                                <div className='qty-btn'>
+                                                    <RemoveCircleIcons onClick={() => this.decrementer()} style={{ fontSize: '2.7em' }} />
                                                     <span className='quantity'>{this.state.qty}</span>
-                                                    <AddIcons onClick={() => this.incrementer()} style={{ fontSize: '1.7em' }} />
+                                                    <AddIcons onClick={() => this.incrementer()} style={{ fontSize: '2.7em' }} />
                                                 </div>
-                                            </div>
-                                            {this.state.qty > 0 ?
+                                                </div>
+                                                {this.state.qty > 0 ?
                                                 <div className='button-section flex-row '>
-                                                    <Button className='mr-20' variant="outlined" onClick={() => this.addToCart(this.props.index, this.state.qty, this.state.fromInfoView)}>Add To Cart</Button>
+                                                    <Button className='btnmodalprimary' variant="outlined" onClick={() => this.addToCart(this.props.index, this.state.qty, this.state.fromInfoView)}>Add To Cart</Button>
                                                 </div> : ''
-                                            }
+                                                 }
+                                            </div>
+                                          
+
+                                            
+                                            <div className='truncate'>
+                                                <span className="each-card-code-head text-titlehead">UPC : </span>
+                                                <span className='each-card-code'>{_get(this.props.productDetails, 'upcCode', '')}</span>
+                                            </div>
+                                            <div className='truncate'>
+                                                <span className="each-card-code-head text-titlehead">Availability : </span>
+                                                <span className='each-card-code'>{_get(this.props.inventoryDetails, 'quantity', 0)} item(s) </span>
+                                            </div>
+                                           
+                                          
+                                                <div className='truncate mt-10'>
+                                                    <span className="each-card-code-head text-titlehead">Description : </span><br/>
+                                                    <span className='each-card-code pro-description'>{_get(this.props.productDetails, 'description', '')}</span>
+                                                </div>
                                         </div>
                                     </div>
 
                                 </div>
-                                <div className="mui-col-md-12">
-                                    <div className='truncate'>
-                                        <span className="each-card-code-head">Description : </span>
-                                        <span className='each-card-code'>{_get(this.props.productDetails, 'description', '')}</span>
-                                    </div>
-                                </div>
-                            </Typography>
-                        </div>
+                        
                     </DialogContent>
                     
                 </Dialog>
