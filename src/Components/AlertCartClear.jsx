@@ -119,10 +119,10 @@ class AlertCartClear extends React.Component {
                         />
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={this.handleClearCart} color="primary">
+                        <Button onClick={this.handleClearCart} className='btnmodalsecondary' variant="outlined">
                             Clear Cart
                         </Button>
-                        <Button onClick={this.handleHold} color="primary">
+                        <Button onClick={this.handleHold} className='btnmodalprimary' variant="outlined">
                             Hold Cart
                         </Button>
                     </DialogActions>
