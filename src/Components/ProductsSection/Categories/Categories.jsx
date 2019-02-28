@@ -116,9 +116,9 @@ class Categories extends Component {
       .search({
         query: category.id,
         fields: ["product.category1", "product.category2", "product.category3"],
-        include_docs: true,
-        limit: 9,
-        skip: 0
+        include_docs: true
+        // limit: 9,
+        // skip: 0
       })
       .then(result => {
         result.pagination = {}
@@ -155,9 +155,9 @@ class Categories extends Component {
     productsdb
       .allDocs({
         include_docs: true,
-        attachments: true,
-        limit: 9,
-        skip: 0
+        attachments: true
+        // limit: 9,
+        // skip: 0
       })
       .then(result => {
         result.pagination = {}

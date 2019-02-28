@@ -94,9 +94,9 @@ class ProductsSection extends React.Component {
             this.setState({ clearInput: false })
             productsdb.allDocs({
                 include_docs: true,
-                attachments: true,
-                limit: 10,
-                skip: 0
+                attachments: true
+                // limit: 10,
+                // skip: 0
             }).then((result) => {
                 this.setState({ clearInput: false })
                 result.pagination = {}
