@@ -319,7 +319,6 @@ class HomeContainer extends React.Component {
                             {...this.propos}
                         /> : null
                 }
-                QuickBookDialog
                 {
                     this.state.openGiftCard &&
                     <GiftCardModel
