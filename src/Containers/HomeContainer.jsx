@@ -27,8 +27,8 @@ import MiscProductModal from '../Components/ProductsSection/MiscProductModal';
 
 /* Pose Animation Configs */
 const Config = {
-    open: { width: '65%', opacity: 1 },
-    closed: { width: '0px', opacity: 0 }
+    open: { width: '65%', opacity: 1, flip: true },
+    closed: { width: '0px', opacity: 0, flip: true }
 }
 
 const Products = posed.div(Config)
