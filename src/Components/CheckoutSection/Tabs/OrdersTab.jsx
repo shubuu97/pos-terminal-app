@@ -3,7 +3,6 @@ import React from 'react';
 import _get from 'lodash/get';
 import _findIndex from 'lodash/findIndex';
 import _isArray from 'lodash/isArray';
-
 /* Material import */
 import Button from '@material-ui/core/Button';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
@@ -18,8 +17,6 @@ import { commonActionCreater } from '../../../Redux/commonAction';
 /* Component Imports */
 import CalculationSection from './CalculationSection'
 import DiscountDialogue from '../DiscountDialogue/DiscountDialogue'
-/* style */
-
 /* Global Function import */
 import globalClearCart from '../../../Global/PosFunctions/clearCart';
 import addGuestToCart from '../../../Global/PosFunctions/addGuestToCart';
@@ -210,7 +207,7 @@ class OrdersTab extends React.Component {
     render() {
         let { checkoutcalcArea, checkoutactionArea, checkoutcartArea, checkoutMainPart } = this.props;
         return (
-          
+
             <div className="orders-section" >
                 <DiscountDialogue
                     open={this.state.open}
@@ -238,20 +235,15 @@ class OrdersTab extends React.Component {
                         checkoutcalcArea={checkoutcalcArea}
                     />
                     <div className='button-section flex-row ' style={{ height: checkoutactionArea }}>
-
-                            <Button className='mr-20 btnsecondary' variant="outlined" onClick={this.handleClearCart}>Clear</Button>
-                            <Button className='mr-20 btnsecondary' variant="outlined" onClick={this.props.handleClickOpen}>Hold</Button>
-                            <Button
-                                className="btnprimary"
-                                style={{ flex: 1 }}
-                                onClick={this.handleProceedToCustomer}
-                                variant="contained">Proceed</Button>
+                        <Button className='mr-20 btnsecondary' variant="outlined" onClick={this.handleClearCart}>Clear</Button>
+                        <Button className='mr-20 btnsecondary' variant="outlined" onClick={this.props.handleClickOpen}>Hold</Button>
+                        <Button className="btnprimary" style={{ flex: 1 }} onClick={this.handleProceedToCustomer} variant="contained">Proceed</Button>
                     </div>
                 </div>
             </div>
 
-               
-              
+
+
         );
     }
 }

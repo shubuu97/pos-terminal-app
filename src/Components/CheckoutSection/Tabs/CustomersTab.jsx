@@ -9,8 +9,9 @@ import History from '@material-ui/icons/History';
 /* Redux Imports */
 import { connect } from 'react-redux';
 /* Global Imports */
-import ReactSelect from '../../../Global/Components/ReactSelect/async-react-select';
-import genericPostData from '../../../Global/dataFetch/genericPostData';
+import ReactSelect from '../../../Global/Components/ReactSelect/async-react-select';    
+import globalClearCart from '../../../Global/PosFunctions/clearCart';
+import addGuestToCart from '../../../Global/PosFunctions/addGuestToCart';
 /* Component Imports */
 import CalculationSection from './CalculationSection';
 import PouchDb from 'pouchdb';
@@ -27,18 +28,19 @@ productsdb.search({
 
 
 
+
 class CustomerTab extends React.Component {
 
     constructor() {
         super();
         this.state = {
             open: false,
-            value:''
+            value: ''
         }
     }
     onInputChange = (newValue) => {
         //const inputValue = newValue.replace(/\W/g, '');
-        this.setState({ value:newValue });
+        this.setState({ value: newValue });
         return newValue;
     }
     mapCustomer = (data) => {
@@ -57,7 +59,7 @@ class CustomerTab extends React.Component {
         console.log(searchText, "");
         productsdb.search({
             query: searchText,
-            fields: ['customer.firstName', 'customer.lastName', 'email', 'phoneNumber.phoneNumber','employeeId'],
+            fields: ['customer.firstName', 'customer.lastName', 'email', 'phoneNumber.phoneNumber', 'employeeId'],
             include_docs: true,
             limit: 20,
             skip: 0
@@ -78,11 +80,11 @@ class CustomerTab extends React.Component {
     onChange = (doc) => {
         debugger;
         let value = _get(doc, 'value');
-        let employeeDiscount = _get(doc,'value.employeeDiscount',0);
+        let employeeDiscount = _get(doc, 'value.employeeDiscount', 0);
         //populating cart reducer with customer
-        this.setState({value:''})
+        this.setState({ value: '' })
         this.props.dispatch(commonActionCreater(employeeDiscount, 'ADD_EMPLOYEE_DISCOUNT'));
-        this.props.dispatch(commonActionCreater(_get(this.props,'cart.cartItems',[]), 'CART_ITEM_LIST'));
+        this.props.dispatch(commonActionCreater(_get(this.props, 'cart.cartItems', []), 'CART_ITEM_LIST'));
         this.props.dispatch(commonActionCreater(doc.value, 'ADD_CUSTOMER_TO_CART'));
 
         //mapped data to state 
@@ -95,16 +97,22 @@ class CustomerTab extends React.Component {
     }
 
     handleOpen = () => {
-        this.setState({open: true})
+        this.setState({ open: true })
     }
 
     handleClose = () => {
-        this.setState({open: false})
+        this.setState({ open: false })
     }
-    handleClickProceed = ()=>{
-        this.props.dispatch(commonActionCreater(3,'SWITCH_TAB_NUMBER'))
+
+    handleClickProceed = () => {
+        this.props.dispatch(commonActionCreater(3, 'SWITCH_TAB_NUMBER'))
 
     }
+
+    handleClearCart = () => {
+        globalClearCart(this.props.dispatch);
+        addGuestToCart(this.props.dispatch);
+    };
 
     render() {
         let { checkoutactionArea, checkoutMainPart, checkoutCustomerArea, checkoutcalcArea, checkoutcartArea } = this.props
@@ -113,7 +121,7 @@ class CustomerTab extends React.Component {
                 <div className="customer-main" style={{ height: checkoutcartArea }}>
                     <div className='search-section flex-row'>
                         <ReactSelect
-                            value = {this.state.value}
+                            value={this.state.value}
                             onInputChange={this.onInputChange}
                             defaultOptions
                             onChange={this.onChange}
@@ -123,7 +131,7 @@ class CustomerTab extends React.Component {
                         <div className='add-customer flex-row align-center justify-center'>
                             <PersonAdd onClick={this.handleOpen} style={{ fontSize: '1.3em', color: 'rgba(0,0,0,0.5)', cursor: 'pointer' }} />
                         </div>
-                        <Customer 
+                        <Customer
                             open={this.state.open}
                             closeModal={this.handleClose}
                             fullScreen={false}
@@ -133,7 +141,7 @@ class CustomerTab extends React.Component {
                         <div className='customer-info'>
                             <div className='each-info'>
                                 <div className='info-title'>Name</div>
-                                <div className='info-data'>{_get(this.props,'customer.firstName')} {_get(this.props,'customer.lastName')}</div>
+                                <div className='info-data'>{_get(this.props, 'customer.firstName')} {_get(this.props, 'customer.lastName')}</div>
                             </div>
                             <div onClick={this.props.handleHistoryOpen} className='add-customer flex-row align-center justify-center'>
                                 <History style={{ fontSize: '1.3em', color: 'rgba(0,0,0,0.5)' }} />
@@ -164,22 +172,14 @@ class CustomerTab extends React.Component {
                     </div>
                 </div>
                 <div className="order-amount-section">
-                <CalculationSection
-                    checkoutcalcArea={checkoutcalcArea}
-                />
-
-                <div className='button-section flex-row ' style={{ height: checkoutactionArea }}>
-                    <div>
+                    <CalculationSection
+                        checkoutcalcArea={checkoutcalcArea}
+                    />
+                    <div className='button-section flex-row ' style={{ height: checkoutactionArea }}>
+                        <Button className='mr-20 btnsecondary' variant="outlined" onClick={this.handleClearCart}>Clear</Button>
                         <Button className='mr-20 btnsecondary' variant="outlined" onClick={this.props.handleClickOpen}>Hold</Button>
-                        {/* <Button className='mr-20' variant="outlined">Proceed as Guest</Button> */}
-                        <Button 
-                        className="btnprimary"
-                        onClick={this.handleClickProceed}
-                        variant="contained"
-                        >Proceed</Button>
+                        <Button className="btnprimary" style={{ flex: 1 }} onClick={this.handleClickProceed} variant="contained">Proceed</Button>
                     </div>
-
-                </div>
                 </div>
             </div>
         );
@@ -188,8 +188,8 @@ class CustomerTab extends React.Component {
 
 function mapStateToProps(state) {
     let customer = _get(state, 'cart.customer');
-    let cart = _get(state,'cart');
-    return { ...customer,cart }
+    let cart = _get(state, 'cart');
+    return { ...customer, cart }
 }
 
 export default connect(mapStateToProps)(CustomerTab);
