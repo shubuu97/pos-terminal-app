@@ -7,6 +7,7 @@ import _get from 'lodash/get';
 import RemoveCircleIcons from '@material-ui/icons/RemoveCircleOutline';
 /* Redux Imports */
 import { connect } from 'react-redux';
+import { commonActionCreater } from '../../../Redux/commonAction';
 
 /* Component Imports */
 
@@ -18,6 +19,12 @@ class CalculationSection extends React.Component {
         this.state = {
 
         }
+    }
+    handleCartDiscountRemove = ()=>{
+        debugger;
+        this.props.dispatch(commonActionCreater(0,'ADD_DISCOUNT_TO_CART'));
+        this.props.dispatch(commonActionCreater(this.props.cartItems,'CART_ITEM_LIST'));
+
     }
 
     render() {
@@ -34,7 +41,9 @@ class CalculationSection extends React.Component {
                             _get(cart, 'cartDiscountAmount.amount', 0) > 0 ?
                                 <div className='cart-each-details'>
                                     <span className='cart-title flex-row align-center'>
-                                        <RemoveCircleIcons style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }} />
+                                        <RemoveCircleIcons style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }}
+                                        onClick = {this.handleCartDiscountRemove}
+                                        />
                                         Cart Discount
                                     </span>
                                     <span className='cart-amount'>- {_get(cart, 'cartDiscountAmount.currencyCode')}{_get(cart, 'cartDiscountAmount.amount')}</span>
