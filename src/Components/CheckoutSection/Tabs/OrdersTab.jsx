@@ -20,7 +20,8 @@ import DiscountDialogue from '../DiscountDialogue/DiscountDialogue'
 /* Global Function import */
 import globalClearCart from '../../../Global/PosFunctions/clearCart';
 import addGuestToCart from '../../../Global/PosFunctions/addGuestToCart';
-
+/* Asset Import  */
+import EmptyCartImg from '../../../assets/images/pos/empty_cart.png'
 
 
 class OrdersTab extends React.Component {
@@ -225,7 +226,13 @@ class OrdersTab extends React.Component {
                         <Button variant="outlined" onClick={this.handleClickOpenDiscount}>Add Discount</Button>
                     </div>
                     <div className="items-section flex-column" style={{ height: this.state.cartListHeight }} >
-                        {this.populateCartItems()}
+                        {
+                            _get(this, 'props.cartItems', []).length ?
+                                this.populateCartItems() :
+                                <div className='flex-row justify-center align-center fheight' >
+                                    <img src={EmptyCartImg} style={{height: '70%'}} alt="" />
+                                </div>
+                        }
                     </div>
                 </div>
 
