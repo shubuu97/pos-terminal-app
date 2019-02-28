@@ -7,9 +7,6 @@ import _find from 'lodash/find'
 /* Material import */
 import Info from '@material-ui/icons/Info';
 import SimpleModal from '../../Global/Components/Modal/MaterialUIModal.jsx';
-import { Button } from '@material-ui/core';
-import RemoveCircleIcons from '@material-ui/icons/RemoveCircleOutline';
-import AddIcons from '@material-ui/icons/AddCircleOutline';
 /* Redux Imports */
 import { commonActionCreater } from '../../Redux/commonAction';
 
