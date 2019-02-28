@@ -82,6 +82,7 @@ class AlertDialogSlide extends React.Component {
                     <DialogContent>
                         <DialogContentText id="alert-dialog-slide-description">
                             Warning! This action will require manager's approval.
+                            <div className="d-flex align-items-center mt-20">
                             <div className="mui-col-md-6">
                                 <TextField
                                     id="discount"
@@ -91,15 +92,15 @@ class AlertDialogSlide extends React.Component {
                                     margin="outline"
                                     fullWidth
                                     type='text'
-                                    variant="outlined"
-                                    className='mt-10'
+                                    variant="outlined"                                   
                                 />
                             </div>
                             <div className="mui-col-md-6">
-                                <div className='discount-keypad'>
-                                    <div className={this.state.type === '%' ? 'discount-keys active': 'discount-keys'} onClick={() => this.handleDiscountType('%')}>%</div>
-                                    <div className={this.state.type === '$' ? 'discount-keys active': 'discount-keys'} onClick={() => this.handleDiscountType('$')}>$</div>
+                                <div className='d-flex justify-content-end'>
+                                    <div className={this.state.type === '%' ? 'discount-keys-top  active': 'discount-keys-top '} onClick={() => this.handleDiscountType('%')}>%</div>
+                                    <div className={this.state.type === '$' ? 'discount-keys-top ml-10  active': 'discount-keys-top ml-10 '} onClick={() => this.handleDiscountType('$')}>$</div>
                                 </div>
+                            </div>
                             </div>
                         </DialogContentText>
                         <div className="mui-col-md-12">
@@ -120,10 +121,10 @@ class AlertDialogSlide extends React.Component {
                         </div>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={this.props.handleClose} color="primary">
+                        <Button onClick={this.props.handleClose} className='btnmodalsecondary' variant="outlined">
                             Disagree
                     </Button>
-                        <Button onClick={this.handleDiscount} color="primary">
+                        <Button onClick={this.handleDiscount} className='btnmodalprimary' variant="outlined">
                             Agree
                     </Button>
                     </DialogActions>

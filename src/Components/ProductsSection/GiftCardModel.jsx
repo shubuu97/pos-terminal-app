@@ -219,8 +219,8 @@ class AlertDialogSlide extends React.Component {
                         </div>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={() => this.props.handleClose()} color="primary">Cancel</Button>
-                        <Button onClick={() => this.addGiftCard()} color="primary">Add To Cart</Button>
+                        <Button onClick={() => this.props.handleClose()} className='btnmodalsecondary' variant="outlined">Cancel</Button>
+                        <Button onClick={() => this.addGiftCard()} className='btnmodalprimary' variant="outlined">Add To Cart</Button>
                     </DialogActions>
                 </Dialog>
             </div>
