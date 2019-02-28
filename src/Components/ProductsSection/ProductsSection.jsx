@@ -151,9 +151,7 @@ class ProductsSection extends React.Component {
         return (
             <div className='pos-products-collection' style={{ height: windowHeight }}>
 
-                {/* 
-                // * Header Component
-                */}
+                {/* Header Component */}
                 <div className='pos-header' style={{height: headerHeight}}>
                     <div className="header-top flex-row align-center justify-space-between pl-10 pr-10" >
                         <SideDrawer
@@ -175,14 +173,16 @@ class ProductsSection extends React.Component {
                     </div>
                 </div>
 
+                {/* Product Categories Component */}
                 <Categories
                     categoriesHeight={categoriesHeight}
                     {...this.props}
                 />
-                {/* Product Categories Component */}
+                
 
                 {/* // ! Note - Hiding Pagination */}
                 {/* <Pagination /> */}
+
                 {/* Products List Component */}
                 <Products
                     {...this.props}
