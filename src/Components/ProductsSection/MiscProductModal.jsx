@@ -126,7 +126,7 @@ class AlertDialogSlide extends React.Component {
                     </DialogTitle>
                     <DialogContent>
                         <div>
-                            <div className="mui-row">
+                            <div className="">
                                 <TextField
                                     id="name"
                                     label="Product Name"
@@ -140,7 +140,7 @@ class AlertDialogSlide extends React.Component {
                                     className='mt-10'
                                 />
                             </div>
-                            <div className="mui-row">
+                            <div className="">
                                 <TextField
                                     id="upcCode"
                                     label="Product UPC"
@@ -154,7 +154,7 @@ class AlertDialogSlide extends React.Component {
                                     className='mt-10'
                                 />
                             </div>
-                            <div className="mui-row flex-row align-center">
+                            <div className=" flex-row align-center">
                                 <div className="mui-col-md-6 no-pad">
                                     <TextField
                                         id="price"
