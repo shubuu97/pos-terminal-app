@@ -129,7 +129,7 @@ class MiscProductModal extends React.Component {
     }
 
     handleChange = (e, name) => {
-        let val = name == 'isTaxable' ? e:_get(e, 'target.value', '');
+        let val = name == 'isTaxable' ? e : _get(e, 'target.value', '');
         this.setState({
             [name]: val,
         })
@@ -147,9 +147,9 @@ class MiscProductModal extends React.Component {
             >
                 <div
                     style={this.getModalStyle()}
-                    className={classes.paper}>
+                    className='misc-product-modal'>
                     <Typography variant="h6" id="modal-title">
-                        Custom Sale
+                        Miscellaneous Product
                     </Typography>
                     <div className="mui-row">
                         <TextField
