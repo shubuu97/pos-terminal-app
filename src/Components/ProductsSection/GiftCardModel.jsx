@@ -59,6 +59,8 @@ class GiftCardModal extends React.Component {
             value: {
                 amount: '',
                 currencyCode: '$',
+                isError: true,
+                errorMsg: ''
             }
         },
     }
@@ -149,6 +151,7 @@ class GiftCardModal extends React.Component {
         let cartItems = _get(this, 'props.cart.cartItems', []);
         let doc = {};
         _set(doc, 'product.id', _get(this.props, 'giftCard.id', ''));
+        _set(doc, 'product.isGiftCard', true);
         _set(doc, 'product.name', _get(this.state, 'giftCard.giftCode', ''));
         _set(doc, 'product.salePrice.currencyCode', _get(this.state, 'giftCard.value.currencyCode', ''));
         _set(doc, 'product.salePrice.price', _get(this.state, 'giftCard.value.amount', 0));
@@ -181,6 +184,11 @@ class GiftCardModal extends React.Component {
 
     handleChange = (e, name) => {
         let val = _get(e, 'target.value', '');
+        if(Number(val) < 5 || Number(val) > 100) {
+          this.setState({ isError: true, errorMsg: 'Value must be between 5 and 100'})
+        } else {
+            this.setState({ isError: false, errorMsg: ''})
+        }
         if (name === 'giftCode') {
             let giftCard = _get(this.state, 'giftCard', {});
             _set(giftCard, 'giftCode', val);
@@ -194,9 +202,7 @@ class GiftCardModal extends React.Component {
             this.setState({
                 giftCard,
             })
-            if (Number(val) < 5 || Number(val) > 100) {
-                alert('value should be between 5 and 100 $')
-            }
+            
         }
     }
 
@@ -245,11 +251,14 @@ class GiftCardModal extends React.Component {
                                     className='mt-10'
                                 />
                             </div>
+                            <div style={{color: 'red'}}>
+                                {this.state.errorMsg}
+                            </div>
                         </div>
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={() => this.props.handleClose()} className='btnmodalsecondary' variant="outlined">Cancel</Button>
-                        <Button onClick={() => this.addGiftCard()} className='btnmodalprimary' variant="outlined">Add To Cart</Button>
+                        <Button disabled={this.state.isError} onClick={() => this.addGiftCard()} className='btnmodalprimary' variant="outlined">Add To Cart</Button>
                     </DialogActions>
                 </Dialog>
             </div>
@@ -258,13 +267,14 @@ class GiftCardModal extends React.Component {
 }
 
 function mapStateToProps(state) {
-    let { cart, saveMiscProductData } = state;
-    let miscProduct = _get(saveMiscProductData, 'lookUpData', {});
+    let { cart, giftCardData } = state;
+    let giftCard = _get(giftCardData, 'lookUpData', {});
 
     return {
         cart,
-        miscProduct,
+        giftCard,
     }
 }
+
 
 export default connect(mapStateToProps)(GiftCardModal);

@@ -162,7 +162,8 @@ class OrdersTab extends React.Component {
                                 <DeleteIcons
                                     onClick={() => this.handleDelete(item)}
                                     style={{ color: '#ff000096', fontSize: '1.5em' }} />
-                                <div className='title'>{_get(item, 'doc.product.name')}</div>
+                                <div className='title'>{item.doc.product.isGiftCard ? `Open Card: ${_get(item, 'doc.product.name')}` :   
+                                    _get(item, 'doc.product.name')}</div>
                             </div>
                             <div className='flex-column'>
                                 <div className='each-product-price'>{_get(item, 'itemSubTotal.currencyCode')} {_get(item, 'itemSubTotal.amount')}</div>
