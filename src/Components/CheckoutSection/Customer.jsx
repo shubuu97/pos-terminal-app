@@ -13,6 +13,10 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { withStyles } from '@material-ui/core/styles';
+import MuiDialogTitle from '@material-ui/core/DialogTitle';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import Typography from '@material-ui/core/Typography';
 
 // const styles = {
 //     Dialog: {
@@ -23,6 +27,32 @@ import { withStyles } from '@material-ui/core/styles';
 //       flex: 1,
 //     },
 //   };
+
+const DialogTitle = withStyles(theme => ({
+    root: {
+        borderBottom: `1px solid ${theme.palette.divider}`,
+        margin: 0,
+        padding: theme.spacing.unit * 2,
+    },
+    closeButton: {
+        position: 'absolute',
+        right: theme.spacing.unit,
+        top: theme.spacing.unit,
+        color: theme.palette.grey[500],
+    },
+}))(props => {
+    const { children, classes, onClose } = props;
+    return (
+        <MuiDialogTitle disableTypography className={classes.root}>
+            <Typography variant="h6">{children}</Typography>
+            {onClose ? (
+                <IconButton aria-label="Close" className={classes.closeButton} onClick={onClose}>
+                    <CloseIcon />
+                </IconButton>
+            ) : null}
+        </MuiDialogTitle>
+    );
+});
 
 class Customer extends React.Component {
 
@@ -62,7 +92,7 @@ debugger;
             onClose={this.props.closeModal}
             aria-labelledby="form-dialog-title"
             >
-            <DialogTitle id="form-dialog-title">Create Customer</DialogTitle>
+            <DialogTitle id="customized-dialog-title" onClose={this.props.handleClose}>Create Customer</DialogTitle>
             <DialogContent>
                 <form onSubmit={handleSubmit(this.formSubmitHandler)}>
                     <FormSection name='customer'>

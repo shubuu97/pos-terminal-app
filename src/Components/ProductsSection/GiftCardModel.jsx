@@ -13,16 +13,45 @@ import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 import Slide from '@material-ui/core/Slide';
 import Typography from '@material-ui/core/Typography';
+import MuiDialogTitle from '@material-ui/core/DialogTitle';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import { withStyles } from '@material-ui/core/styles';
 
 function Transition(props) {
     return <Slide direction="up" {...props} />;
 }
 
-class AlertDialogSlide extends React.Component {
+const DialogTitle = withStyles(theme => ({
+    root: {
+        borderBottom: `1px solid ${theme.palette.divider}`,
+        margin: 0,
+        padding: theme.spacing.unit * 2,
+    },
+    closeButton: {
+        position: 'absolute',
+        right: theme.spacing.unit,
+        top: theme.spacing.unit,
+        color: theme.palette.grey[500],
+    },
+}))(props => {
+    const { children, classes, onClose } = props;
+    return (
+        <MuiDialogTitle disableTypography className={classes.root}>
+            <Typography variant="h6">{children}</Typography>
+            {onClose ? (
+                <IconButton aria-label="Close" className={classes.closeButton} onClick={onClose}>
+                    <CloseIcon />
+                </IconButton>
+            ) : null}
+        </MuiDialogTitle>
+    );
+});
+
+class GiftCardModal extends React.Component {
 
     state = {
         giftCard: {
@@ -183,8 +212,8 @@ class AlertDialogSlide extends React.Component {
                     aria-labelledby="alert-dialog-slide-title"
                     aria-describedby="alert-dialog-slide-description"
                 >
-                    <DialogTitle id="alert-dialog-slide-title">
-                        {`Create Gift Card`}
+                    <DialogTitle id="customized-dialog-title" onClose={this.props.handleClose}>
+                        Create Gift Card
                     </DialogTitle>
                     <DialogContent>
                         <div style={this.getModalStyle()}>
@@ -238,4 +267,4 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps)(AlertDialogSlide);
+export default connect(mapStateToProps)(GiftCardModal);
