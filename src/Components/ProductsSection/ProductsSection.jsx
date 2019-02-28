@@ -6,9 +6,10 @@ import _findIndex from 'lodash/findIndex';
 import _find from 'lodash/find'
 /* Material import */
 import Button from '@material-ui/core/Button';
-import LockIcon from '@material-ui/icons/Lock';
+import LockIcon from '@material-ui/icons/LockOutlined';
 import ExitToApp from '@material-ui/icons/ExitToApp';
 import CardGiftCard from '@material-ui/icons/CardGiftcard';
+import LibraryAdd from '@material-ui/icons/LibraryAddOutlined';
 /* Redux Imports */
 import { commonActionCreater } from '../../Redux/commonAction'
 /* Component Imports */
@@ -66,6 +67,7 @@ class ProductsSection extends React.Component {
             this.props.history.push('/login')
         });
     }
+
     handleChange = (searchText) => {
         this.setState({ clearInput: false })
         if (searchText.length > 3) {
@@ -108,7 +110,7 @@ class ProductsSection extends React.Component {
                 console.log(err)
             });
         }
-        if (searchText.length == 12) {
+        /* if (searchText.length == 12) {
             let noSearchText = Number(searchText)
             productsdb.find({
                 selector: { "product.upcCode": noSearchText }
@@ -138,21 +140,21 @@ class ProductsSection extends React.Component {
                     this.props.dispatch(commonActionCreater(cartObj, 'CART_ITEM_LIST'));
                 }
             })
-        }
+        } */
     }
 
     render() {
         if(this.state.isLoading){
             return <CircularProgress size={24}/>
         }
-        let { windowHeight, categoriesHeight } = this.props
+        let { windowHeight,headerHeight, categoriesHeight } = this.props
         return (
             <div className='pos-products-collection' style={{ height: windowHeight }}>
 
                 {/* 
                 // * Header Component
                 */}
-                <div className='pos-header'>
+                <div className='pos-header' style={{height: headerHeight}}>
                     <div className="header-top flex-row align-center justify-space-between pl-10 pr-10" >
                         <SideDrawer
                             // ! Actions
@@ -165,7 +167,7 @@ class ProductsSection extends React.Component {
                             handleInput={this.state.clearInput}
                         />
                         <div className="header-right-sec">
-                            <Button variant="contained" onClick={this.props.handleMiscProduct}>Misc Product</Button>
+                            <LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 30 }} onClick={this.props.handleMiscProduct}/>
                             <CardGiftCard style={{ color: 'white', padding: '0 10px', fontSize: 30 }} onClick={this.props.handleGiftCard} />
                             <LockIcon style={{ color: 'white', padding: '0 10px', fontSize: 30 }} />
                             <ExitToApp style={{ color: 'white', padding: '0 10px', fontSize: 30 }} onClick={this.logout} />
@@ -179,7 +181,8 @@ class ProductsSection extends React.Component {
                 />
                 {/* Product Categories Component */}
 
-                <Pagination />
+                {/* // ! Note - Hiding Pagination */}
+                {/* <Pagination /> */}
                 {/* Products List Component */}
                 <Products
                     {...this.props}
