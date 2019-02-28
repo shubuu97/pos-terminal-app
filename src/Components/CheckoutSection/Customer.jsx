@@ -97,6 +97,8 @@ class Customer extends React.Component {
                     <DialogContent>
                         <form onSubmit={handleSubmit(this.formSubmitHandler)}>
                             <FormSection name='customer'>
+                            <div className="mui-row">
+                            <div className="mui-col-md-4">
                                 <Field
                                     label="First Name"
                                     name="firstName"
@@ -105,7 +107,8 @@ class Customer extends React.Component {
                                     fullWidth="true"
                                     margin='normal'
                                 />
-
+                                </div>
+                                 <div className="mui-col-md-4">
                                 <Field
                                     label="Middle Name"
                                     name="middleName"
@@ -115,6 +118,8 @@ class Customer extends React.Component {
                                     margin='normal'
 
                                 />
+                                </div>
+                                 <div className="mui-col-md-4">
                                 <Field
                                     label="Last Name"
                                     name="lastName"
@@ -122,8 +127,9 @@ class Customer extends React.Component {
                                     variant="outlined"
                                     fullWidth="true"
                                     margin='normal'
-
                                 />
+                                </div>
+                                </div>
                             </FormSection>
                             <Field
                                 label="Email"
@@ -136,6 +142,8 @@ class Customer extends React.Component {
                             />
 
                             <FormSection name="phoneNumber">
+                            <div className="mui-row">
+                            <div className="mui-col-md-6">
                                 <Field
                                     label="Country Code"
                                     name="countryCode"
@@ -147,6 +155,8 @@ class Customer extends React.Component {
                                     margin='normal'
 
                                 />
+                                </div>
+                                <div className="mui-col-md-6">
                                 <Field
                                     label="Phone No"
                                     name="phoneNumber"
@@ -158,6 +168,8 @@ class Customer extends React.Component {
                                     margin='normal'
 
                                 />
+                                </div>
+                                </div>
                             </FormSection>
 
 
@@ -180,6 +192,8 @@ class Customer extends React.Component {
                                     margin='normal'
 
                                 />
+                                 <div className="mui-row">
+                            <div className="mui-col-md-6">
                                 <Field
                                     label="City"
                                     name="city"
@@ -189,6 +203,8 @@ class Customer extends React.Component {
                                     margin='normal'
 
                                 />
+                                </div>
+                                 <div className="mui-col-md-6">
                                 <Field
                                     label="State"
                                     name="state"
@@ -198,6 +214,10 @@ class Customer extends React.Component {
                                     margin='normal'
 
                                 />
+                                </div>
+                                </div>
+                                <div className="mui-row">
+                            <div className="mui-col-md-6">
                                 <Field
                                     label="Country"
                                     name="country"
@@ -207,6 +227,8 @@ class Customer extends React.Component {
                                     margin='normal'
 
                                 />
+                                  </div>
+                                 <div className="mui-col-md-6">
                                 <Field
                                     label="Postal Code"
                                     name="postalCode"
@@ -216,15 +238,21 @@ class Customer extends React.Component {
                                     margin='normal'
 
                                 />
+                                </div>
+                                </div>
                             </FormSection>
+                          
                             <DialogActions>
-                                <Button onClick={this.props.closeModal} color="primary">
+                            
+                                <Button onClick={this.props.closeModal} className='btnmodalsecondary' variant="outlined">
                                     Cancel
-                        </Button>
-                                <Button type="submit" color="primary">
+                                </Button>
+                                <Button type="submit" className='btnmodalprimary' variant="outlined">
                                     Save
-                        </Button>
+                             </Button>
+                            
                             </DialogActions>
+                           
                         </form>
                     </DialogContent>
                 </Dialog>
