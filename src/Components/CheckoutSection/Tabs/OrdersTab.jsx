@@ -210,7 +210,8 @@ class OrdersTab extends React.Component {
     render() {
         let { checkoutcalcArea, checkoutactionArea, checkoutcartArea, checkoutMainPart } = this.props;
         return (
-            <div className="orders-section" style={{ height: checkoutMainPart }}>
+            <React.Fragment>
+            <div className="orders-section" >
                 <DiscountDialogue
                     open={this.state.open}
                     identifier={this.state.identifier}
@@ -232,20 +233,25 @@ class OrdersTab extends React.Component {
                 </div>
 
 
-                <CalculationSection
-                    checkoutcalcArea={checkoutcalcArea}
-                />
-                <div className='button-section flex-row ' style={{ height: checkoutactionArea }}>
-                   
-                        <Button className='mr-20 btnsecondary' variant="outlined" onClick={this.handleClearCart}>Clear</Button>
-                        <Button className='mr-20 btnsecondary' variant="outlined" onClick={this.props.handleClickOpen}>Hold</Button>
-                        <Button
-                            className="btnprimary"
-                            style={{ flex: 1 }}
-                            onClick={this.handleProceedToCustomer}
-                            variant="contained">Proceed</Button>
+                <div className="order-amount-section">
+                    <CalculationSection
+                        checkoutcalcArea={checkoutcalcArea}
+                    />
+                    <div className='button-section flex-row ' style={{ height: checkoutactionArea }}>
+
+                            <Button className='mr-20 btnsecondary' variant="outlined" onClick={this.handleClearCart}>Clear</Button>
+                            <Button className='mr-20 btnsecondary' variant="outlined" onClick={this.props.handleClickOpen}>Hold</Button>
+                            <Button
+                                className="btnprimary"
+                                style={{ flex: 1 }}
+                                onClick={this.handleProceedToCustomer}
+                                variant="contained">Proceed</Button>
+                    </div>
                 </div>
             </div>
+
+               
+                </React.Fragment>
         );
     }
 }
