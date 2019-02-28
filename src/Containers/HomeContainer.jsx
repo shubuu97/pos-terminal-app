@@ -133,9 +133,11 @@ class HomeContainer extends React.Component {
         productsdb.allDocs({
             include_docs: true,
             attachments: true,
-            limit: 9,
-            skip: 0
+            // limit: 9,
+            // skip: 0
+            // ! Note - Hiding Pagination
         }).then((result) => {
+            debugger
             result.pagination = {}
             result.pagination.firstItemId = result.rows[0].id
             result.pagination.lastItemId = result.rows[result.rows.length - 1].id

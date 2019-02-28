@@ -66,6 +66,7 @@ class ProductsSection extends React.Component {
             this.props.history.push('/login')
         });
     }
+
     handleChange = (searchText) => {
         this.setState({ clearInput: false })
         if (searchText.length > 3) {
@@ -108,7 +109,7 @@ class ProductsSection extends React.Component {
                 console.log(err)
             });
         }
-        if (searchText.length == 12) {
+        /* if (searchText.length == 12) {
             let noSearchText = Number(searchText)
             productsdb.find({
                 selector: { "product.upcCode": noSearchText }
@@ -138,7 +139,7 @@ class ProductsSection extends React.Component {
                     this.props.dispatch(commonActionCreater(cartObj, 'CART_ITEM_LIST'));
                 }
             })
-        }
+        } */
     }
 
     render() {
@@ -179,7 +180,8 @@ class ProductsSection extends React.Component {
                 />
                 {/* Product Categories Component */}
 
-                <Pagination />
+                {/* // ! Note - Hiding Pagination */}
+                {/* <Pagination /> */}
                 {/* Products List Component */}
                 <Products
                     {...this.props}
