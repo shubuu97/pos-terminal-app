@@ -236,14 +236,14 @@ class OrdersTab extends React.Component {
                     checkoutcalcArea={checkoutcalcArea}
                 />
                 <div className='button-section flex-row ' style={{ height: checkoutactionArea }}>
-                    <div>
-                        <Button className='mr-20' variant="outlined" onClick={this.handleClearCart}>Clear</Button>
-                        <Button className='mr-20' variant="outlined" onClick={this.props.handleClickOpen}>Hold</Button>
+                   
+                        <Button className='mr-20 btnsecondary' variant="outlined" onClick={this.handleClearCart}>Clear</Button>
+                        <Button className='mr-20 btnsecondary' variant="outlined" onClick={this.props.handleClickOpen}>Hold</Button>
                         <Button
+                            className="btnprimary"
+                            style={{ flex: 1 }}
                             onClick={this.handleProceedToCustomer}
                             variant="contained">Proceed</Button>
-                    </div>
-
                 </div>
             </div>
         );
