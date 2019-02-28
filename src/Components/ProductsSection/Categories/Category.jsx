@@ -6,10 +6,10 @@ const Category = (props) => {
     const {category} = props
 
     return (
-        <div className='each-tile blue-background'>
-            <span className='category-text' 
-                  onClick={() => props.clickHandler(category)}
-                  style={{'cursor': 'pointer'}}>
+        <div className='each-tile blue-background'
+            onClick={() => props.clickHandler(category)}
+            style={{'cursor': 'pointer'}}>
+            <span className='category-text'>
                 {category.name}
             </span>
         </div>

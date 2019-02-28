@@ -114,7 +114,7 @@ class DiscountDialogue extends React.Component {
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-slide-description">
-                            Warning! This action will require manager's approval.
+                            {/* <span>Warning! This action will require manager's approval.</span> */}
                             <div className="d-flex align-items-center mt-20">
                                 <div className="mui-col-md-6">
                                     <TextField
