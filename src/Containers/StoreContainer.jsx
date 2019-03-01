@@ -83,7 +83,6 @@ class StoreContainer extends React.Component {
         // this.forceUpdate();
     }
     componentDidMount() {
-
         genericPostData({
             dispatch: this.props.dispatch,
             reqObj: { id: localStorage.getItem('storeId') },

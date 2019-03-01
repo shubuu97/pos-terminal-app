@@ -22,7 +22,6 @@ import PaymentReceipt from './paymentReceipt';
 import { withRouter } from 'react-router-dom'
 import { Detector } from 'react-detect-offline';
 import PouchDb from 'pouchdb';
-
 let transactiondb = new PouchDb('transactiondb')
 /* style */
 
@@ -39,6 +38,7 @@ class PaymentSection extends React.Component {
             defaultcardAmountValue: '',
             cashPayValue: '',
             giftPayNumberValue: '',
+            giftAmountRedeemValue:'',
             receiptData: {},
             showPaymentReceipt: false,
             giftCard: {},
@@ -328,8 +328,9 @@ class PaymentSection extends React.Component {
             (parseFloat(this.state.cardAmountValue) || 0) +
             (parseFloat(this.state.defaultcardAmountValue) || 0)
             + (parseFloat(this.state.cashPayValue || 0)) +
-            (parseFloat(_get(this.state, 'giftCardUsedValue', 0)));
-        let netTotal = _get(this.props, 'cart.netTotal', 0);
+            (parseFloat(this.state.giftAmountRedeemValue|| 0));
+        let netTotal = _get(this.props, 'cart.totalAmount.amount', 0);
+        debugger;
         let remainingAmount = parseFloat(netTotal) - parseFloat(paymentAmount);
         return (remainingAmount || 0).toFixed(2);
     }
@@ -408,7 +409,51 @@ class PaymentSection extends React.Component {
                         <Button variant="outlined" size="large" color="primary" >Employee</Button>
                         <Button variant="outlined" size="large" color="primary" >Gift Card</Button>
                         <Button variant="outlined" size="large" color="primary" >Freedom Pay</Button>
-                    </div>
+                </div>
+                {/* <div className='flex-row'>
+                    <div className='card transaction-card'>
+                        <span className='card-title soft-text'>Transactions</span>
+                        {this.state.showCashPay ?
+                            <CashPay
+                                handleKeyBoardValue={this.handleKeyBoardValue}
+                                currentFocus={this.currentFocus}
+                                value={this.state.cashPayValue}
+                                onRemovePaymentMethod={this.onRemovePaymentMethod}
+                            /> : null}
+                        {this.state.showCardPay ?
+                            <CardPay
+                                handleKeyBoardValue={this.handleKeyBoardValue}
+                                currentFocus={this.currentFocus}
+                                value={this.state.cardAmountValue}
+                                initialValue={this.calcRemainingAmount()}
+                                onRemovePaymentMethod={this.onRemovePaymentMethod}
+                            /> : null}
+                        {this.state.showDefaultCardPay ?
+                            <DefaultCardPay
+                                handleKeyBoardValue={this.handleKeyBoardValue}
+                                customer={this.props.customer}
+                                value={this.state.defaultcardAmountValue}
+                                currentFocus={this.currentFocus}
+                                initialValue={this.calcRemainingAmount()}
+                                onRemovePaymentMethod={this.onRemovePaymentMethod}
+                            /> : null}
+                        {this.state.showGiftPay ?
+                            <GiftPay
+                                handleKeyBoardValue={this.handleKeyBoardValue}
+                                handleGiftCardValue={this.handleGiftCardValue}
+                                getGiftCardDetail={this.getGiftCardDetail}
+                                giftPayNumberValue={this.state.giftPayNumberValue}
+                                giftAmountRedeemValue={this.state.giftAmountRedeemValue}
+                                currentFocus={this.currentFocus}
+                                remainingAmount = {this.calcRemainingAmount()}
+                                giftCard={this.state.giftCard}
+                                giftCardId = {_get(this.state, 'giftCard.id', '')}
+                                originalGiftCard={this.state.originalGiftCard}
+                                onRemovePaymentMethod={this.onRemovePaymentMethod}
+                                onPayWithGiftCard={this.onPayWithGiftCard}
+                            /> : null}
+
+                    </div> */}
 
                     <div className='flex-row'>
                         <div className='card transaction-card'>
@@ -482,8 +527,9 @@ class PaymentSection extends React.Component {
                                     label="Sale Comment"
                                     value={this.state.comment}
                                     onChange={this.handleChange('comment')}
-                                    margin="normal"
+                                    margin="none"
                                     variant="outlined"
+                                    fullWidth
                                 />
                             </div>
                             <div className="flex-row justify-flex-end mr-10 ml-10">

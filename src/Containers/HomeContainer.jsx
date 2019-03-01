@@ -64,7 +64,7 @@ class HomeContainer extends React.Component {
     calcHeight() {
         let windowHeight = document.documentElement.scrollHeight
         // * Product Section Calculations
-        let headerHeight = 60;
+        let headerHeight = 70;
         let categoriesHeight = 90;
         let productListHeight = windowHeight - (headerHeight + categoriesHeight + 25)
         // * Checkout Section Calculations
