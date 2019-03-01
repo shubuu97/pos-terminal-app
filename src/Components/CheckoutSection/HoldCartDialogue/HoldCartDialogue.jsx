@@ -81,10 +81,10 @@ class HoldCartDialogue extends React.Component {
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={this.props.handleClose} className='btnmodalsecondary' variant="outlined">
-                            Disagree
+                            Cancel
                         </Button>
                         <Button onClick={this.handleHold} className='btnmodalprimary' variant="outlined">
-                            Agree
+                            Hold
                         </Button>
                     </DialogActions>
                 </Dialog>

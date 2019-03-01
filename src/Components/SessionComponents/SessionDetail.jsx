@@ -25,7 +25,6 @@ class SessionDetail extends React.Component {
     }
 
     handlecloseSessionDialog = () => {
-        debugger;
         this.setState({ closeSessionDialog: true })
     }
     handleClose = () => {
@@ -37,7 +36,6 @@ class SessionDetail extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         if (_get(this.props, 'selectedSession.id') !== _get(nextProps, 'selectedSession.id')) {
-            debugger;
             this.setState({ isLoading: true })
             genericPostData({
                 dispatch: this.props.dispatch,
@@ -72,7 +70,6 @@ class SessionDetail extends React.Component {
         }
     }
     handleSuccessFetchSessionData = (data) => {
-        debugger;
         this.setState({ isLoading: false })
         this.setState({
             manager: _get(data, 'manager'),

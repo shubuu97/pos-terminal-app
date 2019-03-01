@@ -159,7 +159,6 @@ class PaymentSection extends React.Component {
     }
 
     handleInputChange = num => event => {
-        debugger;
         let currentFocus = this.state.currentFocus;
         let currenctFocusValue = this.state[`${currentFocus}Value`]
         if (num != '<') {
@@ -192,7 +191,6 @@ class PaymentSection extends React.Component {
     }
 
     makReqObj = (offline) => {
-        debugger;
         let { customer, cartItems, totalAmount, sessionId } = this.props;
         let { cartDiscountAmount, employeeDiscountAmount, itemDiscountAmount, totalTaxAmount } = this.props.cart
         let saleItems = cartItems.map((item) => {
@@ -286,7 +284,6 @@ class PaymentSection extends React.Component {
             _id:generateV1uuid(),
             transactionDoc:reqObj
         }).then((data)=>{
-            debugger;
             this.setState({isLoadingTransaction:false});
             this.setState({ receiptData: reqObj,showPaymentReceipt: true,transactionStatus:'offline' })
             PouchDb.replicate('transactiondb', `http://localhost:5984/transactiondb`, {
@@ -323,7 +320,6 @@ class PaymentSection extends React.Component {
     }
     handleSaleOnlineTransactionError = () => {
         this.setState({isLoadingTransaction:false})
-        debugger;
     }
     calcRemainingAmount = () => {
         let paymentAmount =

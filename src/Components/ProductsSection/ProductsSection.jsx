@@ -94,9 +94,9 @@ class ProductsSection extends React.Component {
             this.setState({ clearInput: false })
             productsdb.allDocs({
                 include_docs: true,
-                attachments: true,
-                limit: 10,
-                skip: 0
+                attachments: true
+                // limit: 10,
+                // skip: 0
             }).then((result) => {
                 this.setState({ clearInput: false })
                 result.pagination = {}
@@ -115,7 +115,6 @@ class ProductsSection extends React.Component {
             productsdb.find({
                 selector: { "product.upcCode": noSearchText }
             }).then((result) => {
-                debugger
                 if (!_isEmpty(result.docs)) {
                     this.setState({ clearInput: true })
                     let cartItems = _get(this, 'props.cart.cartItems', [])
@@ -159,6 +158,7 @@ class ProductsSection extends React.Component {
                             handleClickOpenOnHold={this.props.handleClickOpenOnHold}
                             handleHistoryOpen={this.props.handleHistoryOpen}
                             handleClickOpenSessionContainer={this.props.handleClickOpenSessionContainer}
+                            handleClickQuickBook = {this.props.handleClickQuickBook}
                         />
                         <SearchBar
                             handleChange={this.handleChange}

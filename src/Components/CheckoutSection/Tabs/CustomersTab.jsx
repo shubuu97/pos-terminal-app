@@ -78,7 +78,6 @@ class CustomerTab extends React.Component {
         // });
     };
     onChange = (doc) => {
-        debugger;
         let value = _get(doc, 'value');
         let employeeDiscount = _get(doc, 'value.employeeDiscount', 0);
         //populating cart reducer with customer

@@ -24,7 +24,6 @@ function genericPostData({dispatch,reqObj,url,constants,identifier,successText,s
 
     })
         .catch((err) => {
-            debugger;
             if(typeof err=='string')
             dispatch(showMessage({ text: err, isSuccess: false }));
             console.log(err);

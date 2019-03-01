@@ -85,6 +85,13 @@ function TemporaryDrawer(props) {
                     <ListItemText primary={'Terminal History'} />
                 </ListItem>
                 <Divider />
+                <ListItem button key={1} onClick={props.handleClickQuickBook}>
+                    <ListItemIcon>
+
+                    </ListItemIcon>
+                    <ListItemText primary={'Integrate QuickBook'} />
+                </ListItem>
+                <Divider />
                 <ListItem button key={1}>
                     <ListItemIcon>
 

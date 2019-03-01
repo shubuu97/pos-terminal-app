@@ -60,7 +60,6 @@ class SignIn extends React.Component {
     };
     componentDidMount(){
         if(this.props.sessionRedirectToLogin){
-            debugger;
             this.setState({currentStep:3});
             this.props.dispatch(commonActionCreater(false,'SESSION_START_REDIRECT_TO_LOGIN'));
         }

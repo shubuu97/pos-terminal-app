@@ -1,7 +1,7 @@
 /* Main Route Imports */
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { HashRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import JssProvider from 'react-jss/lib/JssProvider';
 /* Redux Imports*/
 import { createStore, applyMiddleware, compose } from 'redux';
@@ -31,6 +31,9 @@ import StoreContainer from './Containers/StoreContainer';
 import SessionContainer from './Containers/SessionContainer';
 import DenominationDetailsForm from './Components/SessionComponents/DenominationDetailsForm'
 import OfflineTransactions from './Containers/OfflineTransactionContainer';
+
+import QuickBookContainer from './Containers/QuickBookContainer'
+import ThankYou from './Components/QuickBook/ThankYou'
 
 import * as serviceWorker from './serviceWorker';
 
@@ -85,7 +88,10 @@ ReactDOM.render(
           <RouteWithLayout Layout={EmptyLayout} exact path="/session" Component={SessionContainer} />
           <RouteWithLayout Layout={EmptyLayout} exact path="/DenominationDetailsForm" Component={DenominationDetailsForm} />
           <RouteWithLayout Layout={EmptyLayout} exact path="/OfflineTransactions" Component={OfflineTransactions} />
+          <RouteWithLayout Layout={EmptyLayout} exact path="/QuickBookContainer" Component={QuickBookContainer} />
+          <RouteWithLayout Layout={EmptyLayout} exact path="/QuickBook" Component={ThankYou} />
 
+          
         </Switch>
       </Router>
       {/* </PersistGate> */}
