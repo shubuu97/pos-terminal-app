@@ -39,6 +39,7 @@ class Login extends React.Component {
     afterLoginSuccess = (data) => {
         this.setState({ isFetching: false });
         let decodeToken = jwtDecode(_get(data, 'token'));
+        console.log(decodeToken, 'decodeToken')
         //todo encryption to be 
         localStorage.setItem('Token', _get(data, 'token'));
         localStorage.setItem('userPin', _get(decodeToken, 'Operator.loginPin', ''));

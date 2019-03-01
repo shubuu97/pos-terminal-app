@@ -29,27 +29,25 @@ class Product extends React.Component {
         if (!this.state.iconSelected) {
             let cartItems = _get(this, 'props.cart.cartItems', [])
             let data = _get(this, `props.data`, {});
-            console.log(data, 'is here')
-            let reqObj
+            let reqObj = []
             if (_isEmpty(_find(cartItems, data))) {
                 reqObj = [
                     ...cartItems,
                     {
                         ...data,
                         qty: quantity ? quantity : 1,
-                        saleType: 0,
+                        saleType: 0
                     }
                 ];
                 // this.setState({ qty: quantity ? quantity : 1 })
-            }
-            else {
+            } else {
                 let qty = (_find(cartItems, data)).qty + (quantity ? quantity : 1)
                 let index = _findIndex(cartItems, ['id', data.id]);
                 reqObj = [
                     ...cartItems
                 ]
                 reqObj[index].qty = qty;
-                // this.setState({ qty })
+                this.setState({ qty })
             }
             this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
         }

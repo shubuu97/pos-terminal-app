@@ -14,6 +14,8 @@ import { Provider } from 'react-redux';
 import './assets/stylesheets/main.less'
 /*Material UI Imports*/
 import { createGenerateClassName } from '@material-ui/core/styles';
+import theme from './Global/MaterialUiSettings/theme';
+import { MuiThemeProvider } from '@material-ui/core/styles';
 /*Redux Persist Import */
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
@@ -76,27 +78,25 @@ ReactDOM.render(
   //     <Favicon url="/src/assets/images/favicon.ico" />
 
   <JssProvider generateClassName={generateClassName}>
-    <Provider store={store}>
-      {/* <PersistGate loading={null} persistor={persistor}> */}
-
-      <Router>
-        <Switch>
-          <RouteWithLayout Layout={EmptyLayout} exact path="/" Component={HomeContainer} />
-          <RouteWithLayout Layout={EmptyLayout} exact path="/boilerplate/pos" Component={pos} />
-          <RouteWithLayout Layout={EmptyLayout} exact path="/login" Component={LoginContainer} />
-          <RouteWithLayout Layout={EmptyLayout} exact path="/store" Component={StoreContainer} />
-          <RouteWithLayout Layout={EmptyLayout} exact path="/session" Component={SessionContainer} />
-          <RouteWithLayout Layout={EmptyLayout} exact path="/DenominationDetailsForm" Component={DenominationDetailsForm} />
-          <RouteWithLayout Layout={EmptyLayout} exact path="/OfflineTransactions" Component={OfflineTransactions} />
-          <RouteWithLayout Layout={EmptyLayout} exact path="/QuickBookContainer" Component={QuickBookContainer} />
-          <RouteWithLayout Layout={EmptyLayout} exact path="/QuickBook" Component={ThankYou} />
-
-          
-        </Switch>
-      </Router>
-      {/* </PersistGate> */}
-
-    </Provider>
+    <MuiThemeProvider theme={theme}>
+      <Provider store={store}>
+        {/* <PersistGate loading={null} persistor={persistor}> */}
+        <Router>
+          <Switch>
+            <RouteWithLayout Layout={EmptyLayout} exact path="/" Component={HomeContainer} />
+            <RouteWithLayout Layout={EmptyLayout} exact path="/boilerplate/pos" Component={pos} />
+            <RouteWithLayout Layout={EmptyLayout} exact path="/login" Component={LoginContainer} />
+            <RouteWithLayout Layout={EmptyLayout} exact path="/store" Component={StoreContainer} />
+            <RouteWithLayout Layout={EmptyLayout} exact path="/session" Component={SessionContainer} />
+            <RouteWithLayout Layout={EmptyLayout} exact path="/DenominationDetailsForm" Component={DenominationDetailsForm} />
+            <RouteWithLayout Layout={EmptyLayout} exact path="/OfflineTransactions" Component={OfflineTransactions} />
+            <RouteWithLayout Layout={EmptyLayout} exact path="/QuickBookContainer" Component={QuickBookContainer} />
+            <RouteWithLayout Layout={EmptyLayout} exact path="/QuickBook" Component={ThankYou} />
+          </Switch>
+        </Router>
+        {/* </PersistGate> */}
+      </Provider>
+    </MuiThemeProvider>
   </JssProvider>,
   //   </div>,
   document.getElementById('root')
