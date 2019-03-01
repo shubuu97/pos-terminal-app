@@ -84,7 +84,6 @@ class Store extends React.Component {
     }
 
     handleChange = (event) => {
-        debugger;
         this.setState({ selectedTerminal: event.target.value });
         if(event.target.value!=-1)
         {
@@ -150,7 +149,6 @@ class Store extends React.Component {
         })
     }
     handleSuccessAddSession = (data)=>{
-        debugger;
         localStorage.setItem('sessionId', data.id);
         this.props.handleStepChange(3)
         // this.props.dispatch(commonActionCreater(true, 'SESSION_START_REDIRECT_TO_LOGIN'));

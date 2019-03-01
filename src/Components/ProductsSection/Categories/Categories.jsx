@@ -57,13 +57,11 @@ class Categories extends Component {
   }
 
   componentDidMount() {
-    debugger
     categoryDb
       .find({
         selector: { categoryType: 0 }
       })
       .then(results => {
-        debugger
         this.props.dispatch(
           commonActionCreater(results.docs, "GET_CATEGORY_DATA_SUCCESS")
         );

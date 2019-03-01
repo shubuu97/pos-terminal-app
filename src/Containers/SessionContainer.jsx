@@ -51,7 +51,6 @@ class SessionContainer extends React.Component {
     }
 
     handleOpenNewSessionDialog = () => {
-        debugger;
         this.setState({ openNewSessionDialog: true })
     }
     handleCloseNewSessionDialog = ()=>{

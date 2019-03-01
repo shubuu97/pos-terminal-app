@@ -52,11 +52,9 @@ class AuthModal extends React.Component {
         })
     }
     handleManagerListSuccess = (res) => {
-        debugger;
         this.setState({ managerAuthList: res })
     }
     handleManagerListError = (error) => {
-        debugger;
     }
 
     handleLogin = () => {
@@ -81,7 +79,6 @@ class AuthModal extends React.Component {
         })
     }
     handleManagerLoginSuccess = (data) => {
-        debugger;
         if (data.result) {
             this.props.authSuccess();
             this.props.handleClose();
@@ -89,7 +86,6 @@ class AuthModal extends React.Component {
         }
     }
     handleManagerLoginError = (error) => {
-        debugger;
     }
 
     populateManagers = () => {

@@ -43,7 +43,6 @@ class DenominationDetailsForm extends React.Component {
         this.setState({ currentFocus: fieldValue })
     }
     handleInputChange = num => event => {
-        debugger;
         let currentFocus = this.state.currentFocus;
         let currenctFocusValue = this.state[currentFocus]
         if (num != '<') {
@@ -109,13 +108,11 @@ class DenominationDetailsForm extends React.Component {
         // });
     }
     handleSuccess = (data) => {
-        debugger;
         localStorage.setItem('sessionId', 'data.id')
         this.props.dispatch(commonActionCreater(true, 'SESSION_START_REDIRECT_TO_LOGIN'));
         this.props.history.push('/login');
     }
     handleError = (error) => {
-        debugger
     }
 
     setClosingBalnce = () => {
