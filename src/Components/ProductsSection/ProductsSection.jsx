@@ -115,7 +115,6 @@ class ProductsSection extends React.Component {
             productsdb.find({
                 selector: { "product.upcCode": noSearchText }
             }).then((result) => {
-                debugger
                 if (!_isEmpty(result.docs)) {
                     this.setState({ clearInput: true })
                     let cartItems = _get(this, 'props.cart.cartItems', [])

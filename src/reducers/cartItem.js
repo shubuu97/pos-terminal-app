@@ -95,13 +95,21 @@ const cartItem = (state = { cartItems: [], }, action) => {
                     currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
                     amount: parseFloat((parseFloat(_get(item, 'itemRegularTotal.amount', 0)) - parseFloat(_get(item, 'itemTotalDiscountAmount.amount', 0))).toFixed(2))
                 }
-                item.taxPercentage = _get(state, 'taxPercentage', 0)
-                let taxAmount = _get(item, 'itemSubTotal.amount', 0) * _get(item, 'taxPercentage', 0) / 100
+                let isTaxable = ("isTaxable" in item.doc.product) 
+                let taxPercent 
+                let taxAmount = 0
+                if(isTaxable) {
+                    let federalTaxRate = localStorage.getItem('federalTaxRate')
+                    let stateTaxRate = localStorage.getItem('stateTaxRate')
+                    let countyTaxRate = localStorage.getItem('countyTaxRate')
+                    taxPercent = Number(federalTaxRate) + Number(stateTaxRate) + Number(countyTaxRate)
+                    console.log(taxPercent, 'taxPercent')
+                    taxAmount = _get(item, 'itemSubTotal.amount', 0) * taxPercent / 100
+                }
                 item.itemEffectiveTotal = {
                     currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
                     amount: parseFloat((parseFloat(_get(item, 'itemSubTotal.amount', 0)) + taxAmount).toFixed(2))
                 }
-
                 regularTotal += (parseFloat(_get(item, 'doc.product.salePrice.price')) * _get(item, 'qty', 0));
                 cartQty += _get(item, 'qty', 0);
                 netTotal += parseFloat(_get(item, 'itemSubTotal.amount', 0))

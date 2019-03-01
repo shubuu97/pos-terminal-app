@@ -41,14 +41,14 @@ class AlertCartClear extends React.Component {
     };
 
     handleHold = () => {
-        debugger
+        const {firstName, lastName} = this.props.cart.customer.customer
         let title = this.state.Title
         globalHoldCart(this.props.dispatch, this.props.cart, (title || ''), 'Harry Potter');
 
         let newHoldObj = {};
         newHoldObj.cart = this.props.cart
         newHoldObj.title = title;
-        newHoldObj.customerName = 'customerName';
+        newHoldObj.customerName = firstName + ' ' + lastName;
 
         this.setState({
             holdedItems: [...this.props.holdCartData, newHoldObj]
@@ -61,7 +61,6 @@ class AlertCartClear extends React.Component {
     };
 
     handleClearCart = () => {
-        debugger
         globalClearCart(this.props.dispatch);
         this.applyCart()
         this.props.handleCloseAlertCartClear();
@@ -70,7 +69,7 @@ class AlertCartClear extends React.Component {
 
     applyCart = () => {
         let holdCartData = this.props.holdCartData
-        globalApplyCart(this.props.dispatch, holdCartData[this.props.index].cart)
+        globalApplyCart(this.props.dispatch, holdCartData[this.props.index])
         let unHoldedCart = holdCartData[this.props.index]
         this.props.dispatch(commonActionCreater(unHoldedCart, 'ON_HOLD_DATA'));
         this.deleteHold(this.props.index);
@@ -78,7 +77,6 @@ class AlertCartClear extends React.Component {
 
     deleteHold = (index) => {
         let holdCartData = this.state.holdedItems
-        debugger
         holdCartData.splice(index, 1);
         let reqObj = [
             ...holdCartData

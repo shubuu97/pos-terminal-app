@@ -34,7 +34,6 @@ class HoldDialogue extends React.Component {
     UnHoldCart = (index) => {
         let holdCartData = this.props.holdCartData
         if (_get(this, 'props.cart.cartItems', []).length) {
-            debugger
             this.props.handleHoldIndex(index)
             this.props.handleClickOpenAlertCartClear()
         }
