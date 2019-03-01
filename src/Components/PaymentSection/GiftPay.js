@@ -27,6 +27,7 @@ class GiftPay extends React.Component {
 
         this.props.handleKeyBoardValue('giftPayNumberValue', event.target.value);
     };
+    
     //function to check and set where reddemed value is less the giftcard amount
     giftCardValueValidator = (enterdGiftCardAmount) => {
         if (enterdGiftCardAmount == "") {
@@ -35,13 +36,15 @@ class GiftPay extends React.Component {
         debugger;
         //value returned from api
         let giftCardAmount = _get(this.props, 'giftCard.value.amount', 0);
-        if (enterdGiftCardAmount <= giftCardAmount && enterdGiftCardAmount >= 0) {
+        if (this.props.remainingAmount>=0 && (enterdGiftCardAmount >= 0)) {
             return true
         }
         return false
     }
+    
 
     handleGiftCardValue = name => event => {
+        if(event.target.value>0)
         if (this.giftCardValueValidator(event.target.value))
             this.props.handleKeyBoardValue('giftAmountRedeemValue', event.target.value)
     }
