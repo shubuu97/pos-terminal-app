@@ -1,13 +1,15 @@
-// Color Set 1
-@primary : #0caeca;
-@primary-l: #62727b;
+// Color Set 3
+@primary : #0c2f35;
+@primary-l: #204f5f;
 @primary-d: #0f8fad;
 @primary-text: #ffffff;
+@primary-text-l: #ffffff;
 
-@secondary: #e91e63;
-@secondary-l: #ff6090;
+@secondary: #668ad8;
+@secondary-l: #267b8a;
 @secondary-d: #b0003a;
-@secondary-text: #000000;
+@secondary-text: #fff;
+@secondary-text-l: #fff;
 
 @soft-text: rgba(0, 0, 0, 0.8);
 @softer-text: rgba(0, 0, 0, 0.5);
@@ -15,6 +17,23 @@
 @background: #f9f9f9;
 @background-l: #EEEEEE;
 @background-white: #fff;
+// // Color Set 1
+// @primary : #0caeca;
+// @primary-l: #62727b;
+// @primary-d: #0f8fad;
+// @primary-text: #ffffff;
+
+// @secondary: #e91e63;
+// @secondary-l: #ff6090;
+// @secondary-d: #b0003a;
+// @secondary-text: #000000;
+
+// @soft-text: rgba(0, 0, 0, 0.8);
+// @softer-text: rgba(0, 0, 0, 0.5);
+
+// @background: #f9f9f9;
+// @background-l: #EEEEEE;
+// @background-white: #fff;
 
 // Color Set 2 
 // @primary : #2196f3;
@@ -425,7 +444,8 @@ p {
             background: @primary;
             width:auto;  
             display: flex;
-            align-items: center;     
+            align-items: center;  
+            height: 70px;   
             
             .header-right-sec{
                 display: flex;
@@ -565,8 +585,7 @@ p {
 
 .pos-checkout {
     width: 35%;
-    background: @background-white;
-    box-shadow: 0px 0px 6px 3px #afafaf;
+    background: @background-white;   
     position: relative;   
 
     .order-amount-section{
@@ -578,33 +597,49 @@ p {
         background: #f7f5ff;
     }
 
+    .MuiAppBar-positionStatic{
+        box-shadow: none;
+    }
+
     .MuiTabs-root {
-        height: 60px;
-        min-height: 60px;    
+        height: 70px;
+        min-height: 70px;   
+        background-color: #03afce;
+       
+        .MuiTab-textColorPrimary{
+            color:#fff;
+        }
         
         .MuiTab-fullWidth{
-            min-height: 60px;
+            min-height: 70px;
+            border-right:solid 2px #fff;
+        }
+        .MuiTab-fullWidth:last-child{
+            border-right:0;
         }
     }
     
     .btnprimary{
-        background-color: #15ab79;
-        box-shadow: none;
-        border: none;
-        color: rgba(255, 255, 255, 1);
-        padding: 15px 30px;
-        font-size: 1rem;
+        padding: 0.8em 3em;
+        text-decoration: none;
+        height: 64px;
+        background: #668ad8;
+        color: #FFF;
+        border-bottom: solid 4px #627295;
+        border-radius: 3px;
+        box-shadow: 0px 2px 1px 0px rgba(0, 0, 0, 0.2);
     }
 
     .btnsecondary{
-        background-color: #444343;
-        box-shadow: none;
-        border: none;
-        color: rgba(255, 255, 255, 1);
-        padding: 15px 30px;
-        font-size: 1rem;
+        padding: 0.8em 3em;
+        text-decoration: none;
+        height: 64px;
+        background: #204f5f;
+        color: #FFF;
+        border-bottom: solid 4px #123642;
+        border-radius: 3px;
+        box-shadow: 0px 2px 1px 0px rgba(0, 0, 0, 0.2);
     }
-    
 
     .MuiTab-textColorPrimary.MuiTab-selected {
         color: #fff;
@@ -649,7 +684,7 @@ p {
 
     .orders-section {
         position: relative;
-        height: calc(100vh - 57px);
+        height: calc(100vh - 71px);
         .cart-items {
             display: flex;
             justify-content: space-between;
@@ -798,11 +833,15 @@ p {
         }
     
         .MuiTabs-root {
-            height: 60px;
-            min-height: 60px;    
+            height: 70px;
+            min-height: 70px;    
             
             .MuiTab-fullWidth{
-                min-height: 60px;
+                min-height: 70px;
+                border-right:solid 2px #fff;
+            }
+            .MuiTab-fullWidth:last-child{
+                border-right:0;
             }
         }
         .customer-main {
