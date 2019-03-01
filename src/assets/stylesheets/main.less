@@ -6,8 +6,8 @@
 @primary-text-l: #ffffff;
 
 @secondary: #668ad8;
-@secondary-l: #267b8a;
-@secondary-d: #b0003a;
+@secondary-l: #03afce;
+@secondary-d: #267b8a;
 @secondary-text: #fff;
 @secondary-text-l: #fff;
 
@@ -395,6 +395,7 @@ p {
 }
 
 .pos-products-collection {
+    border-right: solid 2px #c3c3c3;
 
     .MuiPaper-rounded {
         border-radius: 0;
@@ -414,7 +415,25 @@ p {
             
             .header-right-sec{
                 display: flex;
-            align-items: center;    
+                align-items: center;   
+                
+                ul{
+                    padding: 0;
+                    margin: 0;
+                    list-style: none;
+                    display: flex;
+                    align-items: center; 
+
+                    li{                        
+                        border-left:solid 1px #d4d4d4; 
+                        background:@secondary-l;
+                        height: 70px;
+                        padding: 0 10px;
+                        line-height: 70px;
+                        display: flex;
+                        align-items: center;
+                    }
+                }
             }
         }
     }
