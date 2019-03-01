@@ -22,7 +22,7 @@ import { Detector } from 'react-detect-offline';
 import PouchDb from 'pouchdb';
 import generateV1uuid from '../../Global/Uuid';
 import LoaderButton from '../../Global/Components/LoaderButton';
-let transactiondb =  new PouchDb('transactiondb')
+let transactiondb = new PouchDb('transactiondb')
 /* style */
 
 class PaymentSection extends React.Component {
@@ -38,11 +38,11 @@ class PaymentSection extends React.Component {
             defaultcardAmountValue: '',
             cashPayValue: '',
             giftPayNumberValue: '',
+            giftAmountRedeemValue:'',
             receiptData: {},
             showPaymentReceipt: false,
             giftCard: {},
             originalGiftCard: {},
-            giftCardUsedValue: 0,
         }
 
 
@@ -269,7 +269,7 @@ class PaymentSection extends React.Component {
     }
     handleSaleTransaction = (offline) => {
         let reqObj = this.makReqObj(offline);
-        this.setState({isLoadingTransaction:true})
+        this.setState({ isLoadingTransaction: true })
         if (offline) {
             this.handleSaleTransactionOffline(reqObj);
         }
@@ -281,19 +281,20 @@ class PaymentSection extends React.Component {
     }
     handleSaleTransactionOffline = (reqObj) => {
         transactiondb.put({
-            _id:generateV1uuid(),
-            transactionDoc:reqObj
-        }).then((data)=>{
-            this.setState({isLoadingTransaction:false});
-            this.setState({ receiptData: reqObj,showPaymentReceipt: true,transactionStatus:'offline' })
+            _id: generateV1uuid(),
+            transactionDoc: reqObj
+        }).then((data) => {
+            debugger;
+            this.setState({ isLoadingTransaction: false });
+            this.setState({ receiptData: reqObj, showPaymentReceipt: true, transactionStatus: 'offline' })
             PouchDb.replicate('transactiondb', `http://localhost:5984/transactiondb`, {
                 live: true,
                 retry: true
             })
         })
-        .catch((err)=>{
-            this.setState({isLoadingTransaction:false})
-        })
+            .catch((err) => {
+                this.setState({ isLoadingTransaction: false })
+            })
     }
 
     handleSaleTransactionOnline = (reqObj) => {
@@ -314,20 +315,22 @@ class PaymentSection extends React.Component {
     }
 
     handleSaleOnlineTransactionSuccess = (data) => {
-        this.setState({isLoadingTransaction:false})
+        this.setState({ isLoadingTransaction: false })
         this.props.dispatch(commonActionCreater('', 'SALE_COMMENT'));
-        this.setState({ receiptData: data, showPaymentReceipt: true,transactionStatus:'online' })
+        this.setState({ receiptData: data, showPaymentReceipt: true, transactionStatus: 'online' })
     }
     handleSaleOnlineTransactionError = () => {
-        this.setState({isLoadingTransaction:false})
+        this.setState({ isLoadingTransaction: false })
+        debugger;
     }
     calcRemainingAmount = () => {
         let paymentAmount =
             (parseFloat(this.state.cardAmountValue) || 0) +
             (parseFloat(this.state.defaultcardAmountValue) || 0)
             + (parseFloat(this.state.cashPayValue || 0)) +
-            (parseFloat(_get(this.state, 'giftCardUsedValue', 0)));
-        let netTotal = _get(this.props, 'cart.netTotal', 0);
+            (parseFloat(this.state.giftAmountRedeemValue|| 0));
+        let netTotal = _get(this.props, 'cart.totalAmount.amount', 0);
+        debugger;
         let remainingAmount = parseFloat(netTotal) - parseFloat(paymentAmount);
         return (remainingAmount || 0).toFixed(2);
     }
@@ -352,7 +355,7 @@ class PaymentSection extends React.Component {
         if (online)
             return (<LoaderButton
                 color='primary'
-                isFetching = {this.state.isLoadingTransaction}
+                isFetching={this.state.isLoadingTransaction}
                 fullWidth
                 disabled={this.calcRemainingAmount() > 0}
                 variant='contained'
@@ -363,7 +366,7 @@ class PaymentSection extends React.Component {
             return (<LoaderButton
                 style={{ color: 'red' }}
                 fullWidth
-                isFetching = {this.state.isLoadingTransaction}
+                isFetching={this.state.isLoadingTransaction}
                 disabled={this.calcRemainingAmount() > 0}
                 variant='contained'
                 onClick={() => this.handleSaleTransaction(!online)}
@@ -424,9 +427,12 @@ class PaymentSection extends React.Component {
                                 handleKeyBoardValue={this.handleKeyBoardValue}
                                 handleGiftCardValue={this.handleGiftCardValue}
                                 getGiftCardDetail={this.getGiftCardDetail}
-                                value={this.state.giftPayNumberValue}
+                                giftPayNumberValue={this.state.giftPayNumberValue}
+                                giftAmountRedeemValue={this.state.giftAmountRedeemValue}
                                 currentFocus={this.currentFocus}
+                                remainingAmount = {this.calcRemainingAmount()}
                                 giftCard={this.state.giftCard}
+                                giftCardId = {_get(this.state, 'giftCard.id', '')}
                                 originalGiftCard={this.state.originalGiftCard}
                                 onRemovePaymentMethod={this.onRemovePaymentMethod}
                                 onPayWithGiftCard={this.onPayWithGiftCard}
@@ -473,7 +479,7 @@ class PaymentSection extends React.Component {
                 </div>
                 {this.state.showPaymentReceipt ? <PaymentReceipt
                     open={this.state.showPaymentReceipt}
-                    transactionStatus = {this.state.transactionStatus}
+                    transactionStatus={this.state.transactionStatus}
                     receiptData={this.state.receiptData}
                     handleClose={this.handleClose}
                 /> : null}

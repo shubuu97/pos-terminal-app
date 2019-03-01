@@ -152,7 +152,7 @@ class ProductsSection extends React.Component {
 
                 {/* Header Component */}
                 <div className='pos-header' style={{height: headerHeight}}>
-                    <div className="header-top flex-row align-center justify-space-between pl-10 pr-10" >
+                    <div className="header-top flex-row align-center justify-space-between pl-10" >
                         <SideDrawer
                             // ! Actions
                             handleClickOpenOnHold={this.props.handleClickOpenOnHold}
@@ -165,10 +165,12 @@ class ProductsSection extends React.Component {
                             handleInput={this.state.clearInput}
                         />
                         <div className="header-right-sec">
-                            <LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 30 }} onClick={this.props.handleMiscProduct}/>
-                            <CardGiftCard style={{ color: 'white', padding: '0 10px', fontSize: 30 }} onClick={this.props.handleGiftCard} />
-                            <LockIcon style={{ color: 'white', padding: '0 10px', fontSize: 30 }} />
-                            <ExitToApp style={{ color: 'white', padding: '0 10px', fontSize: 30 }} onClick={this.logout} />
+                            <ul>
+                                <li onClick={this.props.handleMiscProduct}><LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 33 }}/></li>
+                                <li onClick={this.props.handleGiftCard}><CardGiftCard style={{ color: 'white', padding: '0 10px', fontSize: 33 }}  /></li>
+                                <li><LockIcon style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>
+                                <li onClick={this.logout}><ExitToApp style={{ color: 'white', padding: '0 10px', fontSize: 33 }}  /></li>
+                            </ul>
                         </div>
                     </div>
                 </div>
