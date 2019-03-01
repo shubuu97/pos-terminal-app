@@ -82,7 +82,6 @@ const cartItem = (state = { cartItems: [], }, action) => {
                 item.cartDiscountPercent = parseFloat(_get(state, 'cartDiscountPercent', 0))
                 item.employeeDiscountPercent = employeeDiscountPercent
                 let totalPercentDiscount = parseFloat(_get(item, 'itemDiscountPercent', 0)) + parseFloat(_get(item, 'cartDiscountPercent', 0)) + parseFloat(_get(item, 'employeeDiscountPercent', 0))
-
                 let thisItemDiscountAmount = (parseFloat(_get(item, 'itemRegularTotal.amount', 0)) * parseFloat(_get(item, 'itemDiscountPercent', 0)) / 100)
                 let thisCartDiscountAmount = (parseFloat(_get(item, 'itemRegularTotal.amount', 0)) * parseFloat(_get(item, 'cartDiscountPercent', 0)) / 100)
                 let thisEmployeemDiscountAmount = (parseFloat(_get(item, 'itemRegularTotal.amount', 0)) * parseFloat(_get(item, 'employeeDiscountPercent', 0)) / 100)
@@ -103,7 +102,6 @@ const cartItem = (state = { cartItems: [], }, action) => {
                     let stateTaxRate = localStorage.getItem('stateTaxRate')
                     let countyTaxRate = localStorage.getItem('countyTaxRate')
                     taxPercent = Number(federalTaxRate) + Number(stateTaxRate) + Number(countyTaxRate)
-                    console.log(taxPercent, 'taxPercent')
                     taxAmount = _get(item, 'itemSubTotal.amount', 0) * taxPercent / 100
                 }
                 item.itemEffectiveTotal = {
