@@ -24,7 +24,6 @@ class BalanceSheet_Row extends Component {
 
             if (pre && (pre != 0) && col) {
                 temp = ((col - pre) / pre) * 100;
-                debugger
             } else {
                 temp = '-';
             }

@@ -27,7 +27,6 @@ class TransactionModal extends React.Component {
     }
 
     mapPositiveTransactions = () => {
-        debugger;
         let total = 0;
         let mappedTransactions = this.props.transactions.map((transaction) => {
 
@@ -56,7 +55,6 @@ class TransactionModal extends React.Component {
     }
 
     mapNegativeTransactions = () => {
-        debugger;
         let total = 0;
         let mappedTransactions = this.props.transactions.map((transaction) => {
 

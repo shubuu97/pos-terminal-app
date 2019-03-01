@@ -69,7 +69,6 @@ class Customer extends React.Component {
 
     handleAddCustomerSuccess = (customerData) => {
         this.props.dispatch(commonActionCreater(customerData.data, 'ADD_CUSTOMER_TO_CART'))
-        debugger;
         this.props.closeModal()
     }
 

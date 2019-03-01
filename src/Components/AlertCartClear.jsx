@@ -61,7 +61,6 @@ class AlertCartClear extends React.Component {
     };
 
     handleClearCart = () => {
-        debugger
         globalClearCart(this.props.dispatch);
         this.applyCart()
         this.props.handleCloseAlertCartClear();
@@ -69,7 +68,6 @@ class AlertCartClear extends React.Component {
     }
 
     applyCart = () => {
-        debugger
         let holdCartData = this.props.holdCartData
         globalApplyCart(this.props.dispatch, holdCartData[this.props.index])
         let unHoldedCart = holdCartData[this.props.index]
@@ -79,7 +77,6 @@ class AlertCartClear extends React.Component {
 
     deleteHold = (index) => {
         let holdCartData = this.state.holdedItems
-        debugger
         holdCartData.splice(index, 1);
         let reqObj = [
             ...holdCartData

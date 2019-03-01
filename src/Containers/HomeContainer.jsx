@@ -140,7 +140,6 @@ class HomeContainer extends React.Component {
             // skip: 0
             // ! Note - Hiding Pagination
         }).then((result) => {
-            debugger
             result.pagination = {}
             result.pagination.firstItemId = result.rows[0].id
             result.pagination.lastItemId = result.rows[result.rows.length - 1].id

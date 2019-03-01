@@ -13,7 +13,6 @@ import CloseIcon from '@material-ui/icons/Close'
 class CardPay extends React.Component {
 
     constructor(props) {
-        debugger;
         super(props);
         this.state = {
             cardAmount:''

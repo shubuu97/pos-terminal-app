@@ -70,7 +70,6 @@ function getDenominationTotal(stateObj){
             amount = amount + quantity*denomination;
         }
     });
-    debugger;
     return amount;
 }
 
