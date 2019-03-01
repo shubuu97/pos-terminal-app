@@ -88,7 +88,6 @@ class GiftCardModal extends React.Component {
     }
 
     handleGetGiftcardDataSuccess = () => {
-        console.log('came in success of gift card get');
         let { giftCard } = this.props;
         if (giftCard) {
             let status = _get(giftCard, 'status', 0);
@@ -120,7 +119,8 @@ class GiftCardModal extends React.Component {
             this.handleAddToCart();
         }
     }
-    handleSaveGiftDataError = () => {
+    handleSaveGiftDataError = (err) => {
+        debugger
         this.setState({ giftCodeMsg: 'Something went wrong'});
     }
 
@@ -159,10 +159,6 @@ class GiftCardModal extends React.Component {
                 isExist = true
             }
         })
-        let ischeck = _find(cartItems, function(item) { if(item.id == this.props.giftCard.id){
-            return true
-        } });
-        console.log(ischeck, 'vhfhfhf')
         _set(doc, 'product.id', _get(this.props, 'giftCard.id', ''));
         _set(doc, 'product.isGiftCard', true);
         _set(doc, 'product.name', _get(this.state, 'giftCard.giftCode', ''));
@@ -175,12 +171,14 @@ class GiftCardModal extends React.Component {
         }
         let reqObj
         if(isExist) {
+            debugger
             let index = _findIndex(cartItems, ['id', this.props.giftCard.id]);        
             reqObj = [
                 ...cartItems
             ]
             reqObj[index].doc.product.salePrice.price = this.state.giftCard.value.amount;
         } else {
+            debugger
             reqObj = [
                 ...cartItems,
                 {
