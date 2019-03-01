@@ -64,7 +64,7 @@ class HomeContainer extends React.Component {
     calcHeight() {
         let windowHeight = document.documentElement.scrollHeight
         // * Product Section Calculations
-        let headerHeight = 60;
+        let headerHeight = 70;
         let categoriesHeight = 90;
         let productListHeight = windowHeight - (headerHeight + categoriesHeight + 25)
         // * Checkout Section Calculations
@@ -76,9 +76,12 @@ class HomeContainer extends React.Component {
         // * Checkout Customer Section Calculations
         let checkoutCustomerArea = checkoutMainPart - checkoutactionArea
 
+        // * Payment Section 
+        
+
 
         this.setState({
-            windowHeight: windowHeight,
+            windowHeight,
             headerHeight,
             categoriesHeight,
             productListHeight,
@@ -254,7 +257,9 @@ class HomeContainer extends React.Component {
 
                 <Payment pose={isOpenPayment ? 'open' : 'closed'}>
                     {isOpenPayment ?
-                        <PaymentSection /> : null
+                        <PaymentSection 
+                            windowHeight={windowHeight}
+                        /> : null
                     }
                 </Payment>
 

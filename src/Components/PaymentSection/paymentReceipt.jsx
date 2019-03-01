@@ -75,8 +75,10 @@ class PaymentReceipt extends React.Component {
         return (
             <React.Fragment>
                 <span>
-                    <span>Order has been created succesfully</span>
-                    <span className="bold">{_get(this.props, 'receiptData.id')}</span>
+                    <span>Order has been created succesfully.</span>
+                    <span style={{display: 'block'}}>Order Id:&nbsp;&nbsp;
+                        <span className="bold">{_get(this.props, 'receiptData.id')}</span>
+                    </span>
                 </span>
                 <table class="mui-table">
                     <tr>
@@ -117,8 +119,8 @@ class PaymentReceipt extends React.Component {
             </React.Fragment>)
     }
     render() {
-        const { store } = this.props;
-        console.log('receiptdataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', this.props.receiptData)
+        const { store, cart } = this.props;
+        console.log(store, 'vhdyfdy jfugu')
         return (
             <React.Fragment>
                 <Dialog
@@ -156,14 +158,11 @@ class PaymentReceipt extends React.Component {
                 }}></iframe>
                 <div id='printarea'>
                     <div>
-
                         <h3> <span>{_get(store, 'store.address.addressLine1', '') + ' ' + _get(store, 'store.address.city', '') + ' ' + _get(store, 'store.address.state', '') + ' ' + _get(store, 'store.address.country', '') + ' ' + _get(store, 'store.address.postalCode', '')}</span> </h3>
                         <h4> <span>CASHIER:</span> <span>{_get(this.props, 'receiptData.operatorId', '')}</span> </h4>
-                        <h4> <span>CUSTOMER:</span> <span>{_get(this.props, 'receiptData.customerId', '') + ' ' + _get(this.state, 'selectedOrder.customer.customer.lastName', '')}</span> </h4>
-                        <h3> <span>STORE:</span> <span>{_get(this.props, 'receiptData.storeId', '')}</span> </h3>
-                        <h3> <span>TERMINAL:</span> <span>{_get(this.props, 'receiptData.terminalId', '')}</span> </h3>
-                        {/* <h4> <span>CASHIER:</span> <span>{_get(this.state, 'selectedOrder.sale.operatorId', '')}</span> </h4> */}
-                        {/* <h4> #<span>{_get(this.state, 'selectedOrder.sale.id', '')}</span> </h4> */}
+                        <h4> <span>CUSTOMER:</span><span>{_get(cart, 'customer.customer.firstName', '') + ' ' + _get(cart, 'customer.customer.lastName', '')}</span> </h4>
+                        <h3> <span>STORE:</span> <span>{_get(store,'store.id','')}</span> </h3>
+                        <h3> <span>TERMINAL:</span> <span>{localStorage.getItem('TerminalId')}</span> </h3>
                         <h4> <span>{moment().format('LLLL')}</span> </h4>
 
                         <div className="card">
@@ -240,11 +239,12 @@ class PaymentReceipt extends React.Component {
 }
 
 const mapStateToProps = state => {
-    let { storeData } = state;
+    let { storeData, cart } = state;
     let store = storeData.lookUpData || {};
 
     return {
-        store
+        store,
+        cart
     }
 }
 

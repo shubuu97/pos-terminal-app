@@ -6,8 +6,8 @@
 @primary-text-l: #ffffff;
 
 @secondary: #668ad8;
-@secondary-l: #267b8a;
-@secondary-d: #b0003a;
+@secondary-l: #03afce;
+@secondary-d: #267b8a;
 @secondary-text: #fff;
 @secondary-text-l: #fff;
 
@@ -395,6 +395,7 @@ p {
 }
 
 .pos-products-collection {
+    border-right: solid 2px #c3c3c3;
 
     .MuiPaper-rounded {
         border-radius: 0;
@@ -414,7 +415,25 @@ p {
             
             .header-right-sec{
                 display: flex;
-            align-items: center;    
+                align-items: center;   
+                
+                ul{
+                    padding: 0;
+                    margin: 0;
+                    list-style: none;
+                    display: flex;
+                    align-items: center; 
+
+                    li{                        
+                        border-left:solid 1px #d4d4d4; 
+                        background:@secondary-l;
+                        height: 70px;
+                        padding: 0 10px;
+                        line-height: 70px;
+                        display: flex;
+                        align-items: center;
+                    }
+                }
             }
         }
     }
@@ -1035,7 +1054,7 @@ p {
     }
 
     .transaction-card {
-        width: 100%;
+        width: 60%;
         min-height: 200px;
 
         .default-card-pay {
@@ -1048,31 +1067,33 @@ p {
         }
     }
 
-    .numpad-card {
-        width: 100%;
-        background: @primary-d;
-        color: @primary-text;
+    .numpad-section{
+        width: 40%;
+        margin: 0 0 10px 0;
+        .numpad-card {
+            background: @primary-d;
+            color: @primary-text;
 
-        .key {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 50px;
-            border-radius: 5px;
-            border: 2px solid rgba(255, 255, 255, 0.8);
-        }
-
-        .big-key {
-            width: 59%;
-            margin: 1%;
-        }
-
-        .small-key {
-            width: 28%;
-            margin: 1%;
+            .key {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 65px;
+                border-radius: 5px;
+                border: 2px solid rgba(255, 255, 255, 0.8);
+            }
+    
+            .big-key {
+                width: 59%;
+                margin: 1%;
+            }
+    
+            .small-key {
+                width: 28%;
+                margin: 1%;
+            }
         }
     }
-
 }
 
 .session-section {

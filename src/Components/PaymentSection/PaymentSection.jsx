@@ -4,24 +4,24 @@ import _get from 'lodash/get';
 import _set from 'lodash/set';
 import _cloneDeep from 'lodash/cloneDeep';
 /* Material import */
-
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 /* Redux Imports */
-
+import { connect } from 'react-redux';
+import { commonActionCreater } from '../../Redux/commonAction';
+/* Global Imports */
+import generateV1uuid from '../../Global/Uuid';
+import LoaderButton from '../../Global/Components/LoaderButton';
+import genericPostData from '../../Global/dataFetch/genericPostData';
 /* Component Imports */
 import CashPay from './CashPay';
 import CardPay from './CardPay';
 import DefaultCardPay from './DefaultCardPay';
 import GiftPay from './GiftPay';
-import Button from '@material-ui/core/Button';
-import { connect } from 'react-redux';
-import genericPostData from '../../Global/dataFetch/genericPostData';
 import PaymentReceipt from './paymentReceipt';
 import { withRouter } from 'react-router-dom'
-import { commonActionCreater } from '../../Redux/commonAction';
 import { Detector } from 'react-detect-offline';
 import PouchDb from 'pouchdb';
-import generateV1uuid from '../../Global/Uuid';
-import LoaderButton from '../../Global/Components/LoaderButton';
 let transactiondb = new PouchDb('transactiondb')
 /* style */
 
@@ -43,6 +43,8 @@ class PaymentSection extends React.Component {
             showPaymentReceipt: false,
             giftCard: {},
             originalGiftCard: {},
+            giftCardUsedValue: 0,
+            comment: '',
         }
 
 
@@ -284,7 +286,6 @@ class PaymentSection extends React.Component {
             _id: generateV1uuid(),
             transactionDoc: reqObj
         }).then((data) => {
-            debugger;
             this.setState({ isLoadingTransaction: false });
             this.setState({ receiptData: reqObj, showPaymentReceipt: true, transactionStatus: 'offline' })
             PouchDb.replicate('transactiondb', `http://localhost:5984/transactiondb`, {
@@ -321,7 +322,6 @@ class PaymentSection extends React.Component {
     }
     handleSaleOnlineTransactionError = () => {
         this.setState({ isLoadingTransaction: false })
-        debugger;
     }
     calcRemainingAmount = () => {
         let paymentAmount =
@@ -375,10 +375,16 @@ class PaymentSection extends React.Component {
         }
     }
 
+    handleChange = name => event => {
+        this.setState({
+          [name]: event.target.value,
+        });
+      };
+
     render() {
         return (
-            <div className='pos-payment m-50'>
-                <div className='card payment-card'>
+            <div className='pos-payment' style={{ height: this.props.windowHeight }}>
+                {/* <div className='card payment-card'>
                     <span className='card-title soft-text'>Payment Methods</span>
                     <div className='flex-row justify-center'>
                         <div style={this.calcRemainingAmount() < 0 ? { pointerEvents: 'none' } : null} onClick={this.handleCashPayment} className='each-payment-method'>
@@ -394,8 +400,17 @@ class PaymentSection extends React.Component {
                             Gift Card
                         </div>
                     </div>
+                </div> */}
+
+                <div className='flex-column pad-20'>
+                    <div className='flex-row justify-space-between m-10'>
+                        <Button variant="outlined" size="large" color="primary" >Cash</Button>
+                        <Button variant="outlined" size="large" color="primary" >Debit/Credit Card</Button>
+                        <Button variant="outlined" size="large" color="primary" >Employee</Button>
+                        <Button variant="outlined" size="large" color="primary" >Gift Card</Button>
+                        <Button variant="outlined" size="large" color="primary" >Freedom Pay</Button>
                 </div>
-                <div className='flex-row'>
+                {/* <div className='flex-row'>
                     <div className='card transaction-card'>
                         <span className='card-title soft-text'>Transactions</span>
                         {this.state.showCashPay ?
@@ -438,45 +453,102 @@ class PaymentSection extends React.Component {
                                 onPayWithGiftCard={this.onPayWithGiftCard}
                             /> : null}
 
-                    </div>
+                    </div> */}
 
+                    <div className='flex-row'>
+                        <div className='card transaction-card'>
+                            <span className='card-title soft-text'>Transactions</span>
+                            <div className="Card">
+                                <span>{this.calcRemainingAmount() > 0 ? 'Remaining Amount ' : 'Change Due '}</span>
+                                <span>{Math.abs(this.calcRemainingAmount())}</span>
+                            </div>
+                            {this.state.showCashPay ?
+                                <CashPay
+                                    handleKeyBoardValue={this.handleKeyBoardValue}
+                                    currentFocus={this.currentFocus}
+                                    value={this.state.cashPayValue}
+                                    onRemovePaymentMethod={this.onRemovePaymentMethod}
+                                /> : null}
+                            {this.state.showCardPay ?
+                                <CardPay
+                                    handleKeyBoardValue={this.handleKeyBoardValue}
+                                    currentFocus={this.currentFocus}
+                                    value={this.state.cardAmountValue}
+                                    initialValue={this.calcRemainingAmount()}
+                                    onRemovePaymentMethod={this.onRemovePaymentMethod}
+                                /> : null}
+                            {this.state.showDefaultCardPay ?
+                                <DefaultCardPay
+                                    handleKeyBoardValue={this.handleKeyBoardValue}
+                                    customer={this.props.customer}
+                                    value={this.state.defaultcardAmountValue}
+                                    currentFocus={this.currentFocus}
+                                    initialValue={this.calcRemainingAmount()}
+                                    onRemovePaymentMethod={this.onRemovePaymentMethod}
+                                /> : null}
+                            {this.state.showGiftPay ?
+                                <GiftPay
+                                    handleKeyBoardValue={this.handleKeyBoardValue}
+                                    handleGiftCardValue={this.handleGiftCardValue}
+                                    getGiftCardDetail={this.getGiftCardDetail}
+                                    value={this.state.giftPayNumberValue}
+                                    currentFocus={this.currentFocus}
+                                    giftCard={this.state.giftCard}
+                                    originalGiftCard={this.state.originalGiftCard}
+                                    onRemovePaymentMethod={this.onRemovePaymentMethod}
+                                    onPayWithGiftCard={this.onPayWithGiftCard}
+                                /> : null}
 
+                        </div>
 
+                        <div className='numpad-section'>
+                            <div className='card numpad-card'>
+                                <span className='card-title'>Numpad</span>
+                                <div className='flex-row flex-wrap justify-center pt-15'>
+                                    <div className='key small-key' onClick={this.handleInputChange('1')}>1</div>
+                                    <div className='key small-key' onClick={this.handleInputChange('2')}>2</div>
+                                    <div className='key small-key' onClick={this.handleInputChange('3')}>3</div>
+                                    <div className='key small-key' onClick={this.handleInputChange('4')}>4</div>
+                                    <div className='key small-key' onClick={this.handleInputChange('5')}>5</div>
+                                    <div className='key small-key' onClick={this.handleInputChange('6')}>6</div>
+                                    <div className='key small-key' onClick={this.handleInputChange('7')}>7</div>
+                                    <div className='key small-key' onClick={this.handleInputChange('8')}>8</div>
+                                    <div className='key small-key' onClick={this.handleInputChange('9')}>9</div>
+                                    <div className='key small-key' onClick={this.handleInputChange('.')}>.</div>
+                                    <div className='key small-key' onClick={this.handleInputChange('0')}>0</div>
+                                    <div className='key small-key' onClick={this.handleInputChange('<')}>clr</div>
+                                    <div className='small-key'></div>
+                                    <div className='key big-key'>Enter</div>
+                                </div>
+                            </div>
+                            <div className='card'>
+                                <TextField
+                                    id="outlined-name"
+                                    label="Sale Comment"
+                                    value={this.state.comment}
+                                    onChange={this.handleChange('comment')}
+                                    margin="none"
+                                    variant="outlined"
+                                    fullWidth
+                                />
+                            </div>
+                            <div className="flex-row justify-flex-end mr-10 ml-10">
+                                <div style={{ width: '100%' }}>
+                                    <Detector
+                                        render={this.buttonToRender} />
+                                </div>
+                            </div>
 
-                    <div className='card numpad-card'>
-                        <span className='card-title'>Numpad</span>
-                        <div className='flex-row flex-wrap justify-center pt-15'>
-                            <div className='key small-key' onClick={this.handleInputChange('1')}>1</div>
-                            <div className='key small-key' onClick={this.handleInputChange('2')}>2</div>
-                            <div className='key small-key' onClick={this.handleInputChange('3')}>3</div>
-                            <div className='key small-key' onClick={this.handleInputChange('4')}>4</div>
-                            <div className='key small-key' onClick={this.handleInputChange('5')}>5</div>
-                            <div className='key small-key' onClick={this.handleInputChange('6')}>6</div>
-                            <div className='key small-key' onClick={this.handleInputChange('7')}>7</div>
-                            <div className='key small-key' onClick={this.handleInputChange('8')}>8</div>
-                            <div className='key small-key' onClick={this.handleInputChange('9')}>9</div>
-                            <div className='key small-key' onClick={this.handleInputChange('.')}>.</div>
-                            <div className='key small-key' onClick={this.handleInputChange('0')}>0</div>
-                            <div className='key small-key' onClick={this.handleInputChange('<')}>clr</div>
-                            <div className='small-key'></div>
-                            <div className='key big-key'>Enter</div>
                         </div>
                     </div>
-
                 </div>
-                <div className="Card">
-                    <span>{this.calcRemainingAmount() > 0 ? 'Remaining Amount ' : 'Change Due '}</span>
-                    <span>{Math.abs(this.calcRemainingAmount())}</span>
-                </div>
-                <div className="flex-row justify-flex-end">
-                    <div style={{ width: '48%' }}>
-
-                        <Detector
-                            render={this.buttonToRender} />
 
 
-                    </div>
-                </div>
+
+
+
+
+
                 {this.state.showPaymentReceipt ? <PaymentReceipt
                     open={this.state.showPaymentReceipt}
                     transactionStatus={this.state.transactionStatus}
