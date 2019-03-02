@@ -104,6 +104,10 @@ const cartItem = (state = { cartItems: [], }, action) => {
                     taxPercent = Number(federalTaxRate) + Number(stateTaxRate) + Number(countyTaxRate)
                     taxAmount = _get(item, 'itemSubTotal.amount', 0) * taxPercent / 100
                 }
+                item.itemTaxAmount = {
+                    currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
+                    amount: taxAmount
+                }
                 item.itemEffectiveTotal = {
                     currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
                     amount: parseFloat((parseFloat(_get(item, 'itemSubTotal.amount', 0)) + taxAmount).toFixed(2))
