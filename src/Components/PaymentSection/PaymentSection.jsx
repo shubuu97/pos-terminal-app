@@ -44,8 +44,6 @@ class PaymentSection extends React.Component {
             giftCard: {},
             originalGiftCard: {},
         }
-
-
     }
 
     handleCashPayment = () => {
@@ -276,15 +274,12 @@ class PaymentSection extends React.Component {
         else {
             this.handleSaleTransactionOnline(reqObj);
         }
-
-
     }
     handleSaleTransactionOffline = (reqObj) => {
         transactiondb.put({
             _id: generateV1uuid(),
             transactionDoc: reqObj
         }).then((data) => {
-            debugger;
             this.setState({ isLoadingTransaction: false });
             this.setState({ receiptData: reqObj, showPaymentReceipt: true, transactionStatus: 'offline' })
             PouchDb.replicate('transactiondb', `http://localhost:5984/transactiondb`, {
@@ -321,7 +316,6 @@ class PaymentSection extends React.Component {
     }
     handleSaleOnlineTransactionError = () => {
         this.setState({ isLoadingTransaction: false })
-        debugger;
     }
     calcRemainingAmount = () => {
         let paymentAmount =
@@ -330,7 +324,6 @@ class PaymentSection extends React.Component {
             + (parseFloat(this.state.cashPayValue || 0)) +
             (parseFloat(this.state.giftAmountRedeemValue|| 0));
         let netTotal = _get(this.props, 'cart.totalAmount.amount', 0);
-        debugger;
         let remainingAmount = parseFloat(netTotal) - parseFloat(paymentAmount);
         return (remainingAmount || 0).toFixed(2);
     }

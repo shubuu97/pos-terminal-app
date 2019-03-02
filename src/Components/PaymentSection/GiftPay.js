@@ -32,7 +32,6 @@ class GiftPay extends React.Component {
         if (enterdGiftCardAmount == "") {
             enterdGiftCardAmount = 0;
         }
-        debugger;
         //value returned from api
         let giftCardAmount = _get(this.props, 'giftCard.value.amount', 0);
         if (enterdGiftCardAmount <= giftCardAmount && enterdGiftCardAmount >= 0) {
@@ -103,7 +102,6 @@ class GiftPay extends React.Component {
     }
     handleCheckMaxAmt = (event) => {
         let checked = event.target.checked;
-        debugger;
         if (checked) {
             //It should fill the value remaining amount
             let giftCardAmount = parseFloat(_get(this.props, 'giftCard.value.amount', 0));

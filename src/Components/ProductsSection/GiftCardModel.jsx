@@ -120,7 +120,6 @@ class GiftCardModal extends React.Component {
         }
     }
     handleSaveGiftDataError = (err) => {
-        debugger
         this.setState({ giftCodeMsg: 'Something went wrong'});
     }
 
@@ -171,14 +170,12 @@ class GiftCardModal extends React.Component {
         }
         let reqObj
         if(isExist) {
-            debugger
             let index = _findIndex(cartItems, ['id', this.props.giftCard.id]);        
             reqObj = [
                 ...cartItems
             ]
             reqObj[index].doc.product.salePrice.price = this.state.giftCard.value.amount;
         } else {
-            debugger
             reqObj = [
                 ...cartItems,
                 {
