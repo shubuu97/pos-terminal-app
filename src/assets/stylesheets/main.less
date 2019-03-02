@@ -1054,7 +1054,7 @@ p {
     }
 
     .transaction-card {
-        width: 100%;
+        width: 60%;
         min-height: 200px;
 
         .default-card-pay {
@@ -1067,31 +1067,33 @@ p {
         }
     }
 
-    .numpad-card {
-        width: 100%;
-        background: @primary-d;
-        color: @primary-text;
+    .numpad-section{
+        width: 40%;
+        margin: 0 0 10px 0;
+        .numpad-card {
+            background: @primary-d;
+            color: @primary-text;
 
-        .key {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 50px;
-            border-radius: 5px;
-            border: 2px solid rgba(255, 255, 255, 0.8);
-        }
-
-        .big-key {
-            width: 59%;
-            margin: 1%;
-        }
-
-        .small-key {
-            width: 28%;
-            margin: 1%;
+            .key {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 65px;
+                border-radius: 5px;
+                border: 2px solid rgba(255, 255, 255, 0.8);
+            }
+    
+            .big-key {
+                width: 59%;
+                margin: 1%;
+            }
+    
+            .small-key {
+                width: 28%;
+                margin: 1%;
+            }
         }
     }
-
 }
 
 .session-section {
