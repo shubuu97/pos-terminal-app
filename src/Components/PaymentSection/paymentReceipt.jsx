@@ -149,6 +149,7 @@ class PaymentReceipt extends React.Component {
                 <div id='printarea'>
                     <div>
                         <HandlePrint 
+                            type="Sale Transaction"
                             currency='$'
                             itemList={_get(cart,'cartItems', [])}
                             orderDate={moment().format('LLLL')}
@@ -157,6 +158,7 @@ class PaymentReceipt extends React.Component {
                             customerName={customerName}
                             terminalName={localStorage.getItem('terminalName')}
                             saleComment={_get(cart,'salecomment', '')}
+                            itemsDiscount={_get(cart,'itemDiscountAmount.amount', '')}
                             cartDiscount={_get(cart,'cartDiscountAmount.amount', '')}
                             employeeDiscount={_get(cart,'employeeDiscountAmount.amount', '')}
                             regularTotal={_get(cart, 'regularTotal', '')}

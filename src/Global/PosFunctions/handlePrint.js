@@ -3,25 +3,33 @@ import _get from 'lodash/get';
 import _isEmpty from 'lodash/isEmpty';
 
 const HandlePrint = (props) => {
-    const orderList = _get(props, 'itemList', []).map(item => {
+
+    const saleTransaction = _get(props, 'itemList', []).map(item => {
         return (
             <tr>
                 <td>{_get(item,'doc.product.name')}</td>
                 <td>{_get(item,'qty', '')}</td>
-                <td>
-                    {_get(props,'currency', '') + _get(item,'itemRegularTotal.amount','0')}
-                </td>
-                <td>
-                    {_get(props,'currency','') + _get(item,'itemTotalDiscountAmount.amount','0')}
-                </td>
-                <td>
-                    {_get(props,'currency', '') + _get(item,'itemTaxAmount.amount','0')}
-                </td>
-                <td>
-                    {_get(props,'currency', '') + _get(item,'itemEffectiveTotal.amount','0')}
-                </td>
+                <td>{_get(item,'itemRegularTotal.amount','0')}</td>
+                <td>{_get(item,'itemTotalDiscountAmount.amount','0')}</td>
+                <td>{_get(item,'itemTaxAmount.amount','0')}</td>
+                <td>{_get(item,'itemEffectiveTotal.amount','0')}</td>
             </tr>
-        )})  
+        )}) 
+        
+        const orderHistory = _get(props, 'itemList', []).map(item => {
+            return (
+                <tr>
+                    <td>{_get(item,'product.name')}</td>
+                    <td>{_get(item,'saleItem.qty', '')}</td>
+                    <td>{_get(item,'saleItem.itemRegularTotal.amount','0')}</td>
+                    <td>{_get(item,'saleItem.itemTotalDiscountAmount.amount','0')}</td>
+                    <td>0
+                        {/* {_get(item,'saleItem.itemTaxAmount.amount','0')} */}
+                    </td>
+                    <td>{_get(item,'saleItem.itemEffectiveTotal.amount','0')}
+                    </td>
+                </tr>
+            )}) 
     
     return (
         <div>
@@ -60,17 +68,21 @@ const HandlePrint = (props) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {orderList}
+                        {props.type == 'Sale Transaction' ? saleTransaction : orderHistory}
                     </tbody>
                 </table>
             </div>
             <div>
-                {props.saleComment == '' ? '' : 
+                {props.saleComment && 
                     <h3>
                         <span>Sale Comment: </span>
-                        <span>{_get(props,'saleComment', '')}</span>
+                        <span>{_get(props,'saleComment', '---------')}</span>
                     </h3>
                 }
+                <h3>
+                    <span>Items Discount: </span>
+                    <span>{_get(props,'currency', '') + _get(props,'itemsDiscount','0')}</span>
+                </h3>
                 <h3>
                     <span>Cart Discount: </span>
                     <span>{_get(props,'currency', '') + _get(props,'cartDiscount','0')}</span>
@@ -81,18 +93,24 @@ const HandlePrint = (props) => {
                         {_get(props,'currency', '') + _get(props,'employeeDiscount','0')}
                     </span>
                 </h3>
-                <h3>
-                    <span>Regular Total: </span>
-                    <span>{_get(props,'currency', '') + _get(props,'regularTotal','0')}</span>
-                </h3>
-                <h3>
-                    <span>Total Discount: </span>
-                    <span>{_get(props,'currency', '') + _get(props,'totalDiscount','0')}</span>
-                </h3>
-                <h3>
-                    <span>Net Total: </span>
-                    <span>{_get(props,'currency', '') + _get(props,'netTotal','0')}</span>
-                </h3>
+                {props.regularTotal &&
+                    <h3>
+                        <span>Regular Total: </span>
+                        <span>{_get(props,'currency', '') + _get(props,'regularTotal','0')}</span>
+                    </h3>
+                }
+                {props.totalDiscount &&
+                    <h3>
+                        <span>Total Discount: </span>
+                        <span>{_get(props,'currency', '') + _get(props,'totalDiscount','0')}</span>
+                    </h3>
+                }
+                {props.netTotal &&
+                    <h3>
+                        <span>Net Total: </span>
+                        <span>{_get(props,'currency', '') + _get(props,'netTotal','0')}</span>
+                    </h3>
+                }
                 <h3>
                     <span>Total Tax: </span>
                     <span>{_get(props,'currency', '') + _get(props,'totalTax','0')}</span>
@@ -101,6 +119,31 @@ const HandlePrint = (props) => {
                     <span>Total Amount: </span>
                     <span>{_get(props,'currency', '') + _get(props,'totalAmount','0')}</span>
                 </h3>
+                {props.totalAmountPaid &&
+                    <h3>
+                        <span>Total Amount Paid: </span>
+                        <span>{_get(props,'currency', '') + _get(props,'totalAmountPaid','0')}</span>
+                    </h3>
+                }
+                {props.changeDue &&
+                    <h3>
+                        <span>Change Due: </span>
+                        <span>{_get(props,'currency', '') + _get(props,'changeDue','0')}</span>
+                    </h3>
+                }
+
+                {props.paymentMethods &&
+                    <h3>Payment Method: 
+                    {_get(props,'paymentMethods',[]).map(payment => {
+                        return (
+                            <div style={{display: 'flex'}}>
+                                <p>{_get(payment,'paymentAmount.currency','') + _get(payment,'paymentAmount.amount',0)} by&nbsp;</p> 
+                                <p>{_get(payment,'paymentMethod','')}</p>
+                            </div>
+                        )
+                    })}
+                    </h3>
+                }
             </div>
         </div>
     )
