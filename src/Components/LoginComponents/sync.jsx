@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import _get from 'lodash/get'
 /* Redux Imports */
 import connect from 'react-redux/lib/connect/connect';
+import { commonActionCreater } from "../../Redux/commonAction";
 /* Material Imports */
 import LinearProgress from '@material-ui/core/LinearProgress';
 /* Global Imports */
@@ -17,6 +18,23 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+import Find from "pouchdb-find";
+PouchDb.plugin(Find);
+
+let categoryDb = new PouchDb("categoryDb");
+categoryDb
+  .createIndex({
+    index: {
+      fields: ["categoryType"]
+    }
+  })
+  .then(function(result) {
+    console.log(result);
+  })
+  .catch(function(err) {
+    console.log(err);
+  });
+
 const styles = theme => ({
     close: {
         padding: theme.spacing.unit / 2,
@@ -53,6 +71,18 @@ class SyncContainer extends Component {
         });
         let categoryDb = new PouchDb('categoryDb');
         categoryDb.bulkDocs(_get(categoryData, 'data', [])).then((res) => {
+            categoryDb
+            .find({
+                selector: { categoryType: 0 }
+            })
+            .then(results => {
+                this.props.dispatch(
+                commonActionCreater(results.docs, "GET_CATEGORY_DATA_SUCCESS")
+                );
+            })
+            .catch(err => {
+                console.log(err);
+            });
             let percentageComplete = this.state.percentageComplete + 100 / this.state.ApiCallCount;
             this.setState({ percentageComplete });
             PouchDb.replicate('categoryDb', `http://localhost:5984/categoryDb`, {

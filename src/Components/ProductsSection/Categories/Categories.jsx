@@ -11,21 +11,19 @@ import { commonActionCreater } from "../../../Redux/commonAction";
 import PouchDb from "pouchdb";
 import Find from "pouchdb-find";
 
-PouchDb.plugin(Find);
-
 let categoryDb = new PouchDb("categoryDb");
-categoryDb
-  .createIndex({
-    index: {
-      fields: ["categoryType"]
-    }
-  })
-  .then(function(result) {
-    console.log(result);
-  })
-  .catch(function(err) {
-    console.log(err);
-  });
+// categoryDb
+//   .createIndex({
+//     index: {
+//       fields: ["categoryType"]
+//     }
+//   })
+//   .then(function(result) {
+//     console.log(result);
+//   })
+//   .catch(function(err) {
+//     console.log(err);
+//   });
 
 class Categories extends Component {
   constructor(props) {
