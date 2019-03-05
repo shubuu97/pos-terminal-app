@@ -167,11 +167,9 @@ class PaymentSection extends React.Component {
     }
 
     handleInputChange = num => event => {
-        debugger;
         let currentFocus = this.state.currentFocus;
         let focusItemValue = this.props[currentFocus];
         if (num != '<') {
-            debugger;
             focusItemValue = (focusItemValue || '') + num;
         }
         else {

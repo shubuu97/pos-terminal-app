@@ -157,7 +157,6 @@ class OrdersTab extends React.Component {
 
     // * Populate each Item added to cart
     populateCartItems = () => {
-        debugger
         let totalCartItems = 0;
         let orderTotal = 0
         let cartItems = this.props.cartItems.map((item, index) => {

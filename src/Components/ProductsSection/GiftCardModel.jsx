@@ -23,7 +23,7 @@ import { withStyles } from '@material-ui/core/styles';
 import _findIndex from 'lodash/findIndex';
 
 function Transition(props) {
-    return <Slide direction="up" {...props} />;
+    return <Slide direction="down" {...props} />;
 }
 
 const DialogTitle = withStyles(theme => ({
