@@ -9,10 +9,13 @@ import Button from '@material-ui/core/Button';
 import CloseIcon from '@material-ui/icons/Close';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 import { commonActionCreater } from '../../Redux/commonAction';
 import { connect } from 'react-redux';
 import genericPostData from '../../Global/dataFetch/genericPostData';
 let regex = /^\d*[\.\d]+$/;
+
 
 
 /* Redux Imports */
@@ -62,7 +65,8 @@ class GiftPay extends React.Component {
         let data = {
             storeId: localStorage.getItem('storeId'),
             code: this.props.giftPayNumber,
-        }
+        };
+        this.setState({isLoadingCheckValue:true})
         genericPostData({
             dispatch: this.props.dispatch,
             reqObj: data,
@@ -73,8 +77,8 @@ class GiftPay extends React.Component {
                 error: 'CHECK_GIFT_CARD_DATA_ERROR'
             },
             identifier: 'CHECK_GIFT_CARD_DATA',
-            successCb: (data) => console.log(data),
-            errorCb: (error) => console.log(error)
+            successCb: (data) => this.setState({isLoadingCheckValue:false}),
+            errorCb: (error) => this.setState({isLoadingCheckValue:false})
         })
         // this.props.getGiftCardDetail('giftPayNumberValue', this.props.giftPayNumber);
 
@@ -156,7 +160,7 @@ class GiftPay extends React.Component {
             return (
                 <React.Fragment>
                     <span className="pay-button" onClick={this.checkGiftCardValue}>
-                        Check Value
+                       {this.state.isLoadingCheckValue?<CircularProgress size={24}/>:"Check Value"}
                     </span>
                 </React.Fragment>
             )
