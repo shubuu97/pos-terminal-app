@@ -77,7 +77,7 @@ class HomeContainer extends React.Component {
         let checkoutCustomerArea = checkoutMainPart - checkoutactionArea
 
         // * Payment Section 
-        
+
 
 
         this.setState({
@@ -139,6 +139,8 @@ class HomeContainer extends React.Component {
         productsdb.allDocs({
             include_docs: true,
             attachments: true,
+            endkey: '_design',
+            'inclusive_end': false
             // limit: 9,
             // skip: 0
             // ! Note - Hiding Pagination
@@ -233,7 +235,7 @@ class HomeContainer extends React.Component {
                         handleHistoryOpen={this.handleTerminalHistoryOpen}
                         handleClickOpenOnHold={() => this.handleClickOpen('openOnHold')}
                         handleClickOpenSessionContainer={this.handleClickOpenSessionContainer}
-                        handleClickQuickBook = {()=>this.setState({openQuickBookContainer:true})}
+                        handleClickQuickBook={() => this.setState({ openQuickBookContainer: true })}
                     />
                 </Products>
 
@@ -257,7 +259,7 @@ class HomeContainer extends React.Component {
 
                 <Payment pose={isOpenPayment ? 'open' : 'closed'}>
                     {isOpenPayment ?
-                        <PaymentSection 
+                        <PaymentSection
                             windowHeight={windowHeight}
                         /> : null
                     }
@@ -303,7 +305,7 @@ class HomeContainer extends React.Component {
                 {
                     this.state.openSessionContainer ?
                         <SessionDialog
-                            title = "Sesssion List"
+                            title="Sesssion List"
                             handleClickOpen={this.handleClickOpenSessionContainer}
                             handleClose={this.handleCloseSessionContainer}
                             open={this.state.openSessionContainer}
@@ -314,9 +316,9 @@ class HomeContainer extends React.Component {
                 {
                     this.state.openQuickBookContainer ?
                         <QuickBookDialog
-                            title = "Quick Book Integration"
-                            handleClickOpen={()=>this.setState({openQuickBookContainer:true})}
-                            handleClose={()=>this.setState({openQuickBookContainer:false})}
+                            title="Quick Book Integration"
+                            handleClickOpen={() => this.setState({ openQuickBookContainer: true })}
+                            handleClose={() => this.setState({ openQuickBookContainer: false })}
                             open={this.state.openQuickBookContainer}
                             holdCartData={this.props.holdCartData}
                             dispatch={dispatch}

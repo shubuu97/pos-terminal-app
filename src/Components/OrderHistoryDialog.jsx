@@ -371,7 +371,8 @@ class OrderHistoryDialog extends React.Component {
     render() {
         const { classes, store } = this.props;
         const { selectedOrder } = this.state; 
-        console.log(selectedOrder, 'selectedOrder')
+        let check = ('amount' in _get(selectedOrder,'sale.itemDiscountAmount',{}))
+        console.log(check, 'checking check')
         let address  = _get(store,'store.address', '')
 
         let storeAddress = _get(address, 'addressLine1', '') + ', ' + 
@@ -443,13 +444,13 @@ class OrderHistoryDialog extends React.Component {
                             storeAddress={storeAddress}
                             customerName={customerName}
                             terminalName={terminalName}
-                            itemsDiscount={_get(selectedOrder,'sale.itemDiscountAmount.amount', '')}
-                            cartDiscount={_get(selectedOrder,'sale.cartDiscountAmount.amount', '')}
-                            employeeDiscount={_get(selectedOrder,'sale.employeeDiscountAmount.amount', '')}
-                            totalTax={_get(selectedOrder,'sale.totalTaxAmount.amount','')}
-                            totalAmount={_get(selectedOrder,'sale.totalAmount.amount','')}
-                            totalAmountPaid={_get(selectedOrder,'sale.totalAmountPaid.amount','')}
-                            changeDue={_get(selectedOrder,'sale.changeDue.amount','0')}
+                            itemsDiscount={('amount' in _get(selectedOrder,'sale.itemDiscountAmount',{})) ? _get(selectedOrder,'sale.itemDiscountAmount.amount', '') : 0}
+                            cartDiscount={('amount' in _get(selectedOrder,'sale.cartDiscountAmount',{})) ? _get(selectedOrder,'sale.cartDiscountAmount.amount', '') : 0}
+                            employeeDiscount={('amount' in _get(selectedOrder,'sale.employeeDiscountAmount',{})) ? _get(selectedOrder,'sale.employeeDiscountAmount.amount', '') : 0}
+                            totalTax={('amount' in _get(selectedOrder,'sale.totalTaxAmount',{})) ? _get(selectedOrder,'sale.totalTaxAmount.amount','') : 0}
+                            totalAmount={('amount' in _get(selectedOrder,'sale.totalAmount',{})) ? _get(selectedOrder,'sale.totalAmount.amount','') : 0}
+                            totalAmountPaid={('amount' in _get(selectedOrder,'sale.totalAmountPaid',{})) ? _get(selectedOrder,'sale.totalAmountPaid.amount','') : 0}
+                            changeDue={('amount' in _get(selectedOrder,'sale.changeDue',{})) ? _get(selectedOrder,'sale.changeDue.amount','0') : 0}
                             paymentMethods={_get(selectedOrder,'sale.payments',[])}
                         />
                     </div>

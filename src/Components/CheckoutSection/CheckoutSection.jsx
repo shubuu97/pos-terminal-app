@@ -30,7 +30,7 @@ class CheckoutSection extends React.Component {
     };
 
     handleHold = (title) => {
-        const {firstName, lastName} = this.props.cart.customer.customer
+        const {firstName, lastName} = _get(this, 'props.cart.customer.customer', '')
         globalHoldCart(this.props.dispatch, this.props.cart, (title || ''), firstName + ' ' + lastName);
     }
 

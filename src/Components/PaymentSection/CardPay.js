@@ -3,7 +3,9 @@ import React from 'react';
 import _get from 'lodash/get';
 /* Material import */
 import TextField from '@material-ui/core/TextField';
-import CloseIcon from '@material-ui/icons/Close'
+import CloseIcon from '@material-ui/icons/Close';
+import { connect } from 'react-redux';
+import { commonActionCreater } from '../../Redux/commonAction';
 
 /* Redux Imports */
 
@@ -15,20 +17,23 @@ class CardPay extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            cardAmount:''
         }
     }
     handleChange = name => event => {
         this.setState({
             [name]: event.target.value,
         });
-        this.props.handleKeyBoardValue('cardAmountValue',event.target.value)
+        this.props.dispatch(commonActionCreater({cardAmount:event.target.value,totalAmount:this.props.totalAmount},'CARD_INPUT_HANDLER'));
+
     };
-    componentWillReceiveProps(props){
-        this.setState({cardAmount:props.value})
-    }
     componentDidMount(){
-        this.props.handleKeyBoardValue('cardAmountValue',this.props.initialValue)
+        //setting to the remaining amount
+        this.props.dispatch(commonActionCreater({cardAmount:this.props.remainingAmount,totalAmount:this.props.totalAmount},'CARD_INPUT_HANDLER'));
+    }
+    componentWillUnmount(){
+        //setting to the 0 again on unmouning
+        this.props.dispatch(commonActionCreater({cardAmount:'',totalAmount:this.props.totalAmount},'CARD_INPUT_HANDLER'));
+
     }
 
     render() {
@@ -40,11 +45,10 @@ class CardPay extends React.Component {
                         <TextField
                         InputLabelProps={{ shrink: true }}
                             autoFocus
-                            onFocus={() => this.props.currentFocus('cardAmount')}
+                            onFocus={() => this.props.currentFocus({fieldValue:'cardAmount',handler:'CARD_INPUT_HANDLER'})}
                             id="outlined-name"
                             label="Amount"
-                            type = "number"
-                            value={this.state.cardAmount}
+                            value={this.props.cardAmount}
                             onChange={this.handleChange('cardAmount')}
                             margin="normal"
                             variant="outlined"
@@ -61,4 +65,12 @@ class CardPay extends React.Component {
     }
 }
 
-export default CardPay;
+function mapStateMapToProps(state){
+    let totalAmount = _get(state,'cart.totalAmount');
+    let cardAmount = _get(state,'PaymentDetails.cardAmount');
+    let remainingAmount = _get(state,'PaymentDetails.remainingAmount')
+
+    return {totalAmount,cardAmount,remainingAmount};
+}
+
+export default connect(mapStateMapToProps)(CardPay);

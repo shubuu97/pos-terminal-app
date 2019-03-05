@@ -64,35 +64,35 @@ function TemporaryDrawer(props) {
                     <ListItemText primary={'Home'} />
                 </ListItem>
                 <Divider />
-                <ListItem button key={1} onClick={props.handleClickOpenOnHold}>
+                <ListItem button key={2} onClick={props.handleClickOpenOnHold}>
                     <ListItemIcon>
 
                     </ListItemIcon>
                     <ListItemText primary={'On Hold'} />
                 </ListItem>
                 <Divider />
-                <ListItem button key={1} onClick={props.handleClickOpenSessionContainer}>
+                <ListItem button key={3} onClick={props.handleClickOpenSessionContainer}>
                     <ListItemIcon>
 
                     </ListItemIcon>
                     <ListItemText primary={'Session Management'} />
                 </ListItem>
                 <Divider />
-                <ListItem button key={1} onClick={props.handleHistoryOpen}>
+                <ListItem button key={4} onClick={props.handleHistoryOpen}>
                     <ListItemIcon>
 
                     </ListItemIcon>
                     <ListItemText primary={'Terminal History'} />
                 </ListItem>
                 <Divider />
-                <ListItem button key={1} onClick={props.handleClickQuickBook}>
+                <ListItem button key={5} onClick={props.handleClickQuickBook}>
                     <ListItemIcon>
 
                     </ListItemIcon>
                     <ListItemText primary={'Integrate QuickBook'} />
                 </ListItem>
                 <Divider />
-                <ListItem button key={1}>
+                <ListItem button key={6} onClick={props.logout}>
                     <ListItemIcon>
 
                     </ListItemIcon>
