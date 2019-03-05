@@ -417,13 +417,15 @@ class PaymentSection extends React.Component {
     render() {
         return (
             <div className='pos-payment' style={{ height: this.props.windowHeight }}>
-                <div className='flex-column pad-20'>
-                    <div className='flex-row justify-space-between m-10'>
-                        <Button disabled={this.props.remainingAmount <= 0} onClick={this.handleCashPayment} variant="outlined" size="large" color="primary" >Cash</Button>
-                        <Button onClick={this.handleCardPayment} variant="outlined" disabled={this.props.remainingAmount <= 0} size="large" color="primary" >Debit/Credit Card</Button>
-                        {_get(this.props, 'customer.isEmpPayEnabled') ? <Button onClick={this.handleEmployeePay} disabled={this.props.remainingAmount < 0} variant="outlined" size="large" color="primary" >Employee</Button> : null}
-                        <Button disabled={this.props.remainingAmount <= 0} onClick={this.handleGiftCardPayment} variant="outlined" size="large" color="primary" >Gift Card</Button>
-                        <Button disabled={this.props.remainingAmount <= 0} variant="outlined" size="large" color="primary" >Freedom Pay</Button>
+                <div className='flex-column'>
+                    <div className='flex-row justify-space-between'>
+                    <ul className="payment-method">
+                        <li disabled={this.props.remainingAmount <= 0} onClick={this.handleCashPayment} className="cash-method">Cash</li>
+                        <li onClick={this.handleCardPayment} variant="outlined" disabled={this.props.remainingAmount <= 0} className="card-method">Debit/Credit Card</li>
+                        {_get(this.props, 'customer.isEmpPayEnabled') ? <li onClick={this.handleEmployeePay} disabled={this.props.remainingAmount < 0} className="employee-section">Employee</li> : null}
+                        <li disabled={this.props.remainingAmount <= 0} onClick={this.handleGiftCardPayment} className="giftcard-section">Gift Card</li>
+                        {/* <li disabled={this.props.remainingAmount <= 0} className="freedompay">Freedom <br/> Pay</li>      */}
+                    </ul>   
                     </div>
 
                     <div className='flex-row'>
