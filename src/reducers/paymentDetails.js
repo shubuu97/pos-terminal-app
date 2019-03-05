@@ -1,4 +1,5 @@
 import _get from 'lodash/get';
+
 const paymentReducer = (state = {
     cashAmount: '',
     cardAmount: '',
@@ -43,10 +44,11 @@ const paymentReducer = (state = {
                 (parseFloat(state.cardAmount) || 0)
                 + (parseFloat(state.giftCardAmount || 0)) +
                 (parseFloat(state.employeePay || 0));
+                debugger;
             remainingAmount = parseFloat(totalAmount) - parseFloat(paymentAmount);
             amountAvailToRedeem = parseFloat(_get(state, 'giftCardData.value.amount'));
             if (amountAvailToRedeem >= remainingAmount) {
-                let effectiveAmount = paymentAmount-remainingAmount
+                let effectiveAmount =  parseFloat(totalAmount) - paymentAmount-remainingAmount
                 return (Object.assign({}, state, { giftCardAmount: remainingAmount, remainingAmount:effectiveAmount }));
             }
             else {
@@ -87,7 +89,7 @@ const paymentReducer = (state = {
                 (parseFloat(state.employeePay || 0));
             remainingAmount = parseFloat(totalAmount) - parseFloat(paymentAmount);
             return (Object.assign({}, state, { remainingAmount }));
-        case 'GET_GIFT_CARD__DATA_SUCCESS':
+        case 'CHECK_GIFT_CARD_DATA_SUCCESS':
             console.log(action.data)
             return (Object.assign({}, state, { giftCardData: action.data }));
         default:
