@@ -321,7 +321,7 @@ class PaymentSection extends React.Component {
 
         })
             .catch((error) => {
-                this.setState({isLoadingTransaction:false});
+                this.setState({ isLoadingTransaction: false });
                 showErrorAlert({ dispatch: this.props.dispatch, error: error })
             })
     }
@@ -413,20 +413,28 @@ class PaymentSection extends React.Component {
             [name]: event.target.value,
         });
     };
+    giftCardRender = ({ online }) => {
+        let disable = this.props.remainingAmount <= 0 ? { opacity: '0.3', pointerEvents: 'none' } : null
+        if (online)
+            return (<li style={disable} onClick={this.handleGiftCardPayment} className="giftcard-section">Gift Card</li>)
+        else {
+            return (null)
+        }
+    }
 
     render() {
-       let disable =  this.props.remainingAmount <= 0?{opacity:'0.3',pointerEvents:'none'}:null
+        let disable = this.props.remainingAmount <= 0 ? { opacity: '0.3', pointerEvents: 'none' } : null
         return (
             <div className='pos-payment' style={{ height: this.props.windowHeight }}>
                 <div className='flex-column'>
                     <div className='flex-row justify-space-between'>
-                    <ul className="payment-method">
-                        <li style={disable}  onClick={this.handleCashPayment} className="cash-method">Cash</li>
-                        <li style={disable} onClick={this.handleCardPayment} variant="outlined"  className="card-method">Debit/Credit Card</li>
-                        {_get(this.props, 'customer.isEmpPayEnabled') ? <li style={disable} onClick={this.handleEmployeePay} disabled={this.props.remainingAmount < 0} className="employee-section">Employee</li> : null}
-                        <li style={disable}  onClick={this.handleGiftCardPayment} className="giftcard-section">Gift Card</li>
-                        {/* <li  className="freedompay">Freedom <br/> Pay</li>      */}
-                    </ul>   
+                        <ul className="payment-method">
+                            <li style={disable} onClick={this.handleCashPayment} className="cash-method">Cash</li>
+                            <li style={disable} onClick={this.handleCardPayment} variant="outlined" className="card-method">Debit/Credit Card</li>
+                            {_get(this.props, 'customer.isEmpPayEnabled') ? <li style={disable} onClick={this.handleEmployeePay} disabled={this.props.remainingAmount < 0} className="employee-section">Employee</li> : null}
+                            <Detector render={this.giftCardRender} />
+                            {/* <li  className="freedompay">Freedom <br/> Pay</li>      */}
+                        </ul>
                     </div>
 
                     <div className='flex-row'>
@@ -506,7 +514,7 @@ class PaymentSection extends React.Component {
                                     fullWidth
                                 />
                             </div>
-                           
+
 
                         </div>
                     </div>
