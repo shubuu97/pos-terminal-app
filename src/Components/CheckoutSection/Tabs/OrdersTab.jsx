@@ -37,7 +37,12 @@ class OrdersTab extends React.Component {
             identifier: '',
             itemIndex: '',
             forCart: false,
+            cartItemQty: 0,
         }
+    }
+
+    componentDidMount(){
+        this.setState({cartItemQty: _get(this, 'props.cart.cartQty', 0)})
     }
 
     componentWillReceiveProps(props) {
@@ -46,6 +51,13 @@ class OrdersTab extends React.Component {
         this.setState({
             cartListHeight
         })
+        if(this.state.cartItemQty != _get(props, 'cart.cartQty', 0)){
+            this.props.dispatch(commonActionCreater(1, 'SWITCH_TAB_NUMBER'))
+            this.setState({
+                cartItemQty: _get(props, 'cart.cartQty', 0)
+            })
+        }
+
     }
 
 
@@ -194,8 +206,6 @@ class OrdersTab extends React.Component {
                         </div>
                     </ExpansionPanelDetails>
                 </ExpansionPanel >
-
-
             )
         });
         return cartItems

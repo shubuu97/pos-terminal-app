@@ -31,7 +31,6 @@ class CardPay extends React.Component {
         this.props.dispatch(commonActionCreater({cardAmount:this.props.remainingAmount,totalAmount:this.props.totalAmount},'CARD_INPUT_HANDLER'));
     }
     componentWillUnmount(){
-        debugger;
         //setting to the 0 again on unmouning
         this.props.dispatch(commonActionCreater({cardAmount:'',totalAmount:this.props.totalAmount},'CARD_INPUT_HANDLER'));
 

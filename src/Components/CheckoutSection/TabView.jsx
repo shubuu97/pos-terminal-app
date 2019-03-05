@@ -57,6 +57,7 @@ class FullWidthTabs extends React.Component {
     handleChangeIndex = index => {
         this.setState({ value: index }, () => {this.toggleView()});
     };
+
     toggleViewPayment = () => {
         this.props.toggleViewPayment()
     }
@@ -110,6 +111,7 @@ class FullWidthTabs extends React.Component {
                             checkoutactionArea={this.props.checkoutactionArea}
                             checkoutcartArea={this.props.checkoutcartArea}
                             handleClickOpen={this.props.handleClickOpen}
+                            handleChangeIndex={this.handleChangeIndex}
                         />
                     </TabContainer>
 

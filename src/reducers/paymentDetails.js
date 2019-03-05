@@ -38,7 +38,6 @@ const paymentReducer = (state = {
             break;
 
         case 'GIFT_USE_MAX':
-        debugger;
             paymentAmount =
                 (parseFloat(state.cashAmount) || 0) +
                 (parseFloat(state.cardAmount) || 0)
@@ -56,7 +55,6 @@ const paymentReducer = (state = {
             }
             break;
         case 'GIFT_AMOUNT_TO_REDEEM':
-            debugger;
             let amountAvailToRedeem = parseFloat(_get(state, 'giftCardData.value.amount'));
             let enteredAmount = parseFloat(action.data.giftCardAmount) || 0;
             paymentAmount =
@@ -91,7 +89,6 @@ const paymentReducer = (state = {
             return (Object.assign({}, state, { remainingAmount }));
         case 'GET_GIFT_CARD__DATA_SUCCESS':
             console.log(action.data)
-            debugger;
             return (Object.assign({}, state, { giftCardData: action.data }));
         default:
             break;
