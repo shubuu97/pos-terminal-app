@@ -415,16 +415,17 @@ class PaymentSection extends React.Component {
     };
 
     render() {
+       let disable =  this.props.remainingAmount <= 0?{opacity:'0.3',pointerEvents:'none'}:null
         return (
             <div className='pos-payment' style={{ height: this.props.windowHeight }}>
                 <div className='flex-column'>
                     <div className='flex-row justify-space-between'>
                     <ul className="payment-method">
-                        <li disabled={this.props.remainingAmount <= 0} onClick={this.handleCashPayment} className="cash-method">Cash</li>
-                        <li onClick={this.handleCardPayment} variant="outlined" disabled={this.props.remainingAmount <= 0} className="card-method">Debit/Credit Card</li>
-                        {_get(this.props, 'customer.isEmpPayEnabled') ? <li onClick={this.handleEmployeePay} disabled={this.props.remainingAmount < 0} className="employee-section">Employee</li> : null}
-                        <li disabled={this.props.remainingAmount <= 0} onClick={this.handleGiftCardPayment} className="giftcard-section">Gift Card</li>
-                        {/* <li disabled={this.props.remainingAmount <= 0} className="freedompay">Freedom <br/> Pay</li>      */}
+                        <li style={disable}  onClick={this.handleCashPayment} className="cash-method">Cash</li>
+                        <li style={disable} onClick={this.handleCardPayment} variant="outlined"  className="card-method">Debit/Credit Card</li>
+                        {_get(this.props, 'customer.isEmpPayEnabled') ? <li style={disable} onClick={this.handleEmployeePay} disabled={this.props.remainingAmount < 0} className="employee-section">Employee</li> : null}
+                        <li style={disable}  onClick={this.handleGiftCardPayment} className="giftcard-section">Gift Card</li>
+                        {/* <li  className="freedompay">Freedom <br/> Pay</li>      */}
                     </ul>   
                     </div>
 
