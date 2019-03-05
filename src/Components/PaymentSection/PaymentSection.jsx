@@ -397,13 +397,15 @@ class PaymentSection extends React.Component {
                     </div>
                 </div> */}
 
-                <div className='flex-column pad-20'>
-                    <div className='flex-row justify-space-between m-10'>
-                        <Button variant="outlined" size="large" color="primary" >Cash</Button>
-                        <Button variant="outlined" size="large" color="primary" >Debit/Credit Card</Button>
-                        <Button variant="outlined" size="large" color="primary" >Employee</Button>
-                        <Button variant="outlined" size="large" color="primary" >Gift Card</Button>
-                        <Button variant="outlined" size="large" color="primary" >Freedom Pay</Button>
+                <div className='flex-column'>
+                    <div className='flex-row justify-space-between'>
+                    <ul className="payment-method">
+                        <li className="cash-method">Cash</li>
+                        <li className="card-method">Debit/Credit Card</li>
+                        <li className="employee-section">Employee</li>
+                        <li className="giftcard-section">Gift Card</li>
+                        {/* <li className="freedompay">Freedom <br/> Pay</li>      */}
+                    </ul>                   
                 </div>
                 {/* <div className='flex-row'>
                     <div className='card transaction-card'>
@@ -527,13 +529,14 @@ class PaymentSection extends React.Component {
                                     fullWidth
                                 />
                             </div>
-                            <div className="flex-row justify-flex-end mr-10 ml-10">
-                                <div style={{ width: '100%' }}>
-                                    <Detector
-                                        render={this.buttonToRender} />
-                                </div>
-                            </div>
+                           
 
+                        </div>
+                    </div>
+                    <div className="flex-row justify-flex-end mr-10 ml-10">
+                        <div style={{ width: '100%' }}>
+                            <Detector
+                                render={this.buttonToRender} />
                         </div>
                     </div>
                 </div>

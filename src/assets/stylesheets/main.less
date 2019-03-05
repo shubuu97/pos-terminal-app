@@ -883,7 +883,7 @@ p {
     }
 
     .payment-section {
-        background: @background;
+        background: @background-white;
 
         .section-heading {
             font-size: 1.4em;
@@ -1017,6 +1017,87 @@ p {
 }
 
 .pos-payment {
+    border-left: solid 2px #c3c3c3;
+    .payment-method{
+        display: flex;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        flex: 1;
+
+        li{
+           
+            margin: 2px;
+            border-bottom: solid 3px #8dc4de;
+            height: 70px;
+            line-height: 18px;
+            text-align: center;
+            background: #beeaff;
+            position: relative;
+            box-sizing: border-box;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            flex:1;
+            padding-left: 7%;
+            justify-content: space-around;
+            text-transform: uppercase;
+        }
+
+        .cash-method:before{
+            content: "";
+            background: url(../images/cash-payment.png) no-repeat;
+            background-size: contain;
+            width: 73px;
+            height: 55px;
+            left: 17%;
+            position: absolute;
+        }
+
+        .card-method:before{
+            content: "";
+            background: url(../images/card-payment.png) no-repeat;
+            background-size: contain;
+            width: 59px;
+            height: 48px;
+            left: 6%;
+            position: absolute;
+
+        }
+
+        .employee-section:before{
+            content: "";
+            background: url(../images/employee.png) no-repeat;
+            background-size: contain;
+            width: 65px;
+            height: 46px;
+            left: 13%;
+            position: absolute;
+
+        }
+
+        .giftcard-section:before{
+            content: "";
+            background: url(../images/gift-card.png) no-repeat;
+            background-size: contain;
+            width: 63px;
+            height: 43px;
+            left: 12%;
+            position: absolute;
+
+        }
+
+        .freedompay:before{
+            content: "";
+            background: url(../images/freedompay.png) no-repeat;
+            background-size: contain;
+            width: 61px;
+            height: 45px;
+            left: 12%;
+            position: absolute;
+
+        }
+    }
     .card {
         background: @background-white;
         border-radius: 5px;
