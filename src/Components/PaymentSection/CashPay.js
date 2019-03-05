@@ -4,6 +4,8 @@ import _get from 'lodash/get';
 /* Material import */
 import TextField from '@material-ui/core/TextField';
 import CloseIcon from '@material-ui/icons/Close'
+import { commonActionCreater } from '../../Redux/commonAction';
+import {connect} from 'react-redux';
 
 
 /* Redux Imports */
@@ -23,11 +25,13 @@ class CashPay extends React.Component {
         this.setState({
             [name]: event.target.value,
         });
-        this.props.handleKeyBoardValue('cashPayValue',event.target.value)
-
+        this.props.dispatch(commonActionCreater({cashAmount:event.target.value,totalAmount:this.props.totalAmount},'CASH_INPUT_HANDLER'));
+        
     };
-    componentWillReceiveProps(props){
-        this.setState({cashPay:props.value})
+    componentWillUnmount(){
+        //setting to the 0 again on unmouning
+        this.props.dispatch(commonActionCreater({cashAmount:'',totalAmount:this.props.totalAmount},'CASH_INPUT_HANDLER'));
+
     }
     render() {
         return (
@@ -40,10 +44,10 @@ class CashPay extends React.Component {
                             id="cashPay"
                             label="Amount"
                             type = "number"
-                            value={this.state.cashPay}
+                            value={this.props.cashAmount}
                             onChange={this.handleChange('cashPay')}
                             margin="outline"
-                            onFocus={() => this.props.currentFocus('cashPay')}
+                            onFocus={() => this.props.currentFocus({fieldValue:'cashAmount',handler:'CASH_INPUT_HANDLER'})}
                             fullWidth
                             autoFocus
                             type='text'
@@ -60,4 +64,12 @@ class CashPay extends React.Component {
     }
 }
 
-export default CashPay;
+function mapStateMapToProps(state){
+    let totalAmount = _get(state,'cart.totalAmount');
+    let cashAmount = _get(state,'PaymentDetails.cashAmount');
+    let remainingAmount = _get(state,'PaymentDetails.remainingAmount')
+
+    return {totalAmount,cashAmount,remainingAmount};
+}
+
+export default connect(mapStateMapToProps)(CashPay);

@@ -14,6 +14,7 @@ import commonStaticReducer from './commonStaticReducer';
 import cart from '../reducers/cartItem';
 import cartHoldData from '../reducers/holdCartItem';
 import ShowToast from './toastReducer';
+import PaymentDetails from '../reducers/paymentDetails'
 
 // import cartOrderDetailsFun from './commonStaticReducer';
 
@@ -60,7 +61,8 @@ let rootRducer = combineReducers({
     giftCardData,
     giftCardPaymentData,
     saveMiscProductData,
-    ShowToast
+    ShowToast,
+    PaymentDetails
 })
 
 export default rootRducer;
