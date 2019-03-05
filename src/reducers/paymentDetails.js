@@ -47,11 +47,12 @@ const paymentReducer = (state = {
             remainingAmount = parseFloat(totalAmount) - parseFloat(paymentAmount);
             amountAvailToRedeem = parseFloat(_get(state, 'giftCardData.value.amount'));
             if (amountAvailToRedeem >= remainingAmount) {
-                return (Object.assign({}, state, { giftCardAmount: remainingAmount, remainingAmount }));
+                let effectiveAmount = paymentAmount-remainingAmount
+                return (Object.assign({}, state, { giftCardAmount: remainingAmount, remainingAmount:effectiveAmount }));
             }
             else {
-                remainingAmount = paymentAmount - amountAvailToRedeem;
-                return (Object.assign({}, state, { giftCardAmount: amountAvailToRedeem, remainingAmount }));
+                let effectiveRemainingAmount =  parseFloat(totalAmount) - parseFloat(paymentAmount)-amountAvailToRedeem;
+                return (Object.assign({}, state, { giftCardAmount: amountAvailToRedeem, remainingAmount:effectiveRemainingAmount }));
             }
             break;
         case 'GIFT_AMOUNT_TO_REDEEM':
