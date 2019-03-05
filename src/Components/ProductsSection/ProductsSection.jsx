@@ -56,7 +56,6 @@ class ProductsSection extends React.Component {
     }
 
     logout = () => {
-        debugger
         localStorage.clear();
         //logic to destory the dbs
         let p1 = new PouchDb('customersdb').destroy();
