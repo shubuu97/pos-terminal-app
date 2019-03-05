@@ -46,8 +46,6 @@ class PaymentSection extends React.Component {
             giftCardUsedValue: 0,
             comment: '',
         }
-
-
     }
 
     componentDidMount() {
@@ -293,8 +291,6 @@ class PaymentSection extends React.Component {
         else {
             this.handleSaleTransactionOnline(reqObj);
         }
-
-
     }
     handleSaleTransactionOffline = (reqObj) => {
         transactiondb.put({
@@ -345,7 +341,6 @@ class PaymentSection extends React.Component {
             + (parseFloat(this.props.cashAmount || 0)) +
             (parseFloat(this.state.giftAmountRedeemValue || 0));
         let netTotal = _get(this.props, 'cart.totalAmount.amount', 0);
-        debugger;
         let remainingAmount = parseFloat(netTotal) - parseFloat(paymentAmount);
         return (remainingAmount || 0).toFixed(2);
     }

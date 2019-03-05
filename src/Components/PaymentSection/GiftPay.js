@@ -112,7 +112,6 @@ class GiftPay extends React.Component {
     }
     handleCheckMaxAmt = (event) => {
         let checked = event.target.checked;
-        debugger;
         if (checked) {
             this.props.dispatch(commonActionCreater({ totalAmount: this.props.totalAmount }, 'GIFT_USE_MAX'))
         }

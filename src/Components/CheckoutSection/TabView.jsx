@@ -42,11 +42,20 @@ class FullWidthTabs extends React.Component {
     };
 
     handleChange = (event, value) => {
-        this.setState({ value });
+        this.setState({ value }, () => {this.toggleView()});
     };
 
+    toggleView = () => {
+        if(this.state.value == 2){
+            this.props.toggleViewPayment()
+        }
+        else{
+            this.props.toggleViewProduct()
+        }
+    }
+
     handleChangeIndex = index => {
-        this.setState({ value: index });
+        this.setState({ value: index }, () => {this.toggleView()});
     };
     toggleViewPayment = () => {
         this.props.toggleViewPayment()
@@ -81,9 +90,9 @@ class FullWidthTabs extends React.Component {
                         textColor="primary"
                         variant="fullWidth"
                     >
-                        <Tab label="Cart" onClick={this.toggleViewProduct} />
-                        <Tab label="Customer" onClick={this.toggleViewProduct} />
-                        <Tab label="Payment" onClick={this.toggleViewPayment} />
+                        <Tab label="Cart" />
+                        <Tab label="Customer" />
+                        <Tab label="Payment" />
                     </Tabs>
                 </AppBar>
                 <SwipeableViews

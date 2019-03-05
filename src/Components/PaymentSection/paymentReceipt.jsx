@@ -17,6 +17,7 @@ import moment from "moment";
 import { commonActionCreater } from '../../Redux/commonAction';
 import addGuestToCart from '../../Global/PosFunctions/addGuestToCart';
 /* Component Imports */
+import HandlePrint from '../../Global/PosFunctions/handlePrint';
 
 function Transition(props) {
     return <Slide direction="up" {...props} />;
@@ -36,7 +37,6 @@ class PaymentReceipt extends React.Component {
     handleNewOrder = () => {
         clearCart(this.props.dispatch);
         addGuestToCart(this.props.dispatch);
-
         this.props.handleClose();
         this.props.dispatch(commonActionCreater(1, 'SWITCH_TAB_NUMBER'));
     }
@@ -49,28 +49,7 @@ class PaymentReceipt extends React.Component {
         pri.focus();
         pri.print();
     }
-    showRecieptOrderList = () => {
-        let listItems = !_isEmpty(_get(this.props, 'receiptData.saleItems', [])) ? this.props.receiptData.saleItems.map((item) => (
-            <tr>
-                <td>{_get(item, 'productId', '')}</td>
-                <td>{_get(item, 'qty', 0)}</td>
-                <td>{_get(item, 'price', 0)}</td>
-                <td>{_get(item, 'itemSubTotal.amount', 0)}</td>
-            </tr>
-        )) : (
-                <tr>
-                    <td>Cell 1-1</td>
-                    <td>Cell 1-2</td>
-                    <td>Cell 1-2</td>
-                    <td>Cell 1-2</td>
-                </tr>
-            )
-        return (
-            <React.Fragment>
-                {listItems}
-            </React.Fragment>
-        )
-    }
+
     showOnlineTransactionData = () => {
         return (
             <React.Fragment>
@@ -120,7 +99,18 @@ class PaymentReceipt extends React.Component {
     }
     render() {
         const { store, cart } = this.props;
-        console.log(store, 'vhdyfdy jfugu')
+
+        let address  = _get(store,'store.address', '')
+        let customer = _get(cart, 'customer.customer')
+
+        let storeAddress = _get(address, 'addressLine1', '') + ', ' + 
+        _get(address, 'addressLine2', '') + ', ' + _get(address, 'city', '') + ', ' +
+        _get(address, 'state', '') + ', ' + _get(address, 'country', '') + ', ' +
+        _get(address, 'postalCode', '')
+
+        let customerName = _get(customer, 'firstName', '') + ' ' + 
+        _get(customer, 'lastName', '')
+
         return (
             <React.Fragment>
                 <Dialog
@@ -158,80 +148,26 @@ class PaymentReceipt extends React.Component {
                 }}></iframe>
                 <div id='printarea'>
                     <div>
-                        <h3> <span>{_get(store, 'store.address.addressLine1', '') + ' ' + _get(store, 'store.address.city', '') + ' ' + _get(store, 'store.address.state', '') + ' ' + _get(store, 'store.address.country', '') + ' ' + _get(store, 'store.address.postalCode', '')}</span> </h3>
-                        <h4> <span>CASHIER:</span> <span>{_get(this.props, 'receiptData.operatorId', '')}</span> </h4>
-                        <h4> <span>CUSTOMER:</span><span>{_get(cart, 'customer.customer.firstName', '') + ' ' + _get(cart, 'customer.customer.lastName', '')}</span> </h4>
-                        <h3> <span>STORE:</span> <span>{_get(store,'store.id','')}</span> </h3>
-                        <h3> <span>TERMINAL:</span> <span>{localStorage.getItem('TerminalId')}</span> </h3>
-                        <h4> <span>{moment().format('LLLL')}</span> </h4>
-
-                        <div className="card">
-                            <div className="mui-row" style={{ paddingLeft: '5%', paddingRight: '6%' }}>
-                                <table className="mui-table mui-table--bordered">
-                                    <thead>
-                                        <tr>
-                                            <th style={{ paddingRight: '50px' }}>ITEM</th>
-                                            <th style={{ paddingRight: '50px' }}>QTY Price</th>
-                                            <th style={{ paddingRight: '50px' }}>PRICE</th>
-                                            <th style={{ paddingRight: '50px' }}>SUBTOTAL</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {this.showRecieptOrderList()}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div className="mui-row">
-                            <div className="mui-col-md-6" style={{ display: 'flex', paddingLeft: '29px' }}>
-                            </div>
-                            <div className="mui-col-md-6" style={{ paddingRight: '50px' }}>
-
-                                <div className="mui-row">
-                                    <div className="mui-col-md-6" style={{ paddingRight: '50px' }}>
-                                        <label >{`Sale Comment: `}</label>
-                                        <label style={{ float: 'right' }}>{`${_get(this.props, 'receiptData.saleComment', '')}`}</label>
-                                        <br />
-                                        {/* <label >{`Subtotal: `}</label>
-                <label style={{ float: 'right' }}>{`$ ${_get(this.props, 'receiptData.saleItems.itemSubTotal', '0')}`}</label>
-                <br /> */}
-                                        {_get(this.props, 'receiptData.itemTotalDiscountAmount', '0') != '0' ?
-                                            <div>
-                                                <label >{`Item Discount: `}</label>
-                                                <label style={{ float: 'right' }}>{`$ ${_get(this.props, 'receiptData.itemDiscountAmount', '0')}`}</label>
-                                                <br />
-                                            </div> : ''
-                                        }
-                                        {_get(this.props, 'receiptData.cartDiscountAmount', '0') != '0' ?
-                                            <div>
-                                                <label >{`Cart Discounts: `}</label>
-                                                <label style={{ float: 'right' }}>{`$ ${_get(this.props, 'receiptData.cartDiscountAmount.amount', '0')}`}</label>
-                                                <br />
-                                            </div> : ''
-                                        }
-                                        {_get(this.props, 'receiptData.employeeDiscountAmount', '0') != '0' ?
-                                            <div>
-                                                <label >{`Employee Discount: `}</label>
-                                                <label style={{ float: 'right' }}>{`$ ${_get(this.props, 'receiptData.employeeDiscountAmount.amount', '0')}`}</label>
-                                                <br />
-                                            </div> : ''
-                                        }
-                                        <label >{`Tax: `}</label>
-                                        <label style={{ float: 'right' }}>{`$ ${_get(this.props.receiptData, 'totalTaxAmount.amount', '0')}`}</label>
-                                        <br />
-                                        <label >{`Total Paid: `}</label>
-                                        <div style={{ float: 'right' }}>
-                                            <label style={{ float: 'right' }}>{`${_get(this.props.receiptData, 'totalAmountPaid.currencyCode', '$')} ${_get(this.props.receiptData, 'totalAmountPaid.amount', '0')}`}</label>
-                                            {/* {this.showPaymentMethods(this.state.selectedOrder)} */}
-                                        </div>
-                                        {/* <label style={{ float: 'right' }}>{`$ ${_get(selectedOrder, 'sale.paymentAmount', '100.00')}`}</label> */}
-                                        <br />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <HandlePrint 
+                            type="Sale Transaction"
+                            currency='$'
+                            itemList={_get(cart,'cartItems', [])}
+                            orderDate={moment().format('LLLL')}
+                            storeName={_get(store,'store.name', '')}
+                            storeAddress={storeAddress}
+                            customerName={customerName}
+                            terminalName={localStorage.getItem('terminalName')}
+                            saleComment={_get(cart,'salecomment', '')}
+                            itemsDiscount={_get(cart,'itemDiscountAmount.amount', '')}
+                            cartDiscount={_get(cart,'cartDiscountAmount.amount', '')}
+                            employeeDiscount={_get(cart,'employeeDiscountAmount.amount', '')}
+                            regularTotal={_get(cart, 'regularTotal', '')}
+                            totalDiscount={_get(cart,'totalDiscount.amount', '')}
+                            netTotal={_get(cart,'netTotal','')}
+                            totalTax={_get(cart,'totalTaxAmount.amount','')}
+                            totalAmount={_get(cart,'totalAmount.amount','')}
+                        />
                     </div>
-
                 </div>
             </React.Fragment>
         );
