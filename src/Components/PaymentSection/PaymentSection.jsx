@@ -22,6 +22,10 @@ import PaymentReceipt from './paymentReceipt';
 import { withRouter } from 'react-router-dom'
 import { Detector } from 'react-detect-offline';
 import PouchDb from 'pouchdb';
+import { APPLICATION_BFF_URL } from '../../Redux/urlConstants';
+import { postData } from '../../Redux/postAction';
+import showMessage from '../../Redux/toastAction';
+import showErrorAlert from '../../Global/PosFunctions/showErrorAlert';
 let transactiondb = new PouchDb('transactiondb')
 /* style */
 
@@ -89,7 +93,7 @@ class PaymentSection extends React.Component {
         let paymentTimeStamp = {
             seconds: parseInt(new Date().getTime() / 1000),
         }
-        _set(value, 'amount', parseFloat(this.state.giftCardUsedValue));
+        _set(value, 'amount', parseFloat(this.props.giftCardAmount));
         _set(value, 'currencyCode', '$');
         let data = {
             giftCardId: _get(this.state, 'giftCard.id', ''),
@@ -204,7 +208,7 @@ class PaymentSection extends React.Component {
         }
     }
 
-    makReqObj = (offline) => {
+    makReqObj = async (offline) => {
         let { customer, cartItems, totalAmount, sessionId } = this.props;
         let { cartDiscountAmount, employeeDiscountAmount, itemDiscountAmount, totalTaxAmount } = this.props.cart
         let saleItems = cartItems.map((item) => {
@@ -221,7 +225,7 @@ class PaymentSection extends React.Component {
             obj.saleType = item.saleType;
             return obj;
         });
-        
+
         let payments = []
         if ((parseFloat(this.props.cashAmount) || 0)) {
             payments.push({
@@ -244,11 +248,35 @@ class PaymentSection extends React.Component {
                 paymentReference: ""
             })
         }
-        if ((parseFloat(this.state.giftCardUsedValue) || 0)) {
+        if ((parseFloat(this.props.giftCardAmount) || 0)) {
+            let url = 'Sale/RedeemValueFromGiftCard';
+            let value = {};
+            let paymentTimeStamp = {
+                seconds: parseInt(new Date().getTime() / 1000),
+            }
+            _set(value, 'amount', parseFloat(this.props.giftCardAmount));
+            _set(value, 'currencyCode', '$');
+            let data = {
+                giftCardId: _get(this.props, 'giftCardData.id', ''),
+                value: value,
+                customerId: _get(this.props, 'customer.id', ''),
+                sessionId: localStorage.getItem('sessionId'),
+                retailerId: localStorage.getItem('retailerId'),
+                paymentTimeStamp: paymentTimeStamp,
+
+            }
+
+            let apiResponse = await this.props.dispatch(postData(`${APPLICATION_BFF_URL}${url}`, data, 'GET_GIFT_CARD_PAYMENT_DATA', {
+                init: 'GET_GIFT_CARD_PAYMENT_DATA_INIT',
+                success: 'GET_GIFT_CARD_PAYMENT_DATA_SUCCESS',
+                error: 'GET_GIFT_CARD_PAYMENT_DATA_ERROR'
+            }))
+
+            debugger;
             payments.push({
                 paymentMethod: 'GIFT_CARD',
-                paymentAmount: { currencyCode: '$', amount: (parseFloat(this.state.giftCardUsedValue) || 0) },
-                paymentReference: _get(this.props, 'giftCardPayment', ''),
+                paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.giftCardAmount) || 0) },
+                paymentReference: apiResponse,
             })
         }
 
@@ -256,7 +284,7 @@ class PaymentSection extends React.Component {
             (parseFloat(this.props.cardAmount) || 0) +
             (parseFloat(this.props.employeePay) || 0)
             + (parseFloat(this.props.cashAmount || 0)) +
-            (parseFloat(this.state.giftCardUsedValue) || 0)
+            (parseFloat(this.props.giftCardAmount) || 0)
         let reqObj = {
             customerId: customer.id,
             storeId: localStorage.getItem('storeId'),
@@ -276,21 +304,28 @@ class PaymentSection extends React.Component {
             offline,
             saleComment: _get(this.props, 'saleComment', ''),
             saleTimeStamp: { seconds: parseInt((new Date().getTime() / 1000)) },
-            changeDue: { currencyCode: '$', amount: parseFloat(Math.abs(this.calcRemainingAmount()).toFixed(2)) }
+            changeDue: { currencyCode: '$', amount: parseFloat(Math.abs(this.props.remainingAmount.toFixed(2))) }
 
         };
         return reqObj;
 
     }
-    handleSaleTransaction = (offline) => {
-        let reqObj = this.makReqObj(offline);
+    handleSaleTransaction = async (offline) => {
         this.setState({ isLoadingTransaction: true })
-        if (offline) {
-            this.handleSaleTransactionOffline(reqObj);
-        }
-        else {
-            this.handleSaleTransactionOnline(reqObj);
-        }
+        await this.makReqObj(offline).then((reqObj) => {
+            debugger
+            if (offline) {
+                this.handleSaleTransactionOffline(reqObj);
+            }
+            else {
+                this.handleSaleTransactionOnline(reqObj);
+            }
+
+        })
+            .catch((error) => {
+                this.setState({isLoadingTransaction:false});
+                showErrorAlert({ dispatch: this.props.dispatch, error: error })
+            })
     }
     handleSaleTransactionOffline = (reqObj) => {
         transactiondb.put({
@@ -333,16 +368,6 @@ class PaymentSection extends React.Component {
     }
     handleSaleOnlineTransactionError = () => {
         this.setState({ isLoadingTransaction: false })
-    }
-    calcRemainingAmount = () => {
-        let paymentAmount =
-            (parseFloat(this.props.cardAmount) || 0) +
-            (parseFloat(this.props.employeePay) || 0)
-            + (parseFloat(this.props.cashAmount || 0)) +
-            (parseFloat(this.state.giftAmountRedeemValue || 0));
-        let netTotal = _get(this.props, 'cart.totalAmount.amount', 0);
-        let remainingAmount = parseFloat(netTotal) - parseFloat(paymentAmount);
-        return (remainingAmount || 0).toFixed(2);
     }
     handleClose = () => {
         this.setState({
@@ -394,24 +419,6 @@ class PaymentSection extends React.Component {
     render() {
         return (
             <div className='pos-payment' style={{ height: this.props.windowHeight }}>
-                {/* <div className='card payment-card'>
-                    <span className='card-title soft-text'>Payment Methods</span>
-                    <div className='flex-row justify-center'>
-                        <div style={this.calcRemainingAmount() < 0 ? { pointerEvents: 'none' } : null} onClick={this.handleCashPayment} className='each-payment-method'>
-                            Cash Payment
-                        </div>
-                        <div style={this.calcRemainingAmount() < 0 ? { pointerEvents: 'none' } : null} onClick={this.handleCardPayment} className='each-payment-method'>
-                            Debit/Credit Card
-                        </div>
-                        {_get(this.props, 'customer.isEmpPayEnabled') ? <div style={this.calcRemainingAmount() < 0 ? { pointerEvents: 'none' } : null} onClick={this.handleEmployeePay} className='each-payment-method'>
-                            Employee
-                        </div> : null}
-                        <div onClick={this.handleGiftCardPayment} className='each-payment-method'>
-                            Gift Card
-                        </div>
-                    </div>
-                </div> */}
-
                 <div className='flex-column pad-20'>
                     <div className='flex-row justify-space-between m-10'>
                         <Button disabled={this.props.remainingAmount <= 0} onClick={this.handleCashPayment} variant="outlined" size="large" color="primary" >Cash</Button>
@@ -420,50 +427,6 @@ class PaymentSection extends React.Component {
                         <Button disabled={this.props.remainingAmount <= 0} onClick={this.handleGiftCardPayment} variant="outlined" size="large" color="primary" >Gift Card</Button>
                         <Button disabled={this.props.remainingAmount <= 0} variant="outlined" size="large" color="primary" >Freedom Pay</Button>
                     </div>
-                    {/* <div className='flex-row'>
-                    <div className='card transaction-card'>
-                        <span className='card-title soft-text'>Transactions</span>
-                        {this.state.showCashPay ?
-                            <CashPay
-                                handleKeyBoardValue={this.handleKeyBoardValue}
-                                currentFocus={this.currentFocus}
-                                value={this.props.cashAmount}
-                                onRemovePaymentMethod={this.onRemovePaymentMethod}
-                            /> : null}
-                        {this.state.showCardPay ?
-                            <CardPay
-                                handleKeyBoardValue={this.handleKeyBoardValue}
-                                currentFocus={this.currentFocus}
-                                value={this.props.cardAmount}
-                                initialValue={this.calcRemainingAmount()}
-                                onRemovePaymentMethod={this.onRemovePaymentMethod}
-                            /> : null}
-                        {this.state.showEmpPay ?
-                            <EmployeePay
-                                handleKeyBoardValue={this.handleKeyBoardValue}
-                                customer={this.props.customer}
-                                value={this.props.employeePay}
-                                currentFocus={this.currentFocus}
-                                initialValue={this.calcRemainingAmount()}
-                                onRemovePaymentMethod={this.onRemovePaymentMethod}
-                            /> : null}
-                        {this.state.showGiftPay ?
-                            <GiftPay
-                                handleKeyBoardValue={this.handleKeyBoardValue}
-                                handleGiftCardValue={this.handleGiftCardValue}
-                                getGiftCardDetail={this.getGiftCardDetail}
-                                giftPayNumberValue={this.state.giftPayNumberValue}
-                                giftAmountRedeemValue={this.state.giftAmountRedeemValue}
-                                currentFocus={this.currentFocus}
-                                remainingAmount = {this.calcRemainingAmount()}
-                                giftCard={this.state.giftCard}
-                                giftCardId = {_get(this.state, 'giftCard.id', '')}
-                                originalGiftCard={this.state.originalGiftCard}
-                                onRemovePaymentMethod={this.onRemovePaymentMethod}
-                                onPayWithGiftCard={this.onPayWithGiftCard}
-                            /> : null}
-
-                    </div> */}
 
                     <div className='flex-row'>
                         <div className='card transaction-card'>
@@ -484,7 +447,6 @@ class PaymentSection extends React.Component {
                                     handleKeyBoardValue={this.handleKeyBoardValue}
                                     currentFocus={this.currentFocus}
                                     value={this.props.cardAmount}
-                                    // initialValue={this.calcRemainingAmount()}
                                     onRemovePaymentMethod={this.onRemovePaymentMethod}
                                 /> : null}
                             {this.state.showEmpPay ?
@@ -493,7 +455,6 @@ class PaymentSection extends React.Component {
                                     customer={this.props.customer}
                                     value={this.props.employeePay}
                                     currentFocus={this.currentFocus}
-                                    // initialValue={this.calcRemainingAmount()}
                                     onRemovePaymentMethod={this.onRemovePaymentMethod}
                                 /> : null}
                             {this.state.showGiftPay ?
@@ -504,7 +465,6 @@ class PaymentSection extends React.Component {
                                     giftPayNumberValue={this.state.giftPayNumberValue}
                                     giftAmountRedeemValue={this.state.giftAmountRedeemValue}
                                     currentFocus={this.currentFocus}
-                                    // remainingAmount={this.calcRemainingAmount()}
                                     giftCard={this.state.giftCard}
                                     giftCardId={_get(this.state, 'giftCard.id', '')}
                                     originalGiftCard={this.state.originalGiftCard}
@@ -587,7 +547,8 @@ function mapStateToProps(state) {
     let giftCardAmount = _get(state, 'PaymentDetails.giftCardAmount');
     let giftPayNumber = _get(state, 'PaymentDetails.giftPayNumber');
     let employeePay = _get(state, 'PaymentDetails.employeePay');
-    let remainingAmount = _get(state, 'PaymentDetails.remainingAmount')
+    let remainingAmount = _get(state, 'PaymentDetails.remainingAmount');
+    let giftCardData = _get(state, 'PaymentDetails.giftCardData');
     let cart = _get(state, 'cart');
 
     return {
@@ -604,6 +565,7 @@ function mapStateToProps(state) {
         sessionId,
         saleComment,
         giftCard,
+        giftCardData,
         giftCardPayment
     }
 }
