@@ -131,7 +131,7 @@ class FullWidthTabs extends React.Component {
                     >
                         <Tab label="Cart" />
                         <Tab label="Customer" />
-                        <Tab label="Payment" disabled={cartItems.length > 0 ? false : true} />
+                        <Tab className={cartItems.length > 0 ? '' : 'disable-button'} label="Payment" disabled={cartItems.length > 0 ? false : true} />
                     </Tabs>
                 </AppBar>
                 
