@@ -206,6 +206,12 @@ class GiftCardModal extends React.Component {
                 this.setState({giftCodeMsg: 'Gift Code already exists.'})
             }
         })
+        if(val == '') {
+            this.setState({ isError: true })
+        } else {
+            this.setState({ isError: false})
+        }
+
         if (name === 'giftCode') {
             let giftCard = _get(this.state, 'giftCard', {});
             _set(giftCard, 'giftCode', val);

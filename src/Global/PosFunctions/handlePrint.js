@@ -5,6 +5,7 @@ import _isEmpty from 'lodash/isEmpty';
 const HandlePrint = (props) => {
 
     const saleTransaction = _get(props, 'itemList', []).map(item => {
+        debugger
         return (
             <tr>
                 <td>{_get(item,'doc.product.name')}</td>
