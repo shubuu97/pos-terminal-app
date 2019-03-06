@@ -132,7 +132,8 @@ class PaymentSection extends React.Component {
             },
             identifier: 'GET_GIFT_CARD_PAYMENT_DATA',
             successCb: successMethod,
-            errorCb: errorMethod
+            errorCb: errorMethod,
+            dontShowMessage:true
         })
     }
     getExistingGiftCard = (url, data, successMethod, errorMethod) => {
@@ -147,7 +148,8 @@ class PaymentSection extends React.Component {
             },
             identifier: 'GET_GIFT_CARD__DATA',
             successCb: successMethod,
-            errorCb: errorMethod
+            errorCb: errorMethod,
+            dontShowMessage:true
         })
     }
     handleGetGiftcardDataSuccess = () => {
@@ -321,7 +323,7 @@ class PaymentSection extends React.Component {
 
         })
             .catch((error) => {
-                this.setState({isLoadingTransaction:false});
+                this.setState({ isLoadingTransaction: false });
                 showErrorAlert({ dispatch: this.props.dispatch, error: error })
             })
     }
@@ -354,7 +356,8 @@ class PaymentSection extends React.Component {
             },
             identifier: 'SALE_TRANSACTION_INIT',
             successCb: this.handleSaleOnlineTransactionSuccess,
-            errorCb: this.handleSaleOnlineTransactionError
+            errorCb: this.handleSaleOnlineTransactionError,
+            dontShowMessage:true
 
         })
     }
@@ -413,19 +416,28 @@ class PaymentSection extends React.Component {
             [name]: event.target.value,
         });
     };
+    giftCardRender = ({ online }) => {
+        let disable = this.props.remainingAmount <= 0 ? { opacity: '0.3', pointerEvents: 'none' } : null
+        if (online)
+            return (<li style={disable} onClick={this.handleGiftCardPayment} className="giftcard-section">Gift Card</li>)
+        else {
+            return (null)
+        }
+    }
 
     render() {
+        let disable = this.props.remainingAmount <= 0 ? { opacity: '0.3', pointerEvents: 'none' } : null
         return (
             <div className='pos-payment' style={{ height: this.props.windowHeight }}>
                 <div className='flex-column'>
                     <div className='flex-row justify-space-between'>
-                    <ul className="payment-method">
-                        <li disabled={this.props.remainingAmount <= 0} onClick={this.handleCashPayment} className="cash-method">Cash</li>
-                        <li onClick={this.handleCardPayment} variant="outlined" disabled={this.props.remainingAmount <= 0} className="card-method">Debit/Credit Card</li>
-                        {_get(this.props, 'customer.isEmpPayEnabled') ? <li onClick={this.handleEmployeePay} disabled={this.props.remainingAmount < 0} className="employee-section">Employee</li> : null}
-                        <li disabled={this.props.remainingAmount <= 0} onClick={this.handleGiftCardPayment} className="giftcard-section">Gift Card</li>
-                        {/* <li disabled={this.props.remainingAmount <= 0} className="freedompay">Freedom <br/> Pay</li>      */}
-                    </ul>   
+                        <ul className="payment-method">
+                            <li style={disable} onClick={this.handleCashPayment} className="cash-method">Cash</li>
+                            <li style={disable} onClick={this.handleCardPayment} variant="outlined" className="card-method">Debit/Credit Card</li>
+                            {_get(this.props, 'customer.isEmpPayEnabled') ? <li style={disable} onClick={this.handleEmployeePay} disabled={this.props.remainingAmount < 0} className="employee-section">Employee</li> : null}
+                            <Detector render={this.giftCardRender} />
+                            {/* <li  className="freedompay">Freedom <br/> Pay</li>      */}
+                        </ul>
                     </div>
 
                     <div className='flex-row'>
@@ -505,7 +517,7 @@ class PaymentSection extends React.Component {
                                     fullWidth
                                 />
                             </div>
-                           
+
 
                         </div>
                     </div>

@@ -77,7 +77,8 @@ class MiscProductModal extends React.Component {
             },
             identifier: 'SAVE_MISC_PRODUCT_DATA',
             successCb: successMethod,
-            errorCb: errorMethod
+            errorCb: errorMethod,
+            dontShowMessage:true
         })
     }
 

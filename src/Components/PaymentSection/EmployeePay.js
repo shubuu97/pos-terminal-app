@@ -7,6 +7,7 @@ import Button from '@material-ui/core/Button';
 import CloseIcon from '@material-ui/icons/Close'
 import { commonActionCreater } from '../../Redux/commonAction';
 import { connect } from 'react-redux';
+let regex = /^\d*[\.\d]+$/;
 
 /* Redux Imports */
 
@@ -22,11 +23,17 @@ class EmployeePay extends React.Component {
         }
     }
     handleChange = name => event => {
-        this.setState({
-            [name]: event.target.value,
-        });
-        this.props.dispatch(commonActionCreater({ employeePay: event.target.value, totalAmount: this.props.totalAmount }, 'EMPLOYEE'));
+        let value = event.target.value;
+        if (regex.test(value)) {
+            this.props.dispatch(commonActionCreater({ cashAmount: value, totalAmount: this.props.totalAmount }, 'EMPLOYEE'));
+        }
+        else if (regex.test(value.substring(0, value.length - 1))) {
+            this.props.dispatch(commonActionCreater({ cashAmount: value.substring(0, value.length - 1), totalAmount: this.props.totalAmount }, 'EMPLOYEE'));
 
+        }
+        else {
+            this.props.dispatch(commonActionCreater({ cashAmount: '', totalAmount: this.props.totalAmount }, 'EMPLOYEE'));
+        }
     };
     componentDidMount() {
         //setting to the remaining amount

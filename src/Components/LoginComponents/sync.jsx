@@ -20,20 +20,22 @@ import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Find from "pouchdb-find";
 PouchDb.plugin(Find);
+PouchDb.plugin(require('pouchdb-quick-search'));
 
 let categoryDb = new PouchDb("categoryDb");
 categoryDb
-  .createIndex({
-    index: {
-      fields: ["categoryType"]
-    }
-  })
-  .then(function(result) {
-    console.log(result);
-  })
-  .catch(function(err) {
-    console.log(err);
-  });
+    .createIndex({
+        index: {
+            fields: ["categoryType"]
+        }
+    })
+    .then(function (result) {
+        console.log(result);
+    })
+    .catch(function (err) {
+        console.log(err);
+    });
+
 
 const styles = theme => ({
     close: {
@@ -72,17 +74,17 @@ class SyncContainer extends Component {
         let categoryDb = new PouchDb('categoryDb');
         categoryDb.bulkDocs(_get(categoryData, 'data', [])).then((res) => {
             categoryDb
-            .find({
-                selector: { categoryType: 0 }
-            })
-            .then(results => {
-                this.props.dispatch(
-                commonActionCreater(results.docs, "GET_CATEGORY_DATA_SUCCESS")
-                );
-            })
-            .catch(err => {
-                console.log(err);
-            });
+                .find({
+                    selector: { categoryType: 0 }
+                })
+                .then(results => {
+                    this.props.dispatch(
+                        commonActionCreater(results.docs, "GET_CATEGORY_DATA_SUCCESS")
+                    );
+                })
+                .catch(err => {
+                    console.log(err);
+                });
             let percentageComplete = this.state.percentageComplete + 100 / this.state.ApiCallCount;
             this.setState({ percentageComplete });
             PouchDb.replicate('categoryDb', `http://localhost:5984/categoryDb`, {
@@ -93,18 +95,25 @@ class SyncContainer extends Component {
             console.log(err);
         })
     }
-    handleProductFetchSuccess = (productData) => {
+    handleProductFetchSuccess = async (productData) => {
         let productsdb = new PouchDb('productsdb');
-        productsdb.bulkDocs(_get(productData, 'data', [])).then((result) => {
-            let percentageComplete = this.state.percentageComplete + 100 / this.state.ApiCallCount;
-            this.setState({ percentageComplete });
-            PouchDb.replicate('productsdb', `http://localhost:5984/productsdb`, {
-                live: true,
-                retry: true
-            })
-        }).catch((err) => {
-            console.log(err);
+        let result = await productsdb.bulkDocs(_get(productData, 'data', []))
+        let indexResultOfSearch = await productsdb.search({
+            fields: ['product.name', 'product.description', 'product.sku'],
+            build: true
         });
+        let indexResultOfFind = await productsdb.createIndex({
+            index: {
+                fields: ["product.upcCode"]
+            }
+        })
+        debugger;
+        let percentageComplete = this.state.percentageComplete + 100 / this.state.ApiCallCount;
+        this.setState({ percentageComplete });
+        PouchDb.replicate('productsdb', `http://localhost:5984/productsdb`, {
+            live: true,
+            retry: true
+        })
     }
     handleCustomerFetchSuccess = (customerData) => {
         _get(customerData, 'data', []).forEach((item, index) => {
@@ -213,9 +222,9 @@ class SyncContainer extends Component {
     render() {
         const { classes } = this.props;
         if (this.state.percentageComplete == 100) {
-            setTimeout(() => {
-                this.props.handleStepChange(4);
-            }, 1000)
+                //this.props.handleStepChange(4);
+                window.location.reload();
+                this.props.history.push('/');
         }
         return (
             <React.Fragment>

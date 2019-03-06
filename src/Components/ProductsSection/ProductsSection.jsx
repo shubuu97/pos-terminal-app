@@ -26,18 +26,6 @@ PouchDb.plugin(Find);
 PouchDb.plugin(require('pouchdb-quick-search'));
 
 let productsdb = new PouchDb("productsdb");
-productsdb
-    .createIndex({
-        index: {
-            fields: ["product.upcCode"]
-        }
-    })
-    .then(function (result) {
-        console.log(result, 'result of yes');
-    })
-    .catch(function (err) {
-        console.log(err, 'result of no');
-    });
 
 
 // let productsdb = new PouchDb("productsdb");
@@ -169,7 +157,7 @@ class ProductsSection extends React.Component {
                             <ul>
                                 <li onClick={this.props.handleMiscProduct}><LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 33 }}/></li>
                                 <li onClick={this.props.handleGiftCard}><CardGiftCard style={{ color: 'white', padding: '0 10px', fontSize: 33 }}  /></li>
-                                <li><LockIcon style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>
+                                <li onClick={this.props.handleLockTerminal}><LockIcon style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>
                                 {/* <li onClick={this.logout}><ExitToApp style={{ color: 'white', padding: '0 10px', fontSize: 33 }}  /></li> */}
                             </ul>
                         </div>

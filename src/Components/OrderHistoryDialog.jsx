@@ -122,7 +122,8 @@ class OrderHistoryDialog extends React.Component {
             },
             identifier: 'SALE_REFUND',
             successCb: this.handleRefundSuccess,
-            errorCb: this.handleRefundError
+            errorCb: this.handleRefundError,
+            dontShowMessage:true
         })
     }
 

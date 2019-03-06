@@ -5,7 +5,9 @@ import _get from 'lodash/get';
 import TextField from '@material-ui/core/TextField';
 import CloseIcon from '@material-ui/icons/Close'
 import { commonActionCreater } from '../../Redux/commonAction';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
+let regex = /^\d*[\.\d]+$/;
+
 
 
 /* Redux Imports */
@@ -22,15 +24,24 @@ class CashPay extends React.Component {
         }
     }
     handleChange = name => event => {
-        this.setState({
-            [name]: event.target.value,
-        });
-        this.props.dispatch(commonActionCreater({cashAmount:event.target.value,totalAmount:this.props.totalAmount},'CASH_INPUT_HANDLER'));
-        
+        let value = event.target.value;
+
+        if (regex.test(value)) {
+            this.props.dispatch(commonActionCreater({ cashAmount: value, totalAmount: this.props.totalAmount }, 'CASH_INPUT_HANDLER'));
+        }
+        else if (regex.test(value.substring(0, value.length - 1))) {
+            this.props.dispatch(commonActionCreater({ cashAmount: value.substring(0, value.length - 1), totalAmount: this.props.totalAmount }, 'CASH_INPUT_HANDLER'));
+
+        }
+        else {
+            this.props.dispatch(commonActionCreater({ cashAmount: '', totalAmount: this.props.totalAmount }, 'CASH_INPUT_HANDLER'));
+        }
+
+
     };
-    componentWillUnmount(){
+    componentWillUnmount() {
         //setting to the 0 again on unmouning
-        this.props.dispatch(commonActionCreater({cashAmount:'',totalAmount:this.props.totalAmount},'CASH_INPUT_HANDLER'));
+        this.props.dispatch(commonActionCreater({ cashAmount: '', totalAmount: this.props.totalAmount }, 'CASH_INPUT_HANDLER'));
 
     }
     render() {
@@ -40,14 +51,14 @@ class CashPay extends React.Component {
                 <div className="flex-row align-center justify-space-between">
                     <div style={{ width: '80%' }}>
                         <TextField
-                        InputLabelProps={{ shrink: true }}
+                            InputLabelProps={{ shrink: true }}
                             id="cashPay"
                             label="Amount"
-                            type = "number"
+                            type="tel"
                             value={this.props.cashAmount}
                             onChange={this.handleChange('cashPay')}
                             margin="outline"
-                            onFocus={() => this.props.currentFocus({fieldValue:'cashAmount',handler:'CASH_INPUT_HANDLER'})}
+                            onFocus={() => this.props.currentFocus({ fieldValue: 'cashAmount', handler: 'CASH_INPUT_HANDLER' })}
                             fullWidth
                             autoFocus
                             type='text'
@@ -57,19 +68,19 @@ class CashPay extends React.Component {
                     </div>
                     <CloseIcon
                         onClick={() => this.props.onRemovePaymentMethod('showCashPay')} />
-                    
-            </div>
+
+                </div>
             </div>
         );
     }
 }
 
-function mapStateMapToProps(state){
-    let totalAmount = _get(state,'cart.totalAmount');
-    let cashAmount = _get(state,'PaymentDetails.cashAmount');
-    let remainingAmount = _get(state,'PaymentDetails.remainingAmount')
+function mapStateMapToProps(state) {
+    let totalAmount = _get(state, 'cart.totalAmount');
+    let cashAmount = _get(state, 'PaymentDetails.cashAmount');
+    let remainingAmount = _get(state, 'PaymentDetails.remainingAmount')
 
-    return {totalAmount,cashAmount,remainingAmount};
+    return { totalAmount, cashAmount, remainingAmount };
 }
 
 export default connect(mapStateMapToProps)(CashPay);
