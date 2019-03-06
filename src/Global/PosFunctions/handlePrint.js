@@ -5,32 +5,32 @@ import _isEmpty from 'lodash/isEmpty';
 const HandlePrint = (props) => {
 
     const saleTransaction = _get(props, 'itemList', []).map(item => {
-        debugger
         return (
             <tr>
                 <td>{_get(item,'doc.product.name')}</td>
                 <td>{_get(item,'qty', '')}</td>
-                <td>{_get(item,'itemRegularTotal.amount','0')}</td>
+                <td>{_get(item,'doc.product.salePrice.price','0')}</td>
                 <td>{_get(item,'itemTotalDiscountAmount.amount','0')}</td>
                 <td>{_get(item,'itemTaxAmount.amount','0')}</td>
                 <td>{_get(item,'itemEffectiveTotal.amount','0')}</td>
             </tr>
         )}) 
         
-        const orderHistory = _get(props, 'itemList', []).map(item => {
-            return (
-                <tr>
-                    <td>{_get(item,'product.name')}</td>
-                    <td>{_get(item,'saleItem.qty', '')}</td>
-                    <td>{_get(item,'saleItem.itemRegularTotal.amount','0')}</td>
-                    <td>{_get(item,'saleItem.itemTotalDiscountAmount.amount','0')}</td>
-                    <td>0
-                        {/* {_get(item,'saleItem.itemTaxAmount.amount','0')} */}
-                    </td>
-                    <td>{_get(item,'saleItem.itemEffectiveTotal.amount','0')}
-                    </td>
-                </tr>
-            )}) 
+    const orderHistory = _get(props, 'itemList', []).map(item => {
+    console.log(item, 'vgugfy yivfu')
+        return (
+            <tr>
+                <td>{_get(item,'product.name')}</td>
+                <td>{_get(item,'saleItem.qty', '')}</td>
+                <td>{_get(item,'product.salePrice.price','0')}</td>
+                <td>{_get(item,'saleItem.itemTotalDiscountAmount.amount','0')}</td>
+                <td>0
+                    {/* {_get(item,'saleItem.itemTaxAmount.amount','0')} */}
+                </td>
+                <td>{_get(item,'saleItem.itemEffectiveTotal.amount','0')}
+                </td>
+            </tr>
+        )}) 
     
     return (
         <div>
