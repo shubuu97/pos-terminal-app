@@ -31,9 +31,13 @@ let giftCardData = commonReducer('GET_GIFT_CARD__DATA');
 let giftCardPaymentData = commonReducer('GET_GIFT_CARD_PAYMENT_DATA');
 let saveMiscProductData = commonReducer('SAVE_MISC_PRODUCT_DATA');
 
-let selectedSession = commonStaticReducer('GET_SELECTED_SESSION')
+
+let selectedSession = commonStaticReducer('GET_SELECTED_SESSION');
 let sessionRedirectToLogin = commonStaticReducer('SESSION_START_REDIRECT_TO_LOGIN');
-let afterSellRedirectToCart = commonStaticReducer('SWITCH_TAB_NUMBER')
+let afterSellRedirectToCart = commonStaticReducer('SWITCH_TAB_NUMBER');
+let lockTerminal = commonStaticReducer('LOCK_TERMINAL');
+
+
 
 
 
@@ -62,7 +66,8 @@ let rootRducer = combineReducers({
     giftCardPaymentData,
     saveMiscProductData,
     ShowToast,
-    PaymentDetails
+    PaymentDetails,
+    lockTerminal,
 })
 
 export default rootRducer;

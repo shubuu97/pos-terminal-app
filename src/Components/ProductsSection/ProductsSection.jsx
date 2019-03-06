@@ -169,7 +169,7 @@ class ProductsSection extends React.Component {
                             <ul>
                                 <li onClick={this.props.handleMiscProduct}><LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 33 }}/></li>
                                 <li onClick={this.props.handleGiftCard}><CardGiftCard style={{ color: 'white', padding: '0 10px', fontSize: 33 }}  /></li>
-                                <li><LockIcon style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>
+                                <li onClick={this.props.handleLockTerminal}><LockIcon style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>
                                 {/* <li onClick={this.logout}><ExitToApp style={{ color: 'white', padding: '0 10px', fontSize: 33 }}  /></li> */}
                             </ul>
                         </div>

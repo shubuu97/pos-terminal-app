@@ -323,6 +323,10 @@ p {
     margin-left: 0;
 }
 
+bold{
+    font-weight: bold
+}
+
 
 /* Material UI changes */
 
@@ -1641,5 +1645,54 @@ p {
     font-size: 1.2rem;
     width: 30px;
     text-align: center;
+    }
+}
+
+.lock-terminal{
+
+    .MuiDialogContent-root{
+        background: @primary;
+        color: @primary-text;
+    }
+
+    .card-title {
+        font-size: 1.4em;
+    }
+
+    .circle{
+        width:15px;
+        height: 15px;
+        border: 2px solid rgba(255, 255, 255, 0.8);
+        border-radius: 100px;
+        margin: 20px 10px;
+    }
+
+    .filled{
+        background: rgba(255, 255, 255, 0.8);
+    }
+
+    .numpad-card {
+        background: @primary;
+        color: @primary-text;
+
+        .key {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 65px;
+            border-radius: 5px;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            font-size: 1.45em;
+        }
+
+        .big-key {
+            width: 59%;
+            margin: 1%;
+        }
+
+        .small-key {
+            width: 28%;
+            margin: 1%;
+        }
     }
 }

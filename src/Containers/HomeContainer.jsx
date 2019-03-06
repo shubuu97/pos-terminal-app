@@ -24,6 +24,8 @@ import GiftCardModel from '../Components/ProductsSection/GiftCardModel';
 import MiscProductModal from '../Components/ProductsSection/MiscProductModal';
 import SessionContainer from './SessionContainer';
 import QuickBookContainer from './QuickBookContainer';
+import LockTerminalDialogue from '../Components/Dialogues/LockTerminalDialogue'
+
 let SessionDialog = withDialog(SessionContainer)
 let QuickBookDialog = withDialog(QuickBookContainer)
 
@@ -75,9 +77,7 @@ class HomeContainer extends React.Component {
         let checkoutcartArea = checkoutMainPart - (checkoutcalcArea + checkoutactionArea)
         // * Checkout Customer Section Calculations
         let checkoutCustomerArea = checkoutMainPart - checkoutactionArea
-
         // * Payment Section 
-
 
 
         this.setState({
@@ -209,6 +209,25 @@ class HomeContainer extends React.Component {
             openMiscProduct: open,
         })
     }
+    handleLockTerminal = () => {
+        this.props.dispatch(commonActionCreater({lock: true}, 'LOCK_TERMINAL'));
+    }
+    handleUnlockTerminal = () => {
+        this.props.dispatch(commonActionCreater({lock: false}, 'LOCK_TERMINAL'));
+    }
+
+    handleLogout = () => {
+        localStorage.clear();
+        //logic to destory the dbs
+        let p1 = new PouchDb('customersdb').destroy();
+        let p2 = new PouchDb('productsdb').destroy();
+        let p3 = new PouchDb('categoryDb').destroy();
+        this.setState({ isLoading: true })
+        Promise.all([p1, p2, p3]).then((data) => {
+            this.setState({ isLoading: false })
+            this.props.history.push('/login')
+        });
+    }
 
 
     render() {
@@ -236,6 +255,7 @@ class HomeContainer extends React.Component {
                         handleClickOpenOnHold={() => this.handleClickOpen('openOnHold')}
                         handleClickOpenSessionContainer={this.handleClickOpenSessionContainer}
                         handleClickQuickBook={() => this.setState({ openQuickBookContainer: true })}
+                        handleLockTerminal={this.handleLockTerminal}
                     />
                 </Products>
 
@@ -339,22 +359,30 @@ class HomeContainer extends React.Component {
                         handleClose={() => this.handleMiscProduct(false)}
                     />
                 }
+
+                <LockTerminalDialogue
+                    open={this.props.lockState}
+                    handleUnlockTerminal={this.handleUnlockTerminal}
+                    handleLogout={this.handleLogout}
+                />
             </div>
         );
     }
 }
 
 function mapStateToProps(state) {
-    let { productList, cart, cartHoldData } = state;
+    let { productList, cart, cartHoldData, lockTerminal } = state;
     productList = _get(productList, 'lookUpData.rows', []);
     let holdCartData = _get(cartHoldData, 'holdedItems', []);
     let customer = _get(cart, 'customer', {});
+    let lockState = _get(lockTerminal, 'lookUpData.lock', false);
 
     return {
         productList,
         cart,
         holdCartData,
         customer,
+        lockState
     }
 }
 export default connect(mapStateToProps)(HomeContainer)
