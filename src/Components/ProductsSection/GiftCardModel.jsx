@@ -83,7 +83,8 @@ class GiftCardModal extends React.Component {
             },
             identifier: 'GET_GIFT_CARD__DATA',
             successCb: successMethod,
-            errorCb: errorMethod
+            errorCb: errorMethod,
+            dontShowMessage:true
         })
     }
 
