@@ -23,19 +23,6 @@ PouchDb.plugin(Find);
 PouchDb.plugin(require('pouchdb-quick-search'));
 
 let categoryDb = new PouchDb("categoryDb");
-categoryDb
-    .createIndex({
-        index: {
-            fields: ["categoryType"]
-        }
-    })
-    .then(function (result) {
-        console.log(result);
-    })
-    .catch(function (err) {
-        console.log(err);
-    });
-
 
 const styles = theme => ({
     close: {
@@ -66,34 +53,28 @@ class SyncContainer extends Component {
         this.pollCategory();
     }
 
-    handleCategoryFetchSuccess = (categoryData) => {
+    handleCategoryFetchSuccess = async (categoryData) => {
         console.log(categoryData.data, 'categoryData.data')
         _get(categoryData, 'data', []).forEach((item, index) => {
             item._id = item.id
         });
         let categoryDb = new PouchDb('categoryDb');
-        categoryDb.bulkDocs(_get(categoryData, 'data', [])).then((res) => {
-            categoryDb
-                .find({
-                    selector: { categoryType: 0 }
-                })
-                .then(results => {
-                    this.props.dispatch(
-                        commonActionCreater(results.docs, "GET_CATEGORY_DATA_SUCCESS")
-                    );
-                })
-                .catch(err => {
-                    console.log(err);
-                });
+        let res = await categoryDb.bulkDocs(_get(categoryData, 'data', []));
+        let createdIndex = await categoryDb.createIndex({ index: { fields: ["categoryType"] } })
+        return 1
+    }
+    handleCategoryFetchSuccessWrapper = (categoryData) => {
+        this.handleCategoryFetchSuccess(categoryData).then((data) => {
             let percentageComplete = this.state.percentageComplete + 100 / this.state.ApiCallCount;
             this.setState({ percentageComplete });
             PouchDb.replicate('categoryDb', `http://localhost:5984/categoryDb`, {
                 live: true,
                 retry: true
-            })
-        }).catch((err) => {
-            console.log(err);
+            });
         })
+            .catch((err) => {
+
+            })
     }
     handleProductFetchSuccess = async (productData) => {
         let productsdb = new PouchDb('productsdb');
@@ -106,49 +87,51 @@ class SyncContainer extends Component {
             index: {
                 fields: ["product.upcCode"]
             }
-        })
+        });
         debugger;
-        let percentageComplete = this.state.percentageComplete + 100 / this.state.ApiCallCount;
-        this.setState({ percentageComplete });
-        PouchDb.replicate('productsdb', `http://localhost:5984/productsdb`, {
-            live: true,
-            retry: true
-        })
+        return 1;
     }
-    handleCustomerFetchSuccess = (customerData) => {
+    handleProductFetchSuccessWrapper = (productData) => {
+        this.handleProductFetchSuccess(productData).then((data) => {
+            debugger;
+            let percentageComplete = this.state.percentageComplete + 100 / this.state.ApiCallCount;
+            this.setState({ percentageComplete });
+            PouchDb.replicate('productsdb', `http://localhost:5984/productsdb`, {
+                live: true,
+                retry: true
+            })
+        })
+            .catch((err) => {
+
+            })
+    }
+    handleCustomerFetchSuccess = async (customerData) => {
         _get(customerData, 'data', []).forEach((item, index) => {
             item._id = item.id
         });
         let customersdb = new PouchDb('customersdb');
-        customersdb.bulkDocs(_get(customerData, 'data', [])).then((result) => {
-            addGuestToCart(this.props.dispatch);
+        let result = await customersdb.bulkDocs(_get(customerData, 'data', []));
+        let indexCreated = await customersdb.search({
+            fields: ['customer.firstName', 'customer.lastName', 'email', 'phoneNumber.phoneNumber'],
+            build: true
+        })
+        addGuestToCart(this.props.dispatch);
+        return 1;
+    }
+    handleCustomerFetchSuccessWrapper = (customerData) => {
+        this.handleCustomerFetchSuccess(customerData).then((data) => {
             let percentageComplete = this.state.percentageComplete + 100 / this.state.ApiCallCount;
             this.setState({ percentageComplete });
             PouchDb.replicate('customersdb', `http://localhost:5984/customersdb`, {
                 live: true,
                 retry: true
             })
-        }).catch((err) => {
-            // dispatch(showMessage({ text: successText||'Updated SuccessFully', isSuccess: true }));
-        });
-
+        })
+            .catch((err) => {
+                console.log(err);
+            })
     }
-    handleProductFetchError = (error) => {
-        setTimeout(this.pollProduct(), 1000);
-        console.log(error);
-    }
-    handleCategoryFetchError = (error) => {
-        setTimeout(this.pollCategory(), 1000);
-
-        console.log(error);
-    }
-    handleCustomerFetchError = (error) => {
-        setTimeout(this.pollCustomer(), 1000);
-        console.log(error);
-    };
-
-
-
+    
     pollProduct = () => {
         return new Promise((resolve, reject) => {
             if (this.state.productCalled == this.state.limit) {
@@ -160,7 +143,7 @@ class SyncContainer extends Component {
                 method: 'POST',
                 url: 'Inventory/ByStoreId',
                 reqObj: { id: storeId },
-                successCb: this.handleProductFetchSuccess,
+                successCb: this.handleProductFetchSuccessWrapper,
                 errorCb: (err) => {
                     this.state.productCalled++;
                     setTimeout(this.pollProduct, 1000);
@@ -180,7 +163,7 @@ class SyncContainer extends Component {
                 // reqObj: { email: this.state.email, password: this.state.password },
                 url: 'Customer/All',
                 reqObj: { id: retailerId },
-                successCb: this.handleCustomerFetchSuccess,
+                successCb: this.handleCustomerFetchSuccessWrapper,
                 errorCb: (err) => {
                     this.state.customerCalled++;
                     setTimeout(this.pollCustomer, 1000);
@@ -199,7 +182,7 @@ class SyncContainer extends Component {
                 method: 'POST',
                 url: 'Category/AllByRetailerId',
                 reqObj: { id: retailerId },
-                successCb: this.handleCategoryFetchSuccess,
+                successCb: this.handleCategoryFetchSuccessWrapper,
                 errorCb: (err) => {
                     this.state.categoryCalled++;
                     setTimeout(this.pollCategory, 1000);
@@ -222,9 +205,9 @@ class SyncContainer extends Component {
     render() {
         const { classes } = this.props;
         if (this.state.percentageComplete == 100) {
-                //this.props.handleStepChange(4);
-                window.location.reload();
-                this.props.history.push('/');
+            //this.props.handleStepChange(4);
+            // window.location.reload();
+            this.props.history.push('/');
         }
         return (
             <React.Fragment>

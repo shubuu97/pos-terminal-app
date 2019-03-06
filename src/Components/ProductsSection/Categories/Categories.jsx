@@ -10,20 +10,7 @@ import { commonActionCreater } from "../../../Redux/commonAction";
 //Pouch Import
 import PouchDb from "pouchdb";
 import Find from "pouchdb-find";
-
 let categoryDb = new PouchDb("categoryDb");
-// categoryDb
-//   .createIndex({
-//     index: {
-//       fields: ["categoryType"]
-//     }
-//   })
-//   .then(function(result) {
-//     console.log(result);
-//   })
-//   .catch(function(err) {
-//     console.log(err);
-//   });
 
 class Categories extends Component {
   constructor(props) {
@@ -76,8 +63,8 @@ class Categories extends Component {
   }
 
   handleHomeClick = () => {
-      this.setState({ selectedCategory: {categoryType: -1} });
-      this.getProductData();
+    this.setState({ selectedCategory: { categoryType: -1 } });
+    this.getProductData();
     this.getCategory(0);
   };
 
@@ -166,7 +153,7 @@ class Categories extends Component {
           commonActionCreater(result, "GET_PRODUCT_DATA_SUCCESS")
         );
       })
-      .catch(err => {});
+      .catch(err => { });
   };
 
   render() {
@@ -184,7 +171,7 @@ class Categories extends Component {
         </div>
         <div
           className="product-catogories"
-          // style={{ height: this.props.categoriesHeight }}
+        // style={{ height: this.props.categoriesHeight }}
         >
           {_get(this.state, "categoryToDisplay", []).map(category => {
             return (
