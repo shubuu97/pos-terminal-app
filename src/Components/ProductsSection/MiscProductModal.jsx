@@ -24,7 +24,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 
 function Transition(props) {
-    return <Slide direction="up" {...props} />;
+    return <Slide direction="down" {...props} />;
 }
 
 const DialogTitle = withStyles(theme => ({
@@ -77,7 +77,8 @@ class MiscProductModal extends React.Component {
             },
             identifier: 'SAVE_MISC_PRODUCT_DATA',
             successCb: successMethod,
-            errorCb: errorMethod
+            errorCb: errorMethod,
+            dontShowMessage:true
         })
     }
 

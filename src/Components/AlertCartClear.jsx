@@ -41,9 +41,9 @@ class AlertCartClear extends React.Component {
     };
 
     handleHold = () => {
-        const {firstName, lastName} = this.props.cart.customer.customer
-        let title = this.state.Title
-        globalHoldCart(this.props.dispatch, this.props.cart, (title || ''), 'Harry Potter');
+        const { firstName, lastName } = _get(this, 'props.cart.customer.customer', '')
+        let title = _get(this, 'state.Title', '')
+        globalHoldCart(this.props.dispatch, this.props.cart, (title || ''), 'Guest Customer');
 
         let newHoldObj = {};
         newHoldObj.cart = this.props.cart
@@ -62,31 +62,32 @@ class AlertCartClear extends React.Component {
 
     handleClearCart = () => {
         globalClearCart(this.props.dispatch);
-        this.applyCart()
-        this.props.handleCloseAlertCartClear();
-        this.props.handleCloseOnHold();
+        this.setState({
+            holdedItems: [...this.props.holdCartData]
+        }, () => {
+            this.applyCart()
+            this.props.handleCloseAlertCartClear();
+            this.props.handleCloseOnHold();
+        })
+
     }
 
     applyCart = () => {
         let holdCartData = this.props.holdCartData
-        globalApplyCart(this.props.dispatch, holdCartData[this.props.index])
+        globalApplyCart(this.props.dispatch, holdCartData[this.props.index].cart)
         let unHoldedCart = holdCartData[this.props.index]
         this.props.dispatch(commonActionCreater(unHoldedCart, 'ON_HOLD_DATA'));
         this.deleteHold(this.props.index);
     }
 
     deleteHold = (index) => {
-        let holdCartData = this.state.holdedItems
+        let holdCartData = [...this.state.holdedItems]
         holdCartData.splice(index, 1);
         let reqObj = [
             ...holdCartData
         ]
         this.props.dispatch(commonActionCreater(reqObj, 'DELETE_HOLD_CART_ITEM'));
     }
-
-    // componentWillReceiveProps(props) {
-    //     if ()
-    // }
 
 
     render() {
@@ -114,6 +115,7 @@ class AlertCartClear extends React.Component {
                             onChange={this.handleChange('Title')}
                             margin="normal"
                             variant="outlined"
+                            fullWidth
                         />
                     </DialogContent>
                     <DialogActions>

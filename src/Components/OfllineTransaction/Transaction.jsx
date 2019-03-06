@@ -1,8 +1,6 @@
 import React from 'react';
 /* Lodash Imports */
 import _get from 'lodash/get';
-import Card from '@material-ui/core/Card';
-
 /* Material import */
 
 /* Redux Imports */ 
@@ -22,7 +20,7 @@ class Transaction extends React.Component {
     render() {
         return (
             <div>
-            Transaction is here
+            
             </div>
         );
     }

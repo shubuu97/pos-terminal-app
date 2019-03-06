@@ -322,6 +322,10 @@ p {
     margin: 1.2rem;
     margin-left: 0;
 }
+.disable-button{
+    opacity: 0.3;
+    pointer-events: none;
+}
 
 
 /* Material UI changes */
@@ -545,6 +549,7 @@ p {
             padding-top: 30px;
             justify-content: space-between;
             align-items: center;
+            color: #000;
         }
 
         .each-card-more {
@@ -883,7 +888,7 @@ p {
     }
 
     .payment-section {
-        background: @background;
+        background: @background-white;
 
         .section-heading {
             font-size: 1.4em;
@@ -1017,6 +1022,88 @@ p {
 }
 
 .pos-payment {
+    border-left: solid 2px #c3c3c3;
+    .payment-method{
+        display: flex;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        flex: 1;
+
+        li{
+           
+            margin: 2px;
+            border-bottom: solid 3px #8dc4de;
+            height: 70px;
+            line-height: 18px;
+            text-align: center;
+            background: #beeaff;
+            position: relative;
+            box-sizing: border-box;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            flex:1;
+            padding-left: 7%;
+            justify-content: space-around;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .cash-method:before{
+            content: "";
+            background: url(../images/cash-payment.png) no-repeat;
+            background-size: contain;
+            width: 73px;
+            height: 55px;
+            left: 17%;
+            position: absolute;
+        }
+
+        .card-method:before{
+            content: "";
+            background: url(../images/card-payment.png) no-repeat;
+            background-size: contain;
+            width: 59px;
+            height: 48px;
+            left: 6%;
+            position: absolute;
+
+        }
+
+        .employee-section:before{
+            content: "";
+            background: url(../images/employee.png) no-repeat;
+            background-size: contain;
+            width: 65px;
+            height: 46px;
+            left: 13%;
+            position: absolute;
+
+        }
+
+        .giftcard-section:before{
+            content: "";
+            background: url(../images/gift-card.png) no-repeat;
+            background-size: contain;
+            width: 63px;
+            height: 43px;
+            left: 12%;
+            position: absolute;
+
+        }
+
+        .freedompay:before{
+            content: "";
+            background: url(../images/freedompay.png) no-repeat;
+            background-size: contain;
+            width: 61px;
+            height: 45px;
+            left: 12%;
+            position: absolute;
+
+        }
+    }
     .card {
         background: @background-white;
         border-radius: 5px;
@@ -1071,7 +1158,7 @@ p {
         width: 40%;
         margin: 0 0 10px 0;
         .numpad-card {
-            background: @primary-d;
+            background: @primary;
             color: @primary-text;
 
             .key {
@@ -1081,6 +1168,7 @@ p {
                 height: 65px;
                 border-radius: 5px;
                 border: 2px solid rgba(255, 255, 255, 0.8);
+                font-size: 1.3em;
             }
     
             .big-key {
@@ -1557,5 +1645,54 @@ p {
     font-size: 1.2rem;
     width: 30px;
     text-align: center;
+    }
+}
+
+.lock-terminal{
+
+    .MuiDialogContent-root{
+        background: @primary;
+        color: @primary-text;
+    }
+
+    .card-title {
+        font-size: 1.4em;
+    }
+
+    .circle{
+        width:15px;
+        height: 15px;
+        border: 2px solid rgba(255, 255, 255, 0.8);
+        border-radius: 100px;
+        margin: 20px 10px;
+    }
+
+    .filled{
+        background: rgba(255, 255, 255, 0.8);
+    }
+
+    .numpad-card {
+        background: @primary;
+        color: @primary-text;
+
+        .key {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 65px;
+            border-radius: 5px;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            font-size: 1.45em;
+        }
+
+        .big-key {
+            width: 59%;
+            margin: 1%;
+        }
+
+        .small-key {
+            width: 28%;
+            margin: 1%;
+        }
     }
 }

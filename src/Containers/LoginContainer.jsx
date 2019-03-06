@@ -55,6 +55,7 @@ class SignIn extends React.Component {
     handleStepChange = (currentStep) => {
         if(currentStep==4){
           this.props.history.push('/');
+          
         }
         this.setState({ currentStep })
     };

@@ -42,12 +42,22 @@ class FullWidthTabs extends React.Component {
     };
 
     handleChange = (event, value) => {
-        this.setState({ value });
+        this.setState({ value }, () => { this.toggleView() });
     };
 
+    toggleView = () => {
+        if (this.state.value == 2) {
+            this.props.toggleViewPayment()
+        }
+        else {
+            this.props.toggleViewProduct()
+        }
+    }
+
     handleChangeIndex = index => {
-        this.setState({ value: index });
+        this.setState({ value: index }, () => { this.toggleView() });
     };
+
     toggleViewPayment = () => {
         this.props.toggleViewPayment()
     }
@@ -55,22 +65,60 @@ class FullWidthTabs extends React.Component {
     toggleViewProduct = () => {
         this.props.toggleViewProduct()
     }
-    componentDidUpdate(){
-      if(this.props.afterSellRedirectToCart){
-        this.setState({ value:this.props.afterSellRedirectToCart-1});
-        if(this.props.afterSellRedirectToCart==1||this.props.afterSellRedirectToCart==2){
-            this.props.toggleViewProduct();
+    componentDidUpdate() {
+        if (this.props.afterSellRedirectToCart) {
+            this.setState({ value: this.props.afterSellRedirectToCart - 1 });
+            if (this.props.afterSellRedirectToCart == 1 || this.props.afterSellRedirectToCart == 2) {
+                this.props.toggleViewProduct();
+            }
+            if (this.props.afterSellRedirectToCart == 3) {
+                this.props.toggleViewPayment();
+            }
+            this.props.dispatch(commonActionCreater(0, 'SWITCH_TAB_NUMBER'))
         }
-        if(this.props.afterSellRedirectToCart==3){
-            this.props.toggleViewPayment();
-        }
-        this.props.dispatch(commonActionCreater(0,'SWITCH_TAB_NUMBER'))
-      }
+    }
+
+    
+    orderTab = () => {
+        // * This function was made to prevent rewriting of code
+        const { cart, cartItems } = this.props;
+        return (
+            <TabContainer>
+                <OrdersTab
+                    cartItems={cartItems}
+                    cart={cart}
+                    dispatch={this.props.dispatch}
+                    checkoutMainPart={this.props.checkoutMainPart}
+                    checkoutcalcArea={this.props.checkoutcalcArea}
+                    checkoutactionArea={this.props.checkoutactionArea}
+                    checkoutcartArea={this.props.checkoutcartArea}
+                    handleClickOpen={this.props.handleClickOpen}
+                    handleChangeIndex={this.handleChangeIndex}
+                />
+            </TabContainer>
+        )
+    }
+    customersTab = () => {
+        // * This function was made to prevent rewriting of code
+        const { cart, cartItems } = this.props;
+        return (
+            <TabContainer>
+                <CustomersTab
+                    {...this.props}
+                    checkoutMainPart={this.props.checkoutMainPart}
+                    checkoutactionArea={this.props.checkoutactionArea}
+                    checkoutCustomerArea={this.props.checkoutCustomerArea}
+                    checkoutcalcArea={this.props.checkoutcalcArea}
+                    checkoutcartArea={this.props.checkoutcartArea}
+                    handleClickOpen={this.props.handleClickOpen}
+                    handleHistoryOpen={this.props.handleHistoryOpen}
+                />
+            </TabContainer>
+        )
     }
 
     render() {
-        const { cart,cartItems } = this.props;
-
+        const { cart, cartItems } = this.props;
         return (
             <div className=''>
                 <AppBar position="static" color="default">
@@ -81,47 +129,34 @@ class FullWidthTabs extends React.Component {
                         textColor="primary"
                         variant="fullWidth"
                     >
-                        <Tab label="Cart" onClick={this.toggleViewProduct} />
-                        <Tab label="Customer" onClick={this.toggleViewProduct} />
-                        <Tab label="Payment" onClick={this.toggleViewPayment} />
+                        <Tab label="Cart" />
+                        <Tab label="Customer" />
+                        <Tab className={cartItems.length > 0 ? '' : 'disable-button'} label="Payment" disabled={cartItems.length > 0 ? false : true} />
                     </Tabs>
                 </AppBar>
-                <SwipeableViews
-                    //   axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-                    index={this.state.value}
-                    onChangeIndex={this.handleChangeIndex}
-                >
-                    <TabContainer >
-                        <OrdersTab
-                            cartItems={cartItems}
-                            cart={cart}
-                            dispatch={this.props.dispatch}
-                            checkoutMainPart={this.props.checkoutMainPart}
-                            checkoutcalcArea={this.props.checkoutcalcArea}
-                            checkoutactionArea={this.props.checkoutactionArea}
-                            checkoutcartArea={this.props.checkoutcartArea}
-                            handleClickOpen={this.props.handleClickOpen}
-                        />
-                    </TabContainer>
-
-                    <TabContainer >
-                        <CustomersTab
-                            {...this.props}
-                            checkoutMainPart={this.props.checkoutMainPart}
-                            checkoutactionArea={this.props.checkoutactionArea}
-                            checkoutCustomerArea={this.props.checkoutCustomerArea}
-                            checkoutcalcArea={this.props.checkoutcalcArea}
-                            checkoutcartArea={this.props.checkoutcartArea}
-                            handleClickOpen={this.props.handleClickOpen}
-                            handleHistoryOpen={this.props.handleHistoryOpen}
-                        />
-                    </TabContainer>
-                    <TabContainer >
-                        <PaymentTab
-                            checkoutMainPart={this.props.checkoutMainPart}
-                        />
-                    </TabContainer>
-                </SwipeableViews>
+                
+                {/* There is no easy way to disable single tab from SwipeableViews */}
+                {cartItems.length > 0 ?
+                    <SwipeableViews
+                        index={this.state.value}
+                        onChangeIndex={this.handleChangeIndex}
+                    >
+                        {this.orderTab()}
+                        {this.customersTab()}
+                        <TabContainer>
+                            <PaymentTab
+                                checkoutMainPart={this.props.checkoutMainPart}
+                            />
+                        </TabContainer>
+                    </SwipeableViews> :
+                    <SwipeableViews
+                        index={this.state.value}
+                        onChangeIndex={this.handleChangeIndex}
+                    >
+                        {this.orderTab()}
+                        {this.customersTab()}
+                    </SwipeableViews>
+                }
             </div>
         );
     }
@@ -130,8 +165,7 @@ class FullWidthTabs extends React.Component {
 function mapStateToProps(state) {
     let cartItems = _get(state, 'cart.cartItems', []);
     let cart = _get(state, 'cart', {});
-    let afterSellRedirectToCart = _get(state,'afterSellRedirectToCart.lookUpData')
-    return { cartItems, cart,afterSellRedirectToCart };
-  }
-  export default connect(mapStateToProps)(FullWidthTabs);
-  
+    let afterSellRedirectToCart = _get(state, 'afterSellRedirectToCart.lookUpData')
+    return { cartItems, cart, afterSellRedirectToCart };
+}
+export default connect(mapStateToProps)(FullWidthTabs);

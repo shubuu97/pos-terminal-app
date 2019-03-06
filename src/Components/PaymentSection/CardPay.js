@@ -3,7 +3,10 @@ import React from 'react';
 import _get from 'lodash/get';
 /* Material import */
 import TextField from '@material-ui/core/TextField';
-import CloseIcon from '@material-ui/icons/Close'
+import CloseIcon from '@material-ui/icons/Close';
+import { connect } from 'react-redux';
+import { commonActionCreater } from '../../Redux/commonAction';
+let regex = /^\d*[\.\d]+$/;
 
 /* Redux Imports */
 
@@ -15,20 +18,30 @@ class CardPay extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            cardAmount:''
         }
     }
     handleChange = name => event => {
-        this.setState({
-            [name]: event.target.value,
-        });
-        this.props.handleKeyBoardValue('cardAmountValue',event.target.value)
+        let value = event.target.value;
+        if (regex.test(value)) {
+            this.props.dispatch(commonActionCreater({ cashAmount: value, totalAmount: this.props.totalAmount }, 'CARD_INPUT_HANDLER'));
+        }
+        else if (regex.test(value.substring(0, value.length - 1))) {
+            this.props.dispatch(commonActionCreater({ cashAmount: value.substring(0, value.length - 1), totalAmount: this.props.totalAmount }, 'CARD_INPUT_HANDLER'));
+
+        }
+        else {
+            this.props.dispatch(commonActionCreater({ cashAmount: '', totalAmount: this.props.totalAmount }, 'CARD_INPUT_HANDLER'));
+        }
+
     };
-    componentWillReceiveProps(props){
-        this.setState({cardAmount:props.value})
+    componentDidMount() {
+        //setting to the remaining amount
+        this.props.dispatch(commonActionCreater({ cardAmount: this.props.remainingAmount, totalAmount: this.props.totalAmount }, 'CARD_INPUT_HANDLER'));
     }
-    componentDidMount(){
-        this.props.handleKeyBoardValue('cardAmountValue',this.props.initialValue)
+    componentWillUnmount() {
+        //setting to the 0 again on unmouning
+        this.props.dispatch(commonActionCreater({ cardAmount: '', totalAmount: this.props.totalAmount }, 'CARD_INPUT_HANDLER'));
+
     }
 
     render() {
@@ -38,13 +51,12 @@ class CardPay extends React.Component {
                 <div className="flex-row align-center justify-space-between">
                     <div style={{ width: '50%' }}>
                         <TextField
-                        InputLabelProps={{ shrink: true }}
+                            InputLabelProps={{ shrink: true }}
                             autoFocus
-                            onFocus={() => this.props.currentFocus('cardAmount')}
+                            onFocus={() => this.props.currentFocus({ fieldValue: 'cardAmount', handler: 'CARD_INPUT_HANDLER' })}
                             id="outlined-name"
                             label="Amount"
-                            type = "number"
-                            value={this.state.cardAmount}
+                            value={this.props.cardAmount}
                             onChange={this.handleChange('cardAmount')}
                             margin="normal"
                             variant="outlined"
@@ -61,4 +73,12 @@ class CardPay extends React.Component {
     }
 }
 
-export default CardPay;
+function mapStateMapToProps(state) {
+    let totalAmount = _get(state, 'cart.totalAmount');
+    let cardAmount = _get(state, 'PaymentDetails.cardAmount');
+    let remainingAmount = _get(state, 'PaymentDetails.remainingAmount')
+
+    return { totalAmount, cardAmount, remainingAmount };
+}
+
+export default connect(mapStateMapToProps)(CardPay);

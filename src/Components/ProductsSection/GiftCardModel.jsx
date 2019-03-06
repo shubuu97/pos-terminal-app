@@ -23,7 +23,7 @@ import { withStyles } from '@material-ui/core/styles';
 import _findIndex from 'lodash/findIndex';
 
 function Transition(props) {
-    return <Slide direction="up" {...props} />;
+    return <Slide direction="down" {...props} />;
 }
 
 const DialogTitle = withStyles(theme => ({
@@ -83,7 +83,8 @@ class GiftCardModal extends React.Component {
             },
             identifier: 'GET_GIFT_CARD__DATA',
             successCb: successMethod,
-            errorCb: errorMethod
+            errorCb: errorMethod,
+            dontShowMessage:true
         })
     }
 

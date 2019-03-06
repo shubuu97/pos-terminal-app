@@ -14,6 +14,7 @@ import commonStaticReducer from './commonStaticReducer';
 import cart from '../reducers/cartItem';
 import cartHoldData from '../reducers/holdCartItem';
 import ShowToast from './toastReducer';
+import PaymentDetails from '../reducers/paymentDetails'
 
 // import cartOrderDetailsFun from './commonStaticReducer';
 
@@ -30,9 +31,13 @@ let giftCardData = commonReducer('GET_GIFT_CARD__DATA');
 let giftCardPaymentData = commonReducer('GET_GIFT_CARD_PAYMENT_DATA');
 let saveMiscProductData = commonReducer('SAVE_MISC_PRODUCT_DATA');
 
-let selectedSession = commonStaticReducer('GET_SELECTED_SESSION')
+
+let selectedSession = commonStaticReducer('GET_SELECTED_SESSION');
 let sessionRedirectToLogin = commonStaticReducer('SESSION_START_REDIRECT_TO_LOGIN');
-let afterSellRedirectToCart = commonStaticReducer('SWITCH_TAB_NUMBER')
+let afterSellRedirectToCart = commonStaticReducer('SWITCH_TAB_NUMBER');
+let lockTerminal = commonStaticReducer('LOCK_TERMINAL');
+
+
 
 
 
@@ -60,7 +65,9 @@ let rootRducer = combineReducers({
     giftCardData,
     giftCardPaymentData,
     saveMiscProductData,
-    ShowToast
+    ShowToast,
+    PaymentDetails,
+    lockTerminal,
 })
 
 export default rootRducer;

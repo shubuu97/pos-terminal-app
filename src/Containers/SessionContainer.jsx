@@ -40,7 +40,8 @@ class SessionContainer extends React.Component {
             },
             identifier: 'GET_SESSION_DATA',
             successCb: this.handleGetSessionData,
-            errorCb: this.handleGetSessionDataError
+            errorCb: this.handleGetSessionDataError,
+            dontShowMessage:true
         })
     }
     handleGetSessionData = (data) => {

@@ -5,7 +5,7 @@ import showMessage from '../../Redux/toastAction';
 
 function genericPostData({dispatch,reqObj,url,constants,identifier,successText,successCb,successTimeOutCb,errorCb,errorTimeOutCb,dontShowMessage})
 {
-     dispatch(
+   return  dispatch(
         postData(`${APPLICATION_BFF_URL}${url}`, reqObj,identifier ,constants)
     ).then((data) => {
         if(!dontShowMessage)

@@ -94,7 +94,8 @@ class StoreContainer extends React.Component {
             },
             identifier: 'GET_STORE_DATA',
             successCb: this.afterStoreSuccess,
-            errorCb: () => this.setState({ isFetching: false })
+            errorCb: () => this.setState({ isFetching: false }),
+            dontShowMessage:true
         })
 
     }

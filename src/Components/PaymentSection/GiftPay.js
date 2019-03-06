@@ -1,12 +1,21 @@
 import React from 'react';
 /* Lodash Imports */
 import _get from 'lodash/get';
+import _isEmpty from 'lodash/isEmpty';
+
 /* Material import */
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import CloseIcon from '@material-ui/icons/Close';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import CircularProgress from '@material-ui/core/CircularProgress';
+
+import { commonActionCreater } from '../../Redux/commonAction';
+import { connect } from 'react-redux';
+import genericPostData from '../../Global/dataFetch/genericPostData';
+let regex = /^\d*[\.\d]+$/;
+
 
 
 /* Redux Imports */
@@ -24,53 +33,72 @@ class GiftPay extends React.Component {
         }
     }
     handleChange = name => event => {
+        this.props.dispatch(commonActionCreater({ giftPayNumber: event.target.value, totalAmount: this.props.totalAmount }, 'GIFT_CARD_NUMBER'));
 
-        this.props.handleKeyBoardValue('giftPayNumberValue', event.target.value);
     };
-    //function to check and set where reddemed value is less the giftcard amount
-    giftCardValueValidator = (enterdGiftCardAmount) => {
-        if (enterdGiftCardAmount == "") {
-            enterdGiftCardAmount = 0;
-        }
-        //value returned from api
-        let giftCardAmount = _get(this.props, 'giftCard.value.amount', 0);
-        if (enterdGiftCardAmount <= giftCardAmount && enterdGiftCardAmount >= 0) {
-            return true
-        }
-        return false
-    }
+
+  
+
 
     handleGiftCardValue = name => event => {
-        if (this.giftCardValueValidator(event.target.value))
-            this.props.handleKeyBoardValue('giftAmountRedeemValue', event.target.value)
+        let value = event.target.value;
+        if (regex.test(value)) {
+            this.props.dispatch(commonActionCreater({ cashAmount: value, totalAmount: this.props.totalAmount }, 'GIFT_AMOUNT_TO_REDEEM'));
+        }
+        else if (regex.test(value.substring(0, value.length - 1))) {
+            this.props.dispatch(commonActionCreater({ cashAmount: value.substring(0, value.length - 1), totalAmount: this.props.totalAmount }, 'GIFT_AMOUNT_TO_REDEEM'));
+
+        }
+        else {
+            this.props.dispatch(commonActionCreater({ cashAmount: '', totalAmount: this.props.totalAmount }, 'GIFT_AMOUNT_TO_REDEEM'));
+        }
     }
-    handleBlur = name => event => {
-        this.props.getGiftCardDetail('giftPayNumberValue', event.target.value)
-    }
-    componentWillReceiveProps(props) {
-        this.setState({ giftPayNumber: props.giftPayNumberValue });
-        //this function will set and validate the gift amount redeem value
-        if (this.giftCardValueValidator(props.giftAmountRedeemValue))
-            this.setState({ giftAmountRedeem: props.giftAmountRedeemValue })
+   
+    componentWillUnmount() {
+        this.props.dispatch(commonActionCreater({ giftPayNumber: '', totalAmount: this.props.totalAmount }, 'GIFT_CARD_NUMBER'));
+        this.props.dispatch(commonActionCreater({ giftCardAmount: '', totalAmount: this.props.totalAmount }, 'GIFT_AMOUNT_TO_REDEEM'));
+        this.props.dispatch(commonActionCreater({}, 'CHECK_GIFT_CARD_DATA_SUCCESS'));
+
     }
     checkGiftCardValue = () => {
-        this.props.getGiftCardDetail('giftPayNumberValue', this.state.giftPayNumber);
+        let url = 'GiftCard/GetByCodeAndStore';
+        let data = {
+            storeId: localStorage.getItem('storeId'),
+            code: this.props.giftPayNumber,
+        };
+        this.setState({isLoadingCheckValue:true})
+        genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj: data,
+            url: url,
+            constants: {
+                init: 'CHECK_GIFT_CARD_DATA_INIT',
+                success: 'CHECK_GIFT_CARD_DATA_SUCCESS',
+                error: 'CHECK_GIFT_CARD_DATA_ERROR'
+            },
+            identifier: 'CHECK_GIFT_CARD_DATA',
+            successCb: (data) => this.setState({isLoadingCheckValue:false}),
+            errorCb: (error) => this.setState({isLoadingCheckValue:false}),
+            dontShowMessage:true
+        })
+        // this.props.getGiftCardDetail('giftPayNumberValue', this.props.giftPayNumber);
 
     }
     whichTextFieldToRender = () => {
-        if (this.props.giftCardId) {
+        if (!_isEmpty(this.props.giftCardData)) {
 
             return (<React.Fragment>
                 <TextField
                     InputLabelProps={{ shrink: true }}
                     // autoFocus
-                    onFocus={() => this.props.currentFocus('giftAmountRedeem')}
+                    autoFocus
+                    onFocus={() => this.props.currentFocus({ fieldValue: 'giftCardAmount', handler: 'GIFT_AMOUNT_TO_REDEEM' })}
                     id="giftAmountRedeem"
                     label="Value to be used"
                     onKeyDown={this.handleGiftCardValue('giftAmountRedeem')}
                     onKeyUp={this.handleGiftCardValue('giftAmountRedeem')}
-                    type="number"
-                    value={_get(this.state, 'giftAmountRedeem', '')}
+                    type="text"
+                    value={_get(this.props, 'giftCardAmount', '')}
                     onChange={this.handleGiftCardValue('giftAmountRedeem')}
                     // onBlur={this.handleBlur('giftValue')}
                     margin="normal"
@@ -85,13 +113,12 @@ class GiftPay extends React.Component {
                     <TextField
                         InputLabelProps={{ shrink: true }}
                         autoFocus
-                        onFocus={() => this.props.currentFocus('giftPayNumber')}
+                        onFocus={() => this.props.currentFocus({ fieldValue: 'giftPayNumber', handler: 'GIFT_CARD_NUMBER' })}
                         id="giftPayNumber"
                         label="Gift Card Number"
-                        type="number"
-                        value={this.state.giftPayNumber}
+                        type="text"
+                        value={this.props.giftPayNumber}
                         onChange={this.handleChange('giftPayNumber')}
-                        // onBlur={this.handleBlur('giftPayNumber')}
                         margin="normal"
                         fullWidth
                         variant="outlined"
@@ -103,27 +130,20 @@ class GiftPay extends React.Component {
     handleCheckMaxAmt = (event) => {
         let checked = event.target.checked;
         if (checked) {
-            //It should fill the value remaining amount
-            let giftCardAmount = parseFloat(_get(this.props, 'giftCard.value.amount', 0));
-            let remainingAmount = parseFloat(this.props.remainingAmount);
-            if (giftCardAmount > remainingAmount)
-                this.props.handleKeyBoardValue('giftAmountRedeemValue', remainingAmount);
-            else {
-                this.props.handleKeyBoardValue('giftAmountRedeemValue', giftCardAmount);
-
-            }
+            this.props.dispatch(commonActionCreater({ totalAmount: this.props.totalAmount }, 'GIFT_USE_MAX'))
         }
         else {
-            this.props.handleKeyBoardValue('giftAmountRedeemValue', '');
+            this.props.dispatch(commonActionCreater({ giftCardAmount: '', totalAmount: this.props.totalAmount }, 'GIFT_AMOUNT_TO_REDEEM'));
+
         }
         this.setState({ maxAmt: event.target.checked });
     }
 
     whichButtonToRender = () => {
-        if (this.props.giftCardId) {
+        if (!_isEmpty(this.props.giftCardData)) {
             return (<React.Fragment>
                 <span>
-                    Value: {_get(this.props, 'giftCard.value.amount', 0)}
+                    Value: {_get(this.props, 'giftCardData.value.amount', 0)}
                 </span>
                 <FormControlLabel
                     control={
@@ -141,11 +161,18 @@ class GiftPay extends React.Component {
             return (
                 <React.Fragment>
                     <span className="pay-button" onClick={this.checkGiftCardValue}>
-                        Check Value
+                       {this.state.isLoadingCheckValue?<CircularProgress size={24}/>:"Check Value"}
                     </span>
                 </React.Fragment>
             )
         }
+    }
+    handleRemove = () => {
+        this.props.dispatch(commonActionCreater({ giftPayNumber: '', totalAmount: this.props.totalAmount }, 'GIFT_CARD_NUMBER'));
+        this.props.dispatch(commonActionCreater({ giftCardAmount: '', totalAmount: this.props.totalAmount }, 'GIFT_AMOUNT_TO_REDEEM'));
+        this.props.dispatch(commonActionCreater({}, 'CHECK_GIFT_CARD_DATA_SUCCESS'));
+
+        this.props.onRemovePaymentMethod('showGiftPay')
     }
 
     render() {
@@ -158,11 +185,22 @@ class GiftPay extends React.Component {
                     </div>
                     {this.whichButtonToRender()}
                     <CloseIcon
-                        onClick={() => this.props.onRemovePaymentMethod('showGiftPay')} />
+                        onClick={this.handleRemove} />
                 </div>
             </div>
         );
     }
 }
 
-export default GiftPay;
+function mapStateMapToProps(state) {
+    let totalAmount = _get(state, 'cart.totalAmount');
+    let giftPayNumber = _get(state, 'PaymentDetails.giftPayNumber');
+    let remainingAmount = _get(state, 'PaymentDetails.remainingAmount')
+    let giftCardAmount = _get(state, 'PaymentDetails.giftCardAmount');
+    let giftCardData = _get(state, 'PaymentDetails.giftCardData');
+
+
+    return { totalAmount, giftCardData, giftPayNumber, remainingAmount, giftCardAmount };
+}
+
+export default connect(mapStateMapToProps)(GiftPay);
