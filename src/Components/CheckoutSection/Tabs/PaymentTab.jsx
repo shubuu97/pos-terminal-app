@@ -2,21 +2,16 @@ import React from 'react';
 /* Lodash Imports */
 import _get from 'lodash/get';
 /* Material import */
-import Button from '@material-ui/core/Button';
+
 /* Material Icons */
-import PersonAdd from '@material-ui/icons/PersonAddOutlined';
+
 /* Redux Imports */
 
 /* Global Imports */
-import ReactSelect from '../../../Global/Components/ReactSelect/async-react-select';
-import genericPostData from '../../../Global/dataFetch/genericPostData';
+
 /* Component Imports */
-import CalculationSection from './CalculationSection';
 import { connect } from 'react-redux'
-import TextField from '@material-ui/core/TextField';
 import { commonActionCreater } from '../../../Redux/commonAction';
-
-
 
 
 class PaymentTab extends React.Component {
