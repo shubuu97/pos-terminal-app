@@ -114,7 +114,7 @@ class CustomerTab extends React.Component {
     };
 
     render() {
-        let { checkoutactionArea, checkoutMainPart, checkoutCustomerArea, checkoutcalcArea, checkoutcartArea } = this.props
+        let { checkoutactionArea, checkoutMainPart, checkoutCustomerArea, checkoutcalcArea, checkoutcartArea,guest,employee} = this.props
         return (
             <div className="customer-section" >
                 <div className="customer-main" style={{ height: checkoutcartArea }}>
@@ -142,14 +142,18 @@ class CustomerTab extends React.Component {
                                     <div className='info-title'>Name</div>
                                     <div className='info-data'>{_get(this.props, 'customer.firstName')} {_get(this.props, 'customer.lastName')}</div>
                                 </div>
-                                <div className='each-info'>
+                                {!guest?<div className='each-info'>
                                     <div className='info-title'>Phone</div>
                                     <div className='info-data'>+{_get(this.props, 'phoneNumber.countryCode')} {_get(this.props, 'phoneNumber.phoneNumber')}</div>
-                                </div>
-                                <div className='each-info'>
+                                </div>:null}
+                                {!guest?<div className='each-info'>
                                     <div className='info-title'>Email</div>
                                     <div className='info-data'>{this.props.email}</div>
-                                </div>
+                                </div>:null}
+                                {employee?<div className='each-info'>
+                                    <div className='info-title'>Employee Id</div>
+                                    <div className='info-data'>{this.props.employeeId}</div>
+                                </div>:null}
                             </div>
                            
                             <div onClick={this.props.handleHistoryOpen} className='add-customer flex-row align-center justify-center'>

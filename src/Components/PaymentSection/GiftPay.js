@@ -78,7 +78,8 @@ class GiftPay extends React.Component {
             },
             identifier: 'CHECK_GIFT_CARD_DATA',
             successCb: (data) => this.setState({isLoadingCheckValue:false}),
-            errorCb: (error) => this.setState({isLoadingCheckValue:false})
+            errorCb: (error) => this.setState({isLoadingCheckValue:false}),
+            dontShowMessage:true
         })
         // this.props.getGiftCardDetail('giftPayNumberValue', this.props.giftPayNumber);
 

@@ -26,18 +26,6 @@ PouchDb.plugin(Find);
 PouchDb.plugin(require('pouchdb-quick-search'));
 
 let productsdb = new PouchDb("productsdb");
-productsdb
-    .createIndex({
-        index: {
-            fields: ["product.upcCode"]
-        }
-    })
-    .then(function (result) {
-        console.log(result, 'result of yes');
-    })
-    .catch(function (err) {
-        console.log(err, 'result of no');
-    });
 
 
 // let productsdb = new PouchDb("productsdb");

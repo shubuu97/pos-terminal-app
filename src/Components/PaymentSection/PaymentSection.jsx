@@ -132,7 +132,8 @@ class PaymentSection extends React.Component {
             },
             identifier: 'GET_GIFT_CARD_PAYMENT_DATA',
             successCb: successMethod,
-            errorCb: errorMethod
+            errorCb: errorMethod,
+            dontShowMessage:true
         })
     }
     getExistingGiftCard = (url, data, successMethod, errorMethod) => {
@@ -147,7 +148,8 @@ class PaymentSection extends React.Component {
             },
             identifier: 'GET_GIFT_CARD__DATA',
             successCb: successMethod,
-            errorCb: errorMethod
+            errorCb: errorMethod,
+            dontShowMessage:true
         })
     }
     handleGetGiftcardDataSuccess = () => {
@@ -354,7 +356,8 @@ class PaymentSection extends React.Component {
             },
             identifier: 'SALE_TRANSACTION_INIT',
             successCb: this.handleSaleOnlineTransactionSuccess,
-            errorCb: this.handleSaleOnlineTransactionError
+            errorCb: this.handleSaleOnlineTransactionError,
+            dontShowMessage:true
 
         })
     }
