@@ -89,10 +89,6 @@ class AlertCartClear extends React.Component {
         this.props.dispatch(commonActionCreater(reqObj, 'DELETE_HOLD_CART_ITEM'));
     }
 
-    // componentWillReceiveProps(props) {
-    //     if ()
-    // }
-
 
     render() {
         return (
