@@ -90,7 +90,7 @@ class PaymentTab extends React.Component {
                         </div>
                     </div>
                 </div>
-                <div className='payment-summary fwidth flex-column'>
+                {/* <div className='payment-summary fwidth flex-column'>
                     <span className='section-heading'>Sale Comment</span>
                     <div className='card flex-column flex-wrap'>
                         <TextField
@@ -106,7 +106,7 @@ class PaymentTab extends React.Component {
                             variant="outlined"
                         />
                     </div>
-                </div>
+                </div> */}
             </div>
         );
     }
