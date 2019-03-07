@@ -81,8 +81,8 @@ class Product extends React.Component {
                                 <span className="each-card-name">{_get(data, 'doc.product.name', 'undefined')}</span>
                             </div>
                             <div className='truncate'>
-                                <span className="each-card-code-head">Code : </span>
-                                <span className='each-card-code'>{_get(data, 'doc.product.id', '')}</span>
+                                <span className="each-card-code-head">Available Quantity : </span>
+                                <span className='each-card-code'>{_get(data, 'doc.inventory.quantity', 0)}</span>
                             </div>
                             <div className="each-card-price flex-row">
                                 {_get(data, 'doc.product.salePrice.currencyCode', '')} {_get(data, 'doc.product.salePrice.price', 'NaN')}
