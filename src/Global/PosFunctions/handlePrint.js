@@ -5,7 +5,9 @@ import logo from '../../assets/images/aobLogodark.png';
 import '../../assets/stylesheets/print.css'
 
 const HandlePrint = (props) => {
-    let subTotal = 0
+    debugger
+    let stSubTotal = 0
+    let ohSubTotal = 0
     const saleTransaction = _get(props, 'itemList', []).map(item => {
         let itemSubTotal = 0
         let empDis
@@ -22,7 +24,7 @@ const HandlePrint = (props) => {
             itemDis = (_get(item,'itemRegularTotal.amount') * _get(item,'itemDiscountPercent')) / 100     
         }
         itemSubTotal = ((_get(item,'doc.product.salePrice.price','0') * _get(item,'qty',1)) - (empDis + itemDis))
-        subTotal += itemSubTotal 
+        stSubTotal += itemSubTotal 
         return (
             <div style={{display:'flex', flex:'1', paddingTop:"10px",  paddingBottom:"10px", borderBottom:'dotted 1px #9e9e9e' }}>
                 <div style={{width:"35%"}}>{_get(item,'doc.product.name')}</div>
@@ -40,31 +42,34 @@ const HandlePrint = (props) => {
         const orderHistory = _get(props, 'itemList', []).map(item => {
             let itemSubTotal = 0
             let empDis
-            if(_get(item,'employeeDiscountPercent','') !== 0 ) {
-                empDis = (_get(item,'itemRegularTotal.amount') * _get(item,'employeeDiscountPercent')) / 100     
-            } else {
+            let isEmpDisExist = ('employeeDiscountPercent' in item.saleItem)
+            if(!isEmpDisExist) {
                 empDis = 0
-            }
-            let itemDis
-            let isItemDiscountPercentExist =  !('itemDiscountPercent' in item)
-            if(isItemDiscountPercentExist) {
-                itemDis = 0
             } else {
-                itemDis = (_get(item,'itemRegularTotal.amount') * _get(item,'itemDiscountPercent')) / 100     
+                empDis = (_get(item,'saleItem.itemRegularTotal.amount') * _get(item,'saleItem.employeeDiscountPercent')) / 100   
             }
-            itemSubTotal = _get(item,'doc.product.salePrice.price','0') - (empDis + itemDis)
-            // subTotal += itemSubTotal 
+            //!Do uncomment when itemDiscountPercent is coming from backend.
+            // let itemDis
+            // let isItemDisExist = ('itemDiscountPercent' in item.saleItem)
+            // if(!isItemDisExist) {
+            //     itemDis = 0
+            // } else {
+            //     itemDis = (_get(item,'saleItem.itemRegularTotal.amount') * _get(item,'saleItem.itemDiscountPercent')) / 100   
+            // }
+            //!Subtract itemDiscount also when available
+            itemSubTotal = (_get(item,'product.salePrice.price',0) * _get(item,'saleItem.qty',1)) - (empDis)
+            ohSubTotal += itemSubTotal 
             return (
                 <div style={{display:'flex', flex:'1', paddingTop:"10px",  paddingBottom:"10px", borderBottom:'dotted 1px #9e9e9e' }}>
                     <div style={{width:"35%", paddingRight:'10px'}}>{_get(item,'product.name')}</div>
                     <div style={{width:"10%", textAlign:"center"}}>{_get(item,'saleItem.qty', '')}</div>
                     <div style={{width:"30%", textAlign:"right"}}>{_get(item,'product.salePrice.price','0')}<br/>
                         <div style={{fontSize:"9px"}}>
-                        (Item Disc.: $23)<br/>
-                        (Emp Disc.: $27)
+                        {/* {itemDis == 0 ? '' : <span>(Item Disc.: {itemDis.toFixed(2)})</span>}<br /> */}
+                        {empDis == 0 ? '' : <span>(Emp Disc.: {empDis.toFixed(2)})</span>}
                         </div>
                     </div>
-                   <div style={{width:"25%", textAlign:"right"}}>{_get(item,'saleItem.itemEffectiveTotal.amount','0')}</div>
+                   <div style={{width:"25%", textAlign:"right"}}>{itemSubTotal.toFixed(2)}</div>
                 </div>
             )}) 
     return (
@@ -102,7 +107,7 @@ const HandlePrint = (props) => {
            
             <div style={{display:'flex', flex:'1', flexDirection:'column', borderBottom:'solid 1px #9e9e9e', paddingTop:"10px",  paddingBottom:"5px"}} >
                 <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>
-                    SUB TOTAL: <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + subTotal.toFixed(2)}</span>
+                    SUB TOTAL: <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + props.type == 'Sale Transaction' ? stSubTotal.toFixed(2) : ohSubTotal.toFixed(2)}</span>
                 </div>
                 {
                     _get(props,'itemsDiscount') == 0 ? '' : 
