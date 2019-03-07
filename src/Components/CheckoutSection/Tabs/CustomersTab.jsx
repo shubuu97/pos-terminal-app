@@ -19,13 +19,7 @@ import { commonActionCreater } from '../../../Redux/commonAction';
 import Customer from '../Customer';
 
 PouchDb.plugin(require('pouchdb-quick-search'));
-let productsdb = new PouchDb('customersdb');
-productsdb.search({
-    fields: ['customer.firstName', 'customer.lastName', 'email', 'phoneNumber.phoneNumber'],
-    build: true
-})
-
-
+let customerdb = new PouchDb('customersdb');
 
 
 
@@ -57,7 +51,7 @@ class CustomerTab extends React.Component {
 
     loadOptions = (searchText, callback) => {
         console.log(searchText, "");
-        productsdb.search({
+        customerdb.search({
             query: searchText,
             fields: ['customer.firstName', 'customer.lastName', 'email', 'phoneNumber.phoneNumber', 'employeeId'],
             include_docs: true,

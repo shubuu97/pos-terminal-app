@@ -27,13 +27,6 @@ PouchDb.plugin(require('pouchdb-quick-search'));
 
 let productsdb = new PouchDb("productsdb");
 
-
-// let productsdb = new PouchDb("productsdb");
-productsdb.search({
-    fields: ['product.name', 'product.description', 'product.sku', 'product.upcCode'],
-    build: true
-})
-
 class ProductsSection extends React.Component {
 
     constructor() {
@@ -51,7 +44,8 @@ class ProductsSection extends React.Component {
         let p3 = new PouchDb('categoryDb').destroy();
         this.setState({ isLoading: true })
         Promise.all([p1, p2, p3]).then((data) => {
-            this.setState({ isLoading: false })
+            this.setState({ isLoading: false });
+            window.location.reload();
             this.props.history.push('/login')
         });
     }

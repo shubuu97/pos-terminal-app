@@ -224,7 +224,8 @@ class HomeContainer extends React.Component {
         let p3 = new PouchDb('categoryDb').destroy();
         this.setState({ isLoading: true })
         Promise.all([p1, p2, p3]).then((data) => {
-            this.setState({ isLoading: false })
+            this.setState({ isLoading: false });
+            window.location.reload();
             this.props.history.push('/login')
         });
     }
@@ -258,7 +259,6 @@ class HomeContainer extends React.Component {
                         handleLockTerminal={this.handleLockTerminal}
                     />
                 </Products>
-
                 <CheckoutSection
                     // * Css Specific props
                     windowHeight={windowHeight}
@@ -276,7 +276,6 @@ class HomeContainer extends React.Component {
                     handleHistoryOpen={this.handleHistoryOpen}
 
                 />
-
                 <Payment pose={isOpenPayment ? 'open' : 'closed'}>
                     {isOpenPayment ?
                         <PaymentSection
@@ -284,7 +283,6 @@ class HomeContainer extends React.Component {
                         /> : null
                     }
                 </Payment>
-
                 {
                     this.state.openOnHold ?
                         <HoldDialogue
@@ -321,7 +319,6 @@ class HomeContainer extends React.Component {
                             dispatch={dispatch}
                         /> : null
                 }
-
                 {
                     this.state.openSessionContainer ?
                         <SessionDialog
@@ -342,7 +339,7 @@ class HomeContainer extends React.Component {
                             open={this.state.openQuickBookContainer}
                             holdCartData={this.props.holdCartData}
                             dispatch={dispatch}
-                            {...this.propos}
+                            {...this.props}
                         /> : null
                 }
                 {

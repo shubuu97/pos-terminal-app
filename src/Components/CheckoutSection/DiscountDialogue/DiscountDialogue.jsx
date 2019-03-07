@@ -83,7 +83,11 @@ class DiscountDialogue extends React.Component {
     }
 
     handleDiscount = () => {
-        this.props.handleDiscount(this.state.discount, this.props.identifier, this.props.itemIndex, this.state.type)
+        let type = this.state.type
+        if(this.props.identifier != 'Discount'){
+            type = '%'
+        }
+        this.props.handleDiscount(this.state.discount, this.props.identifier, this.props.itemIndex, type)
         this.setState({
             discount: ''
         })
@@ -99,7 +103,6 @@ class DiscountDialogue extends React.Component {
     render() {
         return (
             <div>
-
                 <Dialog
                     open={this.props.open}
                     TransitionComponent={Transition}
@@ -115,8 +118,10 @@ class DiscountDialogue extends React.Component {
                     <DialogContent>
                         <DialogContentText id="alert-dialog-slide-description">
                             {/* <span>Warning! This action will require manager's approval.</span> */}
-                            <div className="d-flex align-items-center mt-20">
-                                <div className="mui-col-md-6">
+                        </DialogContentText>
+                        <div className='mui-col-md-12'>
+                            <div className=" d-flex align-items-center mt-20">
+                                <div className="mui-col-md-8">
                                     <TextField
                                         id="discount"
                                         label="Discount"
@@ -128,15 +133,17 @@ class DiscountDialogue extends React.Component {
                                         variant="outlined"
                                     />
                                 </div>
-                                <div className="mui-col-md-6">
+                                <div className="mui-col-md-4">
                                     <div className='d-flex justify-content-end'>
-                                        <div className={this.state.type === '%' ? 'discount-keys-top  active' : 'discount-keys-top '} onClick={() => this.handleDiscountType('%')}>%</div>
-                                        <div className={this.state.type === '$' ? 'discount-keys-top ml-10  active' : 'discount-keys-top ml-10 '} onClick={() => this.handleDiscountType('$')}>$</div>
+                                        <div className={this.state.type === '%' || this.props.identifier != 'Discount' ? 'discount-keys-top  active' : 'discount-keys-top '} onClick={() => this.handleDiscountType('%')}>%</div>
+                                        {
+                                            this.props.identifier == 'Discount' ?
+                                                <div className={this.state.type === '$' ? 'discount-keys-top ml-10  active' : 'discount-keys-top ml-10 '} onClick={() => this.handleDiscountType('$')}>$</div> :
+                                                null
+                                        }
                                     </div>
                                 </div>
                             </div>
-                        </DialogContentText>
-                        <div className="mui-col-md-12">
                             <div className='discount-keypad'>
                                 <div className='discount-keys' onClick={this.handleInputChange('1')}>1</div>
                                 <div className='discount-keys' onClick={this.handleInputChange('2')}>2</div>
@@ -152,6 +159,7 @@ class DiscountDialogue extends React.Component {
                                 <div className='discount-keys' onClick={this.handleInputChange('<')}>clear</div>
                             </div>
                         </div>
+
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={this.props.handleClose} className='btnmodalsecondary' variant="outlined">
