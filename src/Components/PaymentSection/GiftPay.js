@@ -14,6 +14,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { commonActionCreater } from '../../Redux/commonAction';
 import { connect } from 'react-redux';
 import genericPostData from '../../Global/dataFetch/genericPostData';
+import roundUp from '../../Global/PosFunctions/roundUp';
 let regex = /^\d*[\.\d]+$/;
 
 
@@ -37,23 +38,23 @@ class GiftPay extends React.Component {
 
     };
 
-  
+
 
 
     handleGiftCardValue = name => event => {
         let value = event.target.value;
         if (regex.test(value)) {
-            this.props.dispatch(commonActionCreater({ cashAmount: value, totalAmount: this.props.totalAmount }, 'GIFT_AMOUNT_TO_REDEEM'));
+            this.props.dispatch(commonActionCreater({ giftCardAmount: value, totalAmount: this.props.totalAmount }, 'GIFT_AMOUNT_TO_REDEEM'));
         }
         else if (regex.test(value.substring(0, value.length - 1))) {
-            this.props.dispatch(commonActionCreater({ cashAmount: value.substring(0, value.length - 1), totalAmount: this.props.totalAmount }, 'GIFT_AMOUNT_TO_REDEEM'));
+            this.props.dispatch(commonActionCreater({ giftCardAmount: value.substring(0, value.length - 1), totalAmount: this.props.totalAmount }, 'GIFT_AMOUNT_TO_REDEEM'));
 
         }
         else {
-            this.props.dispatch(commonActionCreater({ cashAmount: '', totalAmount: this.props.totalAmount }, 'GIFT_AMOUNT_TO_REDEEM'));
+            this.props.dispatch(commonActionCreater({ giftCardAmount: '', totalAmount: this.props.totalAmount }, 'GIFT_AMOUNT_TO_REDEEM'));
         }
     }
-   
+
     componentWillUnmount() {
         this.props.dispatch(commonActionCreater({ giftPayNumber: '', totalAmount: this.props.totalAmount }, 'GIFT_CARD_NUMBER'));
         this.props.dispatch(commonActionCreater({ giftCardAmount: '', totalAmount: this.props.totalAmount }, 'GIFT_AMOUNT_TO_REDEEM'));
@@ -66,7 +67,7 @@ class GiftPay extends React.Component {
             storeId: localStorage.getItem('storeId'),
             code: this.props.giftPayNumber,
         };
-        this.setState({isLoadingCheckValue:true})
+        this.setState({ isLoadingCheckValue: true })
         genericPostData({
             dispatch: this.props.dispatch,
             reqObj: data,
@@ -77,9 +78,9 @@ class GiftPay extends React.Component {
                 error: 'CHECK_GIFT_CARD_DATA_ERROR'
             },
             identifier: 'CHECK_GIFT_CARD_DATA',
-            successCb: (data) => this.setState({isLoadingCheckValue:false}),
-            errorCb: (error) => this.setState({isLoadingCheckValue:false}),
-            dontShowMessage:true
+            successCb: (data) => this.setState({ isLoadingCheckValue: false }),
+            errorCb: (error) => this.setState({ isLoadingCheckValue: false }),
+            dontShowMessage: true
         })
         // this.props.getGiftCardDetail('giftPayNumberValue', this.props.giftPayNumber);
 
@@ -143,7 +144,7 @@ class GiftPay extends React.Component {
         if (!_isEmpty(this.props.giftCardData)) {
             return (<React.Fragment>
                 <span>
-                    Value: {_get(this.props, 'giftCardData.value.amount', 0)}
+                    Value: {roundUp(_get(this.props, 'giftCardData.value.amount', 0),2)}
                 </span>
                 <FormControlLabel
                     control={
@@ -161,7 +162,7 @@ class GiftPay extends React.Component {
             return (
                 <React.Fragment>
                     <span className="pay-button" onClick={this.checkGiftCardValue}>
-                       {this.state.isLoadingCheckValue?<CircularProgress size={24}/>:"Check Value"}
+                        {this.state.isLoadingCheckValue ? <CircularProgress size={24} /> : "Check Value"}
                     </span>
                 </React.Fragment>
             )
@@ -172,7 +173,7 @@ class GiftPay extends React.Component {
         this.props.dispatch(commonActionCreater({ giftCardAmount: '', totalAmount: this.props.totalAmount }, 'GIFT_AMOUNT_TO_REDEEM'));
         this.props.dispatch(commonActionCreater({}, 'CHECK_GIFT_CARD_DATA_SUCCESS'));
 
-        this.props.onRemovePaymentMethod('showGiftPay')
+        this.props.onRemovePaymentMethod('showGiftPay');
     }
 
     render() {

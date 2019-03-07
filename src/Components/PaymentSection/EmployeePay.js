@@ -25,14 +25,14 @@ class EmployeePay extends React.Component {
     handleChange = name => event => {
         let value = event.target.value;
         if (regex.test(value)) {
-            this.props.dispatch(commonActionCreater({ cashAmount: value, totalAmount: this.props.totalAmount }, 'EMPLOYEE'));
+            this.props.dispatch(commonActionCreater({ employeePay: value, totalAmount: this.props.totalAmount }, 'EMPLOYEE'));
         }
         else if (regex.test(value.substring(0, value.length - 1))) {
-            this.props.dispatch(commonActionCreater({ cashAmount: value.substring(0, value.length - 1), totalAmount: this.props.totalAmount }, 'EMPLOYEE'));
+            this.props.dispatch(commonActionCreater({ employeePay: value.substring(0, value.length - 1), totalAmount: this.props.totalAmount }, 'EMPLOYEE'));
 
         }
         else {
-            this.props.dispatch(commonActionCreater({ cashAmount: '', totalAmount: this.props.totalAmount }, 'EMPLOYEE'));
+            this.props.dispatch(commonActionCreater({ employeePay: '', totalAmount: this.props.totalAmount }, 'EMPLOYEE'));
         }
     };
     componentDidMount() {
