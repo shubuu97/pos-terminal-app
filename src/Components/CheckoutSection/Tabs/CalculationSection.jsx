@@ -69,11 +69,10 @@ class CalculationSection extends React.Component {
                                 </div> : null
                         }
                         {
-                            _get(cart, 'cartDiscountAmount.amount', 0) > 0 ?
-                                null :
+                            _get(this, 'props.handleClickOpenDiscount', false) ?
                                 <div className='cart-each-details'>
                                     <Button variant="outlined" onClick={this.props.handleClickOpenDiscount}>Add Discount</Button>
-                                </div>
+                                </div> : null
                         }
                     </div>
                 </div>

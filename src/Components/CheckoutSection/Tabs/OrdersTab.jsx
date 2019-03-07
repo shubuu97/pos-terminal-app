@@ -46,7 +46,7 @@ class OrdersTab extends React.Component {
     }
 
     componentWillReceiveProps(props) {
-        let cartItemHeight = document.getElementById('cartItemHeading').offsetHeight;
+        let cartItemHeight = 0
         let cartListHeight = this.props.checkoutcartArea - cartItemHeight - 30;
         this.setState({
             cartListHeight
@@ -242,10 +242,10 @@ class OrdersTab extends React.Component {
                     cartTotal={this.state.cartTotal}
                 />
                 <div style={{ height: checkoutcartArea }}>
-                    <div className='cart-items' id='cartItemHeading'>
+                    {/* <div className='cart-items' id='cartItemHeading'>
                         <span>Cart Items</span>
                         <Button variant="outlined" onClick={this.handleClickOpenDiscount}>Add Discount</Button>
-                    </div>
+                    </div> */}
                     <div className="items-section flex-column" style={{ height: this.state.cartListHeight }} >
                         {
                             _get(this, 'props.cartItems', []).length ?
