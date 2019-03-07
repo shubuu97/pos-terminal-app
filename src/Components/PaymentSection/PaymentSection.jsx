@@ -537,10 +537,10 @@ class PaymentSection extends React.Component {
                                     fullWidth
                                 />
                             </div>
-                            <div className="flex-row justify-flex-end mr-10 ml-10">
+                            <div className="flex-row justify-flex-end mr-10 ml-10 submit-transaction">
                                 <div style={{ width: '100%' }}>
                                     <Detector
-                                        render={this.buttonToRender} class_Name="submit-transaction" />
+                                        render={this.buttonToRender} />
                                 </div>
                             </div>
 
