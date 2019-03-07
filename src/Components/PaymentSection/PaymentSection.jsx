@@ -49,6 +49,7 @@ class PaymentSection extends React.Component {
             originalGiftCard: {},
             giftCardUsedValue: 0,
             comment: '',
+            currentFocus:''
         }
     }
 
@@ -133,7 +134,7 @@ class PaymentSection extends React.Component {
             identifier: 'GET_GIFT_CARD_PAYMENT_DATA',
             successCb: successMethod,
             errorCb: errorMethod,
-            dontShowMessage:true
+            dontShowMessage: true
         })
     }
     getExistingGiftCard = (url, data, successMethod, errorMethod) => {
@@ -149,7 +150,7 @@ class PaymentSection extends React.Component {
             identifier: 'GET_GIFT_CARD__DATA',
             successCb: successMethod,
             errorCb: errorMethod,
-            dontShowMessage:true
+            dontShowMessage: true
         })
     }
     handleGetGiftcardDataSuccess = () => {
@@ -173,6 +174,8 @@ class PaymentSection extends React.Component {
     }
 
     handleInputChange = num => event => {
+        if(this.state.currentFocus!=='')
+        {
         let currentFocus = this.state.currentFocus;
         let focusItemValue = this.props[currentFocus];
         if (num != '<') {
@@ -184,25 +187,46 @@ class PaymentSection extends React.Component {
 
         this.props.dispatch(commonActionCreater({ [currentFocus]: focusItemValue, totalAmount: this.props.totalAmount }, this.state.handler))
     }
+    }
     currentFocus = (field) => {
         this.setState({ currentFocus: field.fieldValue, handler: field.handler })
     }
     onRemovePaymentMethod = (fieldValue) => {
         if (fieldValue == 'showCashPay') {
-            this.setState({ [fieldValue]: false });
+            if (this.state.currentFocus == 'cashAmount') {
+                this.setState({ [fieldValue]: false, currentFocus: '' });
+            }
+            else {
+                this.setState({ [fieldValue]: false });
+            }
             this.props.dispatch(commonActionCreater({ cashAmount: '', totalAmount: this.props.totalAmount }, 'CASH_INPUT_HANDLER'))
         }
         if (fieldValue == 'showCardPay') {
-            this.setState({ [fieldValue]: false });
+            if (this.state.currentFocus == 'cardAmount') {
+                this.setState({ [fieldValue]: false, currentFocus: '' });
+            }
+            else {
+                this.setState({ [fieldValue]: false });
+            }
             this.props.dispatch(commonActionCreater({ cardAmount: '', totalAmount: this.props.totalAmount }, 'CARD_INPUT_HANDLER'))
         }
         if (fieldValue == 'showEmpPay') {
-            this.setState({ [fieldValue]: false });
+            if (this.state.currentFocus == 'employeePay') {
+                this.setState({ [fieldValue]: false, currentFocus: '' });
+            }
+            else {
+                this.setState({ [fieldValue]: false });
+            }
             this.props.dispatch(commonActionCreater({ empPay: '', totalAmount: this.props.totalAmount }, 'Employee'))
 
         }
         if (fieldValue == 'showGiftPay') {
-            this.setState({ [fieldValue]: false });
+            if (this.state.currentFocus == 'giftCardAmount' || this.state.currentFocus == 'giftPayNumber') {
+                this.setState({ [fieldValue]: false, currentFocus: '' });
+            }
+            else {
+                this.setState({ [fieldValue]: false });
+            }
             this.props.dispatch(commonActionCreater({ giftPayNumber: '', totalAmount: this.props.totalAmount }, 'GIFT_CARD_NUMBER'));
             this.props.dispatch(commonActionCreater({ giftCardAmount: '', totalAmount: this.props.totalAmount }, 'GIFT_AMOUNT_TO_REDEEM'));
         }
@@ -355,7 +379,7 @@ class PaymentSection extends React.Component {
             identifier: 'SALE_TRANSACTION_INIT',
             successCb: this.handleSaleOnlineTransactionSuccess,
             errorCb: this.handleSaleOnlineTransactionError,
-            dontShowMessage:true
+            dontShowMessage: true
 
         })
     }

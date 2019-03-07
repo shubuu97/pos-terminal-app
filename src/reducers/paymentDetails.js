@@ -1,4 +1,5 @@
 import _get from 'lodash/get';
+import roundUp from '../Global/PosFunctions/roundUp';
 
 const paymentReducer = (state = {
     cashAmount: '',
@@ -53,7 +54,7 @@ const paymentReducer = (state = {
             }
             else {
                 let effectiveRemainingAmount =  parseFloat(totalAmount) - parseFloat(paymentAmount)-amountAvailToRedeem;
-                return (Object.assign({}, state, { giftCardAmount: amountAvailToRedeem, remainingAmount:effectiveRemainingAmount }));
+                return (Object.assign({}, state, { giftCardAmount:  roundUp(amountAvailToRedeem,2), remainingAmount:roundUp(effectiveRemainingAmount,2) }));
             }
             break;
         case 'GIFT_AMOUNT_TO_REDEEM':
