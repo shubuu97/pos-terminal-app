@@ -428,7 +428,7 @@ class PaymentSection extends React.Component {
     render() {
         let disable = this.props.remainingAmount <= 0 ? { opacity: '0.3', pointerEvents: 'none' } : null
         return (
-            <div className='pos-payment' style={{ height: this.props.windowHeight }}>
+            <div className='pos-payment'>
                 <div className='flex-column'>
                     <div className='flex-row justify-space-between'>
                         <ul className="payment-method">
@@ -517,16 +517,16 @@ class PaymentSection extends React.Component {
                                     fullWidth
                                 />
                             </div>
-
+                            <div className="flex-row justify-flex-end mr-10 ml-10">
+                                <div style={{ width: '100%' }}>
+                                    <Detector
+                                        render={this.buttonToRender} class_Name="submit-transaction" />
+                                </div>
+                            </div>
 
                         </div>
                     </div>
-                    <div className="flex-row justify-flex-end mr-10 ml-10">
-                        <div style={{ width: '100%' }}>
-                            <Detector
-                                render={this.buttonToRender} />
-                        </div>
-                    </div>
+                 
                 </div>
 
 
