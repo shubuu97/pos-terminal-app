@@ -270,20 +270,31 @@ class OrderHistoryDialog extends React.Component {
         )
     }
 
+    // handlePrint = () => {
+    //     var content = document.getElementById('printarea');
+    //     var pri = document.getElementById('ifmcontentstoprint').contentWindow;
+    //     pri.document.open();
+    //     pri.document.write('<html><head><title>print data</title>');
+    //     pri.document.write('<link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet"> ');
+    //     pri.document.write('</head><body >');
+    //     pri.document.write(content.innerHTML);
+    //     pri.document.write('</body></html>');
+    //     pri.document.close();
+    //     pri.focus();
+    //     pri.print();
+        
+    // }
+
     handlePrint = () => {
         var content = document.getElementById('printarea');
         var pri = document.getElementById('ifmcontentstoprint').contentWindow;
         pri.document.open();
-        pri.document.write('<html><head><title>print data</title>');
-        pri.document.write('<link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet"> ');
-        pri.document.write('</head><body >');
         pri.document.write(content.innerHTML);
-        pri.document.write('</body></html>');
         pri.document.close();
         pri.focus();
         pri.print();
-        
     }
+
 
     handlePrintRefund = () => {
         var content = document.getElementById('printareaRefund');

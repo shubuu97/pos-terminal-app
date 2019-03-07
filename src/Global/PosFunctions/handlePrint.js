@@ -5,7 +5,6 @@ import logo from '../../assets/images/aobLogodark.png';
 import '../../assets/stylesheets/print.css'
 
 const HandlePrint = (props) => {
-    debugger
     let stSubTotal = 0
     let ohSubTotal = 0
     const saleTransaction = _get(props, 'itemList', []).map(item => {
@@ -42,7 +41,7 @@ const HandlePrint = (props) => {
         const orderHistory = _get(props, 'itemList', []).map(item => {
             let itemSubTotal = 0
             let empDis
-            let isEmpDisExist = ('employeeDiscountPercent' in item.saleItem)
+            let isEmpDisExist = ('employeeDiscountPercent' in _get(item,'saleItem',{}))
             if(!isEmpDisExist) {
                 empDis = 0
             } else {
@@ -72,6 +71,15 @@ const HandlePrint = (props) => {
                    <div style={{width:"25%", textAlign:"right"}}>{itemSubTotal.toFixed(2)}</div>
                 </div>
             )}) 
+    let subTotal = 0
+    if(props.type == 'Sale Transaction') {
+        subTotal = stSubTotal
+        console.log(subTotal, 'subTotal inside')    
+    } 
+    if(props.type == 'Order History') {
+        subTotal = ohSubTotal
+    }
+    console.log(subTotal, 'subTotal')
     return (
         <div style={{fontSize:"12px", fontFamily:"arial, sans-serif"}} >
             <div style={{textAlign:"center"}}>
@@ -107,7 +115,7 @@ const HandlePrint = (props) => {
            
             <div style={{display:'flex', flex:'1', flexDirection:'column', borderBottom:'solid 1px #9e9e9e', paddingTop:"10px",  paddingBottom:"5px"}} >
                 <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>
-                    SUB TOTAL: <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + props.type == 'Sale Transaction' ? stSubTotal.toFixed(2) : ohSubTotal.toFixed(2)}</span>
+                    SUB TOTAL: <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + subTotal.toFixed(2)}</span>
                 </div>
                 {
                     _get(props,'itemsDiscount') == 0 ? '' : 
