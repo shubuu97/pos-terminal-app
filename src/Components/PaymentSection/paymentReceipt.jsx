@@ -99,7 +99,6 @@ class PaymentReceipt extends React.Component {
     }
     render() {
         const { store, cart } = this.props;
-
         let address  = _get(store,'store.address', '')
         let customer = _get(cart, 'customer.customer')
 
@@ -150,8 +149,11 @@ class PaymentReceipt extends React.Component {
                     <div>
                         <HandlePrint 
                             type="Sale Transaction"
+                            orderId={_get(this.props, 'receiptData.id')}
                             currency='$'
                             itemList={_get(cart,'cartItems', [])}
+                            cashierName={localStorage.getItem('userName')}
+                            staffId={localStorage.getItem('userId')}
                             orderDate={moment().format('LLLL')}
                             storeName={_get(store,'store.name', '')}
                             storeAddress={storeAddress}
