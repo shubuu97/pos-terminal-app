@@ -41,8 +41,8 @@ class OrdersTab extends React.Component {
         }
     }
 
-    componentDidMount(){
-        this.setState({cartItemQty: _get(this, 'props.cart.cartQty', 0)})
+    componentDidMount() {
+        this.setState({ cartItemQty: _get(this, 'props.cart.cartQty', 0) })
     }
 
     componentWillReceiveProps(props) {
@@ -51,7 +51,7 @@ class OrdersTab extends React.Component {
         this.setState({
             cartListHeight
         })
-        if(this.state.cartItemQty != _get(props, 'cart.cartQty', 0)){
+        if (this.state.cartItemQty != _get(props, 'cart.cartQty', 0)) {
             this.props.dispatch(commonActionCreater(1, 'SWITCH_TAB_NUMBER'))
             this.setState({
                 cartItemQty: _get(props, 'cart.cartQty', 0)
@@ -81,6 +81,7 @@ class OrdersTab extends React.Component {
             cartTotal: cartTotal,
         });
     };
+
     handleClickOpenItemDiscount = (index) => {
         this.setState({
             open: true,
@@ -170,13 +171,25 @@ class OrdersTab extends React.Component {
                     onChange={this.handleChange(`Panel${_get(item, 'doc.product.sku')}`)}>
                     <ExpansionPanelSummary>
                         <div className='each-product-des fwidth flex-row justify-space-between'>
+
+                            {/* Item Quantity */}
+                            {_get(item, 'doc.product.isGiftCard') ?
+                                null :
+                                <div className='each-item-qty absolute'>
+                                    {item.qty}
+                                </div>
+                            }
+
+                            {/* Delete Icon and Title */}
                             <div className=' des-first-part flex-row align-center'>
                                 <DeleteIcons
                                     onClick={() => this.handleDelete(item)}
                                     style={{ color: '#ff000096', fontSize: '1.5em' }} />
-                                <div className='title'>{item.doc.product.isGiftCard ? `Open Card: ${_get(item, 'doc.product.name')}` :   
+                                <div className='title'>{_get(item, 'doc.product.isGiftCard') ? <div><span>Gift Card :</span> {_get(item, 'doc.product.name')}</div> :
                                     _get(item, 'doc.product.name')}</div>
                             </div>
+
+                            {/* Item Price and Regular Price */}
                             <div className='flex-column'>
                                 <div className='each-product-price'>{_get(item, 'itemSubTotal.currencyCode')} {_get(item, 'itemSubTotal.amount')}</div>
                                 <div className='each-product-reg-price'>Reg Price - {_get(item, 'itemRegularTotal.currencyCode')} {_get(item, 'itemRegularTotal.amount')}</div>
@@ -196,7 +209,6 @@ class OrdersTab extends React.Component {
                                     </div>
                                 </div>
                             }
-
                             <div className='expanded-options'>
                                 <span className='option-title'>Item Discount</span>
                                 <div className='flex-row justify-center align-center'>
@@ -219,7 +231,6 @@ class OrdersTab extends React.Component {
     render() {
         let { checkoutcalcArea, checkoutactionArea, checkoutcartArea, checkoutMainPart } = this.props;
         return (
-
             <div className="orders-section" >
                 <DiscountDialogue
                     open={this.state.open}
@@ -230,7 +241,6 @@ class OrdersTab extends React.Component {
                     forCart={this.state.forCart}
                     cartTotal={this.state.cartTotal}
                 />
-
                 <div style={{ height: checkoutcartArea }}>
                     <div className='cart-items' id='cartItemHeading'>
                         <span>Cart Items</span>
@@ -241,13 +251,11 @@ class OrdersTab extends React.Component {
                             _get(this, 'props.cartItems', []).length ?
                                 this.populateCartItems() :
                                 <div className='flex-row justify-center align-center fheight' >
-                                    <img src={EmptyCartImg} style={{height: '70%'}} alt="" />
+                                    <img src={EmptyCartImg} style={{ height: '70%' }} alt="" />
                                 </div>
                         }
                     </div>
                 </div>
-
-
                 <div className="order-amount-section">
                     <CalculationSection
                         checkoutcalcArea={checkoutcalcArea}
