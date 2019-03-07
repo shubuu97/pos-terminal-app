@@ -78,7 +78,7 @@ class FullWidthTabs extends React.Component {
         }
     }
 
-    
+
     orderTab = () => {
         // * This function was made to prevent rewriting of code
         const { cart, cartItems } = this.props;
@@ -104,6 +104,7 @@ class FullWidthTabs extends React.Component {
         return (
             <TabContainer>
                 <CustomersTab
+                    cartItems={cartItems}
                     {...this.props}
                     checkoutMainPart={this.props.checkoutMainPart}
                     checkoutactionArea={this.props.checkoutactionArea}
@@ -134,7 +135,7 @@ class FullWidthTabs extends React.Component {
                         <Tab className={cartItems.length > 0 ? '' : 'disable-button'} label="Payment" disabled={cartItems.length > 0 ? false : true} />
                     </Tabs>
                 </AppBar>
-                
+
                 {/* There is no easy way to disable single tab from SwipeableViews */}
                 {cartItems.length > 0 ?
                     <SwipeableViews

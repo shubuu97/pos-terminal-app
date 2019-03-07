@@ -295,8 +295,6 @@ class PaymentSection extends React.Component {
                 success: 'GET_GIFT_CARD_PAYMENT_DATA_SUCCESS',
                 error: 'GET_GIFT_CARD_PAYMENT_DATA_ERROR'
             }))
-
-            debugger;
             payments.push({
                 paymentMethod: 'GIFT_CARD',
                 paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.giftCardAmount) || 0) },
