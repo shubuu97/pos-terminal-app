@@ -70,7 +70,16 @@ select:-webkit-autofill {
 
 }
 
-
+.no-gutters {
+    margin-right: 0;
+    margin-left: 0;
+  
+    > .col,
+    > [class*="col-"] {
+      padding-right: 0;
+      padding-left: 0;
+    }
+  }
 
 input,
 textarea,
@@ -834,7 +843,7 @@ p {
 
     .customer-section {
         position: relative;
-        height: calc(100vh - 57px);
+        height: calc(100vh - 71px);
 
         .order-amount-section{
             position: absolute;
@@ -1047,6 +1056,18 @@ p {
 
 .pos-payment {
     border-left: solid 2px #c3c3c3;
+
+    .submit-transaction  .MuiButton-contained.MuiButton-disabled{
+        opacity: .2;
+        background-color: #2ea96c;
+        color: #fff;
+    }
+
+    .submit-transaction .MuiButton-containedPrimary{
+        padding: 20px;
+        font-size: 1.2rem;
+        background-color: #2ea96c;
+    }
     .payment-method{
         display: flex;
         padding: 0;
@@ -1128,11 +1149,7 @@ p {
 
         }
 
-        .submit-transaction .MuiButton-containedPrimary{
-            padding: 20px;
-            font-size: 1.3rem;
-            background-color: #2ea96c;
-        }
+        
     }
     .card {
         background: @background-white;
@@ -1375,11 +1392,10 @@ p {
         background: @background-white;
         border-radius: 5px;
         box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-        margin: 10px;
+        margin:10px 0;
         min-height: 50px;
-        padding: 6px;
-        width: 100%;
-
+        padding: 10px;
+       
         .card-title {
             font-size: 1.2em;
             color: @soft-text;
@@ -1725,4 +1741,18 @@ p {
             margin: 1%;
         }
     }
+}
+
+.order-history-block{
+
+    overflow-y: auto;
+    height: 100vh;
+
+    .history-card-head{
+        padding: 10px;
+        background: #f7f7f7;
+        margin-bottom: 10px;
+    }
+    .c-name{font-size: 1.2rem}
+    .c-amount{font-size: 1.2rem}
 }

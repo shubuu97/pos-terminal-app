@@ -169,25 +169,31 @@ class OrderHistoryDialog extends React.Component {
         const orderHistory = !_isEmpty(salesList) && _isArray(salesList) && salesList.map((custData, index) => (
             <div onClick={() => this.onSelectOrder(custData)} key={index} className="card">
                 <div className={_get(this.state, 'orderId', '') === _get(custData, 'sale.id', '') ? "active" : ""}>
-                    <div className="mui-col-md-12">
-                        {moment(_get(custData, 'sale.saleCommitTimeStamp.seconds', 0) * 1000).format('MM/DD/YYYY')}
-                    </div>
-                    <div className="mui-row" style={{ paddingLeft: '15px' }}>
-                        <div className="">
-                            <div className="mui-col-md-8">
-                                <label>{`Order Id: ${_get(custData, 'sale.id', '')}`}</label>
-                                <br />
-                                <span>{`Email: ${_get(custData, 'customer.email', '')}`}</span>
+                        <div className="mui-row no-gutters history-card-head">
+                            <div className="mui-col-md-4">
+                                {moment(_get(custData, 'sale.saleCommitTimeStamp.seconds', 0) * 1000).format('MM/DD/YYYY')}
                             </div>
-                            <div className="mui-col-md-8">
-                                <label>{`Total Amount: ${_get(custData, 'sale.totalAmount.currencyCode', '$')} ${_get(custData, 'sale.totalAmount.amount', 0)}`}</label>
-                                <br />
+                            <div className="mui-col-md-8 text-right">
+                                #{`${_get(custData, 'sale.id', '')}`}
                             </div>
-                            {this.showPaymentMethods(custData)}
                         </div>
-                    </div>
+                        <div className="mui-row no-gutters">                               
+                            {/* <div className="mui-col-md-6">
+                                {`Email: ${_get(custData, 'customer.email', '')}`}
+                            </div> */}
+                            <div className="mui-col-md-6">
+                                <label className="c-name">Vishnu Kumar</label>
+                            </div>
+                            <div className="mui-col-md-6 text-right">
+                                <label  className="c-name">{`Amount: ${_get(custData, 'sale.totalAmount.currencyCode', '$')} ${_get(custData, 'sale.totalAmount.amount', 0)}`}</label>
+                            </div>
+                        </div>
+                        {/* <div className="mui-row no-gutters">                               
+                            <div className="mui-col-md-12">{this.showPaymentMethods(custData)}</div>
+                        </div> */}
                 </div>
             </div>
+            
         ));
         return (
             <div className="content">
@@ -294,7 +300,7 @@ class OrderHistoryDialog extends React.Component {
         let selectedOrder = _find(salesList, { sale: { id: this.state.orderId } });
         return (
             <div className="">
-                <div className={"mui-row"} >
+                <div className={"mui-row no-gutters"} >
                     <div className="card" style={{ justifyContent: 'center' }}>
                         {moment(_get(selectedOrder, 'sale.saleCommitTimeStamp.seconds', 0) * 1000).format('MM/DD/YYYY')}
                         <div className="mui-row">
@@ -411,12 +417,12 @@ class OrderHistoryDialog extends React.Component {
                             <span className='ml-20'>Order History</span>
                         </div>
                         <div className="mui-container-fluid">
-                            <div className="mui-col-md-4 pad-none"  >
+                            <div className="mui-col-md-4 order-history-block"  >
                                 {this.populateOrderHistory()}
                             </div>
                             {
                                 this.state.orderId !== '' &&
-                                <div className="mui-col-md-8 pad-none"  >
+                                <div className="mui-col-md-8"  >
                                     {this.populateOrderData()}
                                 </div>
                             }
