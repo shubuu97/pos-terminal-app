@@ -5,6 +5,7 @@ import _get from 'lodash/get';
 import Button from '@material-ui/core/Button';
 /* Material Icons */
 import RemoveCircleIcons from '@material-ui/icons/RemoveCircleOutline';
+import AddCircleOutline from '@material-ui/icons/AddCircleOutline';
 /* Redux Imports */
 import { connect } from 'react-redux';
 import { commonActionCreater } from '../../../Redux/commonAction';
@@ -71,8 +72,8 @@ class CalculationSection extends React.Component {
                         {
                             _get(cart, 'cartDiscountAmount.amount', 0) > 0 ?
                                 null :
-                                <div className='cart-each-details'>
-                                    <Button variant="outlined" onClick={this.handleClickOpenDiscount}>Add Discount</Button>
+                                <div className='cart-each-details cart-discount-btn'>
+                                    <Button variant="outlined" onClick={this.handleClickOpenDiscount}><AddCircleOutline /> Add Cart Discount</Button>
                                 </div>
                         }
                     </div>
