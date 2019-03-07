@@ -63,9 +63,9 @@ class Categories extends Component {
   }
 
   handleHomeClick = () => {
-    this.setState({ selectedCategory: { categoryType: -1 } });
-    this.getProductData();
-    this.getCategory(0);
+      this.setState({ selectedCategory: {categoryType: -1} });
+      this.getProductData();
+      this.getCategory(0);
   };
 
   handleCategoryClick = category => {
@@ -104,6 +104,11 @@ class Categories extends Component {
         // skip: 0
       })
       .then(result => {
+        let emptyResult
+        if(result.total_rows == 0) {
+          emptyResult = {}
+        }
+        this.props.dispatch(commonActionCreater(emptyResult, 'GET_PRODUCT_DATA_SUCCESS'))
         result.pagination = {}
         result.pagination.firstItemId = result.rows[0].id
         result.pagination.lastItemId = result.rows[result.rows.length - 1].id
