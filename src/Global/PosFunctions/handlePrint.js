@@ -12,7 +12,7 @@ const HandlePrint = (props) => {
             <div style={{display:'flex', flex:'1', paddingTop:"10px",  paddingBottom:"10px", borderBottom:'dotted 1px #9e9e9e' }}>
                 <div style={{width:"35%"}}>{_get(item,'doc.product.name')}</div>
                 <div  style={{width:"10%", textAlign:"center"}}>{_get(item,'qty', '')}</div>
-                <div  style={{width:"30%", textAlign:"right"}}>{_get(item,'itemRegularTotal.amount','0')}</div>
+                <div  style={{width:"30%", textAlign:"right"}}>{_get(item,'doc.product.salePrice.price','0')}</div>
                 {/* <td>{_get(item,'itemTotalDiscountAmount.amount','0')}</td>
                 <td>{_get(item,'itemTaxAmount.amount','0')}</td> */}
                 <div  style={{width:"25%", textAlign:"right"}}>{_get(item,'itemEffectiveTotal.amount','0')}</div>
@@ -24,7 +24,7 @@ const HandlePrint = (props) => {
                 <div style={{display:'flex', flex:'1', paddingTop:"10px",  paddingBottom:"10px", borderBottom:'dotted 1px #9e9e9e' }}>
                     <div style={{width:"35%", paddingRight:'10px'}}>{_get(item,'product.name')}</div>
                     <div style={{width:"10%", textAlign:"center"}}>{_get(item,'saleItem.qty', '')}</div>
-                    <div style={{width:"30%", textAlign:"right"}}>{_get(item,'saleItem.itemRegularTotal.amount','0')}<br/>
+                    <div style={{width:"30%", textAlign:"right"}}>{_get(item,'product.salePrice.price','0')}<br/>
                         <div style={{fontSize:"9px"}}>
                         (Item Disc.: $23)<br/>
                         (Emp Disc.: $27)
