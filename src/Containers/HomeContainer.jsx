@@ -140,8 +140,8 @@ class HomeContainer extends React.Component {
             include_docs: true,
             attachments: true,
             endkey: '_design',
-            'inclusive_end': false
-            // limit: 9,
+            'inclusive_end': false,
+            limit: 20,
             // skip: 0
             // ! Note - Hiding Pagination
         }).then((result) => {

@@ -70,7 +70,7 @@ class PaymentReceipt extends React.Component {
                     </tr>
                     <tr>
                         <td> <span>Change Due</span></td>
-                        <td> <span>${_get(this.props, 'receiptData.changeDue.amount')}</span></td>
+                        <td> <span>${_get(this.props, 'receiptData.changeDue.amount', 0)}</span></td>
                     </tr>
                 </table>
             </React.Fragment>)
@@ -92,12 +92,13 @@ class PaymentReceipt extends React.Component {
                     </tr>
                     <tr>
                         <td> <span>Change Due</span></td>
-                        <td> <span>${_get(this.props, 'receiptData.changeDue.amount')}</span></td>
+                        <td> <span>${_get(this.props, 'receiptData.changeDue.amount', 0)}</span></td>
                     </tr>
                 </table>
             </React.Fragment>)
     }
     render() {
+        console.log(this.props.receiptData.payments, 'this.props.receiptData.payments')
         const { store, cart } = this.props;
         let address  = _get(store,'store.address', '')
         let customer = _get(cart, 'customer.customer')
@@ -159,15 +160,18 @@ class PaymentReceipt extends React.Component {
                             storeAddress={storeAddress}
                             customerName={customerName}
                             terminalName={localStorage.getItem('terminalName')}
-                            saleComment={_get(cart,'salecomment', '')}
+                            // saleComment={_get(cart,'saleComment', '')}
                             itemsDiscount={_get(cart,'itemDiscountAmount.amount', '')}
                             cartDiscount={_get(cart,'cartDiscountAmount.amount', '')}
                             employeeDiscount={_get(cart,'employeeDiscountAmount.amount', '')}
-                            regularTotal={_get(cart, 'regularTotal', '')}
-                            totalDiscount={_get(cart,'totalDiscount.amount', '')}
-                            netTotal={_get(cart,'netTotal','')}
-                            totalTax={_get(cart,'totalTaxAmount.amount','')}
-                            totalAmount={_get(cart,'totalAmount.amount','')}
+                            // regularTotal={_get(cart, 'regularTotal', '')}
+                            // totalDiscount={_get(cart,'totalDiscount.amount', '')}
+                            // netTotal={_get(cart,'netTotal','')}
+                            totalAmountPaid={_get(this.props, 'receiptData.totalAmountPaid.amount',0)}
+                            changeDue={_get(this.props, 'receiptData.changeDue.amount', 0)}
+                            totalTax={_get(cart,'totalTaxAmount.amount',0)}
+                            totalAmount={_get(cart,'totalAmount.amount',0)}
+                            paymentMethods={_get(this.props,'receiptData.payments',[])}
                         />
                     </div>
                 </div>
