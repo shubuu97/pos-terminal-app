@@ -2,9 +2,10 @@ import React from 'react';
 /* Lodash Imports */
 import _get from 'lodash/get';
 /* Material import */
-
+import Button from '@material-ui/core/Button';
 /* Material Icons */
 import RemoveCircleIcons from '@material-ui/icons/RemoveCircleOutline';
+import AddCircleOutline from '@material-ui/icons/AddCircleOutline';
 /* Redux Imports */
 import { connect } from 'react-redux';
 import { commonActionCreater } from '../../../Redux/commonAction';
@@ -20,9 +21,12 @@ class CalculationSection extends React.Component {
 
         }
     }
-    handleCartDiscountRemove = ()=>{
-        this.props.dispatch(commonActionCreater(0,'ADD_DISCOUNT_TO_CART'));
-        this.props.dispatch(commonActionCreater(this.props.cartItems,'CART_ITEM_LIST'));
+    handleCartDiscountRemove = () => {
+        this.props.dispatch(commonActionCreater(0, 'ADD_DISCOUNT_TO_CART'));
+        this.props.dispatch(commonActionCreater(this.props.cartItems, 'CART_ITEM_LIST'));
+
+    }
+    handleClickOpenDiscount = () => {
 
     }
 
@@ -41,7 +45,7 @@ class CalculationSection extends React.Component {
                                 <div className='cart-each-details'>
                                     <span className='cart-title flex-row align-center'>
                                         <RemoveCircleIcons style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }}
-                                        onClick = {this.handleCartDiscountRemove}
+                                            onClick={this.handleCartDiscountRemove}
                                         />
                                         Cart Discount
                                     </span>
@@ -57,13 +61,20 @@ class CalculationSection extends React.Component {
                         }
                         {
                             _get(cart, 'itemDiscountAmount.amount', 0) > 0 ?
-                            <div className='cart-each-details'>
-                                <span className='cart-title flex-row align-center'>
-                                    <RemoveCircleIcons style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }} />
-                                    Items Discount
+                                <div className='cart-each-details'>
+                                    <span className='cart-title flex-row align-center'>
+                                        <RemoveCircleIcons style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }} />
+                                        Items Discount
                                 </span>
-                                <span className='cart-amount'>- {_get(cart, 'itemDiscountAmount.currencyCode')}{_get(cart, 'itemDiscountAmount.amount')}</span>
-                            </div> : null
+                                    <span className='cart-amount'>- {_get(cart, 'itemDiscountAmount.currencyCode')}{_get(cart, 'itemDiscountAmount.amount')}</span>
+                                </div> : null
+                        }
+                        {
+                            _get(cart, 'cartDiscountAmount.amount', 0) > 0 ?
+                                null :
+                                <div className='cart-each-details cart-discount-btn'>
+                                    <Button variant="outlined" onClick={this.props.handleClickOpenDiscount}><AddCircleOutline /> Add Cart Discount</Button>
+                                </div>
                         }
                     </div>
                 </div>

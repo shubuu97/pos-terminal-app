@@ -70,7 +70,16 @@ select:-webkit-autofill {
 
 }
 
-
+.no-gutters {
+    margin-right: 0;
+    margin-left: 0;
+  
+    > .col,
+    > [class*="col-"] {
+      padding-right: 0;
+      padding-left: 0;
+    }
+  }
 
 input,
 textarea,
@@ -323,7 +332,7 @@ p {
     margin-left: 0;
 }
 .disable-button{
-    opacity: 0.3;
+    opacity: 0.2;
     pointer-events: none;
 }
 
@@ -538,12 +547,12 @@ p {
         }
 
         .each-card-code-head {
-            font-size: 0.7em;
+            font-size: 0.8em;
             color: @soft-text;
         }
 
         .each-card-code {
-            font-size: 0.7em;
+            font-size: 0.8em;
             color: @soft-text;
         }
 
@@ -576,7 +585,8 @@ p {
 
 .pos-checkout {
     width: 35%;
-    background: @background-white;   
+    background: @background-white;
+    height: 100vh;   
     position: relative;   
 
     .order-amount-section{
@@ -586,6 +596,25 @@ p {
         left: 0;
         right: 0;
         background: #f7f5ff;
+
+        .cart-discount-btn{
+            position: absolute;
+            bottom: 5px;
+            right: 0;
+            left: 0;
+
+            .MuiButton-outlined{
+                flex:1;
+                border: 2px solid rgb(3, 175, 206);
+                color: rgb(3, 175, 206);
+
+                .MuiSvgIcon-root{
+                    padding-right: 5px;
+                    color: #03afce;
+                    font-size: 1.2rem;
+                }
+            }
+        }
     }
 
     .MuiAppBar-positionStatic{
@@ -619,6 +648,16 @@ p {
         border-bottom: solid 4px #627295;
         border-radius: 3px;
         box-shadow: 0px 2px 1px 0px rgba(0, 0, 0, 0.2);
+        transition: ease .25s;
+    }
+
+    .btnprimary:hover{
+        background: #3e6ed8;
+        -ms-transform: translateY(4px);
+        -webkit-transform: translateY(4px);
+        transform: translateY(4px);/*Move down*/
+        box-shadow: none;
+        border-bottom: 0;
     }
 
     .btnsecondary{
@@ -630,6 +669,17 @@ p {
         border-bottom: solid 4px #123642;
         border-radius: 3px;
         box-shadow: 0px 2px 1px 0px rgba(0, 0, 0, 0.2);
+        transition: ease .25s;
+ 
+    }
+
+    .btnsecondary:hover{
+        background: #28748e;
+        -ms-transform: translateY(4px);
+        -webkit-transform: translateY(4px);
+        transform: translateY(4px);/*Move down*/
+        box-shadow: none;
+        border-bottom: 0;
     }
 
     .MuiTab-textColorPrimary.MuiTab-selected {
@@ -697,6 +747,20 @@ p {
                         width: 70%;
                     }
 
+                    .each-item-qty{
+                        top: 5px;
+                        right: 5px;
+                        padding: 0px;
+                        width: 20px;
+                        height: 20px;
+                        background: #03afce;
+                        color: #ffffff;
+                        border-radius: 11px;
+                        font-weight: bold;
+                        font-size: 0.85em;
+                        text-align: center;
+                    }
+
                     .title {
                         font-size: 1.1em;
                         color: @softer-text;
@@ -737,6 +801,7 @@ p {
         .calc-first-part {
             padding: 10px;
             width: 50%;
+            position: relative;
 
             .cart-details {
                 align-self: flex-end;
@@ -812,7 +877,7 @@ p {
 
     .customer-section {
         position: relative;
-        height: calc(100vh - 57px);
+        height: calc(100vh - 71px);
 
         .order-amount-section{
             position: absolute;
@@ -900,10 +965,10 @@ p {
         }
 
         .card {
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-            background: @background-white;
+            box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.2);
+            background: #f4fcff;
             min-height: 50px;
-            width: 80%;
+            width: 90%;
             align-self: center;
             margin: 10px 0;
             padding: 10px;
@@ -1025,6 +1090,18 @@ p {
 
 .pos-payment {
     border-left: solid 2px #c3c3c3;
+
+    .submit-transaction  .MuiButton-contained.MuiButton-disabled{
+        opacity: .2;
+        background-color: #2ea96c;
+        color: #fff;
+    }
+
+    .submit-transaction .MuiButton-containedPrimary{
+        padding: 20px;
+        font-size: 1.2rem;
+        background-color: #2ea96c;
+    }
     .payment-method{
         display: flex;
         padding: 0;
@@ -1105,6 +1182,8 @@ p {
             position: absolute;
 
         }
+
+        
     }
     .card {
         background: @background-white;
@@ -1144,7 +1223,7 @@ p {
 
     .transaction-card {
         width: 60%;
-        min-height: 200px;
+        min-height: calc(100vh - 138px);
 
         .default-card-pay {
             .pay-button {
@@ -1347,11 +1426,10 @@ p {
         background: @background-white;
         border-radius: 5px;
         box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-        margin: 10px;
+        margin:10px 0;
         min-height: 50px;
-        padding: 6px;
-        width: 100%;
-
+        padding: 10px;
+       
         .card-title {
             font-size: 1.2em;
             color: @soft-text;
@@ -1697,4 +1775,18 @@ p {
             margin: 1%;
         }
     }
+}
+
+.order-history-block{
+
+    overflow-y: auto;
+    height: 100vh;
+
+    .history-card-head{
+        padding: 10px;
+        background: #f7f7f7;
+        margin-bottom: 10px;
+    }
+    .c-name{font-size: 1.2rem}
+    .c-amount{font-size: 1.2rem}
 }

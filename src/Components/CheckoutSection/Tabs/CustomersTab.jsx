@@ -1,6 +1,8 @@
 import React from 'react';
 /* Lodash Imports */
 import _get from 'lodash/get';
+import _findIndex from 'lodash/findIndex';
+import _isArray from 'lodash/isArray';
 /* Material import */
 import Button from '@material-ui/core/Button';
 /* Material Icons */
@@ -89,6 +91,20 @@ class CustomerTab extends React.Component {
 
     }
 
+    handleClickOpenDiscount = () => {
+        let cartItems = _get(this, 'props.cart.cartItems', []);
+        let cartTotal = 0;
+        _isArray(cartItems) && cartItems.map((cartItem) => {
+            cartTotal += Number(_get(cartItem, 'itemRegularTotal.amount', 0));
+        })
+        this.setState({
+            open: true,
+            identifier: 'Discount',
+            forCart: true,
+            cartTotal: cartTotal,
+        });
+    };
+
     handleOpen = () => {
         this.setState({ open: true })
     }
@@ -160,11 +176,12 @@ class CustomerTab extends React.Component {
                 <div className="order-amount-section">
                     <CalculationSection
                         checkoutcalcArea={checkoutcalcArea}
+                        handleClickOpenDiscount={this.handleClickOpenDiscount}
                     />
                     <div className='button-section flex-row ' style={{ height: checkoutactionArea }}>
                         <Button className='mr-20 btnsecondary' variant="outlined" onClick={this.handleClearCart}>Clear</Button>
-                        <Button className='mr-20 btnsecondary' variant="outlined" onClick={this.props.handleClickOpen}>Hold</Button>
-                        <Button className="btnprimary" style={{ flex: 1 }} onClick={this.handleClickProceed} variant="contained">Proceed</Button>
+                        <Button className={_get(this, 'props.cartItems', []).length ? 'mr-20 btnsecondary' : 'mr-20 btnsecondary disable-button'} variant="outlined" onClick={this.props.handleClickOpen}>Hold</Button>
+                        <Button className={_get(this, 'props.cartItems', []).length ? 'btnprimary' : 'btnprimary disable-button'} style={{ flex: 1 }} onClick={this.handleClickProceed} variant="contained">Proceed</Button>
                     </div>
                 </div>
             </div>
