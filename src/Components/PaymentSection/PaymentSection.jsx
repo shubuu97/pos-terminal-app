@@ -49,6 +49,7 @@ class PaymentSection extends React.Component {
             originalGiftCard: {},
             giftCardUsedValue: 0,
             comment: '',
+            currentFocus:''
         }
     }
 
@@ -173,6 +174,8 @@ class PaymentSection extends React.Component {
     }
 
     handleInputChange = num => event => {
+        if(this.state.currentFocus!=='')
+        {
         let currentFocus = this.state.currentFocus;
         let focusItemValue = this.props[currentFocus];
         if (num != '<') {
@@ -183,6 +186,7 @@ class PaymentSection extends React.Component {
         }
 
         this.props.dispatch(commonActionCreater({ [currentFocus]: focusItemValue, totalAmount: this.props.totalAmount }, this.state.handler))
+    }
     }
     currentFocus = (field) => {
         this.setState({ currentFocus: field.fieldValue, handler: field.handler })
