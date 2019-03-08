@@ -86,6 +86,7 @@ class Login extends React.Component {
                 <LoaderButton
                     onClick={this.handleSubmitLogin}
                     fullWidth
+                    type="submit"
                     isFetching={this.state.isFetching}
                     variant="contained"
                     color="primary"
