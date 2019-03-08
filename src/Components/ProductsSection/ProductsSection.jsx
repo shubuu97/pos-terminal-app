@@ -57,7 +57,7 @@ class ProductsSection extends React.Component {
                 query: searchText,
                 fields: ['product.name', 'product.description', 'product.sku'],
                 include_docs: true,
-                limit: 39,
+                //limit: 39,
                 skip: 0
             }).then((result) => {
                 this.setState({ clearInput: false })
@@ -77,7 +77,7 @@ class ProductsSection extends React.Component {
             productsdb.allDocs({
                 include_docs: true,
                 attachments: true,
-                limit: 39,
+                // limit: 39,
                 // limit: 10,
                 // skip: 0
             }).then((result) => {

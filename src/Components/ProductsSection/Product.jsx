@@ -7,13 +7,15 @@ import _find from 'lodash/find'
 /* Material import */
 import Info from '@material-ui/icons/Info';
 import SimpleModal from '../../Global/Components/Modal/MaterialUIModal.jsx';
+/* Material Icons */
+import InfoOutlined from '@material-ui/icons/InfoOutlined'
 /* Redux Imports */
 import { commonActionCreater } from '../../Redux/commonAction';
 import DefaultImage from '../../assets/images/notfound.png'
 
 import img1 from '../../assets/images/flowers/flower1.jpg'
 
-class Product extends React.Component {
+class Product extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -62,7 +64,18 @@ class Product extends React.Component {
         this.setState({ openModal: false })
     }
 
+    shouldComponentUpdate() {
+        debugger
+        let data = _get(this.props, `data`, {});
+        let cartItems = _get(this.props, 'cart.cartItems', [])
+        if(_find(cartItems, {id:data.id})){
+            return true
+        }
+        else return false
+    }
+
     render() {
+        debugger 
         let index = this.props.index;
         let cartItems = _get(this.props, 'cart.cartItems', [])
         let data = _get(this.props, `data`, {});
@@ -86,7 +99,7 @@ class Product extends React.Component {
                             </div>
                             <div className="each-card-price flex-row">
                                 {_get(data, 'doc.product.salePrice.currencyCode', '')} {_get(data, 'doc.product.salePrice.price', 'NaN')}
-                                <div className='indicator'></div>
+                                {/* <div className='indicator'></div> */}
                             </div>
                             <span
                                 onMouseLeave={() => this.setState({ iconSelected: false })}
@@ -94,7 +107,7 @@ class Product extends React.Component {
                                 onClick={() => this.viewProductDetails(index)}
                                 className="quick-view each-card-more"
                                 title="View Details">
-                                <Info />
+                                <InfoOutlined style={{color: '#000'}}/>
                             </span>
                         </div>
                     </div>
