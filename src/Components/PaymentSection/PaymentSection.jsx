@@ -246,7 +246,8 @@ class PaymentSection extends React.Component {
             obj.employeeDiscountPercent = item.employeeDiscountPercent;
             obj.itemTotalDiscountAmount = item.itemTotalDiscountAmount;
             obj.itemSubTotal = item.itemSubTotal;
-            obj.taxPercentage = item.taxPercentage;
+            obj.itemTaxPercent = item.itemTaxPercent;
+            obj.itemTaxAmount = item.itemTaxAmount
             obj.saleType = item.saleType;
             return obj;
         });
