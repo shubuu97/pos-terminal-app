@@ -270,20 +270,31 @@ class OrderHistoryDialog extends React.Component {
         )
     }
 
+    // handlePrint = () => {
+    //     var content = document.getElementById('printarea');
+    //     var pri = document.getElementById('ifmcontentstoprint').contentWindow;
+    //     pri.document.open();
+    //     pri.document.write('<html><head><title>print data</title>');
+    //     pri.document.write('<link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet"> ');
+    //     pri.document.write('</head><body >');
+    //     pri.document.write(content.innerHTML);
+    //     pri.document.write('</body></html>');
+    //     pri.document.close();
+    //     pri.focus();
+    //     pri.print();
+        
+    // }
+
     handlePrint = () => {
         var content = document.getElementById('printarea');
         var pri = document.getElementById('ifmcontentstoprint').contentWindow;
         pri.document.open();
-        pri.document.write('<html><head><title>print data</title>');
-        pri.document.write('<link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet"> ');
-        pri.document.write('</head><body >');
         pri.document.write(content.innerHTML);
-        pri.document.write('</body></html>');
         pri.document.close();
         pri.focus();
         pri.print();
-        
     }
+
 
     handlePrintRefund = () => {
         var content = document.getElementById('printareaRefund');
@@ -383,8 +394,6 @@ class OrderHistoryDialog extends React.Component {
     render() {
         const { classes, store } = this.props;
         const { selectedOrder } = this.state; 
-        let check = ('amount' in _get(selectedOrder,'sale.itemDiscountAmount',{}))
-        console.log(check, 'checking check')
         let address  = _get(store,'store.address', '')
 
         let storeAddress = _get(address, 'addressLine1', '') + ', ' + 
@@ -449,6 +458,8 @@ class OrderHistoryDialog extends React.Component {
                     <div>
                         <HandlePrint 
                             type="Order History"
+                            cashierName={localStorage.getItem('userName')}
+                            staffId={localStorage.getItem('userId')}
                             currency='$'
                             itemList={_get(selectedOrder,'saleParts', [])}
                             orderDate= {moment(_get(selectedOrder, 'sale.saleCommitTimeStamp.seconds', 0) * 1000).format('llll')}  

@@ -335,7 +335,6 @@ class PaymentSection extends React.Component {
     handleSaleTransaction = async (offline) => {
         this.setState({ isLoadingTransaction: true })
         await this.makReqObj(offline).then((reqObj) => {
-            debugger
             if (offline) {
                 this.handleSaleTransactionOffline(reqObj);
             }
@@ -448,6 +447,7 @@ class PaymentSection extends React.Component {
     }
 
     render() {
+        console.log(this.state.receiptData, 'this.state.receiptData')
         let disable = this.props.remainingAmount <= 0 ? { opacity: '0.3', pointerEvents: 'none' } : null
         return (
             <div className='pos-payment'>
