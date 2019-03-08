@@ -51,10 +51,10 @@ function MapStateToProps(state){
     data.openingAmount = _get(sessionData,'session.openingBalance.amount');
     data.cashSalesAmount = _get(sessionData,'session.cashSalesAmount');
     data.cardSalesAmount = _get(sessionData,'session.cardSalesAmount');
-    data.employeeDeductSalesAmount = _get(sessionData,'session.employeeDeductSalesAmount');
+    data.employeeDeductSalesAmount = _get(sessionData,'session.employeeDeductSalesAmount',0);
     data.cashAdded = _get(sessionData,'session.cashAdded');
     data.cashRemoved = _get(sessionData,'session.cashRemoved');
-    data.theoreticalClosingBalance = _get(sessionData,'session.currentBalance.amount');
+    data.theoreticalClosingBalance = _get(sessionData,'session.currentBalance.amount',0);
     data.realClosingBalance = _get(sessionData,'session.closingBalance.amount');
     data.diffrence = parseFloat(data.realClosingBalance) -parseFloat(data.theoreticalClosingBalance);
 
