@@ -63,7 +63,7 @@ class CalculationSection extends React.Component {
                             _get(cart, 'itemDiscountAmount.amount', 0) > 0 ?
                                 <div className='cart-each-details'>
                                     <span className='cart-title flex-row align-center'>
-                                        <RemoveCircleIcons style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }} />
+                                        {/* <RemoveCircleIcons style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }} /> */}
                                         Items Discount
                                 </span>
                                     <span className='cart-amount'>- {_get(cart, 'itemDiscountAmount.currencyCode')}{_get(cart, 'itemDiscountAmount.amount')}</span>
