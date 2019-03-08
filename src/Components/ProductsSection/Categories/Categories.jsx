@@ -4,9 +4,9 @@ import BreadCrumb from "./BreadCrumb";
 // Lodash Import
 import _get from "lodash/get";
 import _isEmpty from "lodash/isEmpty";
-import { connect } from "react-redux";
 //Redux Import
 import { commonActionCreater } from "../../../Redux/commonAction";
+import { connect } from "react-redux";
 //Pouch Import
 import PouchDb from "pouchdb";
 import Find from "pouchdb-find";
@@ -100,7 +100,7 @@ class Categories extends Component {
         query: category.id,
         fields: ["product.category1", "product.category2", "product.category3"],
         include_docs: true,
-        limit: 39,
+        //limit: 39,
         // limit: 9,
         // skip: 0
       })
@@ -145,7 +145,7 @@ class Categories extends Component {
       .allDocs({
         include_docs: true,
         attachments: true,
-        limit: 39,
+        //limit: 39,
         // limit: 9,
         // skip: 0
       })

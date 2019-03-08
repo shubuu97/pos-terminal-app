@@ -13,12 +13,13 @@ const Products = (props) => {
         </div>
     } else {
         products = productList.map((data, index) => {
+            debugger
             return <Product
                 data={data}
                 key={index}
                 index={index}
                 productList={props.productList}
-                cart={_get(props, 'cart', [])}
+                //cart={_get(props, 'cart', [])}
                 dispatch={props.dispatch}
             />
         })

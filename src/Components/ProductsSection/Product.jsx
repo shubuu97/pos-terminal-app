@@ -12,8 +12,10 @@ import InfoOutlined from '@material-ui/icons/InfoOutlined'
 /* Redux Imports */
 import { commonActionCreater } from '../../Redux/commonAction';
 import DefaultImage from '../../assets/images/notfound.png'
+import { connect } from "react-redux";
 
 import img1 from '../../assets/images/flowers/flower1.jpg'
+//import mapStateToProps from 'react-redux/lib/connect/mapStateToProps';
 
 class Product extends React.PureComponent {
     constructor(props) {
@@ -64,29 +66,20 @@ class Product extends React.PureComponent {
         this.setState({ openModal: false })
     }
 
-    shouldComponentUpdate() {
-        debugger
-        let data = _get(this.props, `data`, {});
-        let cartItems = _get(this.props, 'cart.cartItems', [])
-        if(_find(cartItems, {id:data.id})){
-            return true
-        }
-        else return false
-    }
-
     render() {
-        debugger 
+        debugger
         let index = this.props.index;
         let cartItems = _get(this.props, 'cart.cartItems', [])
         let data = _get(this.props, `data`, {});
+        debugger
         return (
             <React.Fragment>
                 <div className='each-tile white-background flex-row relative' onClick={() => this.addToCart(index)} index={this.props.index} key={this.props.key}>
                     <div className='absolute added-item-position'>
-                        {(_find(cartItems, {id:data.id}))? <div className='added-item-count'>{(_find(cartItems, {id:data.id})).qty}</div> : null}
+                        {(_find(cartItems, { id: data.id })) ? <div className='added-item-count'>{(_find(cartItems, { id: data.id })).qty}</div> : null}
                     </div>
                     <div className='product-image'>
-                        <img src={_get(data, 'doc.product.image')||DefaultImage} alt="" />
+                        <img src={_get(data, 'doc.product.image') || DefaultImage} alt="" />
                     </div>
                     <div className='flex-column justify-space-between product-info'>
                         <div className='flex-column fwidth'>
@@ -107,7 +100,7 @@ class Product extends React.PureComponent {
                                 onClick={() => this.viewProductDetails(index)}
                                 className="quick-view each-card-more"
                                 title="View Details">
-                                <InfoOutlined style={{color: '#000'}}/>
+                                <InfoOutlined style={{ color: '#000' }} />
                             </span>
                         </div>
                     </div>
@@ -128,8 +121,15 @@ class Product extends React.PureComponent {
     }
 }
 
+const mapStateToProps = state => {
+    let { cart } = state;
 
-export default Product;
+    return {
+        cart
+    }
+};
+
+export default connect(mapStateToProps)(Product);
 
 
 
