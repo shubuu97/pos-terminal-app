@@ -10,7 +10,10 @@ import TransactionModal from './TransactionModal';
 import closeSession from '../../Global/PosFunctions/closeSession';
 import PutMoneyInOutDialog from './PutMoneyInOut';
 import ReasonDialog from './ReasonDialog';
-
+import withDialog from '../DialogHoc';
+import ZReport from './ZReport';
+import DialogHoc from '../../Global/Components/HOC/CommonDialogHoc';
+let ZReportDialog = DialogHoc(ZReport);
 class SessionDetail extends React.Component {
 
     constructor(props) {
@@ -19,8 +22,8 @@ class SessionDetail extends React.Component {
             closeSessionDialog: false,
             realClosingBalance: 0,
             stateDetails: {},
-            transactions:[],
-            closeReason:''
+            transactions: [],
+            closeReason: ''
         }
     }
 
@@ -49,7 +52,7 @@ class SessionDetail extends React.Component {
                 identifier: 'GET_SESSION_DATA_BY_ID',
                 successCb: this.handleSuccessFetchSessionData,
                 errorCb: this.handleErrorFetchSessionData,
-                dontShowMessage:true
+                dontShowMessage: true
             })
         }
     }
@@ -67,7 +70,7 @@ class SessionDetail extends React.Component {
                 identifier: 'GET_SESSION_DATA_BY_ID',
                 successCb: this.handleSuccessFetchSessionData,
                 errorCb: this.handleErrorFetchSessionData,
-                dontShowMessage:true
+                dontShowMessage: true
             })
         }
     }
@@ -95,8 +98,8 @@ class SessionDetail extends React.Component {
     }
     handleEndSession = () => {
         if (this.state.realClosingBalance) {
-            if(this.calDiffrence()!=0&&this.state.closeReason==''){
-                this.setState({showReasonModal:true});
+            if (this.calDiffrence() != 0 && this.state.closeReason == '') {
+                this.setState({ showReasonModal: true });
                 return;
             }
             this.setState({ isLoading: true })
@@ -116,7 +119,7 @@ class SessionDetail extends React.Component {
     }
     handleSessionCloseSuccess = (data) => {
         this.setState({ isLoading: false });
-        localStorage.setItem('sessionId','nil');
+        localStorage.setItem('sessionId', 'nil');
         genericPostData({
             dispatch: this.props.dispatch,
             reqObj: { id: localStorage.getItem('terminalId') },
@@ -129,7 +132,7 @@ class SessionDetail extends React.Component {
             identifier: 'GET_SESSION_DATA',
             successCb: this.handleGetSessionData,
             errorCb: this.handleGetSessionDataError,
-            dontShowMessage:true
+            dontShowMessage: true
         });
         genericPostData({
             dispatch: this.props.dispatch,
@@ -143,7 +146,7 @@ class SessionDetail extends React.Component {
             identifier: 'GET_SESSION_DATA_BY_ID',
             successCb: this.handleSuccessFetchSessionData,
             errorCb: this.handleErrorFetchSessionData,
-            dontShowMessage:true
+            dontShowMessage: true
         })
 
 
@@ -173,13 +176,12 @@ class SessionDetail extends React.Component {
         reqObj.amount = { currencyCode: "$", amount: parseFloat(amount) };
         reqObj.reason = reason;
         if (this.state.txType == 'in') {
-        reqObj.adjustmentType = 'CASHIN';
-        url = 'Session/PutMoneyIn';
+            reqObj.adjustmentType = 'CASHIN';
+            url = 'Session/PutMoneyIn';
         }
-        else
-        {
-         reqObj.adjustmentType = 'CASHOUT';
-         url = 'Session/TakeMoneyOut'
+        else {
+            reqObj.adjustmentType = 'CASHOUT';
+            url = 'Session/TakeMoneyOut'
         }
         this.closePutMoneyInOutDialog();
         this.setState({ isLoading: true })
@@ -195,7 +197,7 @@ class SessionDetail extends React.Component {
             identifier: 'PUT_MONEY_IN',
             successCb: this.handlePutMoneySuccess,
             errorCb: this.handlePutMoneyError,
-            dontShowMessage:true
+            dontShowMessage: true
         })
 
     }
@@ -213,7 +215,7 @@ class SessionDetail extends React.Component {
             identifier: 'GET_SESSION_DATA',
             successCb: this.handleGetSessionData,
             errorCb: this.handleGetSessionDataError,
-            dontShowMessage:true
+            dontShowMessage: true
         });
         genericPostData({
             dispatch: this.props.dispatch,
@@ -227,7 +229,7 @@ class SessionDetail extends React.Component {
             identifier: 'GET_SESSION_DATA_BY_ID',
             successCb: this.handleSuccessFetchSessionData,
             errorCb: this.handleErrorFetchSessionData,
-            dontShowMessage:true
+            dontShowMessage: true
         })
 
 
@@ -236,34 +238,43 @@ class SessionDetail extends React.Component {
         this.setState({ isLoading: false });
 
     }
-    calcPlusTxnVal = ()=>{
+    calcPlusTxnVal = () => {
         let total = 0;
 
         this.state.transactions.map((transaction) => {
             if (transaction.adjustmentType == 'SALE' || transaction.adjustmentType == 'CASHIN') {
                 total = total + _get(transaction, 'amount.amount')
-            }})
-            return total;
+            }
+        })
+        return total;
 
     }
-    calcNegTxnVal = ()=>{
+    calcNegTxnVal = () => {
         let total = 0;
 
         this.state.transactions.map((transaction) => {
             if (transaction.adjustmentType == 'CASHOUT') {
                 total = total + _get(transaction, 'amount.amount')
-            }})
-            return total;
+            }
+        })
+        return total;
 
     }
-    calDiffrence = ()=>{
-       let difference =  _get(this.state,'session.currentBalance.amount',0)-this.state.realClosingBalance
-       return difference;
+    calDiffrence = () => {
+        let difference = _get(this.state, 'session.currentBalance.amount', 0) - this.state.realClosingBalance
+        return difference;
     }
-    specifyReason=(closeReason)=>{
-        this.setState({closeReason,showReasonModal:false});
+    specifyReason = (closeReason) => {
+        this.setState({ closeReason, showReasonModal: false });
         this.handleEndSession()
-       }
+    }
+    handlePrintZReport = () => {
+        this.setState({ showZReportDialog: true });
+    }
+    printZReportRecipet = ()=>{
+        debugger;
+        this.setState({ showZReportDialog: false,firePrint:true });
+    }
 
 
     render() {
@@ -353,7 +364,7 @@ class SessionDetail extends React.Component {
                     </div>
                     <div className='mui-row closing-bal'>
                         <div className='mui-col-md-3 secondary-color'>Theoratical Closing Balance</div>
-                        <div className='mui-col-md-3'>${_get(this.state,'session.currentBalance.amount')}</div>
+                        <div className='mui-col-md-3'>${_get(this.state, 'session.currentBalance.amount')}</div>
                         {status == 'open' ? <div className='mui-col-md-6 text-center'>
                             <Button
                                 variant='contained'
@@ -377,9 +388,9 @@ class SessionDetail extends React.Component {
                                 variant='outlined'
                                 color='primary' style={{ marginRight: "1%" }}>Open Cash Drawer</Button>
                             <Button
-                            onClick={()=>this.props.goBackToCheckOut()}
-                             variant='outlined'
-                              color='primary'>Go To Checkout</Button>
+                                onClick={() => this.props.goBackToCheckOut()}
+                                variant='outlined'
+                                color='primary'>Go To Checkout</Button>
                         </div>
                     </div>
                 </div>
@@ -387,7 +398,7 @@ class SessionDetail extends React.Component {
                     <div className='mui-row print-row'>
                         <div className="mui-col-md-12">
                             <div className={status == 'open' ? "mui-col-md-6 text-left" : "mui-col-md-12 text-left"}>
-                                <Button variant='outlined' color='primary' style={{ marginRight: "1%" }} className="printBtn">Print</Button>
+                                <Button onClick={this.handlePrintZReport} variant='outlined' color='primary' style={{ marginRight: "1%" }} className="printBtn">Print</Button>
                             </div>
 
                             {status == 'open' ? <div className="mui-col-md-6 text-left">
@@ -420,11 +431,20 @@ class SessionDetail extends React.Component {
                     handlePutMoenyIn={this.handlePutMoenyIn}
                 />
                 <ReasonDialog
-                open={this.state.showReasonModal}
-                handleClose={()=>this.setState({showReasonModal:false})}
-                specifyReason = {this.specifyReason}
+                    open={this.state.showReasonModal}
+                    handleClose={() => this.setState({ showReasonModal: false })}
+                    specifyReason={this.specifyReason}
                 />
-                
+                <ZReportDialog
+                    open={this.state.showZReportDialog}
+                    actionName = 'Print'
+                    title = {'Z-Report'}
+                    hide={true}
+                    firePrint={this.state.firePrint}
+                    handleClose = {()=>this.setState({showZReportDialog:false})}
+                    actionHandler={this.printZReportRecipet}
+                />
+
             </div>
         )
     }
