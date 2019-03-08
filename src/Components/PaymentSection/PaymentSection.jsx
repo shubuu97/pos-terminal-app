@@ -324,7 +324,7 @@ class PaymentSection extends React.Component {
             itemDiscountAmount,
             totalTaxAmount,
             offline,
-            saleComment: _get(this.props, 'saleComment', ''),
+            saleComment: _get(this.state, 'comment', ''),
             saleTimeStamp: { seconds: parseInt((new Date().getTime() / 1000)) },
             changeDue: { currencyCode: '$', amount: parseFloat(Math.abs(this.props.remainingAmount.toFixed(2))) }
 
