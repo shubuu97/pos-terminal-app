@@ -2,56 +2,98 @@ import React from 'react';
 import _get from 'lodash/get';
 import _isEmpty from 'lodash/isEmpty';
 import logo from '../../assets/images/aobLogodark.png';
-
 import '../../assets/stylesheets/print.css'
 
 const HandlePrint = (props) => {
-
+    let stSubTotal = 0
+    let ohSubTotal = 0
     const saleTransaction = _get(props, 'itemList', []).map(item => {
+        let itemSubTotal = 0
+        let empDis
+        if(_get(item,'employeeDiscountPercent','') !== 0 ) {
+            empDis = (_get(item,'itemRegularTotal.amount') * _get(item,'employeeDiscountPercent')) / 100     
+        } else {
+            empDis = 0
+        }
+        let itemDis
+        let isItemDiscountPercentExist =  !('itemDiscountPercent' in item)
+        if(isItemDiscountPercentExist) {
+            itemDis = 0
+        } else {
+            itemDis = (_get(item,'itemRegularTotal.amount') * _get(item,'itemDiscountPercent')) / 100     
+        }
+        itemSubTotal = ((_get(item,'doc.product.salePrice.price','0') * _get(item,'qty',1)) - (empDis + itemDis))
+        stSubTotal += itemSubTotal 
         return (
             <div style={{display:'flex', flex:'1', paddingTop:"10px",  paddingBottom:"10px", borderBottom:'dotted 1px #9e9e9e' }}>
                 <div style={{width:"35%"}}>{_get(item,'doc.product.name')}</div>
                 <div  style={{width:"10%", textAlign:"center"}}>{_get(item,'qty', '')}</div>
-                <div  style={{width:"30%", textAlign:"right"}}>{_get(item,'doc.product.salePrice.price','0')}</div>
-                {/* <td>{_get(item,'itemTotalDiscountAmount.amount','0')}</td>
-                <td>{_get(item,'itemTaxAmount.amount','0')}</td> */}
-                <div  style={{width:"25%", textAlign:"right"}}>{_get(item,'itemEffectiveTotal.amount','0')}</div>
+                <div  style={{width:"30%", textAlign:"right"}}>{_get(item,'doc.product.salePrice.price','0')}<br/>
+                <div style={{fontSize:"9px"}}>
+                    {itemDis == 0 ? '' : <span>(Item Disc.: {itemDis.toFixed(2)})</span>}<br />
+                    {empDis == 0 ? '' : <span>(Emp Disc.: {empDis.toFixed(2)})</span>}
+                </div>
+                </div>
+                <div  style={{width:"25%", textAlign:"right"}}>{itemSubTotal.toFixed(2)}</div>
             </div>
         )}) 
         
         const orderHistory = _get(props, 'itemList', []).map(item => {
+            let itemSubTotal = 0
+            let empDis
+            let isEmpDisExist = ('employeeDiscountPercent' in _get(item,'saleItem',{}))
+            if(!isEmpDisExist) {
+                empDis = 0
+            } else {
+                empDis = (_get(item,'saleItem.itemRegularTotal.amount') * _get(item,'saleItem.employeeDiscountPercent')) / 100   
+            }
+            //!Do uncomment when itemDiscountPercent is coming from backend.
+            // let itemDis
+            // let isItemDisExist = ('itemDiscountPercent' in item.saleItem)
+            // if(!isItemDisExist) {
+            //     itemDis = 0
+            // } else {
+            //     itemDis = (_get(item,'saleItem.itemRegularTotal.amount') * _get(item,'saleItem.itemDiscountPercent')) / 100   
+            // }
+            //!Subtract itemDiscount also when available
+            itemSubTotal = (_get(item,'product.salePrice.price',0) * _get(item,'saleItem.qty',1)) - (empDis)
+            ohSubTotal += itemSubTotal 
             return (
                 <div style={{display:'flex', flex:'1', paddingTop:"10px",  paddingBottom:"10px", borderBottom:'dotted 1px #9e9e9e' }}>
                     <div style={{width:"35%", paddingRight:'10px'}}>{_get(item,'product.name')}</div>
                     <div style={{width:"10%", textAlign:"center"}}>{_get(item,'saleItem.qty', '')}</div>
                     <div style={{width:"30%", textAlign:"right"}}>{_get(item,'product.salePrice.price','0')}<br/>
                         <div style={{fontSize:"9px"}}>
-                        (Item Disc.: $23)<br/>
-                        (Emp Disc.: $27)
+                        {/* {itemDis == 0 ? '' : <span>(Item Disc.: {itemDis.toFixed(2)})</span>}<br /> */}
+                        {empDis == 0 ? '' : <span>(Emp Disc.: {empDis.toFixed(2)})</span>}
                         </div>
                     </div>
-                    {/* <td>{_get(item,'saleItem.itemTotalDiscountAmount.amount','0')}</td>
-                    <td>0
-                        {_get(item,'saleItem.itemTaxAmount.amount','0')}
-                    </td> */}
-                   <div style={{width:"25%", textAlign:"right"}}>{_get(item,'saleItem.itemEffectiveTotal.amount','0')}</div>
+                   <div style={{width:"25%", textAlign:"right"}}>{itemSubTotal.toFixed(2)}</div>
                 </div>
             )}) 
-    
+    let subTotal = 0
+    if(props.type == 'Sale Transaction') {
+        subTotal = stSubTotal
+        console.log(subTotal, 'subTotal inside')    
+    } 
+    if(props.type == 'Order History') {
+        subTotal = ohSubTotal
+    }
+    console.log(subTotal, 'subTotal')
     return (
         <div style={{fontSize:"12px", fontFamily:"arial, sans-serif"}} >
             <div style={{textAlign:"center"}}>
 
                     <div className="store-logo"> <img src={logo}  /></div>
-                    <div style={{marginTop:'15px'}}>#3453546465675678</div>   
+                    <div style={{marginTop:'15px'}}>{_get(props,'orderId','')}</div>   
                     <div>{_get(props,'orderDate','')}</div>
                     
                
                     <div style={{marginTop:'10px'}}><span style={{color:'#9e9e9e', fontSize:'11px', fontWeight:'bold'}}>STORE:</span> {_get(props,'storeName','')}</div>  
                     <div><span style={{color:'#9e9e9e', fontSize:'11px', fontWeight:'bold'}}>ADDRESS:</span> {_get(props,'storeAddress','')}</div>
 
-                    <div style={{marginTop:'10px'}}><span style={{color:'#9e9e9e', fontSize:'11px', fontWeight:'bold'}}>CASHIER:</span> {_get(props,'storeName','')}</div>                 
-                    <div><span style={{color:'#9e9e9e', fontSize:'11px', fontWeight:'bold'}}>EMPLOYEE ID:</span> #0001</div> 
+                    <div style={{marginTop:'10px'}}><span style={{color:'#9e9e9e', fontSize:'11px', fontWeight:'bold'}}>CASHIER:</span> {_get(props,'cashierName','')}</div>                 
+                    <div><span style={{color:'#9e9e9e', fontSize:'11px', fontWeight:'bold'}}>STAFF ID:</span> {_get(props,'staffId','')}</div> 
                     <div><span style={{color:'#9e9e9e', fontSize:'11px', fontWeight:'bold'}}>TERMINAL:</span> {_get(props,'terminalName','')}</div>  
 
                
@@ -72,58 +114,75 @@ const HandlePrint = (props) => {
             </div>
            
             <div style={{display:'flex', flex:'1', flexDirection:'column', borderBottom:'solid 1px #9e9e9e', paddingTop:"10px",  paddingBottom:"5px"}} >
-                 <div style={{display:'flex',  justifyContent:'space-between', paddingBottom:"4px"}}>
-                     SUB TOTAL: <span style={{fontWeight:'bold'}}>{_get(props,'currency', '') + _get(props,'itemsDiscount','0')}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>
+                    SUB TOTAL: <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + subTotal.toFixed(2)}</span>
                 </div>
-                <div style={{display:'flex',  justifyContent:'space-between', paddingBottom:"4px"}}>
-                     ITEMS DISCOUNT: <span style={{fontWeight:'bold'}}>{_get(props,'currency', '') + _get(props,'itemsDiscount','0')}</span>
-                </div>
-                <div style={{display:'flex',  justifyContent:'space-between', paddingBottom:"4px"}}>
-                    CART DISCOUNT: <span style={{fontWeight:'bold'}}>{_get(props,'currency', '') + _get(props,'cartDiscount','0')}</span>
-                </div>
-                <div style={{display:'flex',  justifyContent:'space-between', paddingBottom:"4px"}}>
-                    EMPLOYEE DISCOUNT:   <span style={{fontWeight:'bold'}}>{_get(props,'currency', '') + _get(props,'employeeDiscount','0')}</span>
-                </div>
-                <div style={{display:'flex',  justifyContent:'space-between', paddingBottom:"4px"}}>
+                {
+                    _get(props,'itemsDiscount') == 0 ? '' : 
+                    <div style={{display:'flex', justifyContent:'space-between',       paddingBottom:"4px"}}>
+                        ITEMS DISCOUNT: <span style={{fontWeight:'bold'}}>{_get(props,'currency', '') + _get(props,'itemsDiscount','0')}</span>
+                    </div>
+                }
+                
+                {
+                    _get(props, 'cartDiscount') == 0 ? '' :
+                    <div style={{display:'flex',  justifyContent:'space-between', paddingBottom:"4px"}}>
+                        CART DISCOUNT: <span style={{fontWeight:'bold'}}>{_get(props,'currency', '') + _get(props,'cartDiscount','0')}</span>
+                    </div>
+                }
+
+                {
+                    _get(props, 'employeeDiscount') == 0 ? '' :
+                    <div style={{display:'flex',  justifyContent:'space-between', paddingBottom:"4px"}}>
+                        EMPLOYEE DISCOUNT:   <span style={{fontWeight:'bold'}}>{_get(props,'currency', '') + _get(props,'employeeDiscount','0')}</span>
+                    </div>
+                }
+                
+                {
+                    _get(props, 'totalTax') == 0 ? '' :
+                    <div style={{display:'flex',  justifyContent:'space-between', paddingBottom:"4px"}}>
                         TOTAL TAX: <span style={{fontWeight:'bold'}}>{_get(props,'currency', '') + _get(props,'totalTax','0')}</span> 
-                </div>
+                    </div>
+                }
             </div>
             <div style={{display:'flex', flex:'1', flexDirection:'column', borderBottom:'solid 1px #9e9e9e', paddingTop:"5px",  paddingBottom:"5px", marginBottom:"15px"}} >
-                {props.regularTotal &&
+                {/* {props.regularTotal &&
                      <div style={{display:'flex',  justifyContent:'space-between', paddingBottom:"4px"}}>
                         REGULAR TOTAL: <span style={{fontWeight:'bold'}}>{_get(props,'currency', '') + _get(props,'regularTotal','0')}</span>
                      </div>
-                }
-                {props.totalDiscount &&
+                } */}
+                {/* {props.totalDiscount &&
                      <div style={{display:'flex',  justifyContent:'space-between', paddingBottom:"4px"}}>
                         TOTAL DISCOUNT: <span style={{fontWeight:'bold'}}>{_get(props,'currency', '') + _get(props,'totalDiscount','0')}</span>
                      </div>
-                }
-                {props.netTotal &&
+                } */}
+                {/* {props.netTotal &&
                      <div style={{display:'flex',  justifyContent:'space-between', paddingBottom:"4px"}}>
                         NET TOTAL: <span style={{fontWeight:'bold'}}>{_get(props,'currency', '') + _get(props,'netTotal','0')}</span>
                      </div>
                 }
-                   
-                    <div style={{display:'flex',  justifyContent:'space-between', paddingBottom:"4px"}}>
-                        GRAND TOTAL: <span style={{fontWeight:'bold'}}>{_get(props,'currency', '') + _get(props,'totalAmount','0')}</span>
-                    </div>
+                    */}
+                <div style={{display:'flex',  justifyContent:'space-between', paddingBottom:"4px"}}>
+                    GRAND TOTAL: <span style={{fontWeight:'bold'}}>{_get(props,'currency', '') + _get(props,'totalAmount','0')}</span>
+                </div>
+
                 {props.totalAmountPaid &&
                      <div style={{display:'flex',  justifyContent:'space-between', paddingBottom:"4px"}}>
                         TOTAL PAID: <span style={{fontWeight:'bold'}}>{_get(props,'currency', '') + _get(props,'totalAmountPaid','0')}</span>
                      </div>
                 }
-                {props.changeDue &&
+
+                {props.changeDue == 0 ? '' :
                      <div style={{display:'flex',  justifyContent:'space-between', paddingBottom:"4px"}}>
-                        TOTAL DUE:  <span style={{fontWeight:'bold'}}>{_get(props,'currency', '') + _get(props,'changeDue','0')}</span>
+                        CHANGE:  <span style={{fontWeight:'bold'}}>{_get(props,'currency', '') + _get(props,'changeDue','0')}</span>
                      </div>
                 }
 
-                {props.saleComment && 
+                {/* {props.saleComment && 
                     <div style={{display:'flex',  justifyContent:'space-between', paddingBottom:"4px"}}>
                         SALE COMMENT: <span style={{fontWeight:'bold'}}>{_get(props,'saleComment', '---------')}</span>
                     </div>
-                }
+                } */}
 
                 {props.paymentMethods &&
                      <div style={{display:'flex',  justifyContent:'space-between', paddingBottom:"4px"}}>
@@ -138,15 +197,16 @@ const HandlePrint = (props) => {
                     })}
                      </div>
                 }
-            </div>
-                    <div style={{display:'flex',  justifyContent:'center', paddingBottom:"4px", fontSize:'15px', marginBottom:'40px'}}>
-                        Customer Copy
-                    </div>
 
-                    <div style={{display:'flex',  justifyContent:'start', paddingBottom:"4px", fontSize:'12px', borderBottom:'dotted 1px #9e9e9e'}}>
-                        Customer Signature
-                    </div>
-        </div>
+            </div>
+                <div style={{display:'flex',  justifyContent:'center', paddingBottom:"4px", fontSize:'15px', marginBottom:'40px'}}>
+                    Customer Copy
+                </div>
+
+                <div style={{display:'flex',  justifyContent:'start', paddingBottom:"4px", fontSize:'12px', borderBottom:'dotted 1px #9e9e9e'}}>
+                    Customer Signature
+                </div>
+            </div>
     )
 }
 

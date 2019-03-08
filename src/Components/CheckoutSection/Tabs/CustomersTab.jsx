@@ -91,20 +91,6 @@ class CustomerTab extends React.Component {
 
     }
 
-    handleClickOpenDiscount = () => {
-        let cartItems = _get(this, 'props.cart.cartItems', []);
-        let cartTotal = 0;
-        _isArray(cartItems) && cartItems.map((cartItem) => {
-            cartTotal += Number(_get(cartItem, 'itemRegularTotal.amount', 0));
-        })
-        this.setState({
-            open: true,
-            identifier: 'Discount',
-            forCart: true,
-            cartTotal: cartTotal,
-        });
-    };
-
     handleOpen = () => {
         this.setState({ open: true })
     }
@@ -176,7 +162,6 @@ class CustomerTab extends React.Component {
                 <div className="order-amount-section">
                     <CalculationSection
                         checkoutcalcArea={checkoutcalcArea}
-                        handleClickOpenDiscount={this.handleClickOpenDiscount}
                     />
                     <div className='button-section flex-row ' style={{ height: checkoutactionArea }}>
                         <Button className='mr-20 btnsecondary' variant="outlined" onClick={this.handleClearCart}>Clear</Button>

@@ -99,7 +99,8 @@ class Categories extends Component {
       .search({
         query: category.id,
         fields: ["product.category1", "product.category2", "product.category3"],
-        include_docs: true
+        include_docs: true,
+        limit: 39,
         // limit: 9,
         // skip: 0
       })
@@ -143,7 +144,8 @@ class Categories extends Component {
     productsdb
       .allDocs({
         include_docs: true,
-        attachments: true
+        attachments: true,
+        limit: 39,
         // limit: 9,
         // skip: 0
       })

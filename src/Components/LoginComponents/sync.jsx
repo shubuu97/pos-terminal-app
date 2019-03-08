@@ -88,12 +88,10 @@ class SyncContainer extends Component {
                 fields: ["product.upcCode"]
             }
         });
-        debugger;
         return 1;
     }
     handleProductFetchSuccessWrapper = (productData) => {
         this.handleProductFetchSuccess(productData).then((data) => {
-            debugger;
             let percentageComplete = this.state.percentageComplete + 100 / this.state.ApiCallCount;
             this.setState({ percentageComplete });
             PouchDb.replicate('productsdb', `http://localhost:5984/productsdb`, {

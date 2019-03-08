@@ -61,7 +61,6 @@ const paymentReducer = (state = {
             return (Object.assign({}, state, { employeePay, remainingAmount }));
             break;
         case 'GIFT_AMOUNT_TO_REDEEM':
-            debugger;
             let amountAvailToRedeem = _get(state, 'giftCardData.value.amount');
             let enteredAmount = action.data.giftCardAmount;
             let expPaymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, enteredAmount);

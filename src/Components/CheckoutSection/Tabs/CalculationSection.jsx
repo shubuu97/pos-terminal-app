@@ -5,6 +5,7 @@ import _get from 'lodash/get';
 import Button from '@material-ui/core/Button';
 /* Material Icons */
 import RemoveCircleIcons from '@material-ui/icons/RemoveCircleOutline';
+import AddCircleOutline from '@material-ui/icons/AddCircleOutline';
 /* Redux Imports */
 import { connect } from 'react-redux';
 import { commonActionCreater } from '../../../Redux/commonAction';
@@ -62,18 +63,18 @@ class CalculationSection extends React.Component {
                             _get(cart, 'itemDiscountAmount.amount', 0) > 0 ?
                                 <div className='cart-each-details'>
                                     <span className='cart-title flex-row align-center'>
-                                        <RemoveCircleIcons style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }} />
+                                        {/* <RemoveCircleIcons style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }} /> */}
                                         Items Discount
                                 </span>
                                     <span className='cart-amount'>- {_get(cart, 'itemDiscountAmount.currencyCode')}{_get(cart, 'itemDiscountAmount.amount')}</span>
                                 </div> : null
                         }
                         {
-                            _get(cart, 'cartDiscountAmount.amount', 0) > 0 ?
-                                null :
-                                <div className='cart-each-details'>
-                                    <Button variant="outlined" onClick={this.props.handleClickOpenDiscount}>Add Discount</Button>
+                            _get(this, 'props.handleClickOpenDiscount', false) && !_get(cart, 'cartDiscountAmount.amount', 0) ?
+                                <div className='cart-each-details cart-discount-btn'>
+                                    <Button variant="outlined" onClick={this.props.handleClickOpenDiscount}><AddCircleOutline /> Cart Discount</Button>
                                 </div>
+                                : null
                         }
                     </div>
                 </div>

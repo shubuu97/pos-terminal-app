@@ -80,7 +80,6 @@ class LockTerminalDialogue extends React.Component {
     }
 
     handleTestPin = () => {
-        debugger
         let pin = localStorage.getItem('userPin');
         let EnteredPin = this.state.EnteredPin;
         if(pin == EnteredPin){
