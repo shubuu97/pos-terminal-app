@@ -70,7 +70,7 @@ class CalculationSection extends React.Component {
                                 </div> : null
                         }
                         {
-                            _get(this, 'props.handleClickOpenDiscount', false) ?
+                            _get(this, 'props.handleClickOpenDiscount', false) && !_get(cart, 'cartDiscountAmount.amount', 0) ?
                                 <div className='cart-each-details cart-discount-btn'>
                                     <Button variant="outlined" onClick={this.props.handleClickOpenDiscount}><AddCircleOutline /> Cart Discount</Button>
                                 </div>
