@@ -66,15 +66,15 @@ class ZReportPrintView extends React.Component {
                     <h3> #Sales </h3>
                     <div className="row">
                         <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-left" >Total Pre Tax Sales</label>
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }}className="labelmain pull-right" >{get(this.props, 'data.totalPreTaxSales', 0).toFixed(2)}</label>
+                        <label style={{ marginLeft: "30px", marginRight: "30px" }}className="labelmain pull-right" >{get(this.props, 'data.preTaxSalesAmount', 0).toFixed(2)}</label>
                     </div>
                     <div className="row">
                         <label style={{ marginLeft: "30px", marginRight: "30px" }}className="labelmain pull-left" >Tax</label>
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-right" >{get(this.props, 'data.tax', 0).toFixed(2)}</label>
+                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-right" >{get(this.props, 'data.taxAmount', 0).toFixed(2)}</label>
                     </div>
                     <div className="row">
                         <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-left" >Total Sales</label>
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-right" >{get(this.props, 'data.totalSales', 0).toFixed(2)}</label>
+                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-right" >{get(this.props, 'data.totalSalesAmount', 0).toFixed(2)}</label>
                     </div>
                     <div className="row">
                         <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-left" >Discount</label>
