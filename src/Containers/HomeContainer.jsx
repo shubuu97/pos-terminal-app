@@ -146,6 +146,7 @@ class HomeContainer extends React.Component {
             // ! Note - Hiding Pagination
         }).then((result) => {
             result.pagination = {}
+            result.pagination.method="allDocs"
             result.pagination.firstItemId = result.rows[0].id
             result.pagination.lastItemId = result.rows[result.rows.length - 1].id
             result.pagination.pageNo = 1
