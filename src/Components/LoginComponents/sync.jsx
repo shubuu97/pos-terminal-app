@@ -80,7 +80,7 @@ class SyncContainer extends Component {
         let productsdb = new PouchDb('productsdb');
         let result = await productsdb.bulkDocs(_get(productData, 'data', []))
         let indexResultOfSearch = await productsdb.search({
-            fields: ['product.name', 'product.description', 'product.sku'],
+            fields: ['product.name', 'product.description', 'product.sku','product.category1','product.category2','product.category3'],
             build: true
         });
         let indexResultOfFind = await productsdb.createIndex({
