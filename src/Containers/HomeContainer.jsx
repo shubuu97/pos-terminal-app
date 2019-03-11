@@ -141,7 +141,7 @@ class HomeContainer extends React.Component {
             attachments: true,
             endkey: '_design',
             'inclusive_end': false,
-            //limit: 39,
+            limit: 39,
             // skip: 0
             // ! Note - Hiding Pagination
         }).then((result) => {

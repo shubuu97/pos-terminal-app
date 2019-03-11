@@ -67,14 +67,12 @@ class Product extends React.PureComponent {
     }
 
     render() {
-        debugger
         let index = this.props.index;
         let cartItems = _get(this.props, 'cart.cartItems', [])
         let data = _get(this.props, `data`, {});
-        debugger
         return (
             <React.Fragment>
-                <div className='each-tile white-background flex-row relative' onClick={() => this.addToCart(index)} index={this.props.index} key={this.props.key}>
+                <div className='each-tile white-background flex-row relative' id='productCard' onClick={() => this.addToCart(index)} index={this.props.index} key={this.props.key}>
                     <div className='absolute added-item-position'>
                         {(_find(cartItems, { id: data.id })) ? <div className='added-item-count'>{(_find(cartItems, { id: data.id })).qty}</div> : null}
                     </div>

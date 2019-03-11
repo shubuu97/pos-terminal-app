@@ -12,6 +12,7 @@ import CardGiftCard from '@material-ui/icons/CardGiftcard';
 import LibraryAdd from '@material-ui/icons/LibraryAddOutlined';
 /* Redux Imports */
 import { commonActionCreater } from '../../Redux/commonAction'
+import { connect } from 'react-redux';
 /* Component Imports */
 import SideDrawer from '../SideDrawer'
 import Products from './Products';
@@ -20,7 +21,7 @@ import PouchDb from 'pouchdb';
 import Categories from './Categories/Categories';
 import Pagination from './Pagination';
 import Find from "pouchdb-find";
-import CircularProgress  from '@material-ui/core/CircularProgress';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 PouchDb.plugin(Find);
 PouchDb.plugin(require('pouchdb-quick-search'));
@@ -57,7 +58,7 @@ class ProductsSection extends React.Component {
                 query: searchText,
                 fields: ['product.name', 'product.description', 'product.sku'],
                 include_docs: true,
-                //limit: 39,
+                limit: 39,
                 skip: 0
             }).then((result) => {
                 this.setState({ clearInput: false })
@@ -67,6 +68,7 @@ class ProductsSection extends React.Component {
                 result.pagination.pageNo = 1
                 result.pagination.startVal = 1
                 result.pagination.endVal = result.rows.length
+
                 this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
             })
                 .catch((err) => {
@@ -77,8 +79,7 @@ class ProductsSection extends React.Component {
             productsdb.allDocs({
                 include_docs: true,
                 attachments: true,
-                // limit: 39,
-                // limit: 10,
+                limit: 39,
                 // skip: 0
             }).then((result) => {
                 this.setState({ clearInput: false })
@@ -103,45 +104,117 @@ class ProductsSection extends React.Component {
                     let cartItems = _get(this, 'props.cart.cartItems', [])
                     let productDataDoc = { doc: result.docs[0] };
                     let productId = productDataDoc.doc._id;
-                    let foundProduct = _find(cartItems, { id:productId });
+                    let foundProduct = _find(cartItems, { id: productId });
                     let cartObj;
                     if (_isEmpty(foundProduct)) {
                         let newCartItem = {
                             ...productDataDoc,
                             qty: 1,
                             saleType: 0,
-                            id:productId
+                            id: productId
                         }
                         cartObj = [...cartItems, newCartItem];
                     } else {
                         let qty = foundProduct.qty + 1
-                        let index = _findIndex(cartItems, ['id',productId]);
+                        let index = _findIndex(cartItems, ['id', productId]);
                         cartObj = [...cartItems]
                         cartObj[index].qty = qty;
                     }
                     this.props.dispatch(commonActionCreater(cartObj, 'CART_ITEM_LIST'));
                 }
             })
-        } 
+        }
+    }
+
+    scroll = () => {
+        let eachCardHeight = document.getElementById('productCard').offsetHeight
+        let scrollHead = document.getElementById('productList').scrollTop
+        let pageNo = this.props.pageNo;
+        let nextScrollTrigger = (pageNo * eachCardHeight * 13) - 400 // ! Assuming limit is 39, needs to be dynamic
+        console.log('Scroll Head - ', scrollHead, nextScrollTrigger)
+        if (scrollHead > nextScrollTrigger) {
+            let result = {
+                rows: [],
+                pagination: {}
+            }
+            result.rows = this.props.productList
+            result.pagination.pageNo = this.props.pageNo + 1
+            this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+            this.getNextProducts()
+        }
+    }
+
+    // getPrevProducts = () => {
+    //     this.setState({ disable: true })
+    //     let startkey = this.props.firstItemId 
+    //     let productsdb = new PouchDb('productsdb');
+    //       productsdb.allDocs({
+    //           include_docs: true,
+    //           descending: true,
+    //           startkey,
+    //           limit: this.state.itemCount,
+    //           skip: 1
+    //       }).then((result) => {
+    //           let sortedResult = _sortBy(result.rows, 'id')
+    //           result.rows = sortedResult
+    //           result.pagination = {}
+    //           result.pagination.firstItemId = result.rows[0].id
+    //           result.pagination.lastItemId = result.rows[result.rows.length - 1].id
+    //           result.pagination.pageNo = this.props.pageNo - 1
+    //           result.pagination.startVal = this.props.startVal - this.state.itemCount
+    //           result.pagination.endVal = result.pagination.pageNo * this.state.itemCount
+    //           this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+    //           this.setState({ disable: false })
+    //       }).catch((err) => {
+    //           console.log(err)
+    //     });
+    //   }
+
+    getNextProducts = async () => {
+        this.setState({ disable: true })
+        let startkey = this.props.lastItemId
+        let productsdb = new PouchDb('productsdb');
+        productsdb.allDocs({
+            include_docs: true,
+            startkey,
+            limit: 39,
+            skip: 1
+        }).then((result) => {
+            result.pagination = {}
+            result.pagination.firstItemId = result.rows[0].id
+            result.pagination.lastItemId = result.rows[result.rows.length - 1].id
+            result.pagination.pageNo = this.props.pageNo
+            result.pagination.startVal = this.props.endVal + 1
+            result.pagination.endVal = result.pagination.pageNo * this.state.itemCount
+
+            result.rows = [..._get(this, 'props.productList', []), ...result.rows]
+            if (result.pagination.endVal > this.props.productCount) {
+                result.pagination.endVal = this.props.productCount
+            }
+            this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+            this.setState({ disable: false })
+        }).catch((err) => {
+            console.log(err)
+        });
     }
 
     render() {
-        if(this.state.isLoading){
-            return <CircularProgress size={24}/>
+        if (this.state.isLoading) {
+            return <CircularProgress size={24} />
         }
-        let { windowHeight,headerHeight, categoriesHeight } = this.props
+        let { windowHeight, headerHeight, categoriesHeight } = this.props
         return (
             <div className='pos-products-collection' style={{ height: windowHeight }}>
 
                 {/* Header Component */}
-                <div className='pos-header' style={{height: headerHeight}}>
+                <div className='pos-header' style={{ height: headerHeight }}>
                     <div className="header-top flex-row align-center justify-space-between pl-10" >
                         <SideDrawer
                             // ! Actions
                             handleClickOpenOnHold={this.props.handleClickOpenOnHold}
                             handleHistoryOpen={this.props.handleHistoryOpen}
                             handleClickOpenSessionContainer={this.props.handleClickOpenSessionContainer}
-                            handleClickQuickBook = {this.props.handleClickQuickBook}
+                            handleClickQuickBook={this.props.handleClickQuickBook}
                             logout={this.logout}
                         />
                         <SearchBar
@@ -150,8 +223,8 @@ class ProductsSection extends React.Component {
                         />
                         <div className="header-right-sec">
                             <ul>
-                                <li onClick={this.props.handleMiscProduct}><LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 33 }}/></li>
-                                <li onClick={this.props.handleGiftCard}><CardGiftCard style={{ color: 'white', padding: '0 10px', fontSize: 33 }}  /></li>
+                                <li onClick={this.props.handleMiscProduct}><LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>
+                                <li onClick={this.props.handleGiftCard}><CardGiftCard style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>
                                 <li onClick={this.props.handleLockTerminal}><LockIcon style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>
                                 {/* <li onClick={this.logout}><ExitToApp style={{ color: 'white', padding: '0 10px', fontSize: 33 }}  /></li> */}
                             </ul>
@@ -164,19 +237,40 @@ class ProductsSection extends React.Component {
                     categoriesHeight={categoriesHeight}
                     {...this.props}
                 />
-                
 
-                {/* // ! Note - Hiding Pagination */}
+
+                {/* // ! Note - Hiding Pagination, Need hard removal */}
                 {/* <Pagination /> */}
 
                 {/* Products List Component */}
-                <Products
-                    {...this.props}
-                />
+                <div className='pos-products' id='productList' style={{ height: this.props.productListHeight }} onScroll={this.scroll}>
+                    <Products
+                        {...this.props}
+                    />
+                </div>
 
             </div>
         );
     }
 }
 
-export default ProductsSection;
+const mapStateToProps = state => {
+    let { productList } = state
+    let productCount = _get(productList, 'lookUpData.total_rows', '')
+    let lastItemId = _get(productList, 'lookUpData.pagination.lastItemId', '')
+    let firstItemId = _get(productList, 'lookUpData.pagination.firstItemId', '')
+    let pageNo = _get(productList, 'lookUpData.pagination.pageNo', '')
+    let startVal = _get(productList, 'lookUpData.pagination.startVal', '')
+    let endVal = _get(productList, 'lookUpData.pagination.endVal', '')
+    console.log(lastItemId, 'lastItemId', firstItemId, 'firstItemId', pageNo, 'pageNo', startVal, 'startVal', endVal, 'endVal')
+    return {
+        productCount,
+        lastItemId,
+        firstItemId,
+        pageNo,
+        startVal,
+        endVal,
+    }
+}
+
+export default connect(mapStateToProps)(ProductsSection);
