@@ -30,6 +30,7 @@ let saleRefund = commonReducer('SALE_REFUND');
 let giftCardData = commonReducer('GET_GIFT_CARD__DATA');
 let giftCardPaymentData = commonReducer('GET_GIFT_CARD_PAYMENT_DATA');
 let saveMiscProductData = commonReducer('SAVE_MISC_PRODUCT_DATA');
+let sessionDataById = commonReducer('GET_SESSION_DATA_BY_ID')
 
 
 let selectedSession = commonStaticReducer('GET_SELECTED_SESSION');
@@ -68,6 +69,7 @@ let rootRducer = combineReducers({
     ShowToast,
     PaymentDetails,
     lockTerminal,
+    sessionDataById
 })
 
 export default rootRducer;

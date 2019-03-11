@@ -242,10 +242,12 @@ class PaymentSection extends React.Component {
             obj.itemEffectiveTotal = item.itemEffectiveTotal;
             obj.itemRegularTotal = item.itemRegularTotal;
             obj.cartDiscountPercent = item.cartDiscountPercent;
+            obj.itemDiscountPercent = item.itemDiscountPercent;
             obj.employeeDiscountPercent = item.employeeDiscountPercent;
             obj.itemTotalDiscountAmount = item.itemTotalDiscountAmount;
             obj.itemSubTotal = item.itemSubTotal;
-            obj.taxPercentage = item.taxPercentage;
+            obj.itemTaxPercent = item.itemTaxPercent;
+            obj.itemTaxAmount = item.itemTaxAmount
             obj.saleType = item.saleType;
             return obj;
         });
@@ -324,7 +326,7 @@ class PaymentSection extends React.Component {
             itemDiscountAmount,
             totalTaxAmount,
             offline,
-            saleComment: _get(this.props, 'saleComment', ''),
+            saleComment: _get(this.state, 'comment', ''),
             saleTimeStamp: { seconds: parseInt((new Date().getTime() / 1000)) },
             changeDue: { currencyCode: '$', amount: parseFloat(Math.abs(this.props.remainingAmount.toFixed(2))) }
 

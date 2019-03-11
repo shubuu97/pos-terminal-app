@@ -220,7 +220,7 @@ class OrdersTab extends React.Component {
                 </ExpansionPanel >
             )
         });
-        return cartItems
+        return cartItems.reverse()
     }
     handleProceedToCustomer = () => {
         this.props.dispatch(commonActionCreater(2, 'SWITCH_TAB_NUMBER'))

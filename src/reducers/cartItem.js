@@ -95,19 +95,21 @@ const cartItem = (state = { cartItems: [], }, action) => {
                     amount: parseFloat((parseFloat(_get(item, 'itemRegularTotal.amount', 0)) - parseFloat(_get(item, 'itemTotalDiscountAmount.amount', 0))).toFixed(2))
                 }
                 let isTaxable = ("isTaxable" in item.doc.product) 
-                let taxPercent 
-                let taxAmount = 0
+                let itemTaxPercent = 0
+                let taxAmount = 0;
                 if(isTaxable) {
                     let federalTaxRate = localStorage.getItem('federalTaxRate')
                     let stateTaxRate = localStorage.getItem('stateTaxRate')
                     let countyTaxRate = localStorage.getItem('countyTaxRate')
-                    taxPercent = Number(federalTaxRate) + Number(stateTaxRate) + Number(countyTaxRate)
-                    taxAmount = _get(item, 'itemSubTotal.amount', 0) * taxPercent / 100
+                    itemTaxPercent = Number(federalTaxRate) + Number(stateTaxRate) + Number(countyTaxRate);
+                    taxAmount = _get(item, 'itemSubTotal.amount', 0) * itemTaxPercent / 100;
+
                 }
                 item.itemTaxAmount = {
                     currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
                     amount: taxAmount
                 }
+                item.itemTaxPercent = itemTaxPercent;
                 item.itemEffectiveTotal = {
                     currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
                     amount: parseFloat((parseFloat(_get(item, 'itemSubTotal.amount', 0)) + taxAmount).toFixed(2))
