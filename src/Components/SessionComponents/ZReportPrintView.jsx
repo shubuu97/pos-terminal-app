@@ -38,7 +38,7 @@ class ZReportPrintView extends React.Component {
                     </div>
                     <div className="row">
                         <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-left" >Cash Sales</label>
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-right" >{get(this.props, 'data.cashSales', 0).toFixed(2)}</label>
+                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-right" >{get(this.props, 'data.cashSalesAmount', 0).toFixed(2)}</label>
                     </div>
                     <div className="row">
                         <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-left" >Cash Added</label>
