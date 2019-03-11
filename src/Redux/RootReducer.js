@@ -14,14 +14,15 @@ import commonStaticReducer from './commonStaticReducer';
 import cart from '../reducers/cartItem';
 import cartHoldData from '../reducers/holdCartItem';
 import ShowToast from './toastReducer';
-import PaymentDetails from '../reducers/paymentDetails'
+import PaymentDetails from '../reducers/paymentDetails';
+import productList from '../reducers/productList'
 
 // import cartOrderDetailsFun from './commonStaticReducer';
 
 
 let loginData = commonReducer('POST_LOGIN_DATA');
 let storeData = commonReducer('GET_STORE_DATA');
-let productList = commonReducer('GET_PRODUCT_DATA');
+// let productList = commonReducer('GET_PRODUCT_DATA');
 let terminalData = commonReducer('GET_TERMINAL_DATA');
 let categoryList = commonReducer('GET_CATEGORY_DATA');
 let sessionList= commonReducer('GET_SESSION_DATA');
@@ -52,7 +53,7 @@ let rootRducer = combineReducers({
     loginData,
     storeData,
     categoryList,
-    productList,
+    //productList,
     staticReducers,
     terminalData,
     cart,
@@ -69,7 +70,8 @@ let rootRducer = combineReducers({
     ShowToast,
     PaymentDetails,
     lockTerminal,
-    sessionDataById
+    sessionDataById,
+    productList
 })
 
 export default rootRducer;
