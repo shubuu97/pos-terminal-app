@@ -57,6 +57,9 @@ function MapStateToProps(state){
     data.theoreticalClosingBalance = _get(sessionData,'session.currentBalance.amount',0);
     data.realClosingBalance = _get(sessionData,'session.closingBalance.amount');
     data.diffrence = parseFloat(data.realClosingBalance) -parseFloat(data.theoreticalClosingBalance);
+    data.preTaxSalesAmount = _get(sessionData,'session.preTaxSalesAmount');
+    data.taxAmount = _get(sessionData,'session.taxAmount');
+    data.totalSalesAmount = _get(sessionData,'session.totalSalesAmount');
     return {data}
 }
 
