@@ -547,18 +547,9 @@ class PaymentSection extends React.Component {
                                         render={this.buttonToRender} />
                                 </div>
                             </div>
-
                         </div>
                     </div>
-                 
                 </div>
-
-
-
-
-
-
-
                 {this.state.showPaymentReceipt ? <PaymentReceipt
                     open={this.state.showPaymentReceipt}
                     transactionStatus={this.state.transactionStatus}
@@ -566,7 +557,6 @@ class PaymentSection extends React.Component {
                     handleClose={this.handleClose}
                 /> : null}
             </div>
-
         );
     }
 }
