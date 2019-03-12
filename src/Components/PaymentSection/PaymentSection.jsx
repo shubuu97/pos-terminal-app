@@ -449,7 +449,8 @@ class PaymentSection extends React.Component {
         if (online)
             return (<li style={disable} onClick={this.handleGiftCardPayment} className="giftcard-section">Gift Card</li>)
         else {
-            return (null)
+            return (<li style={{ opacity: '0.3', pointerEvents: 'none' }}  className="giftcard-section">Gift Card</li>)
+
         }
     }
 
