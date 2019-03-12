@@ -18,9 +18,9 @@ const cartItem = (state = { cartItems: [], }, action) => {
                 saleComment: action.data,
             });
         case 'ADD_EMPLOYEE_DISCOUNT':
-        return Object.assign({}, state, {
-            empDiscount: action.data,
-        });
+            return Object.assign({}, state, {
+                empDiscount: action.data,
+            });
         case 'CART_ITEM_LIST':
 
             // * Initializing Required Fields 
@@ -57,9 +57,13 @@ const cartItem = (state = { cartItems: [], }, action) => {
                     currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
                     amount: parseFloat((parseFloat(_get(item, 'doc.product.salePrice.price', 0)) * _get(item, 'qty', 0)).toFixed(2))
                 }
-                item.cartDiscountPercent = parseFloat(_get(state, 'cartDiscountPercent', 0))
-                if(discountable){
+                if (discountable) {
+                    item.cartDiscountPercent = parseFloat(_get(state, 'cartDiscountPercent', 0))
                     item.employeeDiscountPercent = employeeDiscountPercent
+                }
+                else{
+                    item.cartDiscountPercent = 0
+                    item.employeeDiscountPercent = 0
                 }
                 let totalPercentDiscount = parseFloat(_get(item, 'itemDiscountPercent', 0)) + parseFloat(_get(item, 'cartDiscountPercent', 0)) + parseFloat(_get(item, 'employeeDiscountPercent', 0))
                 let thisItemDiscountAmount = (parseFloat(_get(item, 'itemRegularTotal.amount', 0)) * parseFloat(_get(item, 'itemDiscountPercent', 0)) / 100)
@@ -74,10 +78,10 @@ const cartItem = (state = { cartItems: [], }, action) => {
                     currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
                     amount: parseFloat((parseFloat(_get(item, 'itemRegularTotal.amount', 0)) - parseFloat(_get(item, 'itemTotalDiscountAmount.amount', 0))).toFixed(2))
                 }
-                let isTaxable = ("isTaxable" in item.doc.product) 
+                let isTaxable = ("isTaxable" in item.doc.product)
                 let itemTaxPercent = 0
                 let taxAmount = 0;
-                if(isTaxable) {
+                if (isTaxable) {
                     let federalTaxRate = localStorage.getItem('federalTaxRate')
                     let stateTaxRate = localStorage.getItem('stateTaxRate')
                     let countyTaxRate = localStorage.getItem('countyTaxRate')
