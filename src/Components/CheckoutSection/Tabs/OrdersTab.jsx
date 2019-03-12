@@ -125,11 +125,16 @@ class OrdersTab extends React.Component {
         // let maxDiscount = 80;
         if (type === '$') {
             let cartTotal = 0;
+            let discountableCartTotal = 0
             _isArray(cartItems) && cartItems.map((cartItem) => {
                 cartTotal += Number(_get(cartItem, 'itemRegularTotal.amount', 0));
+                debugger
+                if(_get(cartItem, 'doc.product.discountable', false)){
+                    discountableCartTotal += Number(_get(cartItem, 'itemRegularTotal.amount', 0));
+                }
             })
             let discountDoll = parseFloat(data);
-            let absolutePer = Number(discountDoll / cartTotal);
+            let absolutePer = Number(discountDoll / discountableCartTotal);
             cartDiscountPercent = parseFloat((absolutePer * 100).toFixed(2));
         } else {
             cartDiscountPercent = parseFloat(data);
@@ -218,43 +223,45 @@ class OrdersTab extends React.Component {
                                 </div>
                             }
                             {
-                                _get(item, 'cartDiscountPercent', false) ?
-                                    <div className='expanded-options'>
-                                        <span className='option-title'>Cart Discount</span>
-                                        <div className='flex-row justify-center align-center'>
-                                            {(item.cartDiscountPercent * item.itemRegularTotal.amount / 100).toFixed(2)}
-                                        </div>
-                                    </div> : null
+                                _get(item, 'discountable', false) ?
+                                    _get(item, 'cartDiscountPercent', false) ?
+                                        <div className='expanded-options'>
+                                            <span className='option-title'>Cart Discount</span>
+                                            <div className='flex-row justify-center align-center'>
+                                                {(item.cartDiscountPercent * item.itemRegularTotal.amount / 100).toFixed(2)}
+                                            </div>
+                                        </div> : null : null
                             }
                             {
-                                _get(item, 'employeeDiscountPercent', false) ?
-                                    <div className='expanded-options'>
-                                        <span className='option-title'>Employee Discount</span>
-                                        <div className='flex-row justify-center align-center'>
-                                            {(item.employeeDiscountPercent * item.itemRegularTotal.amount / 100).toFixed(2)}
-                                        </div>
-                                    </div> : null
+                                _get(item, 'discountable', false) ?
+                                    _get(item, 'employeeDiscountPercent', false) ?
+                                        <div className='expanded-options'>
+                                            <span className='option-title'>Employee Discount</span>
+                                            <div className='flex-row justify-center align-center'>
+                                                {(item.employeeDiscountPercent * item.itemRegularTotal.amount / 100).toFixed(2)}
+                                            </div>
+                                        </div> : null : null
                             }
                             {
-                                _get(item, 'itemDiscountPercent', false) ?
-                                    <div className='expanded-options'>
-                                        <span className='option-title'>Item Discount</span>
-                                        <div className='flex-row justify-center align-center' onClick={() => this.handleItemDiscountRemove(index)}>
-                                            {(item.itemDiscountPercent * item.itemRegularTotal.amount / 100).toFixed(2)}
-                                            <RemoveCircleIcons
-                                                style={{ fontSize: '1.2em', color: '#ff000096', paddingLeft: 5 }}
-                                            />
+                                _get(item, 'discountable', false) ?
+                                    _get(item, 'itemDiscountPercent', false) ?
+                                        <div className='expanded-options'>
+                                            <span className='option-title'>Item Discount</span>
+                                            <div className='flex-row justify-center align-center' onClick={() => this.handleItemDiscountRemove(index)}>
+                                                {(item.itemDiscountPercent * item.itemRegularTotal.amount / 100).toFixed(2)}
+                                                <RemoveCircleIcons
+                                                    style={{ fontSize: '1.2em', color: '#ff000096', paddingLeft: 5 }}
+                                                />
+                                            </div>
                                         </div>
-                                    </div>
-                                    :
-                                    <div className='expanded-options'>
-                                        <span className='option-title'>Item Discount</span>
-                                        <div className='flex-row justify-center align-center' onClick={() => this.handleClickOpenItemDiscount(index)}>
-                                            <AddCircleOutline
-                                                style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }}
-                                            /> Add
-                                        </div>
-                                    </div>
+                                        :
+                                        <div className='expanded-options'>
+                                            <span className='option-title'>Item Discount</span>
+                                            <div className='flex-row justify-center align-center' onClick={() => this.handleClickOpenItemDiscount(index)}>
+                                                <AddCircleOutline
+                                                    style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }}
+                                                /> Add</div>
+                                        </div> : null
                             }
                         </div>
                     </ExpansionPanelDetails>
