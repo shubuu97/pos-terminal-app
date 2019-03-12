@@ -174,16 +174,18 @@ class OrdersTab extends React.Component {
                         <div className='each-product-des fwidth flex-row justify-space-between'>
 
                             {/* Item Quantity */}
-                            {_get(item, 'doc.product.isGiftCard') ?
-                                null :
-                                <div className='each-item-qty absolute'>
-                                    {item.qty}
-                                </div>
+                            {
+                                _get(item, 'doc.product.isGiftCard') ?
+                                    null :
+                                    <div className='each-item-qty absolute'>
+                                        {item.qty}
+                                    </div>
                             }
 
                             {/* Item Discount */}
-                            {_get(item, 'itemDiscountPercent', false)  ?
-                                <div className='each-item-discount absolute'></div> : null
+                            {
+                                _get(item, 'itemDiscountPercent', false) ?
+                                    <div className='each-item-discount absolute'></div> : null
                             }
 
                             {/* Delete Icon and Title */}
@@ -232,7 +234,6 @@ class OrdersTab extends React.Component {
                                             {(item.employeeDiscountPercent * item.itemRegularTotal.amount / 100).toFixed(2)}
                                         </div>
                                     </div> : null
-
                             }
                             {
                                 _get(item, 'itemDiscountPercent', false) ?
