@@ -182,7 +182,7 @@ class OrdersTab extends React.Component {
                             }
 
                             {/* Item Discount */}
-                            {_get(item, 'itemDiscountPercent', false) ?
+                            {_get(item, 'itemDiscountPercent', false)  ?
                                 <div className='each-item-discount absolute'></div> : null
                             }
 
