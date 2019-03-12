@@ -181,6 +181,11 @@ class OrdersTab extends React.Component {
                                 </div>
                             }
 
+                            {/* Item Discount */}
+                            {_get(item, 'itemDiscountPercent', false) ?
+                                <div className='each-item-discount absolute'></div> : null
+                            }
+
                             {/* Delete Icon and Title */}
                             <div className=' des-first-part flex-row align-center'>
                                 <DeleteIcons
