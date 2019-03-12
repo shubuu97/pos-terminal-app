@@ -331,6 +331,11 @@ class PaymentSection extends React.Component {
             changeDue: { currencyCode: '$', amount: parseFloat(Math.abs(this.props.remainingAmount.toFixed(2))) }
 
         };
+        if(offline){
+            reqObj.customerName =  _get(customer,'customer.firstName','')+' '+_get(customer,'customer.lastName');
+            reqObj.terminalName = localStorage.getItem('terminalName');
+            reqObj.staffName = localStorage.getItem('userName');
+        }
         return reqObj;
 
     }

@@ -24,10 +24,12 @@ import GiftCardModel from '../Components/ProductsSection/GiftCardModel';
 import MiscProductModal from '../Components/ProductsSection/MiscProductModal';
 import SessionContainer from './SessionContainer';
 import QuickBookContainer from './QuickBookContainer';
+
 import LockTerminalDialogue from '../Components/Dialogues/LockTerminalDialogue'
+import OfflineTransactionContainer from './OfflineTransactionContainer';
 
 let SessionDialog = withDialog(SessionContainer)
-let QuickBookDialog = withDialog(QuickBookContainer)
+let OfflineTransactionDialog = withDialog(OfflineTransactionContainer)
 
 
 /* Pose Animation Configs */
@@ -332,8 +334,8 @@ class HomeContainer extends React.Component {
                 }
                 {
                     this.state.openQuickBookContainer ?
-                        <QuickBookDialog
-                            title="Quick Book Integration"
+                        <OfflineTransactionDialog
+                            title="Offline Transactions"
                             handleClickOpen={() => this.setState({ openQuickBookContainer: true })}
                             handleClose={() => this.setState({ openQuickBookContainer: false })}
                             open={this.state.openQuickBookContainer}
