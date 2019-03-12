@@ -223,7 +223,7 @@ class OrdersTab extends React.Component {
                                 </div>
                             }
                             {
-                                _get(item, 'discountable', false) ?
+                                _get(item, 'doc.product.discountable', false) ?
                                     _get(item, 'cartDiscountPercent', false) ?
                                         <div className='expanded-options'>
                                             <span className='option-title'>Cart Discount</span>
@@ -233,7 +233,7 @@ class OrdersTab extends React.Component {
                                         </div> : null : null
                             }
                             {
-                                _get(item, 'discountable', false) ?
+                                _get(item, 'doc.product.discountable', false) ?
                                     _get(item, 'employeeDiscountPercent', false) ?
                                         <div className='expanded-options'>
                                             <span className='option-title'>Employee Discount</span>
@@ -243,7 +243,7 @@ class OrdersTab extends React.Component {
                                         </div> : null : null
                             }
                             {
-                                _get(item, 'discountable', false) ?
+                                _get(item, 'doc.product.discountable', false) ?
                                     _get(item, 'itemDiscountPercent', false) ?
                                         <div className='expanded-options'>
                                             <span className='option-title'>Item Discount</span>
