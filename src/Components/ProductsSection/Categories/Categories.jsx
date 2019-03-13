@@ -4,9 +4,9 @@ import BreadCrumb from "./BreadCrumb";
 // Lodash Import
 import _get from "lodash/get";
 import _isEmpty from "lodash/isEmpty";
-import { connect } from "react-redux";
 //Redux Import
 import { commonActionCreater } from "../../../Redux/commonAction";
+import { connect } from "react-redux";
 //Pouch Import
 import PouchDb from "pouchdb";
 import Find from "pouchdb-find";
@@ -101,16 +101,18 @@ class Categories extends Component {
         fields: ["product.category1", "product.category2", "product.category3"],
         include_docs: true,
         limit: 39,
-        // limit: 9,
-        // skip: 0
+        skip: 0
       })
       .then(result => {
         let emptyResult
         if(result.total_rows == 0) {
           emptyResult = {}
+          this.props.dispatch(commonActionCreater(emptyResult, 'GET_PRODUCT_DATA_SUCCESS'))
         }
-        this.props.dispatch(commonActionCreater(emptyResult, 'GET_PRODUCT_DATA_SUCCESS'))
         result.pagination = {}
+        result.pagination.method="categories"
+        result.pagination.query = category.id
+        result.pagination.fields = ["product.category1", "product.category2", "product.category3"]
         result.pagination.firstItemId = result.rows[0].id
         result.pagination.lastItemId = result.rows[result.rows.length - 1].id
         result.pagination.pageNo = 1
@@ -146,11 +148,11 @@ class Categories extends Component {
         include_docs: true,
         attachments: true,
         limit: 39,
-        // limit: 9,
-        // skip: 0
+        skip: 0
       })
       .then(result => {
         result.pagination = {}
+        result.pagination.method="allDocs"
         result.pagination.firstItemId = result.rows[0].id
         result.pagination.lastItemId = result.rows[result.rows.length - 1].id
         result.pagination.pageNo = 1

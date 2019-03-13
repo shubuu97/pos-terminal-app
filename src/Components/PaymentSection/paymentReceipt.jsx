@@ -33,7 +33,10 @@ class PaymentReceipt extends React.Component {
         }
     }
     componentDidMount() {
+        this.handlePrint()
+        this.handleNewOrder()
     }
+
     handleNewOrder = () => {
         clearCart(this.props.dispatch);
         addGuestToCart(this.props.dispatch);
@@ -75,6 +78,7 @@ class PaymentReceipt extends React.Component {
                 </table>
             </React.Fragment>)
     }
+
     showOfflineTransactionData = ()=>{
         return (
             <React.Fragment>
@@ -113,7 +117,8 @@ class PaymentReceipt extends React.Component {
 
         return (
             <React.Fragment>
-                <Dialog
+                {/* // ! Commenting this out since we redirect as soon as we print */}
+                {/* <Dialog
                     open={this.props.open}
                     TransitionComponent={Transition}
                     keepMounted
@@ -140,7 +145,7 @@ class PaymentReceipt extends React.Component {
                             New Order
                     </Button>
                     </DialogActions>
-                </Dialog>
+                </Dialog> */}
                 <iframe id="ifmcontentstoprint" style={{
                     height: '0px',
                     width: '0px',

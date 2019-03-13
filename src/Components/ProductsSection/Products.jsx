@@ -3,7 +3,10 @@ import _get from 'lodash/get';
 import Product from './Product';
 import _isEmpty from 'lodash/isEmpty';
 
+
+
 const Products = (props) => {
+    
     let productList = _get(props, 'productList', [])
     let products 
     console.log(productList, 'productList')
@@ -18,16 +21,18 @@ const Products = (props) => {
                 key={index}
                 index={index}
                 productList={props.productList}
-                cart={_get(props, 'cart', [])}
+                //cart={_get(props, 'cart', [])}
                 dispatch={props.dispatch}
             />
         })
     }
 
+    
+
     return (
-        <div className='pos-products' style={{ height: props.productListHeight }}>
+        <React.Fragment>
             {products}
-        </div>
+        </React.Fragment>
     )
 }
 

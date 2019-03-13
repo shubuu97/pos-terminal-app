@@ -1,31 +1,33 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
+import { Detector } from 'react-detect-offline';
 /* Lodash Imports */
 import _get from 'lodash/get';
 import _set from 'lodash/set';
 import _cloneDeep from 'lodash/cloneDeep';
+/* Pouch DB */
+import PouchDb from 'pouchdb';
 /* Material import */
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 /* Redux Imports */
 import { connect } from 'react-redux';
 import { commonActionCreater } from '../../Redux/commonAction';
+import { APPLICATION_BFF_URL } from '../../Redux/urlConstants';
+import { postData } from '../../Redux/postAction';
+import showMessage from '../../Redux/toastAction';
 /* Global Imports */
 import generateV1uuid from '../../Global/Uuid';
 import LoaderButton from '../../Global/Components/LoaderButton';
 import genericPostData from '../../Global/dataFetch/genericPostData';
+import showErrorAlert from '../../Global/PosFunctions/showErrorAlert';
 /* Component Imports */
 import CashPay from './CashPay';
 import CardPay from './CardPay';
 import EmployeePay from './EmployeePay';
 import GiftPay from './GiftPay';
 import PaymentReceipt from './paymentReceipt';
-import { withRouter } from 'react-router-dom'
-import { Detector } from 'react-detect-offline';
-import PouchDb from 'pouchdb';
-import { APPLICATION_BFF_URL } from '../../Redux/urlConstants';
-import { postData } from '../../Redux/postAction';
-import showMessage from '../../Redux/toastAction';
-import showErrorAlert from '../../Global/PosFunctions/showErrorAlert';
+
 let transactiondb = new PouchDb('transactiondb')
 /* style */
 
@@ -547,18 +549,9 @@ class PaymentSection extends React.Component {
                                         render={this.buttonToRender} />
                                 </div>
                             </div>
-
                         </div>
                     </div>
-                 
                 </div>
-
-
-
-
-
-
-
                 {this.state.showPaymentReceipt ? <PaymentReceipt
                     open={this.state.showPaymentReceipt}
                     transactionStatus={this.state.transactionStatus}
@@ -566,7 +559,6 @@ class PaymentSection extends React.Component {
                     handleClose={this.handleClose}
                 /> : null}
             </div>
-
         );
     }
 }

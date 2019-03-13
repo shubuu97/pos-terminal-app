@@ -3,33 +3,6 @@ import _get from 'lodash/get'
 
 const cartItem = (state = { cartItems: [], }, action) => {
     switch (action.type) {
-        case 'UNSAFE_CART_ITEM_LIST':
-            let grossTotal = 0;
-            let itemsDiscount = 0;
-            let discount = 0
-            let totalQuantity = 0;
-            action.data.forEach(item => {
-                if (item.itemDiscount) {
-                    discount = parseFloat(item.itemDiscount) * (_get(item, 'doc.product.salePrice.price') * item.cartQuantity) / 100;
-                    itemsDiscount += discount
-                    item.effectiveTotal = (_get(item, 'doc.product.salePrice.price') * item.cartQuantity) - parseFloat(discount);
-
-                }
-                else {
-                    item.effectiveTotal = (_get(item, 'doc.product.salePrice.price') * item.cartQuantity)
-                }
-                grossTotal += (_get(item, 'doc.product.salePrice.price') * item.cartQuantity);
-                totalQuantity += item.cartQuantity;
-            });
-            netTotal = grossTotal - (itemsDiscount || 0) - _get(state, 'cartDiscount', 0) - _get(state, 'empDiscount', 0)``
-            return Object.assign({}, state, {
-                cartItems: action.data,
-                grossTotal: parseFloat(grossTotal.toFixed(2)),
-                itemsDiscount: parseFloat(itemsDiscount.toFixed(2)),
-                totalQuantity,
-                netTotal: parseFloat(netTotal.toFixed(2))
-            });
-            break;
         case 'ADD_DISCOUNT_TO_CART':
             let newState = Object.assign({}, state, {
                 cartDiscountPercent: action.data,
@@ -45,10 +18,12 @@ const cartItem = (state = { cartItems: [], }, action) => {
                 saleComment: action.data,
             });
         case 'ADD_EMPLOYEE_DISCOUNT':
-        return Object.assign({}, state, {
-            empDiscount: action.data,
-        });
+            return Object.assign({}, state, {
+                empDiscount: action.data,
+            });
         case 'CART_ITEM_LIST':
+
+            // * Initializing Required Fields 
             let employeeDiscountPercent = _get(state, 'empDiscount', 0)
             let regularTotal = 0
             let cartQty = 0
@@ -74,13 +49,22 @@ const cartItem = (state = { cartItems: [], }, action) => {
                 currencyCode: '$',
                 amount: 0
             }
+
+            // * Looping through each Item in the Cart
             action.data.forEach(item => {
+                let discountable = _get(item, 'doc.product.discountable', false)
                 item.itemRegularTotal = {
                     currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
                     amount: parseFloat((parseFloat(_get(item, 'doc.product.salePrice.price', 0)) * _get(item, 'qty', 0)).toFixed(2))
                 }
-                item.cartDiscountPercent = parseFloat(_get(state, 'cartDiscountPercent', 0))
-                item.employeeDiscountPercent = employeeDiscountPercent
+                if (discountable) {
+                    item.cartDiscountPercent = parseFloat(_get(state, 'cartDiscountPercent', 0))
+                    item.employeeDiscountPercent = employeeDiscountPercent
+                }
+                else{
+                    item.cartDiscountPercent = 0
+                    item.employeeDiscountPercent = 0
+                }
                 let totalPercentDiscount = parseFloat(_get(item, 'itemDiscountPercent', 0)) + parseFloat(_get(item, 'cartDiscountPercent', 0)) + parseFloat(_get(item, 'employeeDiscountPercent', 0))
                 let thisItemDiscountAmount = (parseFloat(_get(item, 'itemRegularTotal.amount', 0)) * parseFloat(_get(item, 'itemDiscountPercent', 0)) / 100)
                 let thisCartDiscountAmount = (parseFloat(_get(item, 'itemRegularTotal.amount', 0)) * parseFloat(_get(item, 'cartDiscountPercent', 0)) / 100)
@@ -94,10 +78,10 @@ const cartItem = (state = { cartItems: [], }, action) => {
                     currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
                     amount: parseFloat((parseFloat(_get(item, 'itemRegularTotal.amount', 0)) - parseFloat(_get(item, 'itemTotalDiscountAmount.amount', 0))).toFixed(2))
                 }
-                let isTaxable = ("isTaxable" in item.doc.product) 
+                let isTaxable = ("isTaxable" in item.doc.product)
                 let itemTaxPercent = 0
                 let taxAmount = 0;
-                if(isTaxable) {
+                if (isTaxable) {
                     let federalTaxRate = localStorage.getItem('federalTaxRate')
                     let stateTaxRate = localStorage.getItem('stateTaxRate')
                     let countyTaxRate = localStorage.getItem('countyTaxRate')
