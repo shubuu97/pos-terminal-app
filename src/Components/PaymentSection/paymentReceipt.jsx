@@ -98,7 +98,7 @@ class PaymentReceipt extends React.Component {
             </React.Fragment>)
     }
     render() {
-        console.log(this.props.receiptData.payments, 'this.props.receiptData.payments')
+        console.log(this.props.receiptData.saleComment, 'this.props.receiptData.saleComment')
         const { store, cart } = this.props;
         let address  = _get(store,'store.address', '')
         let customer = _get(cart, 'customer.customer')
@@ -160,7 +160,7 @@ class PaymentReceipt extends React.Component {
                             storeAddress={storeAddress}
                             customerName={customerName}
                             terminalName={localStorage.getItem('terminalName')}
-                            // saleComment={_get(cart,'saleComment', '')}
+                            saleComment={_get(this.props,'receiptData.saleComment','')}
                             itemsDiscount={_get(cart,'itemDiscountAmount.amount', '')}
                             cartDiscount={_get(cart,'cartDiscountAmount.amount', '')}
                             employeeDiscount={_get(cart,'employeeDiscountAmount.amount', '')}

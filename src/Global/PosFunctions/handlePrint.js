@@ -178,11 +178,11 @@ const HandlePrint = (props) => {
                      </div>
                 }
 
-                {/* {props.saleComment && 
+                {props.saleComment && 
                     <div style={{display:'flex',  justifyContent:'space-between', paddingBottom:"4px"}}>
                         SALE COMMENT: <span style={{fontWeight:'bold'}}>{_get(props,'saleComment', '---------')}</span>
                     </div>
-                } */}
+                }
 
                 {props.paymentMethods &&
                      <div style={{display:'flex',  justifyContent:'space-between', paddingBottom:"4px"}}>
