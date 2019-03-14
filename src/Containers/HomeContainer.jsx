@@ -27,9 +27,12 @@ import QuickBookContainer from './QuickBookContainer';
 
 import LockTerminalDialogue from '../Components/Dialogues/LockTerminalDialogue'
 import OfflineTransactionContainer from './OfflineTransactionContainer';
+import pollingHoc from '../Global/PosFunctions/pollingHoc';
+import axiosFetcher from '../Global/dataFetch/axiosFetcher';
 
 let SessionDialog = withDialog(SessionContainer)
 let OfflineTransactionDialog = withDialog(OfflineTransactionContainer)
+let transactiondb = new PouchDb('transactiondb')
 
 
 /* Pose Animation Configs */
@@ -63,6 +66,19 @@ class HomeContainer extends React.Component {
         }
         this.calcHeight();
         this.getProductData();
+        transactiondb.allDocs({
+            include_docs: true,
+            attachments: true,
+        }).then((resp)=>{
+            debugger;
+            let rows = _get(resp,'rows',[]);
+            if(rows.length>0){
+                this.props.startPolling();
+            }
+            else{
+                this.props.stopPolling();
+            }
+        })
     }
 
     calcHeight() {
@@ -281,6 +297,7 @@ class HomeContainer extends React.Component {
                 <Payment pose={isOpenPayment ? 'open' : 'closed'}>
                     {isOpenPayment ?
                         <PaymentSection
+                            startPolling = {this.props.startPolling}
                             windowHeight={windowHeight}
                         /> : null
                     }
@@ -384,4 +401,50 @@ function mapStateToProps(state) {
         lockState
     }
 }
+
+const deleteDocFromDb = async (row) => {
+    debugger;
+    //todo implement maxtry
+    let rev = row.value.rev;
+    return transactiondb.remove(row.id, row.value.rev).
+        then(() => true).
+        catch(() => false);
+}
+
+const OfflineTransactionPusher = async (propsOfComp, dispatch) => {
+    let resp = await transactiondb.allDocs({
+        include_docs: true,
+        attachments: true,
+    });
+    let rows = resp.rows;
+
+
+    if (rows.length) {
+        let transactionDoc = _get(rows, '[0].doc.transactionDoc');
+        debugger;
+        axiosFetcher({
+            method: 'POST',
+            reqObj: transactionDoc,
+            url: 'Sale/CreateSaleTransaction',
+            successCb: () => deleteDocFromDb(rows[0]),
+            errorCb: (err) => {
+                // this.state.customerCalled++;
+                // setTimeout(this.pollCustomer, 1000);
+            }
+        })
+        // .then(() => {
+        //     return deleteDocFromDb(rows[0])
+        // })
+        //     .catch((err) => {
+        //         debugger
+        //         console.log(err);
+        //     });
+    }
+    else {
+        propsOfComp.stopPolling();
+    }
+}
+HomeContainer = pollingHoc(5000, OfflineTransactionPusher)(HomeContainer)
+
+
 export default connect(mapStateToProps)(HomeContainer)
