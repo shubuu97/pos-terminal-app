@@ -38,8 +38,12 @@ class HoldDialogue extends React.Component {
             this.props.handleClickOpenAlertCartClear()
         }
         else {
-            applyCart(this.props.dispatch, holdCartData[index].cart)
             let unHoldedCart = holdCartData[index]
+            if(unHoldedCart.cart.customer.employee) {
+                console.log(unHoldedCart.cart.empDiscount, 'unHoldedCart.cart.employeeDiscount')
+                this.props.dispatch(commonActionCreater(unHoldedCart.cart.empDiscount ,'ADD_EMPLOYEE_DISCOUNT'))
+            }
+            applyCart(this.props.dispatch, holdCartData[index].cart)
             this.props.dispatch(commonActionCreater(unHoldedCart, 'ON_HOLD_DATA'));
             this.deleteHold(index);
             this.props.handleCloseOnHold()

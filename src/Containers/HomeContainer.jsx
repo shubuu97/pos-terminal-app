@@ -1,9 +1,10 @@
 import React from 'react';
+import { Detector } from 'react-detect-offline';
 /* Lodash Imports */
 import _get from 'lodash/get';
 import _isEmpty from 'lodash/isEmpty'
-/* Material import */
-
+/* Material Icons */
+import SignalWifiOffOutlined from '@material-ui/icons/SignalWifiOffOutlined'
 /* Redux Imports */
 import { connect } from 'react-redux';
 import genericPostData from '../Global/dataFetch/genericPostData';
@@ -160,10 +161,10 @@ class HomeContainer extends React.Component {
             endkey: '_design',
             'inclusive_end': false,
             limit: 39,
-            // skip: 0
-            // ! Note - Hiding Pagination
+            skip: 0
         }).then((result) => {
             result.pagination = {}
+            result.pagination.method = "allDocs"
             result.pagination.firstItemId = result.rows[0].id
             result.pagination.lastItemId = result.rows[result.rows.length - 1].id
             result.pagination.pageNo = 1
@@ -228,10 +229,10 @@ class HomeContainer extends React.Component {
         })
     }
     handleLockTerminal = () => {
-        this.props.dispatch(commonActionCreater({lock: true}, 'LOCK_TERMINAL'));
+        this.props.dispatch(commonActionCreater({ lock: true }, 'LOCK_TERMINAL'));
     }
     handleUnlockTerminal = () => {
-        this.props.dispatch(commonActionCreater({lock: false}, 'LOCK_TERMINAL'));
+        this.props.dispatch(commonActionCreater({ lock: false }, 'LOCK_TERMINAL'));
     }
 
     handleLogout = () => {
@@ -246,6 +247,22 @@ class HomeContainer extends React.Component {
             window.location.reload();
             this.props.history.push('/login')
         });
+    }
+
+    showNetworkIndicator = ({ online }) => {
+        if (online)
+            return (
+                null
+            )
+        else {
+            return (
+                <div className='toast-area absolute flex-row justify-center align-center'>
+                    <div className='offline-indicator flex-row justify-center align-center'>
+                        <SignalWifiOffOutlined /> <span className='pl-10'>Uhhh, You are Offline</span>
+                    </div>
+                </div>
+            )
+        }
     }
 
 
@@ -375,6 +392,8 @@ class HomeContainer extends React.Component {
                         handleClose={() => this.handleMiscProduct(false)}
                     />
                 }
+
+                <Detector render={this.showNetworkIndicator} />
 
                 <LockTerminalDialogue
                     open={this.props.lockState}

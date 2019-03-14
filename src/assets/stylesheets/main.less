@@ -401,6 +401,18 @@ p {
     display: flex;
     background: @background;
 }
+.toast-area{
+    bottom: 50px;
+    right: 0;
+    left: 0;
+    pointer-events: none;
+    .offline-indicator{
+        padding: 10px 30px;
+        border-radius: 20px;
+        background: rgba(226, 22, 22, 0.6);
+        color: white;
+    }
+}
 
 .page-no {
     text-align: right;
@@ -621,6 +633,10 @@ p {
         box-shadow: none;
     }
 
+    .MuiButtonBase-root{
+        position: unset;
+    }
+
     .MuiTabs-root {
         height: 70px;
         min-height: 70px;   
@@ -759,6 +775,15 @@ p {
                         font-weight: bold;
                         font-size: 0.85em;
                         text-align: center;
+                    }
+
+                    .each-item-discount{
+                        width: 10px;
+                        height: 10px;
+                        background: #ff7575;
+                        right: 0;
+                        bottom: 0;
+                        border-radius: 10px 0 0 0;
                     }
 
                     .title {

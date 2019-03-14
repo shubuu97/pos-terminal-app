@@ -12,6 +12,7 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import RemoveCircleIcons from '@material-ui/icons/RemoveCircleOutline';
 import DeleteIcons from '@material-ui/icons/DeleteOutline';
 import AddIcons from '@material-ui/icons/AddCircleOutline';
+import AddCircleOutline from '@material-ui/icons/AddCircleOutline';
 /* Redux Imports */
 import { commonActionCreater } from '../../../Redux/commonAction';
 /* Component Imports */
@@ -124,11 +125,16 @@ class OrdersTab extends React.Component {
         // let maxDiscount = 80;
         if (type === '$') {
             let cartTotal = 0;
+            let discountableCartTotal = 0
             _isArray(cartItems) && cartItems.map((cartItem) => {
                 cartTotal += Number(_get(cartItem, 'itemRegularTotal.amount', 0));
+                debugger
+                if(_get(cartItem, 'doc.product.discountable', false)){
+                    discountableCartTotal += Number(_get(cartItem, 'itemRegularTotal.amount', 0));
+                }
             })
             let discountDoll = parseFloat(data);
-            let absolutePer = Number(discountDoll / cartTotal);
+            let absolutePer = Number(discountDoll / discountableCartTotal);
             cartDiscountPercent = parseFloat((absolutePer * 100).toFixed(2));
         } else {
             cartDiscountPercent = parseFloat(data);
@@ -173,11 +179,18 @@ class OrdersTab extends React.Component {
                         <div className='each-product-des fwidth flex-row justify-space-between'>
 
                             {/* Item Quantity */}
-                            {_get(item, 'doc.product.isGiftCard') ?
-                                null :
-                                <div className='each-item-qty absolute'>
-                                    {item.qty}
-                                </div>
+                            {
+                                _get(item, 'doc.product.isGiftCard') ?
+                                    null :
+                                    <div className='each-item-qty absolute'>
+                                        {item.qty}
+                                    </div>
+                            }
+
+                            {/* Item Discount */}
+                            {
+                                _get(item, 'itemDiscountPercent', false) ?
+                                    <div className='each-item-discount absolute'></div> : null
                             }
 
                             {/* Delete Icon and Title */}
@@ -209,12 +222,47 @@ class OrdersTab extends React.Component {
                                     </div>
                                 </div>
                             }
-                            <div className='expanded-options'>
-                                <span className='option-title'>Item Discount</span>
-                                <div className='flex-row justify-center align-center'>
-                                    <div onClick={() => this.handleClickOpenItemDiscount(index)}>Add Discount</div>
-                                </div>
-                            </div>
+                            {
+                                _get(item, 'doc.product.discountable', false) ?
+                                    _get(item, 'cartDiscountPercent', false) ?
+                                        <div className='expanded-options'>
+                                            <span className='option-title'>Cart Discount</span>
+                                            <div className='flex-row justify-center align-center'>
+                                                {(item.cartDiscountPercent * item.itemRegularTotal.amount / 100).toFixed(2)}
+                                            </div>
+                                        </div> : null : null
+                            }
+                            {
+                                _get(item, 'doc.product.discountable', false) ?
+                                    _get(item, 'employeeDiscountPercent', false) ?
+                                        <div className='expanded-options'>
+                                            <span className='option-title'>Employee Discount</span>
+                                            <div className='flex-row justify-center align-center'>
+                                                {(item.employeeDiscountPercent * item.itemRegularTotal.amount / 100).toFixed(2)}
+                                            </div>
+                                        </div> : null : null
+                            }
+                            {
+                                _get(item, 'doc.product.discountable', false) ?
+                                    _get(item, 'itemDiscountPercent', false) ?
+                                        <div className='expanded-options'>
+                                            <span className='option-title'>Item Discount</span>
+                                            <div className='flex-row justify-center align-center' onClick={() => this.handleItemDiscountRemove(index)}>
+                                                {(item.itemDiscountPercent * item.itemRegularTotal.amount / 100).toFixed(2)}
+                                                <RemoveCircleIcons
+                                                    style={{ fontSize: '1.2em', color: '#ff000096', paddingLeft: 5 }}
+                                                />
+                                            </div>
+                                        </div>
+                                        :
+                                        <div className='expanded-options'>
+                                            <span className='option-title'>Item Discount</span>
+                                            <div className='flex-row justify-center align-center' onClick={() => this.handleClickOpenItemDiscount(index)}>
+                                                <AddCircleOutline
+                                                    style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }}
+                                                /> Add</div>
+                                        </div> : null
+                            }
                         </div>
                     </ExpansionPanelDetails>
                 </ExpansionPanel >
@@ -224,6 +272,16 @@ class OrdersTab extends React.Component {
     }
     handleProceedToCustomer = () => {
         this.props.dispatch(commonActionCreater(2, 'SWITCH_TAB_NUMBER'))
+    }
+
+    handleItemDiscountRemove = (index) => {
+        debugger
+        let cartItems = _get(this, 'props.cart.cartItems', []);
+        let reqObj = [
+            ...cartItems
+        ]
+        reqObj[index].itemDiscountPercent = 0;
+        this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
     }
 
 
@@ -263,7 +321,7 @@ class OrdersTab extends React.Component {
                     />
                     <div className='button-section flex-row ' style={{ height: checkoutactionArea }}>
                         <Button className='mr-20 btnsecondary' variant="outlined" onClick={this.handleClearCart}>Clear</Button>
-                        
+
                         <Button className={_get(this, 'props.cartItems', []).length ? 'mr-20 btnsecondary' : 'mr-20 btnsecondary disable-button'} variant="outlined" onClick={this.props.handleClickOpen}>Hold</Button>
 
                         <Button className="btnprimary" style={{ flex: 1 }} onClick={this.handleProceedToCustomer} variant="contained">Proceed</Button>

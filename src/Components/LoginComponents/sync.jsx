@@ -211,8 +211,9 @@ class SyncContainer extends Component {
             <React.Fragment>
                 <div>
                     <LinearProgress
-                        variant="determinate"
-                        value={this.state.percentageComplete} />
+                        // variant="determinate"
+                        // value={this.state.percentageComplete} 
+                    />
                     <span>Synching data from server......</span>
                 </div>
                 <Snackbar
