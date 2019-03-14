@@ -25,10 +25,15 @@ import GiftCardModel from '../Components/ProductsSection/GiftCardModel';
 import MiscProductModal from '../Components/ProductsSection/MiscProductModal';
 import SessionContainer from './SessionContainer';
 import QuickBookContainer from './QuickBookContainer';
+
 import LockTerminalDialogue from '../Components/Dialogues/LockTerminalDialogue'
+import OfflineTransactionContainer from './OfflineTransactionContainer';
+import pollingHoc from '../Global/PosFunctions/pollingHoc';
+import axiosFetcher from '../Global/dataFetch/axiosFetcher';
 
 let SessionDialog = withDialog(SessionContainer)
-let QuickBookDialog = withDialog(QuickBookContainer)
+let OfflineTransactionDialog = withDialog(OfflineTransactionContainer)
+let transactiondb = new PouchDb('transactiondb')
 
 
 /* Pose Animation Configs */
@@ -63,6 +68,7 @@ class HomeContainer extends React.Component {
         this.calcHeight();
         this.getRuleSet();
         this.getProductData();
+        this.props.startPolling();
     }
 
     calcHeight() {
@@ -335,6 +341,7 @@ class HomeContainer extends React.Component {
                 <Payment pose={isOpenPayment ? 'open' : 'closed'}>
                     {isOpenPayment ?
                         <PaymentSection
+                            startPolling={this.props.startPolling}
                             windowHeight={windowHeight}
                         /> : null
                     }
@@ -388,8 +395,8 @@ class HomeContainer extends React.Component {
                 }
                 {
                     this.state.openQuickBookContainer ?
-                        <QuickBookDialog
-                            title="Quick Book Integration"
+                        <OfflineTransactionDialog
+                            title="Offline Transactions"
                             handleClickOpen={() => this.setState({ openQuickBookContainer: true })}
                             handleClose={() => this.setState({ openQuickBookContainer: false })}
                             open={this.state.openQuickBookContainer}
@@ -440,4 +447,90 @@ function mapStateToProps(state) {
         lockState
     }
 }
+
+const deleteDocFromDb = async (row) => {
+    //todo implement maxtry
+    let rev = row.value.rev;
+    return transactiondb.remove(row.id, row.value.rev).
+        then(() => true).
+        catch(() => false);
+}
+
+const OfflineTransactionPusher = async (propsOfComp, dispatch) => {
+    let resp = await transactiondb.allDocs({
+        include_docs: true,
+        attachments: true,
+    });
+    let rows = resp.rows;
+
+
+    if (rows.length) {
+        let transactionDoc = _get(rows, '[0].doc.transactionDoc');
+        axiosFetcher({
+            method: 'POST',
+            reqObj: transactionDoc,
+            url: 'Sale/CreateSaleTransaction',
+            successCb: () => deleteDocFromDb(rows[0]),
+            errorCb: (err) => {
+                console.log(err, "err is here")
+            }
+        })
+    }
+    else {
+        // propsOfComp.stopPolling(propsOfComp, dispatch);
+        return;
+    }
+}
+const updateTimeStampAndDb = async (res) => {
+   let tempInvetoryUpdateTime =  localStorage.getItem('tempInvetoryUpdateTime');
+   localStorage.setItem('invetoryUpdateTime',tempInvetoryUpdateTime)
+
+    let productsdb = new PouchDb('productsdb');
+    let updatedInventory = _get(res, 'data', [])||[];
+    console.log(updatedInventory, '*********res*********');
+    let promiseArray = updatedInventory.map(async (product, index) => {
+        let productObj = await productsdb.get(product._id);
+        productObj.inventory.quantity = product.inventory.quantity;
+        return productObj
+    });
+    Promise.all(promiseArray).then(async (updatedInventoryWith_Rev) => {
+        let resOfUpdateBulk = await productsdb.bulkDocs(updatedInventoryWith_Rev);
+
+        console.log(updatedInventoryWith_Rev, "*********res*********")
+        console.log(resOfUpdateBulk, "*********res*********");
+        console.log('*********res*********');
+    })
+
+}
+const getInventoryUpdate = (propsOfComp, dispatch) => {
+    let reqObj = {
+        id: localStorage.getItem('storeId'),
+        timestamp: {
+            seconds: parseInt(localStorage.getItem('invetoryUpdateTime'))
+        }
+    };
+    let tempInvetoryUpdateTime = Date.now();
+    tempInvetoryUpdateTime = parseInt(tempInvetoryUpdateTime / 1000);
+    localStorage.setItem('tempInvetoryUpdateTime', tempInvetoryUpdateTime);
+    axiosFetcher({
+        method: 'POST',
+        reqObj,
+        url: 'Inventory/Increment',
+        successCb: updateTimeStampAndDb,
+        errorCb: (err) => {
+            console.log(err, "err is here")
+        }
+    })
+}
+const pollingWrapper = async (propsOfComp, dispatch) => {
+    await getInventoryUpdate(propsOfComp, dispatch);
+    OfflineTransactionPusher(propsOfComp, dispatch);
+    return;
+
+}
+
+
+HomeContainer = pollingHoc(60000, pollingWrapper)(HomeContainer)
+
+
 export default connect(mapStateToProps)(HomeContainer)

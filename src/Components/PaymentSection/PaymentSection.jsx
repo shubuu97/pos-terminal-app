@@ -28,6 +28,7 @@ import EmployeePay from './PaymentMethods/EmployeePay';
 import GiftPay from './PaymentMethods/GiftPay';
 import LoyaltyRedeem from './PaymentMethods/LoyaltyRedeem';
 import PaymentReceipt from './paymentReceipt';
+import CostCenter from './CostCenter';
 
 let transactiondb = new PouchDb('transactiondb')
 /* style */
@@ -60,6 +61,7 @@ class PaymentSection extends React.Component {
     componentDidMount() {
         //Action for getting total remaining ammount
         this.props.dispatch(commonActionCreater({ totalAmount: this.props.totalAmount }, 'CASH_INPUT_HANDLER'));
+
     }
     componentWillUnmount() {
         //Action for destroy all amount reducer
@@ -80,6 +82,9 @@ class PaymentSection extends React.Component {
     }
     handleLoyaltyRedeem = () => {
         this.setState({ showLoyaltyRedeem: true })
+    }
+    handleCostCenter = () => {
+        this.setState({ showCostCenter: true })
     }
 
     handleKeyBoardValue = (field, value) => {
@@ -343,9 +348,9 @@ class PaymentSection extends React.Component {
 
         let totalAmountPaid =
             (parseFloat(this.props.cardAmount) || 0) +
-            (parseFloat(this.props.employeePay) || 0) + 
+            (parseFloat(this.props.employeePay) || 0) +
             (parseFloat(this.props.cashAmount || 0)) +
-            (parseFloat(this.props.giftCardAmount) || 0) + 
+            (parseFloat(this.props.giftCardAmount) || 0) +
             (parseFloat(LoyaltyValue || 0))
 
         let reqObj = {
@@ -370,6 +375,13 @@ class PaymentSection extends React.Component {
             changeDue: { currencyCode: '$', amount: parseFloat(Math.abs(this.props.remainingAmount.toFixed(2))) }
 
         };
+        if (offline) {
+            reqObj.customerName = _get(customer, 'customer.firstName', '') + ' ' + _get(customer, 'customer.lastName');
+            reqObj.terminalName = localStorage.getItem('terminalName');
+            reqObj.staffName = localStorage.getItem('userName');
+            reqObj.id = generateV1uuid();
+            reqObj._id = generateV1uuid();
+        }
         return reqObj;
 
     }
@@ -390,16 +402,19 @@ class PaymentSection extends React.Component {
             })
     }
     handleSaleTransactionOffline = (reqObj) => {
+
         transactiondb.put({
-            _id: generateV1uuid(),
+            _id: reqObj.id,
+            id: reqObj.id,
             transactionDoc: reqObj
         }).then((data) => {
             this.setState({ isLoadingTransaction: false });
-            this.setState({ receiptData: reqObj, showPaymentReceipt: true, transactionStatus: 'offline' })
+            this.props.startPolling();
+            this.setState({ receiptData: reqObj, showPaymentReceipt: true, transactionStatus: 'offline' });
             PouchDb.replicate('transactiondb', `http://localhost:5984/transactiondb`, {
                 live: true,
                 retry: true
-            })
+            });
         })
             .catch((err) => {
                 this.setState({ isLoadingTransaction: false })
@@ -488,7 +503,8 @@ class PaymentSection extends React.Component {
                 </React.Fragment>
             )
         else {
-            return (null)
+            return (<li style={{ opacity: '0.3', pointerEvents: 'none' }} className="giftcard-section">Gift Card</li>)
+
         }
     }
 
@@ -505,6 +521,7 @@ class PaymentSection extends React.Component {
                             {_get(this.props, 'customer.isEmpPayEnabled') ? <li style={disable} onClick={this.handleEmployeePay} disabled={this.props.remainingAmount < 0} className="employee-section">Employee</li> : null}
                             <Detector render={this.giftCardRender} />
                             {/* <li  className="freedompay">Freedom <br/> Pay</li>      */}
+                            <li style={disable} onClick={this.handleCostCenter} variant="outlined" className="card-method">Cost Center Charge</li>
                         </ul>
                     </div>
 
@@ -558,6 +575,10 @@ class PaymentSection extends React.Component {
                                     value={this.props.loyaltyRedeem}
                                     onRemovePaymentMethod={this.onRemovePaymentMethod}
                                 /> : null}
+                            {
+                                this.state.showCostCenter ?
+                                    <CostCenter /> : null
+                            }
 
                         </div>
 

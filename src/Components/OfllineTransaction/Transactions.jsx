@@ -78,31 +78,31 @@ class Transactions extends React.Component {
                                     <div className='summary-area flex-row flex-wrap fwidth'>
                                         <div className='each-detail flex-column align-center'>
                                             <span className='summary-title'>Total Items</span>
-                                            <span className='summary-money'>{_get(transaction, 'transactionQty')}</span>
+                                            <span className='summary-money'>{_get(transaction, 'saleItems.length')}</span>
                                         </div>
                                         <div className='each-detail flex-column align-center'>
                                             <span className='summary-title'>transaction Total</span>
-                                            <span className='summary-money'>${_get(transaction, 'regularTotal')}</span>
+                                            <span className='summary-money'>${_get(transaction, 'totalAmount.amount')}</span>
                                         </div>
                                         <div className='each-detail flex-column align-center'>
-                                            <span className='summary-title'>Total Discount</span>
-                                            <span className='summary-money'>{_get(transaction, 'totalDiscount.currencyCode')}{_get(transaction, 'totalDiscount.amount')}</span>
+                                            <span className='summary-title'>Total Amount Paid</span>
+                                            <span className='summary-money'>{_get(transaction, 'totalAmountPaid.currencyCode')}{_get(transaction, 'totalAmountPaid.amount')}</span>
                                         </div>
                                         <div className='each-detail flex-column align-center'>
-                                            <span className='summary-title'>Taxes</span>
-                                            <span className='summary-money'>{_get(transaction, 'totalTaxAmount.currencyCode')}{_get(transaction, 'totalTaxAmount.amount')}</span>
+                                            <span className='summary-title'>Change Due</span>
+                                            <span className='summary-money'>{_get(transaction, 'changeDue.currencyCode')}{_get(transaction, 'changeDue.amount')}</span>
                                         </div>
                                         <div className='each-detail flex-column align-center'>
-                                            <span className='summary-title'>Total</span>
-                                            <span className='summary-money'>{_get(transaction, 'totalTaxAmount.currencyCode')}{_get(transaction, 'totalTaxAmount.amount')}</span>
+                                            <span className='summary-title'>Customer Name</span>
+                                            <span className='summary-money'>{_get(transaction, 'customerName')}</span>
                                         </div>
                                         <div className='each-detail flex-column align-center'>
-                                            <span className='summary-title'>Total</span>
-                                            <span className='summary-money'>{_get(transaction, 'totalTaxAmount.currencyCode')}{_get(transaction, 'totalTaxAmount.amount')}</span>
+                                            <span className='summary-title'>Staff</span>
+                                            <span className='summary-money'>{_get(transaction, 'staffName')}</span>
                                         </div>
                                         <div className='each-detail flex-column align-center'>
-                                            <span className='summary-title'>Total</span>
-                                            <span className='summary-money'>{_get(transaction, 'totalTaxAmount.currencyCode')}{_get(transaction, 'totalTaxAmount.amount')}</span>
+                                            <span className='summary-title'>Terminal</span>
+                                            <span className='summary-money'>{_get(transaction, 'terminalName')}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -110,8 +110,7 @@ class Transactions extends React.Component {
                         </ExpansionPanelSummary>
                         <ExpansionPanelDetails>
                             <Typography>
-                                Lorem iFpsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-                                sit amet blandit leo lobortis eget.
+                               We are synching in background...
           </Typography>
                         </ExpansionPanelDetails>
                     </ExpansionPanel>
