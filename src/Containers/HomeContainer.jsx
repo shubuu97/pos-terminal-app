@@ -67,19 +67,7 @@ class HomeContainer extends React.Component {
         }
         this.calcHeight();
         this.getProductData();
-        transactiondb.allDocs({
-            include_docs: true,
-            attachments: true,
-        }).then((resp)=>{
-            debugger;
-            let rows = _get(resp,'rows',[]);
-            if(rows.length>0){
-                this.props.startPolling();
-            }
-            else{
-                this.props.stopPolling();
-            }
-        })
+        this.props.startPolling();
     }
 
     calcHeight() {
@@ -314,7 +302,7 @@ class HomeContainer extends React.Component {
                 <Payment pose={isOpenPayment ? 'open' : 'closed'}>
                     {isOpenPayment ?
                         <PaymentSection
-                            startPolling = {this.props.startPolling}
+                            startPolling={this.props.startPolling}
                             windowHeight={windowHeight}
                         /> : null
                     }
@@ -422,7 +410,6 @@ function mapStateToProps(state) {
 }
 
 const deleteDocFromDb = async (row) => {
-    debugger;
     //todo implement maxtry
     let rev = row.value.rev;
     return transactiondb.remove(row.id, row.value.rev).
@@ -440,30 +427,71 @@ const OfflineTransactionPusher = async (propsOfComp, dispatch) => {
 
     if (rows.length) {
         let transactionDoc = _get(rows, '[0].doc.transactionDoc');
-        debugger;
         axiosFetcher({
             method: 'POST',
             reqObj: transactionDoc,
             url: 'Sale/CreateSaleTransaction',
             successCb: () => deleteDocFromDb(rows[0]),
             errorCb: (err) => {
-                // this.state.customerCalled++;
-                // setTimeout(this.pollCustomer, 1000);
+                console.log(err, "err is here")
             }
         })
-        // .then(() => {
-        //     return deleteDocFromDb(rows[0])
-        // })
-        //     .catch((err) => {
-        //         debugger
-        //         console.log(err);
-        //     });
     }
     else {
-        propsOfComp.stopPolling();
+        // propsOfComp.stopPolling(propsOfComp, dispatch);
+        return;
     }
 }
-HomeContainer = pollingHoc(5000, OfflineTransactionPusher)(HomeContainer)
+const updateTimeStampAndDb = async (res) => {
+   let tempInvetoryUpdateTime =  localStorage.getItem('tempInvetoryUpdateTime');
+   localStorage.setItem('invetoryUpdateTime',tempInvetoryUpdateTime)
+
+    let productsdb = new PouchDb('productsdb');
+    let updatedInventory = _get(res, 'data', [])||[];
+    console.log(updatedInventory, '*********res*********');
+    let promiseArray = updatedInventory.map(async (product, index) => {
+        let productObj = await productsdb.get(product._id);
+        productObj.inventory.quantity = product.inventory.quantity;
+        return productObj
+    });
+    Promise.all(promiseArray).then(async (updatedInventoryWith_Rev) => {
+        let resOfUpdateBulk = await productsdb.bulkDocs(updatedInventoryWith_Rev);
+
+        console.log(updatedInventoryWith_Rev, "*********res*********")
+        console.log(resOfUpdateBulk, "*********res*********");
+        console.log('*********res*********');
+    })
+
+}
+const getInventoryUpdate = (propsOfComp, dispatch) => {
+    let reqObj = {
+        id: localStorage.getItem('storeId'),
+        timestamp: {
+            seconds: parseInt(localStorage.getItem('invetoryUpdateTime'))
+        }
+    };
+    let tempInvetoryUpdateTime = Date.now();
+    tempInvetoryUpdateTime = parseInt(tempInvetoryUpdateTime / 1000);
+    localStorage.setItem('tempInvetoryUpdateTime', tempInvetoryUpdateTime);
+    axiosFetcher({
+        method: 'POST',
+        reqObj,
+        url: 'Inventory/Increment',
+        successCb: updateTimeStampAndDb,
+        errorCb: (err) => {
+            console.log(err, "err is here")
+        }
+    })
+}
+const pollingWrapper = async (propsOfComp, dispatch) => {
+    await getInventoryUpdate(propsOfComp, dispatch);
+    OfflineTransactionPusher(propsOfComp, dispatch);
+    return;
+
+}
+
+
+HomeContainer = pollingHoc(60000, pollingWrapper)(HomeContainer)
 
 
 export default connect(mapStateToProps)(HomeContainer)

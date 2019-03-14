@@ -137,6 +137,9 @@ class SyncContainer extends Component {
                 return;
             }
             let storeId = localStorage.getItem('storeId');
+            let invetoryUpdateTime = Date.now();
+            invetoryUpdateTime = parseInt(invetoryUpdateTime/1000);
+            localStorage.setItem('invetoryUpdateTime',invetoryUpdateTime);
             axiosFetcher({
                 method: 'POST',
                 url: 'Inventory/ByStoreId',

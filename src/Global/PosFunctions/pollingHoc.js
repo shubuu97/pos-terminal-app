@@ -10,7 +10,7 @@ const pollingHoc = (intervalDuration = 60 * 1000, onInterval) => {
 		}
 
 		componentDidMount () {
-			this.startPolling();
+			//this.startPolling();
 		}
 
 		componentWillUnmount () {
@@ -30,6 +30,7 @@ const pollingHoc = (intervalDuration = 60 * 1000, onInterval) => {
 		}
 
 		asyncInterval (intervalDuration, fn) {
+			debugger;
 			const promise = fn(this.getProps(), this.props.dispatch);
 			const asyncTimeout = () => setTimeout(() => {
 				this.asyncInterval(intervalDuration, fn);
