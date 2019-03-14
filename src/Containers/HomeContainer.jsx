@@ -61,6 +61,7 @@ class HomeContainer extends React.Component {
             this.props.history.push('/login')
         }
         this.calcHeight();
+        this.getRuleSet();
         this.getProductData();
     }
 
@@ -93,6 +94,44 @@ class HomeContainer extends React.Component {
             checkoutcartArea,
             checkoutCustomerArea
         })
+    }
+
+    getRuleSet = () => {
+        let data = { id: localStorage.getItem('retailerId') }
+        genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj: data,
+            url: 'Rewards/RedemptionRule/ByRetailer',
+            constants: {
+                init: 'GET_LOYALTY_REDEMPTION_RULES_INIT',
+                success: 'GET_LOYALTY_REDEMPTION_RULES_SUCCESS',
+                error: 'GET_LOYALTY_REDEMPTION_RULES_ERROR'
+            },
+            identifier: 'GET_LOYALTY_REDEMPTION_RULES',
+            successCb: this.saveRedemptionRules,
+            // errorCb: this.handleGetCustomerSaleDataError
+        })
+        genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj: data,
+            url: 'Rewards/EarningRule/ByRetailer',
+            constants: {
+                init: 'GET_LOYALTY_EARNING_RULES_INIT',
+                success: 'GET_LOYALTY_EARNING_RULES_SUCCESS',
+                error: 'GET_LOYALTY_EARNING_RULES_ERROR'
+            },
+            identifier: 'GET_LOYALTY_EARNING_RULES',
+            successCb: this.saveEarningRules,
+            // errorCb: this.handleGetCustomerSaleDataError
+        })
+    }
+
+    saveRedemptionRules = (data) => {
+        this.props.dispatch(commonActionCreater(data, 'GET_LOYALTY_REDEMPTION_RULES'));
+    }
+
+    saveEarningRules = (data) => {
+        this.props.dispatch(commonActionCreater(data, 'GET_LOYALTY_EARNING_RULES'));
     }
 
     toggleViewPayment = () => {

@@ -4,21 +4,22 @@ import _get from 'lodash/get'
 /* Redux Imports */
 import connect from 'react-redux/lib/connect/connect';
 import { commonActionCreater } from "../../Redux/commonAction";
+import showMessage from '../../Redux/toastAction';
 /* Material Imports */
 import LinearProgress from '@material-ui/core/LinearProgress';
-/* Global Imports */
-import axiosFetcher from '../../Global/dataFetch/axiosFetcher';
-import globalClearCart from '../../Global/PosFunctions/clearCart'
-/* Pouch Import */
-import PouchDb from 'pouchdb';
-import addGuestToCart from '../../Global/PosFunctions/addGuestToCart';
-import showMessage from '../../Redux/toastAction';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+/* Global Imports */
+import axiosFetcher from '../../Global/dataFetch/axiosFetcher';
+import globalClearCart from '../../Global/PosFunctions/clearCart'
+import addGuestToCart from '../../Global/PosFunctions/addGuestToCart';
+/* Pouch Import */
+import PouchDb from 'pouchdb';
 import Find from "pouchdb-find";
+
 PouchDb.plugin(Find);
 PouchDb.plugin(require('pouchdb-quick-search'));
 
@@ -60,9 +61,10 @@ class SyncContainer extends Component {
         });
         let categoryDb = new PouchDb('categoryDb');
         let res = await categoryDb.bulkDocs(_get(categoryData, 'data', []));
-        let createdIndex = await categoryDb.createIndex({ index: { fields: ["categoryType"] } })
+        let createdIndex = await categoryDb.createIndex({ index: { fields: ["categoryType"], build: true } })
         return 1
     }
+
     handleCategoryFetchSuccessWrapper = (categoryData) => {
         this.handleCategoryFetchSuccess(categoryData).then((data) => {
             let percentageComplete = this.state.percentageComplete + 100 / this.state.ApiCallCount;
@@ -76,20 +78,23 @@ class SyncContainer extends Component {
 
             })
     }
+
     handleProductFetchSuccess = async (productData) => {
         let productsdb = new PouchDb('productsdb');
         let result = await productsdb.bulkDocs(_get(productData, 'data', []))
         let indexResultOfSearch = await productsdb.search({
-            fields: ['product.name', 'product.description', 'product.sku','product.category1','product.category2','product.category3'],
+            fields: ['product.name', 'product.description', 'product.sku', 'product.category1', 'product.category2', 'product.category3'],
             build: true
         });
         let indexResultOfFind = await productsdb.createIndex({
             index: {
-                fields: ["product.upcCode"]
+                fields: ["product.upcCode"],
+                build: true
             }
         });
         return 1;
     }
+
     handleProductFetchSuccessWrapper = (productData) => {
         this.handleProductFetchSuccess(productData).then((data) => {
             let percentageComplete = this.state.percentageComplete + 100 / this.state.ApiCallCount;
@@ -103,6 +108,7 @@ class SyncContainer extends Component {
 
             })
     }
+
     handleCustomerFetchSuccess = async (customerData) => {
         _get(customerData, 'data', []).forEach((item, index) => {
             item._id = item.id
@@ -116,6 +122,7 @@ class SyncContainer extends Component {
         addGuestToCart(this.props.dispatch);
         return 1;
     }
+
     handleCustomerFetchSuccessWrapper = (customerData) => {
         this.handleCustomerFetchSuccess(customerData).then((data) => {
             let percentageComplete = this.state.percentageComplete + 100 / this.state.ApiCallCount;
@@ -129,7 +136,7 @@ class SyncContainer extends Component {
                 console.log(err);
             })
     }
-    
+
     pollProduct = () => {
         return new Promise((resolve, reject) => {
             if (this.state.productCalled == this.state.limit) {
@@ -149,7 +156,8 @@ class SyncContainer extends Component {
             })
 
         })
-    };
+    }
+
     pollCustomer = () => {
         return new Promise((resolve, reject) => {
             if (this.state.customerCalled == this.state.limit) {
@@ -169,7 +177,8 @@ class SyncContainer extends Component {
             })
 
         })
-    };
+    }
+
     pollCategory = () => {
         return new Promise((resolve, reject) => {
             if (this.state.categoryCalled == this.state.limit) {
@@ -188,9 +197,10 @@ class SyncContainer extends Component {
             })
         })
     }
+
     handleClick = () => {
         this.setState({ open: true });
-    };
+    }
 
     handleClose = (event, reason) => {
         if (reason === 'clickaway') {
@@ -198,7 +208,7 @@ class SyncContainer extends Component {
         }
 
         this.setState({ open: false });
-    };
+    }
 
     render() {
         const { classes } = this.props;
@@ -211,8 +221,8 @@ class SyncContainer extends Component {
             <React.Fragment>
                 <div>
                     <LinearProgress
-                        // variant="determinate"
-                        // value={this.state.percentageComplete} 
+                    // variant="determinate"
+                    // value={this.state.percentageComplete} 
                     />
                     <span>Synching data from server......</span>
                 </div>
@@ -229,9 +239,7 @@ class SyncContainer extends Component {
                     }}
                     message={<span id="message-id">Note archived</span>}
                     action={[
-                        <Button key="undo" color="secondary" size="small" onClick={this.handleClose}>
-                            UNDO
-            </Button>,
+                        <Button key="undo" color="secondary" size="small" onClick={this.handleClose}>UNDO</Button>,
                         <IconButton
                             key="close"
                             aria-label="Close"
