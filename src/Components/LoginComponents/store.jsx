@@ -2,6 +2,9 @@ import React from 'react';
 import LoaderButton from '../../Global/Components/LoaderButton';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+
+import { withStyles } from '@material-ui/core/styles';
 import genericPostData from '../../Global/dataFetch/genericPostData';
 import _get from 'lodash/get';
 import moment from 'moment';
@@ -12,6 +15,24 @@ import SessionDialog from '../SessionComponents/SessionDialog';
 import showMessage from '../../Redux/toastAction';
 
 
+const styles = theme => ({
+  
+    formControl: {
+        margin: theme.spacing.unit,
+        minWidth: 120,
+        maxWidth: 300,
+    },
+});
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
+    },
+};
 
 class Store extends React.Component {
     constructor(props) {
@@ -59,7 +80,7 @@ class Store extends React.Component {
                 error: 'GET_STORE_DATA_ERROR'
             },
             identifier: 'GET_STORE_DATA',
-            dontShowMessage:true,
+            dontShowMessage: true,
             successCb: this.afterStoreSuccess,
             errorCb: () => this.setState({ isFetching: false })
         })
@@ -78,18 +99,17 @@ class Store extends React.Component {
         let terminals = [];
         terminals.push(<option data-value='' value={-1}></option>);
         this.state.terminals.map((terminal, index) => {
-            terminals.push(<option data-value={terminal} value={index}>{terminal.name}</option>);
+            terminals.push(<MenuItem data-value={terminal} value={index}>{terminal.name}</MenuItem>);
         })
         return terminals;
     }
 
     handleChange = (event) => {
         this.setState({ selectedTerminal: event.target.value });
-        if(event.target.value!=-1)
-        {
-        let terminalObj = this.state.terminals[event.target.value];
-        localStorage.setItem('terminalId', terminalObj.id);
-        localStorage.setItem('terminalName', terminalObj.name);
+        if (event.target.value != -1) {
+            let terminalObj = this.state.terminals[event.target.value];
+            localStorage.setItem('terminalId', terminalObj.id);
+            localStorage.setItem('terminalName', terminalObj.name);
         }
     }
 
@@ -111,7 +131,7 @@ class Store extends React.Component {
             },
             identifier: 'GET_TERMINAL_DATA',
             successCb: this.afterLoginSuccess,
-            dontShowMessage:true,
+            dontShowMessage: true,
             errorCb: () => this.setState({ isFetching: false })
         })
     }
@@ -123,14 +143,14 @@ class Store extends React.Component {
         localStorage.setItem('loggedInTime', loggedInTime);
         localStorage.setItem('loggedInDate', loggedInDate);
         localStorage.setItem('sessionId', _get(data, 'sessionId', 'nil'));
-       
+
         if (_get(data, 'sessionId', 'nil') == 'nil') {
             if (this.state.isManager) {
                 // this.props.history.push('/DenominationDetailsForm');
-                this.setState({showAddSessionDialog:true})
+                this.setState({ showAddSessionDialog: true })
             }
             else {
-               this.setState({showAuthModal:true})
+                this.setState({ showAuthModal: true })
             }
         }
         else {
@@ -138,17 +158,16 @@ class Store extends React.Component {
         }
     }
     authSuccess = () => {
-    //  this.props.history.push('/DenominationDetailsForm');
-    this.setState({showAddSessionDialog:true})
+        //  this.props.history.push('/DenominationDetailsForm');
+        this.setState({ showAddSessionDialog: true })
 
     }
-    handleClose = ()=>
-    {
+    handleClose = () => {
         this.setState({
-        showAuthModal:false
+            showAuthModal: false
         })
     }
-    handleSuccessAddSession = (data)=>{
+    handleSuccessAddSession = (data) => {
         localStorage.setItem('sessionId', data.id);
         this.props.handleStepChange(3)
         // this.props.dispatch(commonActionCreater(true, 'SESSION_START_REDIRECT_TO_LOGIN'));
@@ -158,11 +177,11 @@ class Store extends React.Component {
         let { classes } = this.props
         return (
             <React.Fragment>
-                <FormControl margin="normal" required fullWidth>
-                <InputLabel htmlFor="age-simple">Select Terminal</InputLabel>
+                <FormControl className={classes.formControl} margin="normal" required fullWidth>
+                    <InputLabel htmlFor="age-simple">Select Terminal</InputLabel>
                     <Select
                         placeholder="Please Select terminal"
-                        native
+                        MenuProps={MenuProps}
                         value={this.state.selectedTerminal}
                         onChange={this.handleChange}
                     >
@@ -174,7 +193,7 @@ class Store extends React.Component {
                     fullWidth
                     isFetching={this.state.isFetching}
                     variant="contained"
-                    disabled={this.state.selectedTerminal==-1}
+                    disabled={this.state.selectedTerminal == -1}
                     color="primary"
                     className={classes.submit}
                 >
@@ -186,13 +205,12 @@ class Store extends React.Component {
                     dispatch={this.props.dispatch}
                     authSuccess={this.authSuccess}
                 /> : null}
-                {this.state.showAddSessionDialog?<SessionDialog
+                {this.state.showAddSessionDialog ? <SessionDialog
                     open={this.state.showAddSessionDialog}
-                    handleSuccessAddSession = {this.handleSuccessAddSession}
-                    handleClose={()=>this.setState({showAddSessionDialog:false})}
-                    />:null}
+                    handleSuccessAddSession={this.handleSuccessAddSession}
+                    handleClose={() => this.setState({ showAddSessionDialog: false })}
+                /> : null}
             </React.Fragment>)
     }
 }
-
-export default Store;
+export default withStyles(styles, { withTheme: true })(Store);
