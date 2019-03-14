@@ -26,6 +26,9 @@ import { APPLICATION_BFF_URL } from '../../Redux/urlConstants';
 import { postData } from '../../Redux/postAction';
 import showMessage from '../../Redux/toastAction';
 import showErrorAlert from '../../Global/PosFunctions/showErrorAlert';
+import CostCenter from './CostCenter';
+import pollingHoc from '../../Global/PosFunctions/pollingHoc';
+import axiosFetcher from '../../Global/dataFetch/axiosFetcher';
 let transactiondb = new PouchDb('transactiondb')
 /* style */
 
@@ -49,13 +52,14 @@ class PaymentSection extends React.Component {
             originalGiftCard: {},
             giftCardUsedValue: 0,
             comment: '',
-            currentFocus:''
+            currentFocus: ''
         }
     }
 
     componentDidMount() {
         //action for getting total remaining ammount
         this.props.dispatch(commonActionCreater({ totalAmount: this.props.totalAmount }, 'CASH_INPUT_HANDLER'));
+
     }
     componentWillUnmount() {
         //action for destroy all amount reducer
@@ -73,6 +77,9 @@ class PaymentSection extends React.Component {
     }
     handleGiftCardPayment = () => {
         this.setState({ showGiftPay: true })
+    }
+    handleCostCenter = () => {
+        this.setState({ showCostCenter: true })
     }
 
     handleKeyBoardValue = (field, value) => {
@@ -174,19 +181,18 @@ class PaymentSection extends React.Component {
     }
 
     handleInputChange = num => event => {
-        if(this.state.currentFocus!=='')
-        {
-        let currentFocus = this.state.currentFocus;
-        let focusItemValue = this.props[currentFocus];
-        if (num != '<') {
-            focusItemValue = (focusItemValue || '') + num;
-        }
-        else {
-            focusItemValue = '';
-        }
+        if (this.state.currentFocus !== '') {
+            let currentFocus = this.state.currentFocus;
+            let focusItemValue = this.props[currentFocus];
+            if (num != '<') {
+                focusItemValue = (focusItemValue || '') + num;
+            }
+            else {
+                focusItemValue = '';
+            }
 
-        this.props.dispatch(commonActionCreater({ [currentFocus]: focusItemValue, totalAmount: this.props.totalAmount }, this.state.handler))
-    }
+            this.props.dispatch(commonActionCreater({ [currentFocus]: focusItemValue, totalAmount: this.props.totalAmount }, this.state.handler))
+        }
     }
     currentFocus = (field) => {
         this.setState({ currentFocus: field.fieldValue, handler: field.handler })
@@ -331,10 +337,12 @@ class PaymentSection extends React.Component {
             changeDue: { currencyCode: '$', amount: parseFloat(Math.abs(this.props.remainingAmount.toFixed(2))) }
 
         };
-        if(offline){
-            reqObj.customerName =  _get(customer,'customer.firstName','')+' '+_get(customer,'customer.lastName');
+        if (offline) {
+            reqObj.customerName = _get(customer, 'customer.firstName', '') + ' ' + _get(customer, 'customer.lastName');
             reqObj.terminalName = localStorage.getItem('terminalName');
             reqObj.staffName = localStorage.getItem('userName');
+            reqObj.id = generateV1uuid();
+            reqObj._id = generateV1uuid();
         }
         return reqObj;
 
@@ -356,16 +364,19 @@ class PaymentSection extends React.Component {
             })
     }
     handleSaleTransactionOffline = (reqObj) => {
+        
         transactiondb.put({
-            _id: generateV1uuid(),
+            _id: reqObj.id,
+            id: reqObj.id,
             transactionDoc: reqObj
         }).then((data) => {
             this.setState({ isLoadingTransaction: false });
-            this.setState({ receiptData: reqObj, showPaymentReceipt: true, transactionStatus: 'offline' })
+            this.props.startPolling();
+            this.setState({ receiptData: reqObj, showPaymentReceipt: true, transactionStatus: 'offline' });
             PouchDb.replicate('transactiondb', `http://localhost:5984/transactiondb`, {
                 live: true,
                 retry: true
-            })
+            });
         })
             .catch((err) => {
                 this.setState({ isLoadingTransaction: false })
@@ -449,7 +460,7 @@ class PaymentSection extends React.Component {
         if (online)
             return (<li style={disable} onClick={this.handleGiftCardPayment} className="giftcard-section">Gift Card</li>)
         else {
-            return (<li style={{ opacity: '0.3', pointerEvents: 'none' }}  className="giftcard-section">Gift Card</li>)
+            return (<li style={{ opacity: '0.3', pointerEvents: 'none' }} className="giftcard-section">Gift Card</li>)
 
         }
     }
@@ -467,6 +478,7 @@ class PaymentSection extends React.Component {
                             {_get(this.props, 'customer.isEmpPayEnabled') ? <li style={disable} onClick={this.handleEmployeePay} disabled={this.props.remainingAmount < 0} className="employee-section">Employee</li> : null}
                             <Detector render={this.giftCardRender} />
                             {/* <li  className="freedompay">Freedom <br/> Pay</li>      */}
+                            <li style={disable} onClick={this.handleCostCenter} variant="outlined" className="card-method">Cost Center Charge</li>
                         </ul>
                     </div>
 
@@ -513,6 +525,10 @@ class PaymentSection extends React.Component {
                                     onRemovePaymentMethod={this.onRemovePaymentMethod}
                                     onPayWithGiftCard={this.onPayWithGiftCard}
                                 /> : null}
+                            {
+                                this.state.showCostCenter ?
+                                    <CostCenter /> : null
+                            }
 
                         </div>
 
@@ -556,7 +572,7 @@ class PaymentSection extends React.Component {
 
                         </div>
                     </div>
-                 
+
                 </div>
 
 
