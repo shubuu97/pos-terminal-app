@@ -182,7 +182,7 @@ class OrderHistoryDialog extends React.Component {
                                 {`Email: ${_get(custData, 'customer.email', '')}`}
                             </div> */}
                             <div className="mui-col-md-6">
-                                <label className="c-name">Vishnu Kumar</label>
+                                <label className="c-name">{_get(custData, 'customer.customer.firstName','') + ' ' + _get(custData, 'customer.customer.lastName','')}</label>
                             </div>
                             <div className="mui-col-md-6 text-right">
                                 <label  className="c-name">{`Amount: ${_get(custData, 'sale.totalAmount.currencyCode', '$')} ${_get(custData, 'sale.totalAmount.amount', 0)}`}</label>
@@ -243,12 +243,13 @@ class OrderHistoryDialog extends React.Component {
         let listItems = _isArray(orderData.saleParts) ? orderData.saleParts.map((item) => (
             <tr>
                 <td>{_get(item, 'product.name', '')}</td>
-                <td>{(_get(item, 'saleItem.itemRegularTotal.amount', 0) / _get(item, 'saleItem.qty', 0))}</td>
+                <td>{_get(item, 'product.salePrice.price', 0)}</td>
                 <td>{_get(item, 'saleItem.qty', 0)}</td>
                 <td>{_get(item, 'saleItem.returnQty', 0)}</td>
-                <td>{_get(item, 'product.discount', 0)}</td>
+                <td>{_get(item, 'saleItem.itemTotalDiscountAmount.amount', 0)}</td>
                 <td>{(_get(item, 'saleItem.itemSubTotal.amount', ''))}</td>
-                <td>{_get(item, 'product.tax', 0)}</td>
+                {/* //need to check  */}
+                <td>{_get(item, 'saleItem.itemTaxAmount.amount', 0).toFixed(2)}</td>
                 <td>{(_get(item, 'saleItem.itemEffectiveTotal.amount', 0))}</td>
                 <td>{(_get(item, 'saleItem.itemRefundAmount.amount', ''))}</td>
             </tr>
@@ -323,7 +324,7 @@ class OrderHistoryDialog extends React.Component {
                                 <br />
                                 <label >{`Created Date: ${moment(_get(selectedOrder, 'sale.saleCommitTimeStamp.seconds', 0) * 1000).format('MM/DD/YYYY')}`}</label>
                                 <br />
-                                <label >{`Served By: ${_get(selectedOrder, 'sale.terminalId', '')}`}</label>
+                                {/* <label >{`Served By: ${_get(selectedOrder, 'sale.terminalId', '')}`}</label> */}
                             </div>
                         </div>
                     </div>
@@ -356,15 +357,16 @@ class OrderHistoryDialog extends React.Component {
                             </div>
                             <div className="mui-col-md-6" style={{ paddingRight: '50px' }}>
                                 <label >{`Tax: `}</label>
-                                <label style={{ float: 'right' }}>{`$ ${_get(selectedOrder, 'sale.tax', '0')}`}</label>
+                                <label style={{ float: 'right' }}>{_get(selectedOrder,'sale.totalTaxAmount.currencyCode','$') + _get(selectedOrder,'sale.totalTaxAmount.amount',0)}</label>
                                 <br />
                                 <label >{`Grand Total: `}</label>
                                 <label style={{ float: 'right' }}>{`${_get(selectedOrder, 'sale.totalAmount.currencyCode', '$')} ${_get(selectedOrder, 'sale.totalAmount.amount', '0')}`}</label>
                                 <br />
                                 <label >{`Returned Amount: `}</label>
-                                <label style={{ float: 'right' }}>{`${_get(selectedOrder, 'sale.totalRefundAmount.currencyCode', '$')} ${_get(selectedOrder, 'sale.totalRefundAmount.amount', '0')}`}</label>
+                                <label style={{ float: 'right' }}>{_get(selectedOrder, 'sale.totalRefundAmount.currencyCode', '$') + _get(selectedOrder, 'sale.totalRefundAmount.amount', '0')}</label>
                                 <br />
                                 <label >{`Total Paid: `}</label>
+                                <label style={{ float: 'right' }}>{`${_get(selectedOrder, 'sale.totalAmountPaid.currencyCode', '$')} ${_get(selectedOrder, 'sale.totalAmountPaid.amount', '0')}`}</label>
                                 <div style={{ float: 'right' }}>
                                     {this.showPaymentMethods(this.state.selectedOrder)}
                                 </div>
@@ -372,7 +374,7 @@ class OrderHistoryDialog extends React.Component {
                                 <br />
                                 <br />
                                 <label >{`Change: `}</label>
-                                <label style={{ float: 'right' }}>{`$ ${(_get(selectedOrder, 'sale.totalAmountPaid.amount', 0) - _get(selectedOrder, 'sale.totalAmount.amount', 0)).toFixed(2)}`}</label>
+                                <label style={{ float: 'right' }}>{_get(selectedOrder, 'sale.changeDue.currencyCode', 0) + _get(selectedOrder, 'sale.changeDue.amount', 0).toFixed(2)}</label>
                             </div>
                         </div>
                         <div className="mui-row" style={{ display: 'flex', justifyContent: 'center' }}>
