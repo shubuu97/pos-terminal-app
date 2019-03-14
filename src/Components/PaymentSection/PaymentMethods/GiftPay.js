@@ -2,7 +2,6 @@ import React from 'react';
 /* Lodash Imports */
 import _get from 'lodash/get';
 import _isEmpty from 'lodash/isEmpty';
-
 /* Material import */
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
@@ -10,19 +9,14 @@ import CloseIcon from '@material-ui/icons/Close';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import CircularProgress from '@material-ui/core/CircularProgress';
-
-import { commonActionCreater } from '../../Redux/commonAction';
-import { connect } from 'react-redux';
-import genericPostData from '../../Global/dataFetch/genericPostData';
-import roundUp from '../../Global/PosFunctions/roundUp';
-let regex = /^\d*[\.\d]+$/;
-
-
-
 /* Redux Imports */
+import { commonActionCreater } from '../../../Redux/commonAction';
+import { connect } from 'react-redux';
+/* Global Imports */
+import genericPostData from '../../../Global/dataFetch/genericPostData';
+import roundUp from '../../../Global/PosFunctions/roundUp';
 
-/* Component Imports */
-
+let regex = /^\d*[\.\d]+$/;
 
 class GiftPay extends React.Component {
 
@@ -162,7 +156,7 @@ class GiftPay extends React.Component {
             return (
                 <React.Fragment>
                     <span className="pay-button" onClick={this.checkGiftCardValue}>
-                        {this.state.isLoadingCheckValue ? <CircularProgress size={24} /> : "Check Value"}
+                        {this.state.isLoadingCheckValue ? <CircularProgress size={24} /> : ""}
                     </span>
                 </React.Fragment>
             )
@@ -179,9 +173,9 @@ class GiftPay extends React.Component {
     render() {
         return (
             <div className="default-card-pay">
-                <span>Gift Pay</span>
-                <div className="flex-row align-center justify-space-between">
-                    <div style={{ width: '50%' }}>
+                <span className='payment-title'>Gift Pay</span>
+                <div className="flex-row align-center justify-space-between relative">
+                    <div style={{ width: '80%' }}>
                         {this.whichTextFieldToRender()}
                     </div>
                     {this.whichButtonToRender()}

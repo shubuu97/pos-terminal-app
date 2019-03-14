@@ -4,16 +4,11 @@ import _get from 'lodash/get';
 /* Material import */
 import TextField from '@material-ui/core/TextField';
 import CloseIcon from '@material-ui/icons/Close'
-import { commonActionCreater } from '../../Redux/commonAction';
-import { connect } from 'react-redux';
-let regex = /^\d*[\.\d]+$/;
-
-
-
 /* Redux Imports */
+import { commonActionCreater } from '../../../Redux/commonAction';
+import { connect } from 'react-redux';
 
-/* Component Imports */
-
+let regex = /^\d*[\.\d]+$/;
 
 class CashPay extends React.Component {
 
@@ -47,7 +42,7 @@ class CashPay extends React.Component {
     render() {
         return (
             <div className="default-card-pay">
-                <span>Cash Pay</span>
+                <span className='payment-title'>Cash Pay</span>
                 <div className="flex-row align-center justify-space-between">
                     <div style={{ width: '80%' }}>
                         <TextField

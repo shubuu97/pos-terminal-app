@@ -1251,11 +1251,21 @@ p {
         min-height: calc(100vh - 138px);
 
         .default-card-pay {
+            margin-top: 10px; 
             .pay-button {
-                border: 1px solid @softer-text;
-                padding: 10px 20px;
+                border: 1px solid rgba(0, 0, 0, 0.25);
                 font-size: 1.2em;
-                color: @soft-text
+                color: rgba(0, 0, 0, 0.8);
+                width: 9%;
+                height: 69%;
+                border-radius: 5px;
+                position: absolute;
+                left: 83%;
+                bottom: 8px;
+            }
+            .payment-title{
+                font-size: 1.1em;
+                color: @soft-text;
             }
         }
     }

@@ -89,7 +89,7 @@ function TemporaryDrawer(props) {
                     <ListItemIcon>
 
                     </ListItemIcon>
-                    <ListItemText primary={'Integrate QuickBook'} />
+                    <ListItemText primary={'Offline Transactions'} />
                 </ListItem>
                 <Divider />
                 <ListItem button key={6} onClick={props.logout}>

@@ -5,14 +5,11 @@ import _get from 'lodash/get';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import CloseIcon from '@material-ui/icons/Close'
-import { commonActionCreater } from '../../Redux/commonAction';
-import { connect } from 'react-redux';
-let regex = /^\d*[\.\d]+$/;
-
 /* Redux Imports */
+import { commonActionCreater } from '../../../Redux/commonAction';
+import { connect } from 'react-redux';
 
-/* Component Imports */
-
+let regex = /^\d*[\.\d]+$/;
 
 class EmployeePay extends React.Component {
 
@@ -47,9 +44,9 @@ class EmployeePay extends React.Component {
     render() {
         return (
             <div className="default-card-pay">
-                <span>Employee Pay Deduct</span>
-                <div className="flex-row align-center justify-space-between">
-                    <div style={{ width: '50%' }}>
+                <span className='payment-title'>Employee Pay Deduct</span>
+                <div className="flex-row align-center justify-space-between relative">
+                    <div style={{ width: '80%' }}>
                         <TextField
                             InputLabelProps={{ shrink: true }}
                             autoFocus

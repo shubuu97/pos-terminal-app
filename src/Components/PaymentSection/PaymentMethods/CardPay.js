@@ -4,14 +4,11 @@ import _get from 'lodash/get';
 /* Material import */
 import TextField from '@material-ui/core/TextField';
 import CloseIcon from '@material-ui/icons/Close';
-import { connect } from 'react-redux';
-import { commonActionCreater } from '../../Redux/commonAction';
-let regex = /^\d*[\.\d]+$/;
-
 /* Redux Imports */
+import { connect } from 'react-redux';
+import { commonActionCreater } from '../../../Redux/commonAction';
 
-/* Component Imports */
-
+let regex = /^\d*[\.\d]+$/;
 
 class CardPay extends React.Component {
 
@@ -47,9 +44,9 @@ class CardPay extends React.Component {
     render() {
         return (
             <div className="default-card-pay">
-                <span>Card Pay</span>
-                <div className="flex-row align-center justify-space-between">
-                    <div style={{ width: '50%' }}>
+                <span className='payment-title'>Card Pay</span>
+                <div className="flex-row align-center justify-space-between relative">
+                    <div style={{ width: '80%' }}>
                         <TextField
                             InputLabelProps={{ shrink: true }}
                             autoFocus
@@ -60,6 +57,7 @@ class CardPay extends React.Component {
                             onChange={this.handleChange('cardAmount')}
                             margin="normal"
                             variant="outlined"
+                            fullWidth
                         />
                     </div>
                     <span className="pay-button">
