@@ -10,6 +10,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import { withStyles } from '@material-ui/core/styles';
 import blue from '@material-ui/core/colors/blue';
 import SvgIcon from '@material-ui/core/SvgIcon';
+import { Detector } from 'react-detect-offline';
 
 const styles = theme => ({
     root: {
@@ -50,6 +51,14 @@ function TemporaryDrawer(props) {
         setState({ ...state, [side]: open });
     };
 
+    const handleHideWhenOffline = ({ online }, onlineContent, offlineContent) => {
+        if (online) {
+            return onlineContent
+        }
+        else
+            return offlineContent
+    }
+
     const sideList = (
         <div>
             <div className='pb-30'>
@@ -58,44 +67,38 @@ function TemporaryDrawer(props) {
             <List>
                 <Divider />
                 <ListItem button key={1}>
-                    <ListItemIcon>
-
-                    </ListItemIcon>
                     <ListItemText primary={'Home'} />
                 </ListItem>
                 <Divider />
                 <ListItem button key={2} onClick={props.handleClickOpenOnHold}>
-                    <ListItemIcon>
-
-                    </ListItemIcon>
                     <ListItemText primary={'On Hold'} />
                 </ListItem>
                 <Divider />
-                <ListItem button key={3} onClick={props.handleClickOpenSessionContainer}>
-                    <ListItemIcon>
-
-                    </ListItemIcon>
-                    <ListItemText primary={'Session Management'} />
-                </ListItem>
+                <Detector render={({ online }) => handleHideWhenOffline(
+                    { online },
+                    [<ListItem button key={3} onClick={props.handleClickOpenSessionContainer}>
+                        <ListItemText primary={'Session Management'} />
+                    </ListItem>],
+                    [<ListItem className="disable-button" button key={3} onClick={props.handleClickOpenSessionContainer}>
+                        <ListItemText primary={'Session Management'} />
+                    </ListItem>]
+                )} />
                 <Divider />
-                <ListItem button key={4} onClick={props.handleHistoryOpen}>
-                    <ListItemIcon>
-
-                    </ListItemIcon>
-                    <ListItemText primary={'Terminal History'} />
-                </ListItem>
+                <Detector render={({ online }) => handleHideWhenOffline(
+                    { online },
+                    [<ListItem button key={4} onClick={props.handleHistoryOpen}>
+                        <ListItemText primary={'Terminal History'} />
+                    </ListItem>],
+                    [<ListItem className="disable-button" button key={4} onClick={props.handleHistoryOpen}>
+                        <ListItemText primary={'Terminal History'} />
+                    </ListItem>]
+                )} />
                 <Divider />
                 <ListItem button key={5} onClick={props.handleClickQuickBook}>
-                    <ListItemIcon>
-
-                    </ListItemIcon>
                     <ListItemText primary={'Offline Transactions'} />
                 </ListItem>
                 <Divider />
                 <ListItem button key={6} onClick={props.logout}>
-                    <ListItemIcon>
-
-                    </ListItemIcon>
                     <ListItemText primary={'Log Out'} />
                 </ListItem>
                 <Divider />
@@ -104,7 +107,7 @@ function TemporaryDrawer(props) {
     );
 
     return (
-        <div className= "d-flex">
+        <div className="d-flex">
             <HomeIcon className={classes.icon} style={{ color: 'white', padding: '0', fontSize: 50, margin: '5px' }} onClick={toggleDrawer('left', true)} />
             <Drawer open={state.left} onClose={toggleDrawer('left', false)}>
                 <div

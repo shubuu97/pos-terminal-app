@@ -1,4 +1,5 @@
 import React from 'react';
+import { Detector } from 'react-detect-offline';
 /* Lodash Imports */
 import _get from 'lodash/get';
 import _findIndex from 'lodash/findIndex';
@@ -11,7 +12,7 @@ import History from '@material-ui/icons/History';
 /* Redux Imports */
 import { connect } from 'react-redux';
 /* Global Imports */
-import ReactSelect from '../../../Global/Components/ReactSelect/async-react-select';    
+import ReactSelect from '../../../Global/Components/ReactSelect/async-react-select';
 import globalClearCart from '../../../Global/PosFunctions/clearCart';
 import addGuestToCart from '../../../Global/PosFunctions/addGuestToCart';
 /* Component Imports */
@@ -22,7 +23,7 @@ import { commonActionCreater } from '../../../Redux/commonAction';
 import Customer from '../Customer';
 PouchDb.plugin(PAM);
 PouchDb.plugin(require('pouchdb-quick-search'));
-let customerdb = new PouchDb('customersdb', {adapter: 'memory'});
+let customerdb = new PouchDb('customersdb', { adapter: 'memory' });
 
 
 
@@ -110,8 +111,16 @@ class CustomerTab extends React.Component {
         addGuestToCart(this.props.dispatch);
     };
 
+    handleHideWhenOffline = ({ online }, onlineContent, offlineContent) => {
+        if (online) {
+            return onlineContent
+        }
+        else
+            return offlineContent
+    }
+
     render() {
-        let { checkoutactionArea, checkoutMainPart, checkoutCustomerArea, checkoutcalcArea, checkoutcartArea,guest,employee} = this.props
+        let { checkoutactionArea, checkoutMainPart, checkoutCustomerArea, checkoutcalcArea, checkoutcartArea, guest, employee } = this.props
         return (
             <div className="customer-section" >
                 <div className="customer-main" style={{ height: checkoutcartArea }}>
@@ -124,9 +133,15 @@ class CustomerTab extends React.Component {
                             loadOptions={this.loadOptions}
                             className='fwidth'
                         />
-                        <div className='add-customer flex-row align-center justify-center'>
-                            <PersonAdd onClick={this.handleOpen} style={{ fontSize: '1.3em', color: 'rgba(0,0,0,0.5)', cursor: 'pointer' }} />
-                        </div>
+                        <Detector render={({ online }) => this.handleHideWhenOffline(
+                            { online },
+                            [<div className='add-customer flex-row align-center justify-center'>
+                                <PersonAdd onClick={this.handleOpen} style={{ fontSize: '1.3em', color: 'rgba(0,0,0,0.5)', cursor: 'pointer' }} />
+                            </div>],
+                            [<div className='add-customer flex-row align-center justify-center disable-button'>
+                                <PersonAdd onClick={this.handleOpen} style={{ fontSize: '1.3em', color: 'rgba(0,0,0,0.5)', cursor: 'pointer' }} />
+                            </div>]
+                        )} />
                         <Customer
                             open={this.state.open}
                             closeModal={this.handleClose}
@@ -134,31 +149,34 @@ class CustomerTab extends React.Component {
                         />
                     </div>
                     <div className='d-flex mt-20'>
-                             <div className='customer-info'>
-                                <div className='each-info'>
-                                    <div className='info-title'>Name</div>
-                                    <div className='info-data'>{_get(this.props, 'customer.firstName')} {_get(this.props, 'customer.lastName')}</div>
-                                </div>
-                                {!guest?<div className='each-info'>
-                                    <div className='info-title'>Phone</div>
-                                    <div className='info-data'>+{_get(this.props, 'phoneNumber.countryCode')} {_get(this.props, 'phoneNumber.phoneNumber')}</div>
-                                </div>:null}
-                                {!guest?<div className='each-info'>
-                                    <div className='info-title'>Email</div>
-                                    <div className='info-data'>{this.props.email}</div>
-                                </div>:null}
-                                {employee?<div className='each-info'>
-                                    <div className='info-title'>Employee Id</div>
-                                    <div className='info-data'>{this.props.employeeId}</div>
-                                </div>:null}
+                        <div className='customer-info'>
+                            <div className='each-info'>
+                                <div className='info-title'>Name</div>
+                                <div className='info-data'>{_get(this.props, 'customer.firstName')} {_get(this.props, 'customer.lastName')}</div>
                             </div>
-                           
-                            <div onClick={this.props.handleHistoryOpen} className='add-customer flex-row align-center justify-center'>
+                            {!guest ? <div className='each-info'>
+                                <div className='info-title'>Phone</div>
+                                <div className='info-data'>+{_get(this.props, 'phoneNumber.countryCode')} {_get(this.props, 'phoneNumber.phoneNumber')}</div>
+                            </div> : null}
+                            {!guest ? <div className='each-info'>
+                                <div className='info-title'>Email</div>
+                                <div className='info-data'>{this.props.email}</div>
+                            </div> : null}
+                            {employee ? <div className='each-info'>
+                                <div className='info-title'>Employee Id</div>
+                                <div className='info-data'>{this.props.employeeId}</div>
+                            </div> : null}
+                        </div>
+                        <Detector render={({ online }) => this.handleHideWhenOffline(
+                            { online },
+                            [<div onClick={this.props.handleHistoryOpen} className='add-customer flex-row align-center justify-center'>
                                 <History style={{ fontSize: '2.3em', color: 'rgba(0,0,0,0.5)' }} />
-                            </div>
-                     </div>
-                        
-                  
+                            </div>],
+                            [<div onClick={this.props.handleHistoryOpen} className='disable-button add-customer flex-row align-center justify-center'>
+                                <History style={{ fontSize: '2.3em', color: 'rgba(0,0,0,0.5)' }} />
+                            </div>]
+                        )} />
+                    </div>
                 </div>
                 <div className="order-amount-section">
                     <CalculationSection

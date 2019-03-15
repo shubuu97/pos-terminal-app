@@ -1,11 +1,13 @@
 import React from 'react';
+import { Detector } from 'react-detect-offline';
 /* Lodash Imports */
 import _get from 'lodash/get';
 import _isEmpty from 'lodash/isEmpty';
 import _findIndex from 'lodash/findIndex';
 import _find from 'lodash/find'
-/* Material import */
-import Button from '@material-ui/core/Button';
+/* Material Import */
+import CircularProgress from '@material-ui/core/CircularProgress';
+/* Material Icons */
 import LockIcon from '@material-ui/icons/LockOutlined';
 import ExitToApp from '@material-ui/icons/ExitToApp';
 import CardGiftCard from '@material-ui/icons/CardGiftcard';
@@ -13,21 +15,21 @@ import LibraryAdd from '@material-ui/icons/LibraryAddOutlined';
 /* Redux Imports */
 import { commonActionCreater } from '../../Redux/commonAction'
 import { connect } from 'react-redux';
+/* Pouch Imports */
+import PAM from "pouchdb-adapter-memory"
+import Find from "pouchdb-find";
 /* Component Imports */
 import SideDrawer from '../SideDrawer'
 import Products from './Products';
 import SearchBar from './SearchBar';
 import PouchDb from 'pouchdb';
 import Categories from './Categories/Categories';
-import Pagination from './Pagination';
-import Find from "pouchdb-find";
-import CircularProgress from '@material-ui/core/CircularProgress';
-import PAM from "pouchdb-adapter-memory"
+
 PouchDb.plugin(PAM);
 PouchDb.plugin(Find);
 PouchDb.plugin(require('pouchdb-quick-search'));
 
-let productsdb = new PouchDb("productsdb", {adapter: 'memory'});
+let productsdb = new PouchDb("productsdb", { adapter: 'memory' });
 
 class ProductsSection extends React.Component {
 
@@ -187,7 +189,7 @@ class ProductsSection extends React.Component {
         this.setState({ disable: true })
         let startkey = this.props.lastItemId
         let method = this.props.method
-        let productsdb = new PouchDb('productsdb', {adapter: 'memory'});
+        let productsdb = new PouchDb('productsdb', { adapter: 'memory' });
         if (method == 'allDocs') {
             productsdb.allDocs({
                 include_docs: true,
@@ -244,6 +246,14 @@ class ProductsSection extends React.Component {
         }
     }
 
+    handleHideWhenOffline = ({ online }, onlineContent, offlineContent) => {
+        if (online) {
+            return onlineContent
+        }
+        else
+            return offlineContent
+    }
+
     render() {
         if (this.state.isLoading) {
             return <CircularProgress size={24} />
@@ -269,8 +279,18 @@ class ProductsSection extends React.Component {
                         />
                         <div className="header-right-sec">
                             <ul>
-                                <li onClick={this.props.handleMiscProduct}><LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>
-                                <li onClick={this.props.handleGiftCard}><CardGiftCard style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>
+                                <Detector render={({ online }) => this.handleHideWhenOffline(
+                                    { online },
+                                    [<li onClick={this.props.handleMiscProduct}><LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>],
+                                    [<li className="disable-button" onClick={this.props.handleMiscProduct}><LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>]
+                                )} />
+
+                                <Detector render={({ online }) => this.handleHideWhenOffline(
+                                    { online },
+                                    [<li onClick={this.props.handleGiftCard}><CardGiftCard style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>],
+                                    [<li className="disable-button" onClick={this.props.handleGiftCard}><CardGiftCard style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>]
+                                )} />
+
                                 <li onClick={this.props.handleLockTerminal}><LockIcon style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>
                                 {/* <li onClick={this.logout}><ExitToApp style={{ color: 'white', padding: '0 10px', fontSize: 33 }}  /></li> */}
                             </ul>
