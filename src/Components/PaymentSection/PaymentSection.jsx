@@ -505,7 +505,14 @@ class PaymentSection extends React.Component {
                 </React.Fragment>
             )
         else {
-            return (<li style={{ opacity: '0.3', pointerEvents: 'none' }} className="giftcard-section">Gift Card</li>)
+            return (
+                <React.Fragment>
+                    <li className='disable-button giftcard-section'>Gift Card</li>
+                    <li className='disable-button giftcard-section'>Redeem Points</li>
+
+                </React.Fragment>
+            
+            )
 
         }
     }
@@ -524,7 +531,7 @@ class PaymentSection extends React.Component {
                             {_get(this.props, 'customer.isEmpPayEnabled') ? <li style={disable} onClick={this.handleEmployeePay} disabled={this.props.remainingAmount < 0} className="employee-section">Employee</li> : null}
                             <Detector render={this.giftCardRender} />
                             {/* <li  className="freedompay">Freedom <br/> Pay</li>      */}
-                            <li style={disable} onClick={this.handleCostCenter} variant="outlined" className="card-method">Cost Center Charge</li>
+                            {/* <li style={disable} onClick={this.handleCostCenter} variant="outlined" className="card-method">Cost Center Charge</li> */}
                         </ul>
                     </div>
 
@@ -578,10 +585,10 @@ class PaymentSection extends React.Component {
                                     value={this.props.loyaltyRedeem}
                                     onRemovePaymentMethod={this.onRemovePaymentMethod}
                                 /> : null}
-                            {
+                            {/* {
                                 this.state.showCostCenter ?
                                     <CostCenter /> : null
-                            }
+                            } */}
 
                         </div>
 
