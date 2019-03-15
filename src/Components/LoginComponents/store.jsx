@@ -16,13 +16,9 @@ import showMessage from '../../Redux/toastAction';
 
 
 const styles = theme => ({
-  
-    formControl: {
-        margin: theme.spacing.unit,
-        minWidth: 120,
-        maxWidth: 300,
-    },
+
 });
+
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -184,6 +180,7 @@ class Store extends React.Component {
                         MenuProps={MenuProps}
                         value={this.state.selectedTerminal}
                         onChange={this.handleChange}
+                        fullWidth
                     >
                         {this.mapTermainal()}
                     </Select>
