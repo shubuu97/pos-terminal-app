@@ -272,7 +272,6 @@ class SessionDetail extends React.Component {
         this.setState({ showZReportDialog: true });
     }
     printZReportRecipet = ()=>{
-        debugger;
         this.setState({ showZReportDialog: false,firePrint:true });
     }
 

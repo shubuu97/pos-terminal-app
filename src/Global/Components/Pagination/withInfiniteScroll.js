@@ -16,7 +16,6 @@ const withInfiniteScroll = (Component) =>
     }
 
     onScroll = () => {
-      debugger
       var st = window.pageYOffset || document.documentElement.scrollTop;
       let lastScrollTop = this.props.lastScrollTop;
       if (st > lastScrollTop) {

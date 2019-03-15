@@ -214,7 +214,6 @@ class ProductsSection extends React.Component {
             });
         }
         else if (method == 'search' || method == 'categories') {
-            debugger
             productsdb.search({
                 query: this.props.query,
                 fields: this.props.fields,
