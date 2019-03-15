@@ -10,7 +10,11 @@ import { connect } from "react-redux";
 //Pouch Import
 import PouchDb from "pouchdb";
 import Find from "pouchdb-find";
-let categoryDb = new PouchDb("categoryDb");
+import PAM from "pouchdb-adapter-memory"
+PouchDb.plugin(Find);
+PouchDb.plugin(PAM);
+
+let categoryDb = new PouchDb("categoryDb", {adapter: 'memory'});
 
 class Categories extends Component {
   constructor(props) {
@@ -94,7 +98,7 @@ class Categories extends Component {
         console.log(err);
       });
 
-    let productsdb = new PouchDb("productsdb");
+    let productsdb = new PouchDb("productsdb", {adapter: 'memory'});
     productsdb
       .search({
         query: category.id,
@@ -142,7 +146,7 @@ class Categories extends Component {
   };
 
   getProductData = () => {
-    let productsdb = new PouchDb("productsdb");
+    let productsdb = new PouchDb("productsdb", {adapter: 'memory'});
     productsdb
       .allDocs({
         include_docs: true,

@@ -181,7 +181,7 @@ class HomeContainer extends React.Component {
 
 
     getProductData = () => {
-        let productsdb = new PouchDb('productsdb');
+        let productsdb = new PouchDb('productsdb', {adapter: 'memory'});
         productsdb.allDocs({
             include_docs: true,
             attachments: true,
@@ -485,7 +485,7 @@ const updateTimeStampAndDb = async (res) => {
    let tempInvetoryUpdateTime =  localStorage.getItem('tempInvetoryUpdateTime');
    localStorage.setItem('invetoryUpdateTime',tempInvetoryUpdateTime)
 
-    let productsdb = new PouchDb('productsdb');
+    let productsdb = new PouchDb('productsdb', {adapter: 'memory'});
     let updatedInventory = _get(res, 'data', [])||[];
     console.log(updatedInventory, '*********res*********');
     let promiseArray = updatedInventory.map(async (product, index) => {

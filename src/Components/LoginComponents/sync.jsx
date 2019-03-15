@@ -19,11 +19,11 @@ import addGuestToCart from '../../Global/PosFunctions/addGuestToCart';
 /* Pouch Import */
 import PouchDb from 'pouchdb';
 import Find from "pouchdb-find";
+import PAM from "pouchdb-adapter-memory"
 
 PouchDb.plugin(Find);
 PouchDb.plugin(require('pouchdb-quick-search'));
-
-let categoryDb = new PouchDb("categoryDb");
+PouchDb.plugin(PAM);
 
 const styles = theme => ({
     close: {
@@ -59,7 +59,7 @@ class SyncContainer extends Component {
         _get(categoryData, 'data', []).forEach((item, index) => {
             item._id = item.id
         });
-        let categoryDb = new PouchDb('categoryDb');
+        let categoryDb = new PouchDb('categoryDb', {adapter: 'memory'});
         let res = await categoryDb.bulkDocs(_get(categoryData, 'data', []));
         let createdIndex = await categoryDb.createIndex({ index: { fields: ["categoryType"], build: true } })
         return 1
@@ -80,7 +80,7 @@ class SyncContainer extends Component {
     }
 
     handleProductFetchSuccess = async (productData) => {
-        let productsdb = new PouchDb('productsdb');
+        let productsdb = new PouchDb('productsdb', {adapter: 'memory'});
         let result = await productsdb.bulkDocs(_get(productData, 'data', []))
         let indexResultOfSearch = await productsdb.search({
             fields: ['product.name', 'product.description', 'product.sku', 'product.category1', 'product.category2', 'product.category3'],
@@ -113,7 +113,7 @@ class SyncContainer extends Component {
         _get(customerData, 'data', []).forEach((item, index) => {
             item._id = item.id
         });
-        let customersdb = new PouchDb('customersdb');
+        let customersdb = new PouchDb('customersdb', {adapter: 'memory'});
         let result = await customersdb.bulkDocs(_get(customerData, 'data', []));
         let indexCreated = await customersdb.search({
             fields: ['customer.firstName', 'customer.lastName', 'email', 'phoneNumber.phoneNumber'],
