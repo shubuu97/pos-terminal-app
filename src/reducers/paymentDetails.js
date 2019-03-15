@@ -43,7 +43,6 @@ const paymentReducer = (state = {
     let loyaltyRedeem = state.loyaltyRedeem;
     switch (action.type) {
         case 'CASH_INPUT_HANDLER':
-            debugger
             cashAmount = action.data.cashAmount;
             paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem)
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
@@ -51,7 +50,6 @@ const paymentReducer = (state = {
             return (Object.assign({}, state, { cashAmount, remainingAmount }));
             break;
         case 'LOYALTY_INPUT_HANDLER':
-            debugger
             loyaltyRedeem = action.data.loyaltyRedeem;
             paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem)
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);

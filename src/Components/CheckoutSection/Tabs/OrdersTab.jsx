@@ -128,7 +128,6 @@ class OrdersTab extends React.Component {
             let discountableCartTotal = 0
             _isArray(cartItems) && cartItems.map((cartItem) => {
                 cartTotal += Number(_get(cartItem, 'itemRegularTotal.amount', 0));
-                debugger
                 if(_get(cartItem, 'doc.product.discountable', false)){
                     discountableCartTotal += Number(_get(cartItem, 'itemRegularTotal.amount', 0));
                 }
@@ -275,7 +274,6 @@ class OrdersTab extends React.Component {
     }
 
     handleItemDiscountRemove = (index) => {
-        debugger
         let cartItems = _get(this, 'props.cart.cartItems', []);
         let reqObj = [
             ...cartItems

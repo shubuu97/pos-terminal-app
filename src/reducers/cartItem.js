@@ -1,7 +1,8 @@
-
 import _get from 'lodash/get'
 
-const cartItem = (state = { cartItems: [], }, action) => {
+const cartItem = (state = {
+    cartItems: [],
+}, action) => {
     switch (action.type) {
         case 'ADD_DISCOUNT_TO_CART':
             let newState = Object.assign({}, state, {
@@ -72,8 +73,7 @@ const cartItem = (state = { cartItems: [], }, action) => {
                 if (discountable) {
                     item.cartDiscountPercent = parseFloat(_get(state, 'cartDiscountPercent', 0))
                     item.employeeDiscountPercent = employeeDiscountPercent
-                }
-                else {
+                } else {
                     item.cartDiscountPercent = 0
                     item.employeeDiscountPercent = 0
                 }
@@ -98,6 +98,7 @@ const cartItem = (state = { cartItems: [], }, action) => {
                     let stateTaxRate = localStorage.getItem('stateTaxRate')
                     let countyTaxRate = localStorage.getItem('countyTaxRate')
                     itemTaxPercent = Number(federalTaxRate) + Number(stateTaxRate) + Number(countyTaxRate);
+                    console.log(itemTaxPercent, 'itemTaxPercent')
                     taxAmount = _get(item, 'itemSubTotal.amount', 0) * itemTaxPercent / 100;
 
                 }

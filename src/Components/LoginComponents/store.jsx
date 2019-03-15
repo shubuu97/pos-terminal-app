@@ -87,9 +87,9 @@ class Store extends React.Component {
 
     }
     afterStoreSuccess = (data) => {
-        let countyTaxRate = _get(data, 'tax.countyTaxRate');
-        let federalTaxRate = _get(data, 'tax.federalTaxRate');
-        let stateTaxRate = _get(data, 'tax.stateTaxRate');
+        let countyTaxRate = _get(data, 'tax.countyTaxRate', 0);
+        let federalTaxRate = _get(data, 'tax.federalTaxRate', 0);
+        let stateTaxRate = _get(data, 'tax.stateTaxRate', 0);
         localStorage.setItem('countyTaxRate', countyTaxRate);
         localStorage.setItem('federalTaxRate', federalTaxRate);
         localStorage.setItem('stateTaxRate', stateTaxRate);
