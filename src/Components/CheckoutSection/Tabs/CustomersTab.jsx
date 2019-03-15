@@ -17,11 +17,12 @@ import addGuestToCart from '../../../Global/PosFunctions/addGuestToCart';
 /* Component Imports */
 import CalculationSection from './CalculationSection';
 import PouchDb from 'pouchdb';
+import PAM from "pouchdb-adapter-memory";
 import { commonActionCreater } from '../../../Redux/commonAction';
 import Customer from '../Customer';
-
+PouchDb.plugin(PAM);
 PouchDb.plugin(require('pouchdb-quick-search'));
-let customerdb = new PouchDb('customersdb');
+let customerdb = new PouchDb('customersdb', {adapter: 'memory'});
 
 
 
