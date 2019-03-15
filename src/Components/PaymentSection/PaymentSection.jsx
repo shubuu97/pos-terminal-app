@@ -499,7 +499,10 @@ class PaymentSection extends React.Component {
             return (
                 <React.Fragment>
                     <li style={disable} onClick={this.handleGiftCardPayment} className="giftcard-section">Gift Card</li>
-                    <li style={disable} onClick={this.handleLoyaltyRedeem} className="giftcard-section">Redeem Points</li>
+                    {
+                        _get(this.props, 'totalAmount.amount') > _get(this.props, 'redemptionRules.lookUpData.redemptionRule.minimumSaleAmount') && !(_get(this.props, 'customer.guest', false)) ?                     
+                        <li style={disable} onClick={this.handleLoyaltyRedeem} className="giftcard-section">Redeem Points</li> : null
+                    }
                 </React.Fragment>
             )
         else {
@@ -509,6 +512,7 @@ class PaymentSection extends React.Component {
     }
 
     render() {
+        console.log('mak', _get(this.props, 'totalAmount.amount'),  _get(this.props, 'RedemptionRules.lookUpData.redemptionRule.minimumSaleAmount'))
         console.log(this.state.receiptData, 'this.state.receiptData')
         let disable = this.props.remainingAmount <= 0 ? { opacity: '0.3', pointerEvents: 'none' } : null
         return (
