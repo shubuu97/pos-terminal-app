@@ -646,7 +646,7 @@ function mapStateToProps(state) {
     let giftCard = _get(state, 'giftCardData.lookUpData', {});
     let giftCardPayment = _get(state, 'giftCardPaymentData.lookUpData', {});
     let cashAmount = _get(state, 'PaymentDetails.cashAmount');
-    let loyaltyRedeem = _get(state, 'PaymentDetails.cashAmount');
+    let loyaltyRedeem = _get(state, 'PaymentDetails.loyaltyRedeem');
     let cardAmount = _get(state, 'PaymentDetails.cardAmount');
     let giftCardAmount = _get(state, 'PaymentDetails.giftCardAmount');
     let giftPayNumber = _get(state, 'PaymentDetails.giftPayNumber');

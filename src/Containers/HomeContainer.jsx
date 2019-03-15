@@ -13,6 +13,9 @@ import { commonActionCreater } from '../Redux/commonAction';
 import posed from 'react-pose';
 /* Pouch DB */
 import PouchDb from 'pouchdb';
+/* Global Imports */
+import pollingHoc from '../Global/PosFunctions/pollingHoc';
+import axiosFetcher from '../Global/dataFetch/axiosFetcher';
 /* Component Imports */
 import ProductsSection from '../Components/ProductsSection/ProductsSection'
 import CheckoutSection from '../Components/CheckoutSection/CheckoutSection'
@@ -24,12 +27,9 @@ import AlertCartClear from '../Components/AlertCartClear';
 import GiftCardModel from '../Components/ProductsSection/GiftCardModel';
 import MiscProductModal from '../Components/ProductsSection/MiscProductModal';
 import SessionContainer from './SessionContainer';
-import QuickBookContainer from './QuickBookContainer';
-
 import LockTerminalDialogue from '../Components/Dialogues/LockTerminalDialogue'
 import OfflineTransactionContainer from './OfflineTransactionContainer';
-import pollingHoc from '../Global/PosFunctions/pollingHoc';
-import axiosFetcher from '../Global/dataFetch/axiosFetcher';
+
 
 let SessionDialog = withDialog(SessionContainer)
 let OfflineTransactionDialog = withDialog(OfflineTransactionContainer)
@@ -41,7 +41,6 @@ const Config = {
     open: { width: '65%', opacity: 1, flip: true },
     closed: { width: '0px', opacity: 0, flip: true }
 }
-
 const Products = posed.div(Config)
 const Payment = posed.div(Config);
 
@@ -61,14 +60,17 @@ class HomeContainer extends React.Component {
     }
 
     componentDidMount() {
+        debugger
         let token = localStorage.getItem('Token')
         if (_isEmpty(token)) {
             this.props.history.push('/login')
         }
-        this.calcHeight();
-        this.getRuleSet();
-        this.getProductData();
-        this.props.startPolling();
+        else {
+            this.calcHeight();
+            this.getRuleSet();
+            this.getProductData();
+            this.props.startPolling();
+        }
     }
 
     calcHeight() {
@@ -181,7 +183,7 @@ class HomeContainer extends React.Component {
 
 
     getProductData = () => {
-        let productsdb = new PouchDb('productsdb', {adapter: 'memory'});
+        let productsdb = new PouchDb('productsdb', { adapter: 'memory' });
         productsdb.allDocs({
             include_docs: true,
             attachments: true,
@@ -482,11 +484,11 @@ const OfflineTransactionPusher = async (propsOfComp, dispatch) => {
     }
 }
 const updateTimeStampAndDb = async (res) => {
-   let tempInvetoryUpdateTime =  localStorage.getItem('tempInvetoryUpdateTime');
-   localStorage.setItem('invetoryUpdateTime',tempInvetoryUpdateTime)
+    let tempInvetoryUpdateTime = localStorage.getItem('tempInvetoryUpdateTime');
+    localStorage.setItem('invetoryUpdateTime', tempInvetoryUpdateTime)
 
-    let productsdb = new PouchDb('productsdb', {adapter: 'memory'});
-    let updatedInventory = _get(res, 'data', [])||[];
+    let productsdb = new PouchDb('productsdb', { adapter: 'memory' });
+    let updatedInventory = _get(res, 'data', []) || [];
     console.log(updatedInventory, '*********res*********');
     let promiseArray = updatedInventory.map(async (product, index) => {
         let productObj = await productsdb.get(product._id);
