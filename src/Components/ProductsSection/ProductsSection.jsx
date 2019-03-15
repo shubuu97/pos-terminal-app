@@ -99,7 +99,7 @@ class ProductsSection extends React.Component {
                 console.log(err)
             });
         }
-        if (searchText.length == 12) {
+        if (searchText.length === 12 || searchText.length === 11 || searchText.length === 13) {
             let noSearchText = Number(searchText)
             productsdb.find({
                 selector: { "product.upcCode": noSearchText }
