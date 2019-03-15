@@ -18,7 +18,7 @@ import { commonActionCreater } from '../../Redux/commonAction';
 import addGuestToCart from '../../Global/PosFunctions/addGuestToCart';
 /* Component Imports */
 import HandlePrint from '../../Global/PosFunctions/handlePrint';
-
+import logo from '../../assets/images/aobLogodark.png';
 function Transition(props) {
     return <Slide direction="up" {...props} />;
 }
@@ -153,6 +153,7 @@ class PaymentReceipt extends React.Component {
                 }}></iframe>
                 <div id='printarea'>
                     <div>
+                    <div className="store-logo"> <img src={logo} /></div>
                         <HandlePrint 
                             type="Sale Transaction"
                             orderId={_get(this.props, 'receiptData.id')}
