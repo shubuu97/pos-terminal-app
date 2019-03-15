@@ -233,7 +233,7 @@ class SyncContainer extends Component {
                     // variant="determinate"
                     // value={this.state.percentageComplete} 
                     />
-                    <span>Synching data from server......</span>
+                    <span></span>
                 </div>
                 <Snackbar
                     anchorOrigin={{
