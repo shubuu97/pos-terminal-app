@@ -95,18 +95,25 @@ class OrdersTab extends React.Component {
         this.setState({ open: false });
     };
 
+    handleCartDiscountRemove = () => {
+        this.props.dispatch(commonActionCreater(0, 'ADD_DISCOUNT_TO_CART'));
+        this.props.dispatch(commonActionCreater(this.props.cartItems, 'CART_ITEM_LIST'));
+    }
+
 
     // * Functions to Update Cart Reducers 
     handleDelete = (item) => {
         let cartItems = [...this.props.cartItems];
         let index = _findIndex(cartItems, ['id', item.id]);
         cartItems.splice(index, 1);
+        this.props.dispatch(commonActionCreater(0, 'ADD_DISCOUNT_TO_CART'));
         this.props.dispatch(commonActionCreater(cartItems, 'CART_ITEM_LIST'));
     };
     handleIncreaseQuantity = (item) => {
         let cartItems = [...this.props.cartItems];
         let index = _findIndex(cartItems, ['id', item.id]);
         cartItems[index].qty = cartItems[index].qty + 1;
+        this.props.dispatch(commonActionCreater(0, 'ADD_DISCOUNT_TO_CART'));
         this.props.dispatch(commonActionCreater(cartItems, 'CART_ITEM_LIST'));
     };
     handleDecreseQuantity = (item) => {
@@ -116,6 +123,7 @@ class OrdersTab extends React.Component {
         if (cartItems[index].qty == 0) {
             cartItems.splice(index, 1);
         }
+        this.props.dispatch(commonActionCreater(0, 'ADD_DISCOUNT_TO_CART'));
         this.props.dispatch(commonActionCreater(cartItems, 'CART_ITEM_LIST'));
     };
     handleDiscount = (data, identifier, index, type) => {

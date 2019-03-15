@@ -181,7 +181,6 @@ class HomeContainer extends React.Component {
         })
     }
 
-
     getProductData = () => {
         let productsdb = new PouchDb('productsdb', { adapter: 'memory' });
         productsdb.allDocs({

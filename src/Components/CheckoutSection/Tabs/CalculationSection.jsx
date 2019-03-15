@@ -24,8 +24,8 @@ class CalculationSection extends React.Component {
     handleCartDiscountRemove = () => {
         this.props.dispatch(commonActionCreater(0, 'ADD_DISCOUNT_TO_CART'));
         this.props.dispatch(commonActionCreater(this.props.cartItems, 'CART_ITEM_LIST'));
-
     }
+    
     handleClickOpenDiscount = () => {
 
     }

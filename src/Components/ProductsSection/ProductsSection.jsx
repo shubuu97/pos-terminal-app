@@ -127,6 +127,7 @@ class ProductsSection extends React.Component {
                         cartObj = [...cartItems]
                         cartObj[index].qty = qty;
                     }
+                    this.props.dispatch(commonActionCreater(0, 'ADD_DISCOUNT_TO_CART'));
                     this.props.dispatch(commonActionCreater(cartObj, 'CART_ITEM_LIST'));
                 }
             })
