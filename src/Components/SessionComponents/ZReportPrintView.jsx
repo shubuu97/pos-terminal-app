@@ -1,112 +1,77 @@
 import React from 'react';
 import _get from 'lodash/get';
 import 'react-bootstrap-table/dist/react-bootstrap-table-all.min.css';
-import get from 'lodash/get'
+import logo from '../../assets/images/aobLogodark.png';
 
 class ZReportPrintView extends React.Component {
 
 
     render() {
-
         return (
-            <div className="z-report-dialog">
-                <div>
-                    <h3> #Session </h3>
-                    <div className="row">
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-left" >POS</label>
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-right" >{get(this.props, 'data.pos', '')}</label>
-                    </div>
-                    <div className="row">
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-left" >Staff</label>
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-right" >{get(this.props, 'data.staff', '')}</label>
-                    </div>
-                    <div className="row">
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-left" >Opened</label>
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-right" >{get(this.props, 'data.openFrom', '')}</label>
-                    </div>
-                    <div className="row">
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-left" >Closed</label>
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-right" >{get(this.props, 'data.closedAt', '')}</label>
-                    </div>
-                </div>
+            <div style={{ fontSize: "12px", fontFamily: "arial, sans-serif", padding: "50px" }}>
+                <div style={{ textAlign: "center" }}>
+                    <div style={{marginBottom: "10px"}} className="store-logo"> <img src={logo}/></div>
+                    <div style={{ display: 'flex', flex: '1', flexDirection: 'column', borderBottom: 'solid 1px #9e9e9e', paddingTop: "10px", paddingBottom: "5px" }}>
+                        <h3 style={{marginBottom: "20px"}}><u>#Session</u></h3>
 
-                <div>
-                    <h3> #Transaction </h3>
-                    <div className="row">
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-left" >Opening Amount</label>
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-right" >{get(this.props, 'data.openingAmount', 0).toFixed(2)}</label>
-                    </div>
-                    <div className="row">
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-left" >Cash Sales</label>
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-right" >{get(this.props, 'data.cashSalesAmount', 0).toFixed(2)}</label>
-                    </div>
-                    <div className="row">
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-left" >Cash Added</label>
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-right" >{get(this.props, 'data.cashAdded', 0).toFixed(2)}</label>
-                    </div>
-                    <div className="row">
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-left" >Cash Removed</label>
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-right" >{get(this.props, 'data.cashRemoved', 0).toFixed(2)}</label>
-                    </div>
-                    <div className="row">
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-left" >Theoretical Closing Balance</label>
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-right" >{get(this.props, 'data.theoreticalClosingBalance', 0).toFixed(2)}</label>
-                    </div>
-                    <div className="row">
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-left" >Real Closing Balance</label>
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-right" >{get(this.props, 'data.realClosingBalance', 0).toFixed(2)}</label>
-                    </div>
-                    <div className="row">
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-left" >Difference</label>
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-right" >{get(this.props, 'data.difference', 0).toFixed(2)}</label>
-                    </div>
-                </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>POS:<span style={{ fontWeight: 'bold' }}>{_get(this.props, 'data.pos', '')}</span></div>
 
-                <div>
-                    <h3> #Sales </h3>
-                    <div className="row">
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-left" >Total Pre Tax Sales</label>
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }}className="labelmain pull-right" >{get(this.props, 'data.preTaxSalesAmount', 0).toFixed(2)}</label>
-                    </div>
-                    <div className="row">
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }}className="labelmain pull-left" >Tax</label>
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-right" >{get(this.props, 'data.taxAmount', 0).toFixed(2)}</label>
-                    </div>
-                    <div className="row">
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-left" >Total Sales</label>
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-right" >{get(this.props, 'data.totalSalesAmount', 0).toFixed(2)}</label>
-                    </div>
-                    <div className="row">
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-left" >Discount</label>
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-right" >{get(this.props, 'data.discount', 0).toFixed(2)}</label>
-                    </div>
-                    <div className="row">
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-left" >Refund</label>
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-right" >{get(this.props, 'data.refund', 0).toFixed(2)}</label>
-                    </div>
-                    <div className="row">
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-left" >Void</label>
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-right" >{get(this.props, 'data.void', 0).toFixed(2)}</label>
-                    </div>
-                </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>Staff:<span style={{ fontWeight: 'bold' }}>{_get(this.props, 'data.staff', '')}</span></div>
 
-                <div>
-                    <h3> #Payment </h3>
-                    <div className="row">
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-left" >Cash Payment</label>
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-right" >{get(this.props, 'data.cashSalesAmount', 0).toFixed(2)}</label>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>Opened:<span style={{ fontWeight: 'bold' }}>{_get(this.props, 'data.openFrom', '')}</span></div>
+
+                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>Closed:<span style={{ fontWeight: 'bold' }}> {_get(this.props, 'data.closedAt', '')}</span></div>
                     </div>
-                    <div className="row">
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-left" >Credit/Debit Card</label>
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-right" >{get(this.props, 'data.cardSalesAmount', 0).toFixed(2)}</label>
+
+                    <div style={{borderBottom: 'solid 1px #9e9e9e', paddingBottom: '30px'}}>
+                        <h3 style={{marginBottom: "20px"}}><u>#Transaction</u></h3>
+
+                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>Opening Amount:<span style={{fontWeight: 'bold' }}> {_get(this.props, 'data.openingAmount', 0).toFixed(2)}</span></div>
+
+                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>Cash Sales:<span style={{fontWeight: 'bold' }}> {_get(this.props, 'data.cashSalesAmount', 0).toFixed(2)}</span></div>
+
+                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>Cash Added:<span style={{fontWeight: 'bold' }}> {_get(this.props, 'data.cashAdded', 0).toFixed(2)}</span></div>
+
+                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>Cash Removed:<span style={{fontWeight: 'bold' }}> {_get(this.props, 'data.cashRemoved', 0).toFixed(2)}</span></div>
+
+                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>Theoretical Closing Balance:<span style={{fontWeight: 'bold' }}>{_get(this.props, 'data.theoreticalClosingBalance', 0).toFixed(2)}</span></div>
+
+                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>Real Closing Balance:<span style={{fontWeight: 'bold' }}>{_get(this.props, 'data.realClosingBalance', 0).toFixed(2)}
+                        </span></div>
+
+                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>Difference:<span style={{fontWeight: 'bold' }}> {_get(this.props, 'data.difference', 0).toFixed(2)}</span></div>
                     </div>
-                    <div className="row">
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-left" >Employee Payroll Deduct</label>
-                        <label style={{ marginLeft: "30px", marginRight: "30px" }} className="labelmain pull-right" >{get(this.props, 'data.employeeDeductSalesAmount', 0).toFixed(2)}</label>
+
+                    <div style={{borderBottom: 'solid 1px #9e9e9e', paddingBottom: '30px'}}>
+                        <h3 style={{marginBottom: "20px"}}><u>#Sales</u></h3>
+
+                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>Total Pre Tax Sales:<span style={{fontWeight: 'bold' }}> {_get(this.props, 'data.preTaxSalesAmount', 0).toFixed(2)}
+                        </span></div>
+
+                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>Tax:<span style={{fontWeight: 'bold' }}> {_get(this.props, 'data.taxAmount', 0).toFixed(2)}</span></div>
+
+                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>Total Sales:<span style={{fontWeight: 'bold' }}> {_get(this.props, 'data.totalSalesAmount', 0).toFixed(2)}</span></div>
+
+                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>Discount:<span style={{fontWeight: 'bold' }}> {_get(this.props, 'data.discount', 0).toFixed(2)}</span></div>
+
+                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>Refund:<span style={{fontWeight: 'bold' }}> {_get(this.props, 'data.refund', 0).toFixed(2)}</span></div>
+
+                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>Void:<span style={{fontWeight: 'bold' }}> {_get(this.props, 'data.void', 0).toFixed(2)}</span></div>
+
+                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>Difference:<span style={{fontWeight: 'bold' }}> {_get(this.props, 'data.difference', 0).toFixed(2)}</span></div>
                     </div>
-                </div>
+
+                    <div style={{borderBottom: 'solid 1px #9e9e9e', paddingBottom: '30px'}}>
+                        <h3 style={{marginBottom: "20px"}}><u>#Payment</u></h3>
+
+                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>Cash Payment:<span style={{fontWeight: 'bold' }}> {_get(this.props, 'data.cashSalesAmount', 0).toFixed(2)}</span></div>
+
+                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>Credit/Debit Card:<span style={{fontWeight: 'bold' }}> {_get(this.props, 'data.cardSalesAmount', 0).toFixed(2)}</span></div>
+
+                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>Employee Payroll Deduct:<span style={{fontWeight: 'bold' }}>{_get(this.props, 'data.employeeDeductSalesAmount', 0).toFixed(2)}</span></div>
+                    </div>
             </div>
-
+        </div>
         );
     }
 }
