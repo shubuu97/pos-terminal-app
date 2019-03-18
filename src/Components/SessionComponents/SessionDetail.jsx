@@ -14,6 +14,7 @@ import withDialog from '../DialogHoc';
 import ZReport from './ZReport';
 import DialogHoc from '../../Global/Components/HOC/CommonDialogHoc';
 let ZReportDialog = DialogHoc(ZReport);
+
 class SessionDetail extends React.Component {
 
     constructor(props) {
