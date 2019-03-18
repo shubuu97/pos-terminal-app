@@ -7,7 +7,7 @@ PouchDb.plugin(PAM);
 PouchDb.plugin(Find);
 
 const addGuestToCart = async(dispatch) => {
-    let customersdb = new PouchDb('customersdb', {adapter: 'memory'});
+    let customersdb = new PouchDb('customersdb');
     customersdb.find({selector:{guest:true}}).then((data)=>{
         dispatch(commonActionCreater(_get(data,'docs[0]',[]), 'ADD_CUSTOMER_TO_CART'));
     })

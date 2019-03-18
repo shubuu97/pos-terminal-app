@@ -29,14 +29,15 @@ PouchDb.plugin(PAM);
 PouchDb.plugin(Find);
 PouchDb.plugin(require('pouchdb-quick-search'));
 
-let productsdb = new PouchDb("productsdb", { adapter: 'memory' });
+let productsdb = new PouchDb("productsdb");
 
 class ProductsSection extends React.Component {
 
     constructor() {
         super();
         this.state = {
-            clearInput: false
+            clearInput: false,
+            productLoading: false
         }
     }
 
@@ -187,10 +188,10 @@ class ProductsSection extends React.Component {
     //   }
 
     getNextProducts = async () => {
-        this.setState({ disable: true })
+        this.setState({ disable: true, productLoading: true })
         let startkey = this.props.lastItemId
         let method = this.props.method
-        let productsdb = new PouchDb('productsdb', { adapter: 'memory' });
+        let productsdb = new PouchDb('productsdb');
         if (method == 'allDocs') {
             productsdb.allDocs({
                 include_docs: true,
@@ -198,6 +199,7 @@ class ProductsSection extends React.Component {
                 limit: 39,
                 skip: 1
             }).then((result) => {
+                debugger
                 result.pagination = {}
                 result.pagination.method = method
                 result.pagination.firstItemId = result.rows[0].id
@@ -211,7 +213,7 @@ class ProductsSection extends React.Component {
                     result.pagination.endVal = this.props.productCount
                 }
                 this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
-                this.setState({ disable: false })
+                this.setState({ disable: false, productLoading: false })
             }).catch((err) => {
                 console.log(err)
             });
@@ -225,6 +227,7 @@ class ProductsSection extends React.Component {
                 limit: 39,
                 skip: 1
             }).then((result) => {
+                
                 result.pagination = {}
                 result.pagination.method = method
                 result.pagination.query = this.props.query
@@ -240,7 +243,7 @@ class ProductsSection extends React.Component {
                     result.pagination.endVal = this.props.productCount
                 }
                 this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
-                this.setState({ disable: false })
+                this.setState({ disable: false, productLoading: false })
             }).catch((err) => {
                 console.log(err)
             });
@@ -314,6 +317,10 @@ class ProductsSection extends React.Component {
                     <Products
                         {...this.props}
                     />
+                    {
+                        this.state.productLoading ? 
+                        <div className='fwidth pt-15 flex-row justify-center align-center'><CircularProgress /> <span className='loading-text'>Loading ... </span></div> : null
+                    }
                 </div>
 
             </div>

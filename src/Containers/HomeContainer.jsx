@@ -60,7 +60,6 @@ class HomeContainer extends React.Component {
     }
 
     componentDidMount() {
-        debugger
         let token = localStorage.getItem('Token')
         if (_isEmpty(token)) {
             this.props.history.push('/login')
@@ -182,7 +181,7 @@ class HomeContainer extends React.Component {
     }
 
     getProductData = () => {
-        let productsdb = new PouchDb('productsdb', { adapter: 'memory' });
+        let productsdb = new PouchDb('productsdb');
         productsdb.allDocs({
             include_docs: true,
             attachments: true,
@@ -486,7 +485,7 @@ const updateTimeStampAndDb = async (res) => {
     let tempInvetoryUpdateTime = localStorage.getItem('tempInvetoryUpdateTime');
     localStorage.setItem('invetoryUpdateTime', tempInvetoryUpdateTime)
 
-    let productsdb = new PouchDb('productsdb', { adapter: 'memory' });
+    let productsdb = new PouchDb('productsdb');
     let updatedInventory = _get(res, 'data', []) || [];
     let promiseArray = updatedInventory.map(async (product, index) => {
         let productObj = await productsdb.get(product._id);

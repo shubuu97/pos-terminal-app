@@ -14,7 +14,7 @@ import PAM from "pouchdb-adapter-memory"
 PouchDb.plugin(Find);
 PouchDb.plugin(PAM);
 
-let categoryDb = new PouchDb("categoryDb", {adapter: 'memory'});
+let categoryDb = new PouchDb("categoryDb");
 
 class Categories extends Component {
   constructor(props) {
@@ -98,7 +98,7 @@ class Categories extends Component {
         console.log(err);
       });
 
-    let productsdb = new PouchDb("productsdb", {adapter: 'memory'});
+    let productsdb = new PouchDb("productsdb");
     productsdb
       .search({
         query: category.id,
@@ -146,7 +146,7 @@ class Categories extends Component {
   };
 
   getProductData = () => {
-    let productsdb = new PouchDb("productsdb", {adapter: 'memory'});
+    let productsdb = new PouchDb("productsdb");
     productsdb
       .allDocs({
         include_docs: true,

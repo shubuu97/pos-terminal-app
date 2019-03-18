@@ -59,7 +59,7 @@ class SyncContainer extends Component {
         _get(categoryData, 'data', []).forEach((item, index) => {
             item._id = item.id
         });
-        let categoryDb = new PouchDb('categoryDb', {adapter: 'memory'});
+        let categoryDb = new PouchDb('categoryDb');
         let res = await categoryDb.bulkDocs(_get(categoryData, 'data', []));
         let createdIndex = await categoryDb.createIndex({ index: { fields: ["categoryType"], build: true } })
         return 1
@@ -80,7 +80,7 @@ class SyncContainer extends Component {
     }
 
     handleProductFetchSuccess = async (productData) => {
-        let productsdb = await new PouchDb('productsdb', {adapter: 'memory'});
+        let productsdb = await new PouchDb('productsdb');
         let result = await productsdb.bulkDocs(_get(productData, 'data', []))
         let indexResultOfSearch = await productsdb.search({
             fields: ['product.name', 'product.description', 'product.sku'],
@@ -119,7 +119,7 @@ class SyncContainer extends Component {
         _get(customerData, 'data', []).forEach((item, index) => {
             item._id = item.id
         });
-        let customersdb = new PouchDb('customersdb', {adapter: 'memory'});
+        let customersdb = new PouchDb('customersdb');
         let result = await customersdb.bulkDocs(_get(customerData, 'data', []));
         let indexCreated = await customersdb.search({
             fields: ['customer.firstName', 'customer.lastName', 'email', 'phoneNumber.phoneNumber'],

@@ -23,7 +23,7 @@ import { commonActionCreater } from '../../../Redux/commonAction';
 import Customer from '../Customer';
 PouchDb.plugin(PAM);
 PouchDb.plugin(require('pouchdb-quick-search'));
-let customerdb = new PouchDb('customersdb', { adapter: 'memory' });
+let customerdb = new PouchDb('customersdb');
 
 
 
