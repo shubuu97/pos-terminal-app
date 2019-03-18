@@ -488,7 +488,6 @@ const updateTimeStampAndDb = async (res) => {
 
     let productsdb = new PouchDb('productsdb', { adapter: 'memory' });
     let updatedInventory = _get(res, 'data', []) || [];
-    console.log(updatedInventory, '*********res*********');
     let promiseArray = updatedInventory.map(async (product, index) => {
         let productObj = await productsdb.get(product._id);
         productObj.inventory.quantity = product.inventory.quantity;
@@ -496,10 +495,6 @@ const updateTimeStampAndDb = async (res) => {
     });
     Promise.all(promiseArray).then(async (updatedInventoryWith_Rev) => {
         let resOfUpdateBulk = await productsdb.bulkDocs(updatedInventoryWith_Rev);
-
-        console.log(updatedInventoryWith_Rev, "*********res*********")
-        console.log(resOfUpdateBulk, "*********res*********");
-        console.log('*********res*********');
     })
 
 }
