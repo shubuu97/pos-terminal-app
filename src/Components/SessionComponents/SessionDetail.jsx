@@ -247,7 +247,7 @@ class SessionDetail extends React.Component {
                 total = total + _get(transaction, 'amount.amount')
             }
         })
-        return total;
+        return parseFloat(total).toFixed(2);
 
     }
     calcNegTxnVal = () => {
@@ -258,12 +258,12 @@ class SessionDetail extends React.Component {
                 total = total + _get(transaction, 'amount.amount')
             }
         })
-        return total;
+        return parseFloat(total).toFixed(2);
 
     }
     calDiffrence = () => {
         let difference = _get(this.state, 'session.currentBalance.amount', 0) - this.state.realClosingBalance
-        return difference;
+        return parseFloat(difference).toFixed(2);
     }
     specifyReason = (closeReason) => {
         this.setState({ closeReason, showReasonModal: false });
@@ -329,10 +329,10 @@ class SessionDetail extends React.Component {
                 <div>
                     <div className='mui-row opening-bal-row'>
                         <div className='mui-col-md-3 secondary-color'>Opening Balance</div>
-                        <div className='mui-col-md-3'>${openingBalance}</div>
+                        <div className='mui-col-md-3'>${parseFloat(openingBalance || 0).toFixed(2)}</div>
                         <div className="mui-col-md-6 real-closing-bal">
                             <div className='mui-col-md-6 secondary-color'>Real Closing Balance</div>
-                            <div className='mui-col-md-6'>${this.state.realClosingBalance}</div>
+                            <div className='mui-col-md-6'>${parseFloat(_get(this, 'state.realClosingBalance', 0)).toFixed(2)}</div>
                         </div>
                     </div>
                     <div className='mui-row trans-row-1'>
@@ -364,7 +364,7 @@ class SessionDetail extends React.Component {
                     </div>
                     <div className='mui-row closing-bal'>
                         <div className='mui-col-md-3 secondary-color'>Theoratical Closing Balance</div>
-                        <div className='mui-col-md-3'>${_get(this.state, 'session.currentBalance.amount')}</div>
+                        <div className='mui-col-md-3'>${parseFloat(_get(this.state, 'session.currentBalance.amount')).toFixed(2)}</div>
                         {status == 'open' ? <div className='mui-col-md-6 text-center'>
                             <Button
                                 variant='contained'
