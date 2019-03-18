@@ -180,8 +180,8 @@ class OrdersTab extends React.Component {
             return (
                 <ExpansionPanel
                     className='each-checkout-item'
-                    expanded={this.state.expanded === `Panel${_get(item, 'doc.product.sku')}`}
-                    onChange={this.handleChange(`Panel${_get(item, 'doc.product.sku')}`)}>
+                    expanded={this.state.expanded === `Panel${_get(item, 'doc.product.sku', _get(item, 'id'))}`}
+                    onChange={this.handleChange(`Panel${_get(item, 'doc.product.sku', _get(item, 'id'))}`)}>
                     <ExpansionPanelSummary>
                         <div className='each-product-des fwidth flex-row justify-space-between'>
 
