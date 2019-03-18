@@ -61,7 +61,7 @@ class EmployeePay extends React.Component {
                             variant="outlined"
                         />
                     </div>
-                    <span className="pay-button">
+                    <span className="pay-button flex-row justify-center align-center">
                         {_get(this.props, 'customer.employeeId')}
                     </span>
                     <CloseIcon

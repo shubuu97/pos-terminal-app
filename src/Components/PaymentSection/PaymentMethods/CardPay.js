@@ -60,7 +60,7 @@ class CardPay extends React.Component {
                             fullWidth
                         />
                     </div>
-                    <span className="pay-button">
+                    <span className="pay-button flex-row justify-center align-center">
                         pay
               </span>
                     <CloseIcon
