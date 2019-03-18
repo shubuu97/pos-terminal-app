@@ -74,11 +74,12 @@ class HomeContainer extends React.Component {
 
     calcHeight() {
         let windowHeight = document.documentElement.scrollHeight
-        // * Product Section Calculations
+        // ! Product Section Calculations
         let headerHeight = 70;
         let categoriesHeight = 90;
         let productListHeight = windowHeight - (headerHeight + categoriesHeight + 25)
-        // * Checkout Section Calculations
+
+        // ! Checkout Section Calculations
         let checkoutHeader = headerHeight * 0.65;
         let checkoutMainPart = windowHeight - (checkoutHeader + 80);
         let checkoutcalcArea = 150
@@ -86,7 +87,13 @@ class HomeContainer extends React.Component {
         let checkoutcartArea = checkoutMainPart - (checkoutcalcArea + checkoutactionArea)
         // * Checkout Customer Section Calculations
         let checkoutCustomerArea = checkoutMainPart - checkoutactionArea
-        // * Payment Section 
+
+        // ! Payment Section
+        let paymentOptionsPart = headerHeight;
+        let paymentMainPart = windowHeight - (checkoutHeader + 100);
+        let paymentCalculator = paymentMainPart * 0.70;
+        let paymentSaleComment = paymentMainPart * 0.10;
+        let paymentSubmitTransaction = paymentMainPart * 0.10;
 
 
         this.setState({
@@ -99,7 +106,12 @@ class HomeContainer extends React.Component {
             checkoutcalcArea,
             checkoutactionArea,
             checkoutcartArea,
-            checkoutCustomerArea
+            checkoutCustomerArea,
+            paymentOptionsPart,
+            paymentMainPart,
+            paymentCalculator,
+            paymentSaleComment,
+            paymentSubmitTransaction,
         })
     }
 
@@ -343,6 +355,11 @@ class HomeContainer extends React.Component {
                         <PaymentSection
                             startPolling={this.props.startPolling}
                             windowHeight={windowHeight}
+                            paymentOptionsPart={this.state.paymentOptionsPart}
+                            paymentMainPart={this.state.paymentMainPart}
+                            paymentCalculator={this.state.paymentCalculator}
+                            paymentSaleComment={this.state.paymentSaleComment}
+                            paymentSubmitTransaction={this.state.paymentSubmitTransaction}
                         /> : null
                     }
                 </Payment>

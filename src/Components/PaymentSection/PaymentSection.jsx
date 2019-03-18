@@ -518,13 +518,12 @@ class PaymentSection extends React.Component {
     }
 
     render() {
-        console.log('mak', _get(this.props, 'totalAmount.amount'),  _get(this.props, 'RedemptionRules.lookUpData.redemptionRule.minimumSaleAmount'))
-        console.log(this.state.receiptData, 'this.state.receiptData')
+        let {paymentOptionsPart, paymentMainPart, paymentCalculator, paymentSaleComment, paymentSubmitTransaction} = this.props
         let disable = this.props.remainingAmount <= 0 ? { opacity: '0.3', pointerEvents: 'none' } : null
         return (
             <div className='pos-payment'>
                 <div className='flex-column'>
-                    <div className='flex-row justify-space-between'>
+                    <div className='flex-row justify-space-between' style={{height: paymentOptionsPart}}>
                         <ul className="payment-method">
                             <li style={disable} onClick={this.handleCashPayment} className="cash-method">Cash</li>
                             <li style={disable} onClick={this.handleCardPayment} variant="outlined" className="card-method">Debit/Credit Card</li>
@@ -535,8 +534,8 @@ class PaymentSection extends React.Component {
                         </ul>
                     </div>
 
-                    <div className='flex-row'>
-                        <div className='card transaction-card'>
+                    <div className='flex-row' style={{height: paymentMainPart}}>
+                        <div className='card transaction-card' style={{height: paymentMainPart}}>
                             <span className='card-title soft-text'>Transactions</span>
                             <div className="Card">
                                 <span>{this.props.remainingAmount > 0 ? 'Remaining Amount ' : 'Change Due '}</span>
@@ -592,8 +591,8 @@ class PaymentSection extends React.Component {
 
                         </div>
 
-                        <div className='numpad-section'>
-                            <div className='card numpad-card'>
+                        <div className='numpad-section' style={{height: paymentMainPart}}>
+                            <div className='card numpad-card' style={{height: paymentCalculator}}>
                                 <span className='card-title'>Numpad</span>
                                 <div className='flex-row flex-wrap justify-center pt-15'>
                                     <div className='key small-key' onClick={this.handleInputChange('1')}>1</div>
@@ -612,7 +611,7 @@ class PaymentSection extends React.Component {
                                     <div className='key big-key'>Enter</div>
                                 </div>
                             </div>
-                            <div className='card'>
+                            <div className='card' style={{height: paymentSaleComment}}>
                                 <TextField
                                     id="outlined-name"
                                     label="Sale Comment"
@@ -623,7 +622,7 @@ class PaymentSection extends React.Component {
                                     fullWidth
                                 />
                             </div>
-                            <div className="flex-row justify-flex-end mr-10 ml-10 submit-transaction">
+                            <div className="flex-row justify-flex-end mr-10 ml-10 submit-transaction" style={{height: paymentSubmitTransaction}}>
                                 <div style={{ width: '100%' }}>
                                     <Detector
                                         render={this.buttonToRender} />
