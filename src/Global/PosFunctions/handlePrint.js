@@ -13,7 +13,7 @@ const HandlePrint = (props) => {
         let itemSubTotal = 0
         let empDis
         if (_get(item, 'employeeDiscountPercent', '') !== 0) {
-            empDis = (_get(item, 'itemRegularTotal.amount') * _get(item, 'employeeDiscountPercent')) / 100
+            empDis = (_get(item, 'itemRegularTotal.amount',0) * _get(item, 'employeeDiscountPercent')) / 100
         } else {
             empDis = 0
         }
@@ -22,15 +22,15 @@ const HandlePrint = (props) => {
         if (isItemDiscountPercentExist) {
             itemDis = 0
         } else {
-            itemDis = (_get(item, 'itemRegularTotal.amount') * _get(item, 'itemDiscountPercent')) / 100
+            itemDis = (_get(item, 'itemRegularTotal.amount',0) * _get(item, 'itemDiscountPercent')) / 100
         }
         itemSubTotal = ((_get(item, 'doc.product.salePrice.price', '0') * _get(item, 'qty', 1)) - (empDis + itemDis))
         stSubTotal += itemSubTotal
         return (
             <div style={{ display: 'flex', flex: '1', paddingTop: "10px", paddingBottom: "10px", borderBottom: 'dotted 1px #9e9e9e' }}>
-                <div style={{ width: "35%" }}>{_get(item, 'doc.product.name')}</div>
+                <div style={{ width: "35%" }}>{_get(item, 'doc.product.name', ' ')}</div>
                 <div style={{ width: "10%", textAlign: "center" }}>{_get(item, 'qty', '')}</div>
-                <div style={{ width: "30%", textAlign: "right" }}>{_get(item, 'doc.product.salePrice.price', '0')}<br />
+                <div style={{ width: "30%", textAlign: "right" }}>{_get(item, 'doc.product.salePrice.price', '0').toFixed(2)}<br />
                     <div style={{ fontSize: "9px" }}>
                         {itemDis == 0 ? '' : <span>(Item Disc.: {itemDis.toFixed(2)})</span>}<br />
                         {empDis == 0 ? '' : <span>(Emp Disc.: {empDis.toFixed(2)})</span>}
@@ -44,7 +44,7 @@ const HandlePrint = (props) => {
     const orderHistory = _get(props, 'itemList', []).map(item => {
         let itemSubTotal = 0
         let empDis
-        let salePrice = _get(item, 'product.salePrice.price', '0')
+        let salePrice = _get(item, 'product.salePrice.price', 0)
         let isEmpDisExist = ('employeeDiscountPercent' in _get(item, 'saleItem', {}))
         if (!isEmpDisExist) {
             empDis = 0
@@ -62,9 +62,9 @@ const HandlePrint = (props) => {
         ohSubTotal += itemSubTotal
         return (
             <div style={{ display: 'flex', flex: '1', paddingTop: "10px", paddingBottom: "10px", borderBottom: 'dotted 1px #9e9e9e' }}>
-                <div style={{ width: "35%", paddingRight: '10px' }}>{_get(item, 'product.name')}</div>
+                <div style={{ width: "35%", paddingRight: '10px' }}>{_get(item, 'product.name','')}</div>
                 <div style={{ width: "10%", textAlign: "center" }}>{_get(item, 'saleItem.qty', '')}</div>
-                <div style={{ width: "30%", textAlign: "right" }}>{salePrice}<br />
+                <div style={{ width: "30%", textAlign: "right" }}>{salePrice.toFixed(2)}<br />
                     <div style={{ fontSize: "9px" }}>
                         {itemDis == 0 ? '' : <span>(Item Disc.: {itemDis.toFixed(2)})</span>}<br />
                         {empDis == 0 ? '' : <span>(Emp Disc.: {empDis.toFixed(2)})</span>}
@@ -82,13 +82,13 @@ const HandlePrint = (props) => {
         subTotal = ohSubTotal
     }
 
-    let itemDiscount = _get(props, 'currency', '') + _get(props, 'itemsDiscount', '0')
-    let cartDiscount = _get(props, 'currency', '') + _get(props, 'cartDiscount', '0')
-    let employeeDiscount = _get(props, 'currency', '') + _get(props, 'employeeDiscount', '0')
-    let taxAmount = _get(props, 'currency', '') + _get(props, 'totalTax', '0')
-    let grandTotal = _get(props, 'currency', '') + _get(props, 'totalAmount', '0')
-    let totalAmountPaid = _get(props, 'currency', '') + _get(props, 'totalAmountPaid', '0')
-    let changeDue = _get(props, 'currency', '') + _get(props, 'changeDue', '0')
+    let itemDiscount = _get(props, 'currency', '') + _get(props, 'itemsDiscount', 0)
+    let cartDiscount = _get(props, 'cartDiscount', 0)
+    let employeeDiscount = _get(props, 'employeeDiscount', 0)
+    let taxAmount = _get(props, 'totalTax', 0)
+    let grandTotal = _get(props, 'totalAmount', 0)
+    let totalAmountPaid = _get(props, 'totalAmountPaid', 0)
+    let changeDue = _get(props, 'changeDue', 0)
     
     return (
         <div style={{ fontSize: "12px", fontFamily: "arial, sans-serif" }} >
@@ -125,31 +125,31 @@ const HandlePrint = (props) => {
 
             <div style={{ display: 'flex', flex: '1', flexDirection: 'column', borderBottom: 'solid 1px #9e9e9e', paddingTop: "10px", paddingBottom: "5px" }} >
                 <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>
-                    SUB TOTAL: <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + subTotal}</span>
+                    SUB TOTAL: <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + subTotal.toFixed(2)}</span>
                 </div>
                 {
                     _get(props, 'itemsDiscount') == 0 ? '' :
                         <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>
-                            ITEMS DISCOUNT: <span style={{ fontWeight: 'bold' }}>{itemDiscount}</span>
+                            ITEMS DISCOUNT: <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + itemDiscount.toFixed(2)}</span>
                         </div>
                 }
 
                 {
                     _get(props, 'cartDiscount') == 0 ? '' :
                         <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>
-                            CART DISCOUNT: <span style={{ fontWeight: 'bold' }}>{cartDiscount}</span>
+                            CART DISCOUNT: <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + cartDiscount.toFixed(2)}</span>
                         </div>
                 }
 
                 {
                     _get(props, 'employeeDiscount') == 0 ? '' :
                         <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>
-                            EMPLOYEE DISCOUNT: <span style={{ fontWeight: 'bold' }}>{employeeDiscount}</span>
+                            EMPLOYEE DISCOUNT: <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + employeeDiscount.toFixed(2)}</span>
                         </div>
                 }
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>
-                    TOTAL TAX: <span style={{ fontWeight: 'bold' }}>{taxAmount}</span>
+                    TOTAL TAX: <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + taxAmount.toFixed(2)}</span>
                 </div>
                 
             </div>
@@ -171,18 +171,18 @@ const HandlePrint = (props) => {
                 }
                     */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>
-                    GRAND TOTAL: <span style={{ fontWeight: 'bold' }}>{grandTotal}</span>
+                    GRAND TOTAL: <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + grandTotal.toFixed(2)}</span>
                 </div>
 
                 {props.totalAmountPaid &&
                     <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>
-                        TOTAL PAID: <span style={{ fontWeight: 'bold' }}>{totalAmountPaid}</span>
+                        TOTAL PAID: <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + totalAmountPaid.toFixed(2)}</span>
                     </div>
                 }
 
                 {props.changeDue == 0 ? '' :
                     <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>
-                        CHANGE:  <span style={{ fontWeight: 'bold' }}>{changeDue}</span>
+                        CHANGE:  <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + changeDue.toFixed(2)}</span>
                     </div>
                 }
 
@@ -198,7 +198,7 @@ const HandlePrint = (props) => {
                     {_get(props, 'paymentMethods', []).map(payment => {
                             return (
                                 <div style={{ display: 'flex' }}>
-                                    <span style={{ fontWeight: 'bold', textAlign: "right" }}>{_get(props, 'currency', '') + _get(payment, 'paymentAmount.amount', 0)}<br />
+                                    <span style={{ fontWeight: 'bold', textAlign: "right" }}>{_get(props, 'currency', '') + _get(payment, 'paymentAmount.amount', 0).toFixed(2)}<br />
                                         by {_get(payment, 'paymentMethod', '')}</span>
                                 </div>
                             )

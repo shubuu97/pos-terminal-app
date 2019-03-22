@@ -43,6 +43,7 @@ class PaymentReceipt extends React.Component {
         this.props.handleClose();
         this.props.dispatch(commonActionCreater(1, 'SWITCH_TAB_NUMBER'));
     }
+
     handlePrint = () => {
         var content = document.getElementById('printarea');
         var pri = document.getElementById('ifmcontentstoprint').contentWindow;
@@ -153,7 +154,6 @@ class PaymentReceipt extends React.Component {
                 }}></iframe>
                 <div id='printarea'>
                     <div>
-                    <div className="store-logo"> <img src={logo} /></div>
                         <HandlePrint 
                             type="Sale Transaction"
                             orderId={_get(this.props, 'receiptData.id')}

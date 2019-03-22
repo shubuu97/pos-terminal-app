@@ -457,8 +457,7 @@ class PaymentSection extends React.Component {
             defaultcardAmountValue: '',
             cashPayValue: '',
             giftPayNumberValue: '',
-            receiptData: {},
-            showPaymentReceipt: false
+            receiptData: {}        
         });
         this.props.history.push('/?tab==1');
     }
