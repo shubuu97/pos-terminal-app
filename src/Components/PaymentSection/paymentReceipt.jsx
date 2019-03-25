@@ -18,7 +18,7 @@ import { commonActionCreater } from '../../Redux/commonAction';
 import addGuestToCart from '../../Global/PosFunctions/addGuestToCart';
 /* Component Imports */
 import HandlePrint from '../../Global/PosFunctions/handlePrint';
-
+import logo from '../../assets/images/aobLogodark.png';
 function Transition(props) {
     return <Slide direction="up" {...props} />;
 }
@@ -43,6 +43,7 @@ class PaymentReceipt extends React.Component {
         this.props.handleClose();
         this.props.dispatch(commonActionCreater(1, 'SWITCH_TAB_NUMBER'));
     }
+
     handlePrint = () => {
         var content = document.getElementById('printarea');
         var pri = document.getElementById('ifmcontentstoprint').contentWindow;

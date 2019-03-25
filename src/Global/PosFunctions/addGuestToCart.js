@@ -2,9 +2,9 @@ import { commonActionCreater } from '../../Redux/commonAction';
 import  PouchDb  from 'pouchdb';
 import Find from "pouchdb-find";
 import _get from 'lodash/get'
-
+import PAM from 'pouchdb-adapter-memory'
+PouchDb.plugin(PAM);
 PouchDb.plugin(Find);
-let customersdb = new PouchDb('customersdb');
 
 const addGuestToCart = async(dispatch) => {
     let customersdb = new PouchDb('customersdb');

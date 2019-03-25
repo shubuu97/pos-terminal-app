@@ -13,6 +13,9 @@ import { commonActionCreater } from '../Redux/commonAction';
 import posed from 'react-pose';
 /* Pouch DB */
 import PouchDb from 'pouchdb';
+/* Global Imports */
+import pollingHoc from '../Global/PosFunctions/pollingHoc';
+import axiosFetcher from '../Global/dataFetch/axiosFetcher';
 /* Component Imports */
 import ProductsSection from '../Components/ProductsSection/ProductsSection'
 import CheckoutSection from '../Components/CheckoutSection/CheckoutSection'
@@ -24,12 +27,8 @@ import AlertCartClear from '../Components/AlertCartClear';
 import GiftCardModel from '../Components/ProductsSection/GiftCardModel';
 import MiscProductModal from '../Components/ProductsSection/MiscProductModal';
 import SessionContainer from './SessionContainer';
-import QuickBookContainer from './QuickBookContainer';
-
 import LockTerminalDialogue from '../Components/Dialogues/LockTerminalDialogue'
 import OfflineTransactionContainer from './OfflineTransactionContainer';
-import pollingHoc from '../Global/PosFunctions/pollingHoc';
-import axiosFetcher from '../Global/dataFetch/axiosFetcher';
 import Customer from '../Components/CheckoutSection/Customer';
 
 let SessionDialog = withDialog(SessionContainer)
@@ -42,7 +41,6 @@ const Config = {
     open: { width: '65%', opacity: 1, flip: true },
     closed: { width: '0px', opacity: 0, flip: true }
 }
-
 const Products = posed.div(Config)
 const Payment = posed.div(Config);
 
@@ -66,18 +64,22 @@ class HomeContainer extends React.Component {
         if (_isEmpty(token)) {
             this.props.history.push('/login')
         }
-        this.calcHeight();
-        this.getProductData();
-        this.props.startPolling();
+        else {
+            this.calcHeight();
+            this.getRuleSet();
+            this.getProductData();
+            this.props.startPolling();
+        }
     }
 
     calcHeight() {
         let windowHeight = document.documentElement.scrollHeight
-        // * Product Section Calculations
+        // ! Product Section Calculations
         let headerHeight = 70;
         let categoriesHeight = 90;
         let productListHeight = windowHeight - (headerHeight + categoriesHeight + 25)
-        // * Checkout Section Calculations
+
+        // ! Checkout Section Calculations
         let checkoutHeader = headerHeight * 0.65;
         let checkoutMainPart = windowHeight - (checkoutHeader + 80);
         let checkoutcalcArea = 150
@@ -85,7 +87,13 @@ class HomeContainer extends React.Component {
         let checkoutcartArea = checkoutMainPart - (checkoutcalcArea + checkoutactionArea)
         // * Checkout Customer Section Calculations
         let checkoutCustomerArea = checkoutMainPart - checkoutactionArea
-        // * Payment Section 
+
+        // ! Payment Section
+        let paymentOptionsPart = headerHeight;
+        let paymentMainPart = windowHeight - (checkoutHeader + 100);
+        let paymentCalculator = paymentMainPart * 0.70;
+        let paymentSaleComment = paymentMainPart * 0.10;
+        let paymentSubmitTransaction = paymentMainPart * 0.10;
 
 
         this.setState({
@@ -98,8 +106,51 @@ class HomeContainer extends React.Component {
             checkoutcalcArea,
             checkoutactionArea,
             checkoutcartArea,
-            checkoutCustomerArea
+            checkoutCustomerArea,
+            paymentOptionsPart,
+            paymentMainPart,
+            paymentCalculator,
+            paymentSaleComment,
+            paymentSubmitTransaction,
         })
+    }
+
+    getRuleSet = () => {
+        let data = { id: localStorage.getItem('retailerId') }
+        genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj: data,
+            url: 'Rewards/RedemptionRule/ByRetailer',
+            constants: {
+                init: 'GET_LOYALTY_REDEMPTION_RULES_INIT',
+                success: 'GET_LOYALTY_REDEMPTION_RULES_SUCCESS',
+                error: 'GET_LOYALTY_REDEMPTION_RULES_ERROR'
+            },
+            identifier: 'GET_LOYALTY_REDEMPTION_RULES',
+            successCb: this.saveRedemptionRules,
+            // errorCb: this.handleGetCustomerSaleDataError
+        })
+        genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj: data,
+            url: 'Rewards/EarningRule/ByRetailer',
+            constants: {
+                init: 'GET_LOYALTY_EARNING_RULES_INIT',
+                success: 'GET_LOYALTY_EARNING_RULES_SUCCESS',
+                error: 'GET_LOYALTY_EARNING_RULES_ERROR'
+            },
+            identifier: 'GET_LOYALTY_EARNING_RULES',
+            successCb: this.saveEarningRules,
+            // errorCb: this.handleGetCustomerSaleDataError
+        })
+    }
+
+    saveRedemptionRules = (data) => {
+        this.props.dispatch(commonActionCreater(data, 'GET_LOYALTY_REDEMPTION_RULES'));
+    }
+
+    saveEarningRules = (data) => {
+        this.props.dispatch(commonActionCreater(data, 'GET_LOYALTY_EARNING_RULES'));
     }
 
     toggleViewPayment = () => {
@@ -140,7 +191,6 @@ class HomeContainer extends React.Component {
             holdIndex: index
         })
     }
-
 
     getProductData = () => {
         let productsdb = new PouchDb('productsdb');
@@ -305,6 +355,11 @@ class HomeContainer extends React.Component {
                         <PaymentSection
                             startPolling={this.props.startPolling}
                             windowHeight={windowHeight}
+                            paymentOptionsPart={this.state.paymentOptionsPart}
+                            paymentMainPart={this.state.paymentMainPart}
+                            paymentCalculator={this.state.paymentCalculator}
+                            paymentSaleComment={this.state.paymentSaleComment}
+                            paymentSubmitTransaction={this.state.paymentSubmitTransaction}
                         /> : null
                     }
                 </Payment>
@@ -444,12 +499,11 @@ const OfflineTransactionPusher = async (propsOfComp, dispatch) => {
     }
 }
 const updateTimeStampAndDb = async (res) => {
-   let tempInvetoryUpdateTime =  localStorage.getItem('tempInvetoryUpdateTime');
-   localStorage.setItem('invetoryUpdateTime',tempInvetoryUpdateTime)
+    let tempInvetoryUpdateTime = localStorage.getItem('tempInvetoryUpdateTime');
+    localStorage.setItem('invetoryUpdateTime', tempInvetoryUpdateTime)
 
     let productsdb = new PouchDb('productsdb');
-    let updatedInventory = _get(res, 'data', [])||[];
-    console.log(updatedInventory, '*********res*********');
+    let updatedInventory = _get(res, 'data', []) || [];
     let promiseArray = updatedInventory.map(async (product, index) => {
         let productObj = await productsdb.get(product._id);
         productObj.inventory.quantity = product.inventory.quantity;
@@ -457,10 +511,6 @@ const updateTimeStampAndDb = async (res) => {
     });
     Promise.all(promiseArray).then(async (updatedInventoryWith_Rev) => {
         let resOfUpdateBulk = await productsdb.bulkDocs(updatedInventoryWith_Rev);
-
-        console.log(updatedInventoryWith_Rev, "*********res*********")
-        console.log(resOfUpdateBulk, "*********res*********");
-        console.log('*********res*********');
     })
 
 }

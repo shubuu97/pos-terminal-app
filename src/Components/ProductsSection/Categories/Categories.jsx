@@ -10,6 +10,10 @@ import { connect } from "react-redux";
 //Pouch Import
 import PouchDb from "pouchdb";
 import Find from "pouchdb-find";
+import PAM from "pouchdb-adapter-memory"
+PouchDb.plugin(Find);
+PouchDb.plugin(PAM);
+
 let categoryDb = new PouchDb("categoryDb");
 
 class Categories extends Component {

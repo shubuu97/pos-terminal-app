@@ -53,6 +53,7 @@ class Product extends React.PureComponent {
                 reqObj[index].qty = qty;
                 this.setState({ qty })
             }
+            this.props.dispatch(commonActionCreater(0, 'ADD_DISCOUNT_TO_CART'));
             this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
         }
     }

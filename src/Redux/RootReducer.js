@@ -32,16 +32,14 @@ let giftCardData = commonReducer('GET_GIFT_CARD__DATA');
 let giftCardPaymentData = commonReducer('GET_GIFT_CARD_PAYMENT_DATA');
 let saveMiscProductData = commonReducer('SAVE_MISC_PRODUCT_DATA');
 let sessionDataById = commonReducer('GET_SESSION_DATA_BY_ID')
+let RedemptionRules = commonReducer('GET_LOYALTY_REDEMPTION_RULES');
+let EarningRules = commonReducer('GET_LOYALTY_EARNING_RULES');
 
 
 let selectedSession = commonStaticReducer('GET_SELECTED_SESSION');
 let sessionRedirectToLogin = commonStaticReducer('SESSION_START_REDIRECT_TO_LOGIN');
 let afterSellRedirectToCart = commonStaticReducer('SWITCH_TAB_NUMBER');
 let lockTerminal = commonStaticReducer('LOCK_TERMINAL');
-
-
-
-
 
 
 // let cartItems = cartItemFun('CART_ITEM_LIST');
@@ -53,7 +51,8 @@ let rootRducer = combineReducers({
     loginData,
     storeData,
     categoryList,
-    //productList,
+    RedemptionRules,
+    EarningRules,
     staticReducers,
     terminalData,
     cart,

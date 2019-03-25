@@ -16,13 +16,9 @@ import showMessage from '../../Redux/toastAction';
 
 
 const styles = theme => ({
-  
-    formControl: {
-        margin: theme.spacing.unit,
-        minWidth: 120,
-        maxWidth: 300,
-    },
+
 });
+
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -87,9 +83,9 @@ class Store extends React.Component {
 
     }
     afterStoreSuccess = (data) => {
-        let countyTaxRate = _get(data, 'tax.countyTaxRate');
-        let federalTaxRate = _get(data, 'tax.federalTaxRate');
-        let stateTaxRate = _get(data, 'tax.stateTaxRate');
+        let countyTaxRate = _get(data, 'tax.countyTaxRate', 0);
+        let federalTaxRate = _get(data, 'tax.federalTaxRate', 0);
+        let stateTaxRate = _get(data, 'tax.stateTaxRate', 0);
         localStorage.setItem('countyTaxRate', countyTaxRate);
         localStorage.setItem('federalTaxRate', federalTaxRate);
         localStorage.setItem('stateTaxRate', stateTaxRate);
@@ -184,6 +180,7 @@ class Store extends React.Component {
                         MenuProps={MenuProps}
                         value={this.state.selectedTerminal}
                         onChange={this.handleChange}
+                        fullWidth
                     >
                         {this.mapTermainal()}
                     </Select>

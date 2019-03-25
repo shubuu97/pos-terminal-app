@@ -80,7 +80,7 @@ class SignIn extends React.Component {
                         {this.state.currentStep == 1 ? 'Sign in' :
                             <div>{this.state.currentStep == 2 ?
                                 'Choose terminal' :
-                                'Synching data'}
+                                'Synchronizing'}
                             </div>
                         }
                     </Typography>

@@ -24,8 +24,8 @@ class CalculationSection extends React.Component {
     handleCartDiscountRemove = () => {
         this.props.dispatch(commonActionCreater(0, 'ADD_DISCOUNT_TO_CART'));
         this.props.dispatch(commonActionCreater(this.props.cartItems, 'CART_ITEM_LIST'));
-
     }
+    
     handleClickOpenDiscount = () => {
 
     }
@@ -70,7 +70,7 @@ class CalculationSection extends React.Component {
                                 </div> : null
                         }
                         {
-                            _get(this, 'props.handleClickOpenDiscount', false) && !_get(cart, 'cartDiscountAmount.amount', 0) ?
+                            _get(this, 'props.handleClickOpenDiscount', false) && !_get(cart, 'cartDiscountAmount.amount', 0) && _get(this, 'props.cartItems', []).length ?
                                 <div className='cart-each-details cart-discount-btn'>
                                     <Button variant="outlined" onClick={this.props.handleClickOpenDiscount}><AddCircleOutline /> Cart Discount</Button>
                                 </div>

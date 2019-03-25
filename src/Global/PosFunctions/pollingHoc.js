@@ -18,7 +18,6 @@ const pollingHoc = (intervalDuration = 60 * 1000, onInterval) => {
 		}
 
 		startPolling () {
-			debugger;
 			if (this.interval) return;
 			this.keepPolling = true;
 			this.asyncInterval(intervalDuration, onInterval);
@@ -30,7 +29,6 @@ const pollingHoc = (intervalDuration = 60 * 1000, onInterval) => {
 		}
 
 		asyncInterval (intervalDuration, fn) {
-			debugger;
 			const promise = fn(this.getProps(), this.props.dispatch);
 			const asyncTimeout = () => setTimeout(() => {
 				this.asyncInterval(intervalDuration, fn);

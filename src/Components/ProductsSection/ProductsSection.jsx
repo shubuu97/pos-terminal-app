@@ -1,11 +1,13 @@
 import React from 'react';
+import { Detector } from 'react-detect-offline';
 /* Lodash Imports */
 import _get from 'lodash/get';
 import _isEmpty from 'lodash/isEmpty';
 import _findIndex from 'lodash/findIndex';
 import _find from 'lodash/find'
-/* Material import */
-import Button from '@material-ui/core/Button';
+/* Material Import */
+import CircularProgress from '@material-ui/core/CircularProgress';
+/* Material Icons */
 import LockIcon from '@material-ui/icons/LockOutlined';
 import ExitToApp from '@material-ui/icons/ExitToApp';
 import CardGiftCard from '@material-ui/icons/CardGiftcard';
@@ -13,16 +15,17 @@ import LibraryAdd from '@material-ui/icons/LibraryAddOutlined';
 /* Redux Imports */
 import { commonActionCreater } from '../../Redux/commonAction'
 import { connect } from 'react-redux';
+/* Pouch Imports */
+import PAM from "pouchdb-adapter-memory"
+import Find from "pouchdb-find";
 /* Component Imports */
 import SideDrawer from '../SideDrawer'
 import Products from './Products';
 import SearchBar from './SearchBar';
 import PouchDb from 'pouchdb';
 import Categories from './Categories/Categories';
-import Pagination from './Pagination';
-import Find from "pouchdb-find";
-import CircularProgress from '@material-ui/core/CircularProgress';
 
+PouchDb.plugin(PAM);
 PouchDb.plugin(Find);
 PouchDb.plugin(require('pouchdb-quick-search'));
 
@@ -33,7 +36,8 @@ class ProductsSection extends React.Component {
     constructor() {
         super();
         this.state = {
-            clearInput: false
+            clearInput: false,
+            productLoading: false
         }
     }
 
@@ -98,7 +102,7 @@ class ProductsSection extends React.Component {
                 console.log(err)
             });
         }
-        if (searchText.length == 12) {
+        if (searchText.length === 12 || searchText.length === 11 || searchText.length === 13) {
             let noSearchText = Number(searchText)
             productsdb.find({
                 selector: { "product.upcCode": noSearchText }
@@ -124,6 +128,7 @@ class ProductsSection extends React.Component {
                         cartObj = [...cartItems]
                         cartObj[index].qty = qty;
                     }
+                    this.props.dispatch(commonActionCreater(0, 'ADD_DISCOUNT_TO_CART'));
                     this.props.dispatch(commonActionCreater(cartObj, 'CART_ITEM_LIST'));
                 }
             })
@@ -183,7 +188,7 @@ class ProductsSection extends React.Component {
     //   }
 
     getNextProducts = async () => {
-        this.setState({ disable: true })
+        this.setState({ disable: true, productLoading: true })
         let startkey = this.props.lastItemId
         let method = this.props.method
         let productsdb = new PouchDb('productsdb');
@@ -194,6 +199,7 @@ class ProductsSection extends React.Component {
                 limit: 39,
                 skip: 1
             }).then((result) => {
+                debugger
                 result.pagination = {}
                 result.pagination.method = method
                 result.pagination.firstItemId = result.rows[0].id
@@ -207,13 +213,12 @@ class ProductsSection extends React.Component {
                     result.pagination.endVal = this.props.productCount
                 }
                 this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
-                this.setState({ disable: false })
+                this.setState({ disable: false, productLoading: false })
             }).catch((err) => {
                 console.log(err)
             });
         }
         else if (method == 'search' || method == 'categories') {
-            debugger
             productsdb.search({
                 query: this.props.query,
                 fields: this.props.fields,
@@ -222,6 +227,7 @@ class ProductsSection extends React.Component {
                 limit: 39,
                 skip: 1
             }).then((result) => {
+                
                 result.pagination = {}
                 result.pagination.method = method
                 result.pagination.query = this.props.query
@@ -237,11 +243,19 @@ class ProductsSection extends React.Component {
                     result.pagination.endVal = this.props.productCount
                 }
                 this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
-                this.setState({ disable: false })
+                this.setState({ disable: false, productLoading: false })
             }).catch((err) => {
                 console.log(err)
             });
         }
+    }
+
+    handleHideWhenOffline = ({ online }, onlineContent, offlineContent) => {
+        if (online) {
+            return onlineContent
+        }
+        else
+            return offlineContent
     }
 
     render() {
@@ -269,8 +283,18 @@ class ProductsSection extends React.Component {
                         />
                         <div className="header-right-sec">
                             <ul>
-                                <li onClick={this.props.handleMiscProduct}><LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>
-                                <li onClick={this.props.handleGiftCard}><CardGiftCard style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>
+                                <Detector render={({ online }) => this.handleHideWhenOffline(
+                                    { online },
+                                    [<li onClick={this.props.handleMiscProduct}><LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>],
+                                    [<li className="disable-button" onClick={this.props.handleMiscProduct}><LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>]
+                                )} />
+
+                                <Detector render={({ online }) => this.handleHideWhenOffline(
+                                    { online },
+                                    [<li onClick={this.props.handleGiftCard}><CardGiftCard style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>],
+                                    [<li className="disable-button" onClick={this.props.handleGiftCard}><CardGiftCard style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>]
+                                )} />
+
                                 <li onClick={this.props.handleLockTerminal}><LockIcon style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>
                                 {/* <li onClick={this.logout}><ExitToApp style={{ color: 'white', padding: '0 10px', fontSize: 33 }}  /></li> */}
                             </ul>
@@ -293,6 +317,10 @@ class ProductsSection extends React.Component {
                     <Products
                         {...this.props}
                     />
+                    {
+                        this.state.productLoading ? 
+                        <div className='fwidth pt-15 flex-row justify-center align-center'><CircularProgress /> <span className='loading-text'>Loading ... </span></div> : null
+                    }
                 </div>
 
             </div>

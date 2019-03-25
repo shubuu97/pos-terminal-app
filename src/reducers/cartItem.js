@@ -1,7 +1,8 @@
-
 import _get from 'lodash/get'
 
-const cartItem = (state = { cartItems: [], }, action) => {
+const cartItem = (state = {
+    cartItems: [],
+}, action) => {
     switch (action.type) {
         case 'ADD_DISCOUNT_TO_CART':
             let newState = Object.assign({}, state, {
@@ -21,6 +22,11 @@ const cartItem = (state = { cartItems: [], }, action) => {
             return Object.assign({}, state, {
                 empDiscount: action.data,
             });
+        case 'GET_LOYALTY_EARNING_RULES':
+            return Object.assign({}, state, {
+                earningRules: action.data,
+            });
+            break;
         case 'CART_ITEM_LIST':
 
             // * Initializing Required Fields 
@@ -50,6 +56,13 @@ const cartItem = (state = { cartItems: [], }, action) => {
                 amount: 0
             }
 
+            let earningLoyaltyRules = {
+                minimumSaleAmount: _get(state, 'earningRules.earningRule.minimumSaleAmount', 0),
+                earningMultiplier: _get(state, 'earningRules.earningRule.earningMultiplier', 0)
+            }
+
+            let loyaltyEarned = 0
+
             // * Looping through each Item in the Cart
             action.data.forEach(item => {
                 let discountable = _get(item, 'doc.product.discountable', false)
@@ -60,8 +73,7 @@ const cartItem = (state = { cartItems: [], }, action) => {
                 if (discountable) {
                     item.cartDiscountPercent = parseFloat(_get(state, 'cartDiscountPercent', 0))
                     item.employeeDiscountPercent = employeeDiscountPercent
-                }
-                else{
+                } else {
                     item.cartDiscountPercent = 0
                     item.employeeDiscountPercent = 0
                 }
@@ -86,6 +98,7 @@ const cartItem = (state = { cartItems: [], }, action) => {
                     let stateTaxRate = localStorage.getItem('stateTaxRate')
                     let countyTaxRate = localStorage.getItem('countyTaxRate')
                     itemTaxPercent = Number(federalTaxRate) + Number(stateTaxRate) + Number(countyTaxRate);
+                    console.log(itemTaxPercent, 'itemTaxPercent')
                     taxAmount = _get(item, 'itemSubTotal.amount', 0) * itemTaxPercent / 100;
 
                 }
@@ -128,6 +141,10 @@ const cartItem = (state = { cartItems: [], }, action) => {
                 amount: parseFloat(itemDiscountAmount.amount) + parseFloat(cartDiscountAmount.amount) + parseFloat(employeeDiscountAmount.amount)
             }
 
+            if (!(_get(state, 'customer.guest', false)) && netTotal > earningLoyaltyRules.minimumSaleAmount) {
+                loyaltyEarned = Math.round(netTotal * earningLoyaltyRules.earningMultiplier);
+            }
+
             return Object.assign({}, state, {
                 cartItems: action.data,
                 regularTotal: regularTotal.toFixed(2),
@@ -138,7 +155,8 @@ const cartItem = (state = { cartItems: [], }, action) => {
                 employeeDiscountAmount,
                 totalTaxAmount,
                 netTotal: netTotal.toFixed(2),
-                totalDiscount
+                totalDiscount,
+                loyaltyEarned
             });
             break;
     }

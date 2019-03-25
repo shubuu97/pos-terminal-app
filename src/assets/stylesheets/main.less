@@ -534,6 +534,12 @@ p {
         overflow: auto;
         align-content: flex-start;
 
+        .loading-text{
+            font-size: 1.4em;
+            color: @soft-text;
+            padding-left: 15px;
+        }
+
         .truncate {
             width: 80%;
             white-space: nowrap;
@@ -1002,6 +1008,28 @@ p {
 
         .customer-summary {
             padding: 20px 0;
+            .customer-icon{
+                width: 20%;
+            }
+            .customer-basic-info{
+                width: 80%;
+            }
+            .customer-name{
+                padding: 5px 10px;
+            }
+            .customer-phone{
+                padding: 5px 10px;
+            }
+            .customer-email{
+                padding: 5px 10px;
+            }
+            .card-title{
+                font-size: 0.8em;
+                color: @softer-text;
+            }
+            .card-data{
+                font-size: 1.1em;
+            }
         }
 
         .payment-summary {
@@ -1249,13 +1277,24 @@ p {
     .transaction-card {
         width: 60%;
         min-height: calc(100vh - 138px);
+        overflow: auto;
 
         .default-card-pay {
+            margin-top: 20px; 
             .pay-button {
-                border: 1px solid @softer-text;
-                padding: 10px 20px;
+                border: 1px solid rgba(0, 0, 0, 0.25);
                 font-size: 1.2em;
-                color: @soft-text
+                color: rgba(0, 0, 0, 0.8);
+                width: 9%;
+                height: 69%;
+                border-radius: 5px;
+                position: absolute;
+                left: 83%;
+                bottom: 8px;
+            }
+            .payment-title{
+                font-size: 1.1em;
+                color: @soft-text;
             }
         }
     }

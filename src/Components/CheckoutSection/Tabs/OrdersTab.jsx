@@ -95,18 +95,25 @@ class OrdersTab extends React.Component {
         this.setState({ open: false });
     };
 
+    handleCartDiscountRemove = () => {
+        this.props.dispatch(commonActionCreater(0, 'ADD_DISCOUNT_TO_CART'));
+        this.props.dispatch(commonActionCreater(this.props.cartItems, 'CART_ITEM_LIST'));
+    }
+
 
     // * Functions to Update Cart Reducers 
     handleDelete = (item) => {
         let cartItems = [...this.props.cartItems];
         let index = _findIndex(cartItems, ['id', item.id]);
         cartItems.splice(index, 1);
+        this.props.dispatch(commonActionCreater(0, 'ADD_DISCOUNT_TO_CART'));
         this.props.dispatch(commonActionCreater(cartItems, 'CART_ITEM_LIST'));
     };
     handleIncreaseQuantity = (item) => {
         let cartItems = [...this.props.cartItems];
         let index = _findIndex(cartItems, ['id', item.id]);
         cartItems[index].qty = cartItems[index].qty + 1;
+        this.props.dispatch(commonActionCreater(0, 'ADD_DISCOUNT_TO_CART'));
         this.props.dispatch(commonActionCreater(cartItems, 'CART_ITEM_LIST'));
     };
     handleDecreseQuantity = (item) => {
@@ -116,6 +123,7 @@ class OrdersTab extends React.Component {
         if (cartItems[index].qty == 0) {
             cartItems.splice(index, 1);
         }
+        this.props.dispatch(commonActionCreater(0, 'ADD_DISCOUNT_TO_CART'));
         this.props.dispatch(commonActionCreater(cartItems, 'CART_ITEM_LIST'));
     };
     handleDiscount = (data, identifier, index, type) => {
@@ -128,7 +136,6 @@ class OrdersTab extends React.Component {
             let discountableCartTotal = 0
             _isArray(cartItems) && cartItems.map((cartItem) => {
                 cartTotal += Number(_get(cartItem, 'itemRegularTotal.amount', 0));
-                debugger
                 if(_get(cartItem, 'doc.product.discountable', false)){
                     discountableCartTotal += Number(_get(cartItem, 'itemRegularTotal.amount', 0));
                 }
@@ -173,8 +180,8 @@ class OrdersTab extends React.Component {
             return (
                 <ExpansionPanel
                     className='each-checkout-item'
-                    expanded={this.state.expanded === `Panel${_get(item, 'doc.product.sku')}`}
-                    onChange={this.handleChange(`Panel${_get(item, 'doc.product.sku')}`)}>
+                    expanded={this.state.expanded === `Panel${_get(item, 'doc.product.sku', _get(item, 'id'))}`}
+                    onChange={this.handleChange(`Panel${_get(item, 'doc.product.sku', _get(item, 'id'))}`)}>
                     <ExpansionPanelSummary>
                         <div className='each-product-des fwidth flex-row justify-space-between'>
 
@@ -275,7 +282,6 @@ class OrdersTab extends React.Component {
     }
 
     handleItemDiscountRemove = (index) => {
-        debugger
         let cartItems = _get(this, 'props.cart.cartItems', []);
         let reqObj = [
             ...cartItems
