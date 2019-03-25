@@ -82,7 +82,7 @@ const HandlePrint = (props) => {
         subTotal = ohSubTotal
     }
 
-    let itemDiscount = _get(props, 'currency', '') + _get(props, 'itemsDiscount', 0)
+    let itemDiscount = _get(props, 'itemsDiscount', 0)
     let cartDiscount = _get(props, 'cartDiscount', 0)
     let employeeDiscount = _get(props, 'employeeDiscount', 0)
     let taxAmount = _get(props, 'totalTax', 0)
@@ -93,7 +93,7 @@ const HandlePrint = (props) => {
     return (
         <div style={{ fontSize: "12px", fontFamily: "arial, sans-serif" }} >
             <div style={{ textAlign: "center" }}>
-                <div className="store-logo"> <img src={logo} /></div>
+                <div className="store-logo"> <img src={props.logo}/></div>
                 <div style={{ marginTop: '15px' }}>{_get(props, 'orderId', '')}</div>
                 <div>{_get(props, 'orderDate', '')}</div>
                 <div style={{ marginTop: '10px' }}><span style={{ color: '#9e9e9e', fontSize: '11px', fontWeight: 'bold' }}>STORE:</span> {_get(props, 'storeName', '')}</div>

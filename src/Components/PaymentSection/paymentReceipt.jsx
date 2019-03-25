@@ -158,6 +158,7 @@ class PaymentReceipt extends React.Component {
                             type="Sale Transaction"
                             orderId={_get(this.props, 'receiptData.id')}
                             currency='$'
+                            logo={_get(this, 'props.logo', '')}
                             itemList={_get(cart,'cartItems', [])}
                             cashierName={localStorage.getItem('userName')}
                             staffId={localStorage.getItem('userId')}
