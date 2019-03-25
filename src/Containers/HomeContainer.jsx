@@ -30,6 +30,7 @@ import LockTerminalDialogue from '../Components/Dialogues/LockTerminalDialogue'
 import OfflineTransactionContainer from './OfflineTransactionContainer';
 import pollingHoc from '../Global/PosFunctions/pollingHoc';
 import axiosFetcher from '../Global/dataFetch/axiosFetcher';
+import Customer from '../Components/CheckoutSection/Customer';
 
 let SessionDialog = withDialog(SessionContainer)
 let OfflineTransactionDialog = withDialog(OfflineTransactionContainer)
@@ -463,7 +464,7 @@ const updateTimeStampAndDb = async (res) => {
     })
 
 }
-const getInventoryUpdate = (propsOfComp, dispatch) => {
+const getInventoryUpdate = async (propsOfComp, dispatch) => {
     let reqObj = {
         id: localStorage.getItem('storeId'),
         timestamp: {
@@ -483,15 +484,50 @@ const getInventoryUpdate = (propsOfComp, dispatch) => {
         }
     })
 }
+const updateTimeStampAndDbForCustomer = async (res)=>{
+    let tempCustomerTime =  localStorage.getItem('tempCustomerTime');
+    localStorage.setItem('CustomerTime',tempCustomerTime)
+ 
+     let customerdb = new PouchDb('customersdb');
+     let updatedCustomer = _get(res, 'data', [])||[];
+     updatedCustomer.forEach((item, index) => {
+        item._id = item.id
+    });
+     console.log(updatedCustomer, '*********resCustomer*********');
+    let resOfUpdateBulk = await customerdb.bulkDocs(updatedCustomer);
+    console.log(resOfUpdateBulk, "*********resOfUpdateBulk**********");
+
+}
+const getCustomerUpdate = async (propsOfComp, dispatch) => {
+    let reqObj = {
+        id: localStorage.getItem('retailerId'),
+        timestamp: {
+            seconds: parseInt(localStorage.getItem('CustomerTime'))
+        }
+    };
+    let tempCustomerTime = Date.now();
+    tempCustomerTime = parseInt(tempCustomerTime / 1000);
+    localStorage.setItem('tempCustomerTime', tempCustomerTime);
+    axiosFetcher({
+        method: 'POST',
+        reqObj,
+        url: 'Customer/Increment',
+        successCb: updateTimeStampAndDbForCustomer,
+        errorCb: (err) => {
+            console.log(err, "err is here")
+        }
+    })
+}
 const pollingWrapper = async (propsOfComp, dispatch) => {
     await getInventoryUpdate(propsOfComp, dispatch);
+    await getCustomerUpdate(propsOfComp,dispatch)
     OfflineTransactionPusher(propsOfComp, dispatch);
     return;
 
 }
 
 
-HomeContainer = pollingHoc(60000, pollingWrapper)(HomeContainer)
+HomeContainer = pollingHoc(5000, pollingWrapper)(HomeContainer)
 
 
 export default connect(mapStateToProps)(HomeContainer)

@@ -80,7 +80,7 @@ class SyncContainer extends Component {
         let productsdb = new PouchDb('productsdb');
         let result = await productsdb.bulkDocs(_get(productData, 'data', []))
         let indexResultOfSearch = await productsdb.search({
-            fields: ['product.name', 'product.description', 'product.sku','product.category1','product.category2','product.category3'],
+            fields: ['product.name', 'product.description', 'product.sku', 'product.category1', 'product.category2', 'product.category3'],
             build: true
         });
         let indexResultOfFind = await productsdb.createIndex({
@@ -129,7 +129,7 @@ class SyncContainer extends Component {
                 console.log(err);
             })
     }
-    
+
     pollProduct = () => {
         return new Promise((resolve, reject) => {
             if (this.state.productCalled == this.state.limit) {
@@ -138,8 +138,8 @@ class SyncContainer extends Component {
             }
             let storeId = localStorage.getItem('storeId');
             let invetoryUpdateTime = Date.now();
-            invetoryUpdateTime = parseInt(invetoryUpdateTime/1000);
-            localStorage.setItem('invetoryUpdateTime',invetoryUpdateTime);
+            invetoryUpdateTime = parseInt(invetoryUpdateTime / 1000);
+            localStorage.setItem('invetoryUpdateTime', invetoryUpdateTime);
             axiosFetcher({
                 method: 'POST',
                 url: 'Inventory/ByStoreId',
@@ -159,6 +159,9 @@ class SyncContainer extends Component {
                 return;
             };
             let retailerId = localStorage.getItem('retailerId');
+            let CustomerTime = Date.now();
+            CustomerTime = parseInt(CustomerTime / 1000);
+            localStorage.setItem('CustomerTime', CustomerTime);
             axiosFetcher({
                 method: 'POST',
                 // reqObj: { email: this.state.email, password: this.state.password },
@@ -214,8 +217,8 @@ class SyncContainer extends Component {
             <React.Fragment>
                 <div>
                     <LinearProgress
-                        // variant="determinate"
-                        // value={this.state.percentageComplete} 
+                    // variant="determinate"
+                    // value={this.state.percentageComplete} 
                     />
                     <span>Synching data from server......</span>
                 </div>
