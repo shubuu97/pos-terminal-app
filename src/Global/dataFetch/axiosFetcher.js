@@ -9,6 +9,7 @@ const axiosFetcher = ({method,
   successCb,
   successText,
   dispatch,
+  extraArgs,
   errorCb})=>
 {
 let requestObject = {};
@@ -30,7 +31,7 @@ let requestObject = {};
     requestObject
   )
     .then(responseData => {
-        successCb(responseData)
+        successCb(responseData,dispatch,extraArgs)
     })
 .catch((err)=>
 {
