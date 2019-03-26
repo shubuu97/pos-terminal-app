@@ -7,6 +7,9 @@ import CloseIcon from '@material-ui/icons/Close';
 /* Redux Imports */
 import { connect } from 'react-redux';
 import { commonActionCreater } from '../../../Redux/commonAction';
+// var parser = require('xml2json');
+var convert = require('xml-js');
+
 
 const request = require('superagent');
 
@@ -71,7 +74,9 @@ class CardPay extends React.Component {
             .post('http://192.168.1.20:1011')
             .send(xmlBodyStr) // sends a JSON post body
             .then(res => {
-                debugger;
+                var json = convert.xml2json(res.text, {compact: true, spaces: 4});
+                console.log(JSON.parse(json),"json");
+
             }).catch(err => {
                 debugger;
             });
