@@ -16,7 +16,7 @@ import cartHoldData from '../reducers/holdCartItem';
 import ShowToast from './toastReducer';
 import PaymentDetails from '../reducers/paymentDetails';
 import productList from '../reducers/productList'
-
+import zipCodeReducer from '../reducers/zipCodeReducer';
 // import cartOrderDetailsFun from './commonStaticReducer';
 
 
@@ -70,7 +70,8 @@ let rootRducer = combineReducers({
     PaymentDetails,
     lockTerminal,
     sessionDataById,
-    productList
+    productList,
+    zipCodeReducer
 })
 
 export default rootRducer;

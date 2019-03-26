@@ -16,6 +16,8 @@ import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
+import { fetchAddressFromZip } from '../../actions/common';
+import {connect} from 'react-redux';
 
 // const styles = {
 //     Dialog: {
@@ -78,6 +80,30 @@ class Customer extends React.Component {
 
     handleClickOpen = () => {
         this.setState({ open: true })
+    }
+
+    handleZipCode = (data, postalCode) => {
+        let reqObj = {
+            zipCode: postalCode,
+            countryShortCode: "US"
+        }
+        this.props.dispatch(fetchAddressFromZip('', reqObj))
+    }
+
+    componentWillReceiveProps(props) {
+        if(props.type == "RECEIVED_ADDRESS_FROM_ZIP") {
+            if(props.status == 200) {
+                const { city, state, country } = props.addressData
+                props.autofill('billingAddress.city', city);
+                props.autofill('billingAddress.state', state);
+                props.autofill('billingAddress.country', country);
+            
+            } 
+        } else if(props.type == "RECEIVED_ADDRESS_FROM_ZIP_ERROR") {
+            props.autofill('billingAddress.city', '');
+            props.autofill('billingAddress.state', '');
+            props.autofill('billingAddress.country', '');
+        }
     }
 
     render() {
@@ -192,52 +218,52 @@ class Customer extends React.Component {
 
                                 />
                                  <div className="mui-row">
-                            <div className="mui-col-md-6">
-                                <Field
-                                    label="City"
-                                    name="city"
-                                    component={GlobalTextField}
-                                    variant="outlined"
-                                    fullWidth="true"
-                                    margin='normal'
-
-                                />
-                                </div>
                                  <div className="mui-col-md-6">
-                                <Field
-                                    label="State"
-                                    name="state"
-                                    component={GlobalTextField}
-                                    variant="outlined"
-                                    fullWidth="true"
-                                    margin='normal'
+                                    <Field
+                                        label="Postal Code"
+                                        name="postalCode"
+                                        component={GlobalTextField}
+                                        variant="outlined"
+                                        fullWidth="true"
+                                        margin='normal'
+                                        onBlur={(data, postalCode) => this.handleZipCode(data, postalCode)} 
+                                    />
+                                </div>
+                                <div className="mui-col-md-6">
+                                    <Field
+                                        label="City"
+                                        name="city"
+                                        component={GlobalTextField}
+                                        variant="outlined"
+                                        fullWidth="true"
+                                        margin='normal'
 
-                                />
+                                    />
                                 </div>
                                 </div>
                                 <div className="mui-row">
-                            <div className="mui-col-md-6">
-                                <Field
-                                    label="Country"
-                                    name="country"
-                                    component={GlobalTextField}
-                                    variant="outlined"
-                                    fullWidth="true"
-                                    margin='normal'
+                                    <div className="mui-col-md-6">
+                                        <Field
+                                            label="State"
+                                            name="state"
+                                            component={GlobalTextField}
+                                            variant="outlined"
+                                            fullWidth="true"
+                                            margin='normal'
+                                        />
+                                    </div>
+                                    <div className="mui-col-md-6">
+                                        <Field
+                                            label="Country"
+                                            name="country"
+                                            component={GlobalTextField}
+                                            variant="outlined"
+                                            fullWidth="true"
+                                            margin='normal'
 
-                                />
-                                  </div>
-                                 <div className="mui-col-md-6">
-                                <Field
-                                    label="Postal Code"
-                                    name="postalCode"
-                                    component={GlobalTextField}
-                                    variant="outlined"
-                                    fullWidth="true"
-                                    margin='normal'
-
-                                />
-                                </div>
+                                        />
+                                    </div>
+                                    
                                 </div>
                             </FormSection>
                           
@@ -248,7 +274,7 @@ class Customer extends React.Component {
                                 </Button>
                                 <Button type="submit" className='btnmodalprimary' variant="outlined">
                                     Save
-                             </Button>
+                                </Button>
                             
                             </DialogActions>
                            
@@ -261,7 +287,18 @@ class Customer extends React.Component {
 }
 
 Customer = reduxForm({
-    form: 'CustomerForm'
+    form: 'CustomerForm',
+    destroyOnUnmount: true
 })(Customer)
 
-export default Customer;
+const mapStateToProps = state => {
+    const { zipCodeReducer } = state
+    const {addressData, type, status } = zipCodeReducer || {}
+    return {
+        addressData,
+        type,
+        status
+    }
+}
+
+export default connect(mapStateToProps)(Customer);
