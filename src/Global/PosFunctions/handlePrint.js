@@ -30,7 +30,7 @@ const HandlePrint = (props) => {
             <div style={{ display: 'flex', flex: '1', paddingTop: "10px", paddingBottom: "10px", borderBottom: 'dotted 1px #9e9e9e' }}>
                 <div style={{ width: "35%" }}>{_get(item, 'doc.product.name', ' ')}</div>
                 <div style={{ width: "10%", textAlign: "center" }}>{_get(item, 'qty', '')}</div>
-                <div style={{ width: "30%", textAlign: "right" }}>{_get(item, 'doc.product.salePrice.price', '0').toFixed(2)}<br />
+                <div style={{ width: "30%", textAlign: "right" }}>{_get(item, 'doc.product.salePrice.price', 0).toFixed(2)}<br />
                     <div style={{ fontSize: "9px" }}>
                         {itemDis == 0 ? '' : <span>(Item Disc.: {itemDis.toFixed(2)})</span>}<br />
                         {empDis == 0 ? '' : <span>(Emp Disc.: {empDis.toFixed(2)})</span>}
@@ -82,7 +82,7 @@ const HandlePrint = (props) => {
         subTotal = ohSubTotal
     }
 
-    let itemDiscount = _get(props, 'currency', '') + _get(props, 'itemsDiscount', 0)
+    let itemDiscount = _get(props, 'itemsDiscount', 0)
     let cartDiscount = _get(props, 'cartDiscount', 0)
     let employeeDiscount = _get(props, 'employeeDiscount', 0)
     let taxAmount = _get(props, 'totalTax', 0)
