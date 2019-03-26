@@ -1,7 +1,7 @@
 /* Main Route Imports */
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import JssProvider from 'react-jss/lib/JssProvider';
 /* Redux Imports*/
 import { createStore, applyMiddleware, compose } from 'redux';
@@ -52,7 +52,7 @@ const persistConfig = {
   key: 'SMEInvestorRoot',
   storage,
   stateReconciler: hardSet,
-  blacklist: ['form', 'ShowToast']
+  blacklist: ['form', 'ShowToast', 'PaymentDetails']
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

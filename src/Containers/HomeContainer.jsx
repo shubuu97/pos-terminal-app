@@ -2,7 +2,8 @@ import React from 'react';
 import { Detector } from 'react-detect-offline';
 /* Lodash Imports */
 import _get from 'lodash/get';
-import _isEmpty from 'lodash/isEmpty'
+import _isEmpty from 'lodash/isEmpty';
+import _find from 'lodash/find'
 /* Material Icons */
 import SignalWifiOffOutlined from '@material-ui/icons/SignalWifiOffOutlined'
 /* Redux Imports */
@@ -29,7 +30,7 @@ import MiscProductModal from '../Components/ProductsSection/MiscProductModal';
 import SessionContainer from './SessionContainer';
 import LockTerminalDialogue from '../Components/Dialogues/LockTerminalDialogue'
 import OfflineTransactionContainer from './OfflineTransactionContainer';
-
+import Customer from '../Components/CheckoutSection/Customer';
 
 let SessionDialog = withDialog(SessionContainer)
 let OfflineTransactionDialog = withDialog(OfflineTransactionContainer)
@@ -121,6 +122,7 @@ class HomeContainer extends React.Component {
             dispatch: this.props.dispatch,
             reqObj: data,
             url: 'Rewards/RedemptionRule/ByRetailer',
+            dontShowMessage: true,
             constants: {
                 init: 'GET_LOYALTY_REDEMPTION_RULES_INIT',
                 success: 'GET_LOYALTY_REDEMPTION_RULES_SUCCESS',
@@ -134,6 +136,7 @@ class HomeContainer extends React.Component {
             dispatch: this.props.dispatch,
             reqObj: data,
             url: 'Rewards/EarningRule/ByRetailer',
+            dontShowMessage: true,
             constants: {
                 init: 'GET_LOYALTY_EARNING_RULES_INIT',
                 success: 'GET_LOYALTY_EARNING_RULES_SUCCESS',
@@ -498,7 +501,7 @@ const OfflineTransactionPusher = async (propsOfComp, dispatch) => {
         return;
     }
 }
-const updateTimeStampAndDb = async (res) => {
+const updateTimeStampAndDbForInventory = async (res, dispatch, extraArgs) => {
     let tempInvetoryUpdateTime = localStorage.getItem('tempInvetoryUpdateTime');
     localStorage.setItem('invetoryUpdateTime', tempInvetoryUpdateTime)
 
@@ -511,10 +514,20 @@ const updateTimeStampAndDb = async (res) => {
     });
     Promise.all(promiseArray).then(async (updatedInventoryWith_Rev) => {
         let resOfUpdateBulk = await productsdb.bulkDocs(updatedInventoryWith_Rev);
+        //!this is the code for updating the current reducer;
+        // console.log(updatedInventoryWith_Rev, extraArgs, "this is the code for updating the current reducer 1");
+        // let productList = _get(extraArgs, 'productList', []) || [];
+        // updatedInventoryWith_Rev.map((updatedInventory, index) => {
+        //     console.log(updatedInventory, productList, "this is the code for updating the current reducer 2");
+        //     let res = _find(productList, {id:updatedInventory._id});
+            
+        //     console.log(updatedInventoryWith_Rev, extraArgs, res, "this is the code for updating the current reducer 3");
+
+        // })
     })
 
 }
-const getInventoryUpdate = (propsOfComp, dispatch) => {
+const getInventoryUpdate = async (propsOfComp, dispatch) => {
     let reqObj = {
         id: localStorage.getItem('storeId'),
         timestamp: {
@@ -528,7 +541,42 @@ const getInventoryUpdate = (propsOfComp, dispatch) => {
         method: 'POST',
         reqObj,
         url: 'Inventory/Increment',
-        successCb: updateTimeStampAndDb,
+        successCb: updateTimeStampAndDbForInventory,
+        extraArgs: propsOfComp,
+        errorCb: (err) => {
+            console.log(err, "err is here")
+        }
+    })
+}
+const updateTimeStampAndDbForCustomer = async (res) => {
+    let tempCustomerTime = localStorage.getItem('tempCustomerTime');
+    localStorage.setItem('CustomerTime', tempCustomerTime)
+
+    let customerdb = new PouchDb('customersdb');
+    let updatedCustomer = _get(res, 'data', []) || [];
+    updatedCustomer.forEach((item, index) => {
+        item._id = item.id
+    });
+    console.log(updatedCustomer, '*********resCustomer*********');
+    let resOfUpdateBulk = await customerdb.bulkDocs(updatedCustomer);
+    console.log(resOfUpdateBulk, "*********resOfUpdateBulk**********");
+
+}
+const getCustomerUpdate = async (propsOfComp, dispatch) => {
+    let reqObj = {
+        id: localStorage.getItem('retailerId'),
+        timestamp: {
+            seconds: parseInt(localStorage.getItem('CustomerTime'))
+        }
+    };
+    let tempCustomerTime = Date.now();
+    tempCustomerTime = parseInt(tempCustomerTime / 1000);
+    localStorage.setItem('tempCustomerTime', tempCustomerTime);
+    axiosFetcher({
+        method: 'POST',
+        reqObj,
+        url: 'Customer/Increment',
+        successCb: updateTimeStampAndDbForCustomer,
         errorCb: (err) => {
             console.log(err, "err is here")
         }
@@ -536,13 +584,14 @@ const getInventoryUpdate = (propsOfComp, dispatch) => {
 }
 const pollingWrapper = async (propsOfComp, dispatch) => {
     await getInventoryUpdate(propsOfComp, dispatch);
+    await getCustomerUpdate(propsOfComp, dispatch)
     OfflineTransactionPusher(propsOfComp, dispatch);
     return;
 
 }
 
 
-HomeContainer = pollingHoc(60000, pollingWrapper)(HomeContainer)
+HomeContainer = pollingHoc(5000, pollingWrapper)(HomeContainer)
 
 
 export default connect(mapStateToProps)(HomeContainer)

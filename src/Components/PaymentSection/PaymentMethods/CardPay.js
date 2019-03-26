@@ -7,6 +7,11 @@ import CloseIcon from '@material-ui/icons/Close';
 /* Redux Imports */
 import { connect } from 'react-redux';
 import { commonActionCreater } from '../../../Redux/commonAction';
+// var parser = require('xml2json');
+var convert = require('xml-js');
+
+
+const request = require('superagent');
 
 let regex = /^\d*[\.\d]+$/;
 
@@ -40,6 +45,42 @@ class CardPay extends React.Component {
         this.props.dispatch(commonActionCreater({ cardAmount: '', totalAmount: this.props.totalAmount }, 'CARD_INPUT_HANDLER'));
 
     }
+    reqPaymentByCard = () => {
+        //const parseString = require('xml2js').parseString;
+        var xmlBodyStr = '<POSRequest>\
+        <RequestType>Sale</RequestType>\
+        <CardNumber>4386128598056733</CardNumber>\
+        <ExpiryDate>09/19</ExpiryDate>\
+        <CardType>visa</CardType>\
+        <TokenType>2</TokenType>\
+        <ChargeAmount>49</ChargeAmount>\
+        <TaxAmount>0</TaxAmount>\
+        <TipAmount>0</TipAmount>\
+        <ClientEnvironment>FCCTestClient 4.1.10.3</ClientEnvironment>\
+        <StoreId>1234567</StoreId>\
+        <TerminalId>123456789</TerminalId>\
+        <MerchantReferenceCode>D3F35ED5369A48E9</MerchantReferenceCode>\
+        <InvoiceNumber>174211</InvoiceNumber>\
+        <Recurring p2:nil="true" xmlns:p2="http://www.w3.org/2001/XMLSchema-instance" />\
+      </POSRequest>';
+        console.log(xmlBodyStr, "xmlBodyStr")
+        var config = {
+            headers: { 'Content-Type': 'text/xml' }
+        };
+        let parser = new DOMParser();
+        let xmlDoc = parser.parseFromString(xmlBodyStr, "text/xml");
+        console.log(xmlDoc, "xmlBodyStr");
+        request
+            .post('http://192.168.1.20:1011')
+            .send(xmlBodyStr) // sends a JSON post body
+            .then(res => {
+                var json = convert.xml2json(res.text, {compact: true, spaces: 4});
+                console.log(JSON.parse(json),"json");
+
+            }).catch(err => {
+                debugger;
+            });
+    }
 
     render() {
         return (
@@ -60,7 +101,7 @@ class CardPay extends React.Component {
                             fullWidth
                         />
                     </div>
-                    <span className="pay-button flex-row justify-center align-center">
+                    <span onClick={this.reqPaymentByCard} className="pay-button flex-row justify-center align-center">
                         pay
               </span>
                     <CloseIcon

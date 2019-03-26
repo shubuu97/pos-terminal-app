@@ -151,8 +151,8 @@ class SyncContainer extends Component {
             }
             let storeId = localStorage.getItem('storeId');
             let invetoryUpdateTime = Date.now();
-            invetoryUpdateTime = parseInt(invetoryUpdateTime/1000);
-            localStorage.setItem('invetoryUpdateTime',invetoryUpdateTime);
+            invetoryUpdateTime = parseInt(invetoryUpdateTime / 1000);
+            localStorage.setItem('invetoryUpdateTime', invetoryUpdateTime);
             axiosFetcher({
                 method: 'POST',
                 url: 'Inventory/ByStoreId',
@@ -173,6 +173,9 @@ class SyncContainer extends Component {
                 return;
             };
             let retailerId = localStorage.getItem('retailerId');
+            let CustomerTime = Date.now();
+            CustomerTime = parseInt(CustomerTime / 1000);
+            localStorage.setItem('CustomerTime', CustomerTime);
             axiosFetcher({
                 method: 'POST',
                 // reqObj: { email: this.state.email, password: this.state.password },

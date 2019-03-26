@@ -1,11 +1,13 @@
 import React from 'react';
-import {render} from "react-dom";
+import { render } from "react-dom";
 // import HeaderLayout from './components/common/HeaderNav.jsx';
 
 import Snackbar from '@material-ui/core/Snackbar';
 import _get from 'lodash/get';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
+
+
 
 const styles = theme => ({
   failure: {
@@ -22,12 +24,11 @@ class EmptyLayout extends React.Component {
 
   render() {
     let { classes } = this.props;
-
     return (
       <div className="login-container">
         {/* <HeaderLayout /> */}
         <React.Fragment>
-            {this.props.children}
+          {this.props.children}
         </React.Fragment>
         <div>{this.props.message.text && <Snackbar
           anchorOrigin={{
@@ -49,8 +50,8 @@ class EmptyLayout extends React.Component {
       </div>
     );
   }
-  
-  
+
+
 }
 function mapStateToProps(state) {
   let message = _get(state, 'ShowToast.message', '')

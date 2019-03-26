@@ -13,7 +13,7 @@ const HandlePrint = (props) => {
         let itemSubTotal = 0
         let empDis
         if (_get(item, 'employeeDiscountPercent', '') !== 0) {
-            empDis = (_get(item, 'itemRegularTotal.amount',0) * _get(item, 'employeeDiscountPercent')) / 100
+            empDis = (_get(item, 'itemRegularTotal.amount', 0) * _get(item, 'employeeDiscountPercent', 0)) / 100
         } else {
             empDis = 0
         }
@@ -24,7 +24,7 @@ const HandlePrint = (props) => {
         } else {
             itemDis = (_get(item, 'itemRegularTotal.amount',0) * _get(item, 'itemDiscountPercent')) / 100
         }
-        itemSubTotal = ((_get(item, 'doc.product.salePrice.price', '0') * _get(item, 'qty', 1)) - (empDis + itemDis))
+        itemSubTotal = ((_get(item, 'doc.product.salePrice.price', 0) * _get(item, 'qty', 1)) - (empDis + itemDis))
         stSubTotal += itemSubTotal
         return (
             <div style={{ display: 'flex', flex: '1', paddingTop: "10px", paddingBottom: "10px", borderBottom: 'dotted 1px #9e9e9e' }}>
@@ -56,7 +56,7 @@ const HandlePrint = (props) => {
         if(!isItemDisExist) {
             itemDis = 0
         } else {
-            itemDis = (_get(item,'saleItem.itemRegularTotal.amount') * _get(item,'saleItem.itemDiscountPercent')) / 100   
+            itemDis = (_get(item,'saleItem.itemRegularTotal.amount', 0) * _get(item,'saleItem.itemDiscountPercent', 0)) / 100   
         }
         itemSubTotal = (_get(item, 'product.salePrice.price', 0) * _get(item, 'saleItem.qty', 1)) - (empDis + itemDis) 
         ohSubTotal += itemSubTotal
@@ -93,7 +93,7 @@ const HandlePrint = (props) => {
     return (
         <div style={{ fontSize: "12px", fontFamily: "arial, sans-serif" }} >
             <div style={{ textAlign: "center" }}>
-                <div className="store-logo"> <img src={logo} /></div>
+                <div className="store-logo"> <img src={props.logo}/></div>
                 <div style={{ marginTop: '15px' }}>{_get(props, 'orderId', '')}</div>
                 <div>{_get(props, 'orderDate', '')}</div>
                 <div style={{ marginTop: '10px' }}><span style={{ color: '#9e9e9e', fontSize: '11px', fontWeight: 'bold' }}>STORE:</span> {_get(props, 'storeName', '')}</div>
@@ -156,17 +156,17 @@ const HandlePrint = (props) => {
             <div style={{ display: 'flex', flex: '1', flexDirection: 'column', borderBottom: 'solid 1px #9e9e9e', paddingTop: "5px", paddingBottom: "5px", marginBottom: "15px" }} >
                 {/* {props.regularTotal &&
                      <div style={{display:'flex',  justifyContent:'space-between', paddingBottom:"4px"}}>
-                        REGULAR TOTAL: <span style={{fontWeight:'bold'}}>{_get(props,'currency', '') + _get(props,'regularTotal','0')}</span>
+                        REGULAR TOTAL: <span style={{fontWeight:'bold'}}>{_get(props,'currency', '') + _get(props,'regularTotal', 0)}</span>
                      </div>
                 } */}
                 {/* {props.totalDiscount &&
                      <div style={{display:'flex',  justifyContent:'space-between', paddingBottom:"4px"}}>
-                        TOTAL DISCOUNT: <span style={{fontWeight:'bold'}}>{_get(props,'currency', '') + _get(props,'totalDiscount','0')}</span>
+                        TOTAL DISCOUNT: <span style={{fontWeight:'bold'}}>{_get(props,'currency', '') + _get(props,'totalDiscount', 0)}</span>
                      </div>
                 } */}
                 {/* {props.netTotal &&
                      <div style={{display:'flex',  justifyContent:'space-between', paddingBottom:"4px"}}>
-                        NET TOTAL: <span style={{fontWeight:'bold'}}>{_get(props,'currency', '') + _get(props,'netTotal','0')}</span>
+                        NET TOTAL: <span style={{fontWeight:'bold'}}>{_get(props,'currency', '') + _get(props,'netTotal', 0)}</span>
                      </div>
                 }
                     */}
