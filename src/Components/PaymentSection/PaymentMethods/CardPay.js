@@ -8,7 +8,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { connect } from 'react-redux';
 import { commonActionCreater } from '../../../Redux/commonAction';
 
-import axios from 'axios';
+const request = require('superagent');
 
 let regex = /^\d*[\.\d]+$/;
 
@@ -44,36 +44,37 @@ class CardPay extends React.Component {
     }
     reqPaymentByCard = () => {
         //const parseString = require('xml2js').parseString;
-        var xmlBodyStr = `
-        <POSRequest>
-        <RequestType>Sale</RequestType>
-        <CardNumber>4386128598056733</CardNumber>
-        <ExpiryDate>09/19</ExpiryDate>
-        <CardType>visa</CardType>
-        <TokenType>2</TokenType>
-        <ChargeAmount>49</ChargeAmount>
-        <TaxAmount>0</TaxAmount>
-        <TipAmount>0</TipAmount>
-        <ClientEnvironment>FCCTestClient 4.1.10.3</ClientEnvironment>
-        <StoreId>1234567</StoreId>
-        <TerminalId>123456789</TerminalId>
-        <MerchantReferenceCode>D3F35ED5369A48E9</MerchantReferenceCode>
-        <InvoiceNumber>174211</InvoiceNumber>
-        <Recurring p2:nil="true" xmlns:p2="http://www.w3.org/2001/XMLSchema-instance" />
-      </POSRequest>`;
+        var xmlBodyStr = '<POSRequest>\
+        <RequestType>Sale</RequestType>\
+        <CardNumber>4386128598056733</CardNumber>\
+        <ExpiryDate>09/19</ExpiryDate>\
+        <CardType>visa</CardType>\
+        <TokenType>2</TokenType>\
+        <ChargeAmount>49</ChargeAmount>\
+        <TaxAmount>0</TaxAmount>\
+        <TipAmount>0</TipAmount>\
+        <ClientEnvironment>FCCTestClient 4.1.10.3</ClientEnvironment>\
+        <StoreId>1234567</StoreId>\
+        <TerminalId>123456789</TerminalId>\
+        <MerchantReferenceCode>D3F35ED5369A48E9</MerchantReferenceCode>\
+        <InvoiceNumber>174211</InvoiceNumber>\
+        <Recurring p2:nil="true" xmlns:p2="http://www.w3.org/2001/XMLSchema-instance" />\
+      </POSRequest>';
         console.log(xmlBodyStr, "xmlBodyStr")
         var config = {
-            headers: { 'Content-Type': 'application/xml' }
+            headers: { 'Content-Type': 'text/xml' }
         };
         let parser = new DOMParser();
         let xmlDoc = parser.parseFromString(xmlBodyStr, "text/xml");
-        let formData = new FormData();
-        console.log(xmlDoc, "xmlBodyStr")
-        axios.post('http://192.168.1.20:1011', xmlBodyStr).then(res => {
-            debugger;
-        }).catch(err => {
-            debugger;
-        });
+        console.log(xmlDoc, "xmlBodyStr");
+        request
+            .post('http://192.168.1.20:1011')
+            .send(xmlBodyStr) // sends a JSON post body
+            .then(res => {
+                debugger;
+            }).catch(err => {
+                debugger;
+            });
     }
 
     render() {
