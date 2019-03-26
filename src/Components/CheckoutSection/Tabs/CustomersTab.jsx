@@ -21,7 +21,6 @@ import PouchDb from 'pouchdb';
 import PAM from "pouchdb-adapter-memory";
 import { commonActionCreater } from '../../../Redux/commonAction';
 import Customer from '../Customer';
-import {handleZipCode} from '../../../Components/commonZipCode'
 import {reset} from 'redux-form';
 
 PouchDb.plugin(PAM);
