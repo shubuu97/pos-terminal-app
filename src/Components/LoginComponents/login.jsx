@@ -18,7 +18,8 @@ class Login extends React.Component {
             password: '',
         }
     }
-    handleSubmitLogin = () => {
+    handleSubmitLogin = (event) => {
+        event.preventDefault();
         this.setState({ isFetching: true });
         genericPostData({
             dispatch: this.props.dispatch,
