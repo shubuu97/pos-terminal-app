@@ -6,6 +6,7 @@ import _findIndex from 'lodash/findIndex';
 import _isArray from 'lodash/isArray';
 /* Material import */
 import Button from '@material-ui/core/Button';
+import { withStyles } from '@material-ui/core/styles'
 /* Material Icons */
 import PersonAdd from '@material-ui/icons/PersonAddOutlined';
 import History from '@material-ui/icons/History';
@@ -25,7 +26,13 @@ PouchDb.plugin(PAM);
 PouchDb.plugin(require('pouchdb-quick-search'));
 let customerdb = new PouchDb('customersdb');
 
-
+const styles = theme => ({
+    darkColor: {
+        background: theme.palette.secondary.light,
+        color: theme.palette.secondary.text,
+        height: '50px'
+    }
+})
 
 class CustomerTab extends React.Component {
 
@@ -119,12 +126,17 @@ class CustomerTab extends React.Component {
             return offlineContent
     }
 
+    proceedAsGuest = () => {
+        addGuestToCart(this.props.dispatch);
+        this.handleClickProceed()
+    }
+
     render() {
         let { checkoutactionArea, checkoutMainPart, checkoutCustomerArea, checkoutcalcArea, checkoutcartArea, guest, employee } = this.props
         return (
             <div className="customer-section" >
-                <div className="customer-main" style={{ height: checkoutcartArea }}>
-                    <div className='search-section flex-row'>
+                <div className="customer-main flex-column align-center" style={{ height: checkoutcartArea }}>
+                    <div className='search-section flex-row fwidth'>
                         <ReactSelect
                             value={this.state.value}
                             onInputChange={this.onInputChange}
@@ -148,7 +160,7 @@ class CustomerTab extends React.Component {
                             fullScreen={false}
                         />
                     </div>
-                    <div className='d-flex mt-20'>
+                    <div className='d-flex mt-20 fwidth'>
                         <div className='customer-info'>
                             <div className='each-info'>
                                 <div className='info-title'>Name</div>
@@ -177,6 +189,14 @@ class CustomerTab extends React.Component {
                             </div>]
                         )} />
                     </div>
+                    {
+                       !guest ? 
+                        <div className='flex-column align-center justify-center'>
+                            <div>Or</div>
+                            <Button className={`${this.props.classes.darkColor} mt-20`} variant="contained" onClick={this.proceedAsGuest}>Proceed as Guest</Button>
+                        </div> : null
+
+                    }
                 </div>
                 <div className="order-amount-section">
                     <CalculationSection
@@ -199,5 +219,5 @@ function mapStateToProps(state) {
     return { ...customer, cart }
 }
 
-export default connect(mapStateToProps)(CustomerTab);
+export default connect(mapStateToProps)(withStyles(styles)(CustomerTab));
 

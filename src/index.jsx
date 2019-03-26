@@ -52,7 +52,7 @@ const persistConfig = {
   key: 'SMEInvestorRoot',
   storage,
   stateReconciler: hardSet,
-  blacklist: ['form', 'ShowToast']
+  blacklist: ['form', 'ShowToast', 'PaymentDetails']
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
