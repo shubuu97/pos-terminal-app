@@ -43,7 +43,7 @@ class CardPay extends React.Component {
 
     }
     reqPaymentByCard = () => {
-        const parseString = require('xml2js').parseString;
+        //const parseString = require('xml2js').parseString;
         var xmlBodyStr = `
         <POSRequest>
         <RequestType>Sale</RequestType>
