@@ -1,7 +1,7 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { Detector } from 'react-detect-offline';
-import logo from '../../assets/images/aobLogodark.png';
+import aobLogo from '../../assets/images/aobLogodark.png';
 /* Lodash Imports */
 import _get from 'lodash/get';
 import _set from 'lodash/set';
@@ -520,6 +520,14 @@ class PaymentSection extends React.Component {
     render() {
         let {paymentOptionsPart, paymentMainPart, paymentCalculator, paymentSaleComment, paymentSubmitTransaction} = this.props
         let disable = this.props.remainingAmount <= 0 ? { opacity: '0.3', pointerEvents: 'none' } : null
+
+        let logo 
+        if(localStorage.getItem('storeLogo') !== '') {
+            logo = localStorage.getItem('storeLogo')
+        } else {
+            logo = {aobLogo}
+        }
+
         return (
             <div className='pos-payment'>
                 <div className='flex-column'>

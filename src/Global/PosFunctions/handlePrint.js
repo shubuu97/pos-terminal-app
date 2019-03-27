@@ -1,7 +1,6 @@
 import React from 'react';
 import _get from 'lodash/get';
 import _isEmpty from 'lodash/isEmpty';
-import logo from '../../assets/images/aobLogodark.png';
 import '../../assets/stylesheets/print.css';
 
 var Barcode = require('react-barcode');
@@ -28,7 +27,7 @@ const HandlePrint = (props) => {
         stSubTotal += itemSubTotal
         return (
             <div style={{ display: 'flex', flex: '1', paddingTop: "10px", paddingBottom: "10px", borderBottom: 'dotted 1px #9e9e9e' }}>
-                <div style={{ width: "35%" }}>{_get(item, 'doc.product.name', ' ')}</div>
+                <div style={{ width: "35%" }}>{_get(item, 'doc.product.isGiftCard', false) ? 'Gift Card' :  _get(item, 'doc.product.name', ' ')}</div>
                 <div style={{ width: "10%", textAlign: "center" }}>{_get(item, 'qty', '')}</div>
                 <div style={{ width: "30%", textAlign: "right" }}>{_get(item, 'doc.product.salePrice.price', 0).toFixed(2)}<br />
                     <div style={{ fontSize: "9px" }}>
@@ -42,6 +41,7 @@ const HandlePrint = (props) => {
     })
 
     const orderHistory = _get(props, 'itemList', []).map(item => {
+        console.log(item, 'checking item')
         let itemSubTotal = 0
         let empDis
         let salePrice = _get(item, 'product.salePrice.price', 0)
@@ -59,18 +59,22 @@ const HandlePrint = (props) => {
             itemDis = (_get(item,'saleItem.itemRegularTotal.amount', 0) * _get(item,'saleItem.itemDiscountPercent', 0)) / 100   
         }
         itemSubTotal = (_get(item, 'product.salePrice.price', 0) * _get(item, 'saleItem.qty', 1)) - (empDis + itemDis) 
-        ohSubTotal += itemSubTotal
+        if(_isEmpty(item.giftCard)) {
+            ohSubTotal += itemSubTotal
+        } else {
+            ohSubTotal += _get(item, 'giftCard.value.amount',0)
+        }
         return (
             <div style={{ display: 'flex', flex: '1', paddingTop: "10px", paddingBottom: "10px", borderBottom: 'dotted 1px #9e9e9e' }}>
-                <div style={{ width: "35%", paddingRight: '10px' }}>{_get(item, 'product.name','')}</div>
+                <div style={{ width: "35%", paddingRight: '10px' }}>{_isEmpty(item.giftCard) ? _get(item, 'product.name','') : 'Gift Card'}</div>
                 <div style={{ width: "10%", textAlign: "center" }}>{_get(item, 'saleItem.qty', '')}</div>
-                <div style={{ width: "30%", textAlign: "right" }}>{salePrice.toFixed(2)}<br />
+                <div style={{ width: "30%", textAlign: "right" }}>{_isEmpty(item.giftCard) ? salePrice.toFixed(2) : _get(item, 'giftCard.value.amount',0)}<br />
                     <div style={{ fontSize: "9px" }}>
                         {itemDis == 0 ? '' : <span>(Item Disc.: {itemDis.toFixed(2)})</span>}<br />
                         {empDis == 0 ? '' : <span>(Emp Disc.: {empDis.toFixed(2)})</span>}
                     </div>
                 </div>
-                <div style={{ width: "25%", textAlign: "right" }}>{itemSubTotal.toFixed(2)}</div>
+                <div style={{ width: "25%", textAlign: "right" }}>{_isEmpty(item.giftCard) ? itemSubTotal.toFixed(2) : _get(item, 'giftCard.value.amount',0)}</div>
             </div>
         )
     })
@@ -93,7 +97,7 @@ const HandlePrint = (props) => {
     return (
         <div style={{ fontSize: "12px", fontFamily: "arial, sans-serif" }} >
             <div style={{ textAlign: "center" }}>
-                <div className="store-logo"> <img src={props.logo}/></div>
+                <div style={{height: "100px", width: "100%"}}> <img style={{height: "100%", width: "auto"}} src={props.logo}/></div>
                 <div style={{ marginTop: '15px' }}>{_get(props, 'orderId', '')}</div>
                 <div>{_get(props, 'orderDate', '')}</div>
                 <div style={{ marginTop: '10px' }}><span style={{ color: '#9e9e9e', fontSize: '11px', fontWeight: 'bold' }}>STORE:</span> {_get(props, 'storeName', '')}</div>
