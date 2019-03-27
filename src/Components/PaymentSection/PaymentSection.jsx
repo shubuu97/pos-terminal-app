@@ -30,7 +30,7 @@ import GiftPay from './PaymentMethods/GiftPay';
 import LoyaltyRedeem from './PaymentMethods/LoyaltyRedeem';
 import PaymentReceipt from './paymentReceipt';
 import CostCenter from './CostCenter';
-import CardPaymentDialogue from './Dialogue/CardPaymentDialogue'
+
 
 let transactiondb = new PouchDb('transactiondb')
 /* style */
@@ -459,201 +459,215 @@ class PaymentSection extends React.Component {
             defaultcardAmountValue: '',
             cashPayValue: '',
             giftPayNumberValue: '',
-            receiptData: {}        
+            receiptData: {}
         });
         this.props.history.push('/?tab==1');
     }
-
-    buttonToRender = ({ online }) => {
-        if (online)
-            return (<LoaderButton
-                color='primary'
-                isFetching={this.state.isLoadingTransaction}
-                fullWidth
-                disabled={this.props.remainingAmount > 0}
-                variant='contained'
-                onClick={() => this.handleSaleTransaction(!online)}
-            >  Submit Transaction
-        </LoaderButton>)
-        else {
-            return (<LoaderButton
-                style={{ color: 'red' }}
-                fullWidth
-                isFetching={this.state.isLoadingTransaction}
-                disabled={this.props.remainingAmount > 0}
-                variant='contained'
-                onClick={() => this.handleSaleTransaction(!online)}
-            >  Submit Transaction Offline
-        </LoaderButton>)
+    disableDecider = () => {
+        if (this.props.remainingAmount > 0) {
+            return true
         }
+        if (this.state.showCardPay ) {
+            if(this.props.cardAmount){
+                if(!this.props.cardRefrenceId){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
-    handleChange = name => event => {
-        this.setState({
-            [name]: event.target.value,
-        });
-    };
-    giftCardRender = ({ online }) => {
-        let disable = this.props.remainingAmount <= 0 ? { opacity: '0.3', pointerEvents: 'none' } : null
-        if (online)
-            return (
-                <React.Fragment>
-                    <li style={disable} onClick={this.handleGiftCardPayment} className="giftcard-section">Gift Card</li>
-                    {
-                        _get(this.props, 'totalAmount.amount') > _get(this.props, 'redemptionRules.lookUpData.redemptionRule.minimumSaleAmount') && !(_get(this.props, 'customer.guest', false)) ?                     
-                        <li style={disable} onClick={this.handleLoyaltyRedeem} className="giftcard-section">Redeem Points</li> : null
-                    }
-                </React.Fragment>
-            )
-        else {
-            return (
-                <React.Fragment>
-                    <li className='disable-button giftcard-section'>Gift Card</li>
-                    <li className='disable-button giftcard-section'>Redeem Points</li>
-
-                </React.Fragment>
-            
-            )
-
-        }
+buttonToRender = ({ online }) => {
+    if (online)
+        return (<LoaderButton
+            color='primary'
+            isFetching={this.state.isLoadingTransaction}
+            fullWidth
+            disabled={this.disableDecider()}
+            variant='contained'
+            onClick={() => this.handleSaleTransaction(!online)}
+        >  Submit Transaction
+        </LoaderButton>)
+    else {
+        return (<LoaderButton
+            style={{ color: 'red' }}
+            fullWidth
+            isFetching={this.state.isLoadingTransaction}
+            disabled={this.disableDecider()}
+            variant='contained'
+            onClick={() => this.handleSaleTransaction(!online)}
+        >  Submit Transaction Offline
+        </LoaderButton>)
     }
+}
 
-    render() {
-        let {paymentOptionsPart, paymentMainPart, paymentCalculator, paymentSaleComment, paymentSubmitTransaction} = this.props
-        let disable = this.props.remainingAmount <= 0 ? { opacity: '0.3', pointerEvents: 'none' } : null
-
-        let logo 
-        if(localStorage.getItem('storeLogo') !== '') {
-            logo = localStorage.getItem('storeLogo')
-        } else {
-            logo = {aobLogo}
-        }
-
+handleChange = name => event => {
+    this.setState({
+        [name]: event.target.value,
+    });
+};
+giftCardRender = ({ online }) => {
+    let disable = this.props.remainingAmount <= 0 ? { opacity: '0.3', pointerEvents: 'none' } : null
+    if (online)
         return (
-            <div className='pos-payment'>
-                <div className='flex-column'>
-                    <div className='flex-row justify-space-between' style={{height: paymentOptionsPart}}>
-                        <ul className="payment-method">
-                            <li style={disable} onClick={this.handleCashPayment} className="cash-method">Cash</li>
-                            <li style={disable} onClick={this.handleCardPayment} variant="outlined" className="card-method">Debit/Credit Card</li>
-                            {_get(this.props, 'customer.isEmpPayEnabled') ? <li style={disable} onClick={this.handleEmployeePay} disabled={this.props.remainingAmount < 0} className="employee-section">Employee</li> : null}
-                            <Detector render={this.giftCardRender} />
-                            {/* <li  className="freedompay">Freedom <br/> Pay</li>      */}
-                            {/* <li style={disable} onClick={this.handleCostCenter} variant="outlined" className="card-method">Cost Center Charge</li> */}
-                        </ul>
-                    </div>
+            <React.Fragment>
+                <li style={disable} onClick={this.handleGiftCardPayment} className="giftcard-section">Gift Card</li>
+                {
+                    _get(this.props, 'totalAmount.amount') > _get(this.props, 'redemptionRules.lookUpData.redemptionRule.minimumSaleAmount') && !(_get(this.props, 'customer.guest', false)) ?
+                        <li style={disable} onClick={this.handleLoyaltyRedeem} className="giftcard-section">Redeem Points</li> : null
+                }
+            </React.Fragment>
+        )
+    else {
+        return (
+            <React.Fragment>
+                <li className='disable-button giftcard-section'>Gift Card</li>
+                <li className='disable-button giftcard-section'>Redeem Points</li>
 
-                    <div className='flex-row' style={{height: paymentMainPart}}>
-                        <div className='card transaction-card' style={{height: paymentMainPart}}>
-                            <span className='card-title soft-text'>Transactions</span>
-                            <div className="Card">
-                                <span>{this.props.remainingAmount > 0 ? 'Remaining Amount ' : 'Change Due '}</span>
-                                <span>{Math.abs(this.props.remainingAmount).toFixed(2)}</span>
-                            </div>
-                            {this.state.showCashPay ?
-                                <CashPay
-                                    handleKeyBoardValue={this.handleKeyBoardValue}
-                                    currentFocus={this.currentFocus}
-                                    value={this.props.cashAmount}
-                                    onRemovePaymentMethod={this.onRemovePaymentMethod}
-                                /> : null}
-                            {this.state.showCardPay ?
-                                <CardPay
-                                    handleKeyBoardValue={this.handleKeyBoardValue}
-                                    currentFocus={this.currentFocus}
-                                    value={this.props.cardAmount}
-                                    onRemovePaymentMethod={this.onRemovePaymentMethod}
-                                /> : null}
-                            {this.state.showEmpPay ?
-                                <EmployeePay
-                                    handleKeyBoardValue={this.handleKeyBoardValue}
-                                    customer={this.props.customer}
-                                    value={this.props.employeePay}
-                                    currentFocus={this.currentFocus}
-                                    onRemovePaymentMethod={this.onRemovePaymentMethod}
-                                /> : null}
-                            {this.state.showGiftPay ?
-                                <GiftPay
-                                    handleKeyBoardValue={this.handleKeyBoardValue}
-                                    handleGiftCardValue={this.handleGiftCardValue}
-                                    getGiftCardDetail={this.getGiftCardDetail}
-                                    giftPayNumberValue={this.state.giftPayNumberValue}
-                                    giftAmountRedeemValue={this.state.giftAmountRedeemValue}
-                                    currentFocus={this.currentFocus}
-                                    giftCard={this.state.giftCard}
-                                    giftCardId={_get(this.state, 'giftCard.id', '')}
-                                    originalGiftCard={this.state.originalGiftCard}
-                                    onRemovePaymentMethod={this.onRemovePaymentMethod}
-                                    onPayWithGiftCard={this.onPayWithGiftCard}
-                                /> : null}
-                            {this.state.showLoyaltyRedeem ?
-                                <LoyaltyRedeem
-                                    handleKeyBoardValue={this.handleKeyBoardValue}
-                                    currentFocus={this.currentFocus}
-                                    value={this.props.loyaltyRedeem}
-                                    onRemovePaymentMethod={this.onRemovePaymentMethod}
-                                /> : null}
-                            {/* {
+            </React.Fragment>
+
+        )
+
+    }
+}
+
+render() {
+    let { paymentOptionsPart, paymentMainPart, paymentCalculator, paymentSaleComment, paymentSubmitTransaction } = this.props
+    let disable = this.props.remainingAmount <= 0 ? { opacity: '0.3', pointerEvents: 'none' } : null
+
+    let logo
+    if (localStorage.getItem('storeLogo') !== '') {
+        logo = localStorage.getItem('storeLogo')
+    } else {
+        logo = { aobLogo }
+    }
+
+    return (
+        <div className='pos-payment'>
+            <div className='flex-column'>
+                <div className='flex-row justify-space-between' style={{ height: paymentOptionsPart }}>
+                    <ul className="payment-method">
+                        <li style={disable} onClick={this.handleCashPayment} className="cash-method">Cash</li>
+                        <li style={disable} onClick={this.handleCardPayment} variant="outlined" className="card-method">Debit/Credit Card</li>
+                        {_get(this.props, 'customer.isEmpPayEnabled') ? <li style={disable} onClick={this.handleEmployeePay} disabled={this.props.remainingAmount < 0} className="employee-section">Employee</li> : null}
+                        <Detector render={this.giftCardRender} />
+                        {/* <li  className="freedompay">Freedom <br/> Pay</li>      */}
+                        {/* <li style={disable} onClick={this.handleCostCenter} variant="outlined" className="card-method">Cost Center Charge</li> */}
+                    </ul>
+                </div>
+
+                <div className='flex-row' style={{ height: paymentMainPart }}>
+                    <div className='card transaction-card' style={{ height: paymentMainPart }}>
+                        <span className='card-title soft-text'>Transactions</span>
+                        <div className="Card">
+                            <span>{this.props.remainingAmount > 0 ? 'Remaining Amount ' : 'Change Due '}</span>
+                            <span>{Math.abs(this.props.remainingAmount).toFixed(2)}</span>
+                        </div>
+                        {this.state.showCashPay ?
+                            <CashPay
+                                handleKeyBoardValue={this.handleKeyBoardValue}
+                                currentFocus={this.currentFocus}
+                                value={this.props.cashAmount}
+                                onRemovePaymentMethod={this.onRemovePaymentMethod}
+                            /> : null}
+                        {this.state.showCardPay ?
+                            <CardPay
+                                handleKeyBoardValue={this.handleKeyBoardValue}
+                                currentFocus={this.currentFocus}
+                                value={this.props.cardAmount}
+                                onRemovePaymentMethod={this.onRemovePaymentMethod}
+                            /> : null}
+                        {this.state.showEmpPay ?
+                            <EmployeePay
+                                handleKeyBoardValue={this.handleKeyBoardValue}
+                                customer={this.props.customer}
+                                value={this.props.employeePay}
+                                currentFocus={this.currentFocus}
+                                onRemovePaymentMethod={this.onRemovePaymentMethod}
+                            /> : null}
+                        {this.state.showGiftPay ?
+                            <GiftPay
+                                handleKeyBoardValue={this.handleKeyBoardValue}
+                                handleGiftCardValue={this.handleGiftCardValue}
+                                getGiftCardDetail={this.getGiftCardDetail}
+                                giftPayNumberValue={this.state.giftPayNumberValue}
+                                giftAmountRedeemValue={this.state.giftAmountRedeemValue}
+                                currentFocus={this.currentFocus}
+                                giftCard={this.state.giftCard}
+                                giftCardId={_get(this.state, 'giftCard.id', '')}
+                                originalGiftCard={this.state.originalGiftCard}
+                                onRemovePaymentMethod={this.onRemovePaymentMethod}
+                                onPayWithGiftCard={this.onPayWithGiftCard}
+                            /> : null}
+                        {this.state.showLoyaltyRedeem ?
+                            <LoyaltyRedeem
+                                handleKeyBoardValue={this.handleKeyBoardValue}
+                                currentFocus={this.currentFocus}
+                                value={this.props.loyaltyRedeem}
+                                onRemovePaymentMethod={this.onRemovePaymentMethod}
+                            /> : null}
+                        {/* {
                                 this.state.showCostCenter ?
                                     <CostCenter /> : null
                             } */}
 
-                        </div>
+                    </div>
 
-                        <div className='numpad-section' style={{height: paymentMainPart}}>
-                            <div className='card numpad-card' style={{height: paymentCalculator}}>
-                                <span className='card-title'>Numpad</span>
-                                <div className='flex-row flex-wrap justify-center pt-15'>
-                                    <div className='key small-key' onClick={this.handleInputChange('1')}>1</div>
-                                    <div className='key small-key' onClick={this.handleInputChange('2')}>2</div>
-                                    <div className='key small-key' onClick={this.handleInputChange('3')}>3</div>
-                                    <div className='key small-key' onClick={this.handleInputChange('4')}>4</div>
-                                    <div className='key small-key' onClick={this.handleInputChange('5')}>5</div>
-                                    <div className='key small-key' onClick={this.handleInputChange('6')}>6</div>
-                                    <div className='key small-key' onClick={this.handleInputChange('7')}>7</div>
-                                    <div className='key small-key' onClick={this.handleInputChange('8')}>8</div>
-                                    <div className='key small-key' onClick={this.handleInputChange('9')}>9</div>
-                                    <div className='key small-key' onClick={this.handleInputChange('.')}>.</div>
-                                    <div className='key small-key' onClick={this.handleInputChange('0')}>0</div>
-                                    <div className='key small-key' onClick={this.handleInputChange('<')}>clr</div>
-                                    <div className='small-key'></div>
-                                    <div className='key big-key'>Enter</div>
-                                </div>
+                    <div className='numpad-section' style={{ height: paymentMainPart }}>
+                        <div className='card numpad-card' style={{ height: paymentCalculator }}>
+                            <span className='card-title'>Numpad</span>
+                            <div className='flex-row flex-wrap justify-center pt-15'>
+                                <div className='key small-key' onClick={this.handleInputChange('1')}>1</div>
+                                <div className='key small-key' onClick={this.handleInputChange('2')}>2</div>
+                                <div className='key small-key' onClick={this.handleInputChange('3')}>3</div>
+                                <div className='key small-key' onClick={this.handleInputChange('4')}>4</div>
+                                <div className='key small-key' onClick={this.handleInputChange('5')}>5</div>
+                                <div className='key small-key' onClick={this.handleInputChange('6')}>6</div>
+                                <div className='key small-key' onClick={this.handleInputChange('7')}>7</div>
+                                <div className='key small-key' onClick={this.handleInputChange('8')}>8</div>
+                                <div className='key small-key' onClick={this.handleInputChange('9')}>9</div>
+                                <div className='key small-key' onClick={this.handleInputChange('.')}>.</div>
+                                <div className='key small-key' onClick={this.handleInputChange('0')}>0</div>
+                                <div className='key small-key' onClick={this.handleInputChange('<')}>clr</div>
+                                <div className='small-key'></div>
+                                <div className='key big-key'>Enter</div>
                             </div>
-                            <div className='card' style={{height: paymentSaleComment}}>
-                                <TextField
-                                    id="outlined-name"
-                                    label="Sale Comment"
-                                    value={this.state.comment}
-                                    onChange={this.handleChange('comment')}
-                                    margin="none"
-                                    variant="outlined"
-                                    fullWidth
-                                />
-                            </div>
-                            <div className="flex-row justify-flex-end mr-10 ml-10 submit-transaction" style={{height: paymentSubmitTransaction}}>
-                                <div style={{ width: '100%' }}>
-                                    <Detector
-                                        render={this.buttonToRender} />
-                                </div>
+                        </div>
+                        <div className='card' style={{ height: paymentSaleComment }}>
+                            <TextField
+                                id="outlined-name"
+                                label="Sale Comment"
+                                value={this.state.comment}
+                                onChange={this.handleChange('comment')}
+                                margin="none"
+                                variant="outlined"
+                                fullWidth
+                            />
+                        </div>
+                        <div className="flex-row justify-flex-end mr-10 ml-10 submit-transaction" style={{ height: paymentSubmitTransaction }}>
+                            <div style={{ width: '100%' }}>
+                                <Detector
+                                    render={this.buttonToRender} />
                             </div>
                         </div>
                     </div>
                 </div>
-                <div className='none'>
-                    <img src={logo} alt=""/>
-                </div>
-                {this.state.showPaymentReceipt ? <PaymentReceipt
-                    open={this.state.showPaymentReceipt}
-                    transactionStatus={this.state.transactionStatus}
-                    receiptData={this.state.receiptData}
-                    handleClose={this.handleClose}
-                    logo={logo}
-                /> : null}
-                <CardPaymentDialogue/>
             </div>
-        );
-    }
+            <div className='none'>
+                <img src={logo} alt="" />
+            </div>
+            {this.state.showPaymentReceipt ? <PaymentReceipt
+                open={this.state.showPaymentReceipt}
+                transactionStatus={this.state.transactionStatus}
+                receiptData={this.state.receiptData}
+                handleClose={this.handleClose}
+                logo={logo}
+            /> : null}
+
+
+        </div>
+    );
+}
 }
 
 function mapStateToProps(state) {
@@ -673,7 +687,8 @@ function mapStateToProps(state) {
     let remainingAmount = _get(state, 'PaymentDetails.remainingAmount');
     let giftCardData = _get(state, 'PaymentDetails.giftCardData');
     let cart = _get(state, 'cart');
-    let redemptionRules = _get(state, 'RedemptionRules')
+    let redemptionRules = _get(state, 'RedemptionRules');
+    let cardRefrenceId = _get(state, 'PaymentDetails.cardRefrenceId');
 
     return {
         cart,
@@ -692,7 +707,9 @@ function mapStateToProps(state) {
         giftCard,
         giftCardData,
         giftCardPayment,
-        redemptionRules
+        redemptionRules,
+        cardRefrenceId
+
     }
 }
 

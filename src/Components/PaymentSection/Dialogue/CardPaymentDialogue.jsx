@@ -26,7 +26,7 @@ class CardPaymentDialogue extends React.Component {
     return (
       <div>
         <Dialog
-          open={this.state.open}
+          open={this.props.open}
           TransitionComponent={Transition}
           keepMounted
           aria-labelledby="alert-dialog-slide-title"
@@ -35,7 +35,7 @@ class CardPaymentDialogue extends React.Component {
           <div className='card-payment-dialogue'>
 
             {
-              !this.state.error && !this.state.success ?
+              !this.props.error && !this.props.success ?
                 <div className='fwidth flex-column justify-center align-center'>
                   <CircularProgress color='#fff'/>
                   <div className='processing-text'>Processing Card Payment</div>
@@ -43,21 +43,21 @@ class CardPaymentDialogue extends React.Component {
             }
 
             {
-              this.state.error ?
+              this.props.error ?
                 <div className='fwidth flex-column error-section'>
                   <div>
                     <div className='error-title'>Error</div>
-                    <div className='error-message'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex, iusto! Fugit doloremque doloribus officia nobis, modi obcaecati, facere cupiditate accusamus harum saepe minima laborum dignissimos nemo fuga voluptatum voluptatem atque.</div>
+                    <div className='error-message'>{this.props.errorMsg}</div>
                   </div>
                   <div className='error-actions'>
-                    <Button className='action' variant="contained">Cancel</Button>
+                    <Button className='action' variant="contained" onClick={this.props.handleClose}>Cancel</Button>
                     <Button className='action' variant="contained">Retry</Button>
                   </div>
                 </div> : null
             }
 
             {
-              this.state.success ?
+              this.props.success ?
                 <div className='fwidth flex-column justify-center align-center'>
                   <div className='success-text'>Success</div>
                 </div> : null

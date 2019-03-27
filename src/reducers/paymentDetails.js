@@ -61,7 +61,8 @@ const paymentReducer = (state = {
             paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem)
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
             cardAmount = roundUpAmount(cardAmount);
-            return (Object.assign({}, state, { cardAmount, remainingAmount }));
+           let  cardRefrenceId = action.data.cardRefrenceId
+            return (Object.assign({}, state, { cardAmount, remainingAmount,cardRefrenceId }));
             break;
         case 'EMPLOYEE':
             employeePay = action.data.employeePay;

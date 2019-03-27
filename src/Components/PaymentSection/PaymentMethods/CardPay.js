@@ -8,6 +8,9 @@ import CloseIcon from '@material-ui/icons/Close';
 import { connect } from 'react-redux';
 import { commonActionCreater } from '../../../Redux/commonAction';
 import showErrorAlert from '../../../Global/PosFunctions/showErrorAlert';
+import genericPostData from '../../../Global/dataFetch/genericPostData';
+import codes from '../StatusCodes/codes';
+import CardPaymentDialogue from '../Dialogue/CardPaymentDialogue';
 // var parser = require('xml2json');
 var convert = require('xml-js');
 
@@ -21,8 +24,24 @@ class CardPay extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            success: false,
+            open: false,
+            error: false,
+            errorMsg:''
         }
     }
+
+    componentDidMount() {
+        //setting to the remaining amount
+        this.props.dispatch(commonActionCreater({ cardAmount: this.props.remainingAmount, totalAmount: this.props.totalAmount }, 'CARD_INPUT_HANDLER'));
+    }
+
+    componentWillUnmount() {
+        //setting to the 0 again on unmouning
+        this.props.dispatch(commonActionCreater({ cardAmount: '', totalAmount: this.props.totalAmount }, 'CARD_INPUT_HANDLER'));
+
+    }
+
     handleChange = name => event => {
         let value = event.target.value;
         if (regex.test(value)) {
@@ -36,23 +55,14 @@ class CardPay extends React.Component {
             this.props.dispatch(commonActionCreater({ cardAmount: '', totalAmount: this.props.totalAmount }, 'CARD_INPUT_HANDLER'));
         }
 
-    };
-    componentDidMount() {
-        //setting to the remaining amount
-        this.props.dispatch(commonActionCreater({ cardAmount: this.props.remainingAmount, totalAmount: this.props.totalAmount }, 'CARD_INPUT_HANDLER'));
     }
-    componentWillUnmount() {
-        //setting to the 0 again on unmouning
-        this.props.dispatch(commonActionCreater({ cardAmount: '', totalAmount: this.props.totalAmount }, 'CARD_INPUT_HANDLER'));
 
-    }
-    reqPaymentByCard = () => {
-        //const parseString = require('xml2js').parseString;
-        var xmlBodyStr = '<POSRequest>\
+    makePOSReqObj = () => {
+        let xmlBodyStr = '<POSRequest>\
         <RequestType>Sale</RequestType>\
-        <CardNumber>4386128598056733</CardNumber>\
+        <CardNumber>4111111111111111</CardNumber>\
         <ExpiryDate>09/19</ExpiryDate>\
-        <CardType>visa</CardType>\
+        <CardType>credit</CardType>\
         <TokenType>2</TokenType>\
         <ChargeAmount>49</ChargeAmount>\
         <TaxAmount>0</TaxAmount>\
@@ -64,35 +74,100 @@ class CardPay extends React.Component {
         <InvoiceNumber>174211</InvoiceNumber>\
         <Recurring p2:nil="true" xmlns:p2="http://www.w3.org/2001/XMLSchema-instance" />\
       </POSRequest>';
-        console.log(xmlBodyStr, "xmlBodyStr")
-        var config = {
-            headers: { 'Content-Type': 'text/xml' }
-        };
-        let parser = new DOMParser();
-        let xmlDoc = parser.parseFromString(xmlBodyStr, "text/xml");
-        console.log(xmlDoc, "xmlBodyStr");
+        return xmlBodyStr;
+    }
+
+    reqPaymentByCard = () => {
+        this.handleOpen();
+        let POSReqObj = this.makePOSReqObj();
         request
             .post('http://192.168.1.19:1011')
-            .send(xmlBodyStr) // sends a JSON post body
+            .send(POSReqObj) // sends a JSON post body
             .then(res => {
-                debugger;
                 var json = convert.xml2json(res.text, { compact: true, spaces: 4 });
                 let responseObj = JSON.parse(json);
                 let POSResponse = _get(responseObj, 'POSResponse');
-
-                if (_get(POSResponse, 'Decision._text' == 'A')) {
-                    debugger;
+                console.log(POSResponse, "POSResponse");
+                if (_get(POSResponse, 'Decision._text') == 'A' && _get(POSResponse, 'ErrorCode._text') == '102') {
+                    this.posResponseSuccess(res.text, POSResponse);
+                    return
                 }
-                console.log(JSON.parse(json), "json")
                 if (_get(responseObj, 'POSResponse.ErrorCode._text')) {
-                    showErrorAlert({ dispatch: this.props.dispatch, error: _get(responseObj, 'POSResponse.ErrorCode._text') })
+                    let errorObj = codes(POSResponse.ErrorCode._text);
+                    console.log(errorObj, "errorObj");
+                    let errMsg = `Error Occured with code:${POSResponse.ErrorCode._text}(${_get(errorObj, 'descripton')})`
+                    this.handleError(errMsg)
                 }
-
-
             }).catch(err => {
-                showErrorAlert({ dispatch: this.props.dispatch, error: err.message })
+                // showErrorAlert({ dispatch: this.props.dispatch, error: err.message })
+                this.handleError(err.message)
             });
     }
+
+    posResponseSuccess = (xmlRes, POSResponseObj) => {
+
+        genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj: {
+                retailerId: localStorage.getItem('retailerId'),
+                customerId: localStorage.getItem('customerId'),
+                storeId: localStorage.getItem('storeId'),
+                terminalId: localStorage.getItem('terminalId'),
+                operatorId: localStorage.getItem('operatorId'),
+                sessionId: localStorage.getItem('sessionId'),
+                transactionId: _get(POSResponseObj, 'RequestId._text'),
+                requestPayload: this.makePOSReqObj(),
+                responsePayload: xmlRes,
+            },
+            url: 'Payment/FreedomPay/Transactions/Save',
+            constants: {
+                init: 'FreedomPaySave_INIT',
+                success: 'FreedomPaySave_SUCEESS',
+                error: 'FreedomPaySave_ERROR'
+            },
+            identifier: 'FreedomPaySave',
+            successCb: this.refrenceSavedSuccess,
+            errorCb: this.refrenceSavedError
+        })
+    }
+
+    refrenceSavedSuccess = (resData) => {
+        this.props.dispatch(commonActionCreater({ cardAmount: this.props.remainingAmount, totalAmount: this.props.totalAmount,cardRefrenceId:resData }, 'CARD_INPUT_HANDLER'));
+        this.handleSuccess();
+
+    }
+
+    refrenceSavedError = (err) => {
+        this.handleError(err);
+    }
+
+    handleClose = () => {
+        this.setState({
+            open: false,
+            success: false,
+            error: false
+        })
+    }
+    handleOpen = () => {
+        this.setState({
+            open: true
+        })
+    }
+    handleSuccess = () => {
+        this.setState({
+            success: true,
+            error: false
+        })
+        setTimeout(()=>this.handleClose(), 2000);
+    }
+    handleError = (err) => {
+        this.setState({
+            success: false,
+            error: true,
+            errorMsg: err,
+        })
+    }
+
 
     render() {
         return (
@@ -119,6 +194,16 @@ class CardPay extends React.Component {
                     <CloseIcon
                         onClick={() => this.props.onRemovePaymentMethod('showCardPay')} />
                 </div>
+                <CardPaymentDialogue
+                    handleOpen={this.handleOpen}
+                    handleClose={this.handleClose}
+                    handleSuccess={this.handleSuccess}
+                    handleError={this.handleError}
+                    open={this.state.open}
+                    success={this.state.success}
+                    error={this.state.error}
+                    errorMsg={this.state.errorMsg}
+                />
             </div>
         );
     }
