@@ -97,7 +97,6 @@ class SyncContainer extends Component {
                 type: 'string'
             }
         });
-        debugger;
         return 1;
     }
 

@@ -95,7 +95,7 @@ class Login extends React.Component {
                     className={classes.submit}
                 >
                     Sign in
-</LoaderButton>
+                </LoaderButton>
             </React.Fragment>)
     }
 }
