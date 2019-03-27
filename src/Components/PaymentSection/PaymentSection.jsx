@@ -30,6 +30,7 @@ import GiftPay from './PaymentMethods/GiftPay';
 import LoyaltyRedeem from './PaymentMethods/LoyaltyRedeem';
 import PaymentReceipt from './paymentReceipt';
 import CostCenter from './CostCenter';
+import CardPaymentDialogue from './Dialogue/CardPaymentDialogue'
 
 let transactiondb = new PouchDb('transactiondb')
 /* style */
@@ -649,6 +650,7 @@ class PaymentSection extends React.Component {
                     handleClose={this.handleClose}
                     logo={logo}
                 /> : null}
+                <CardPaymentDialogue/>
             </div>
         );
     }
