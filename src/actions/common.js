@@ -23,15 +23,16 @@ const receiveAddressFromZip = (subreddit, json, status )=> ({
     receivedAt: Date.now()
 })
 
-export const fetchAddressFromZip = (subreddit, zipCode) => dispatch => {
+export const fetchAddressFromZip = (subreddit, data) => dispatch => {
     
     dispatch(requestAddressFromZip(subreddit));
     
-    fetch(COMMON_CONSTANTS.COMMON_URL+"/zipCodes/"+zipCode+"/details", { method: 'GET',
+    fetch("http://13.126.59.19:20029/api/Reference/GetZipCodeData", { method: 'POST',
     headers: {
-        "Content-type": "application/json"
+        "Content-type": "application/json",
+        "Authorization":`Bearer ${localStorage.getItem("Token")}`
     },
-    // body: JSON.stringify(data)
+    body: JSON.stringify(data)
     })
     .then(response => {
         status = response.status;

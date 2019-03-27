@@ -22,6 +22,8 @@ import PouchDb from 'pouchdb';
 import PAM from "pouchdb-adapter-memory";
 import { commonActionCreater } from '../../../Redux/commonAction';
 import Customer from '../Customer';
+import {reset} from 'redux-form';
+
 PouchDb.plugin(PAM);
 PouchDb.plugin(require('pouchdb-quick-search'));
 let customerdb = new PouchDb('customersdb');
@@ -104,7 +106,9 @@ class CustomerTab extends React.Component {
         this.setState({ open: true })
     }
 
-    handleClose = () => {
+    handleClose = (props) => {
+        // ! Uncomment if you want to clear form values onclick of cancel button 
+        this.props.dispatch(reset('CustomerForm'));
         this.setState({ open: false })
     }
 
