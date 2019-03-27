@@ -1068,7 +1068,47 @@ p {
             }
         }
     }
+}
 
+.card-payment-dialogue{
+    min-height: 40vh;
+    display: flex;
+    background: @primary;
+    color: @primary-text;   
+    justify-content: center;
+    align-content: center;
+
+    .error-section{
+        padding: 20px;
+        justify-content: space-between;
+
+        .error-title{
+            font-size: 2.5em;
+            color: red;
+        }
+
+        .error-message{
+            font-size: 0.8em;
+            text-align: justify;
+            padding-top: 10px;
+        }
+
+        .error-actions{
+            display: flex;
+            justify-content: flex-end;
+
+            .action{
+                margin: 10px;
+            }
+        }
+    }
+    .processing-text{
+        font-size: 2em;
+        margin-top: 10px;
+    }
+    .success-text{
+        font-size: 2em;
+    }
 }
 
 /* On Hold Dialogue */
