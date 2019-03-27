@@ -7,6 +7,7 @@ import CloseIcon from '@material-ui/icons/Close';
 /* Redux Imports */
 import { connect } from 'react-redux';
 import { commonActionCreater } from '../../../Redux/commonAction';
+import showErrorAlert from '../../../Global/PosFunctions/showErrorAlert';
 // var parser = require('xml2json');
 var convert = require('xml-js');
 
@@ -71,14 +72,22 @@ class CardPay extends React.Component {
         let xmlDoc = parser.parseFromString(xmlBodyStr, "text/xml");
         console.log(xmlDoc, "xmlBodyStr");
         request
-            .post('http://192.168.1.20:1011')
+            .post('http://192.168.1.19:1011')
             .send(xmlBodyStr) // sends a JSON post body
             .then(res => {
-                var json = convert.xml2json(res.text, {compact: true, spaces: 4});
-                console.log(JSON.parse(json),"json");
+                debugger;
+                var json = convert.xml2json(res.text, { compact: true, spaces: 4 });
+                let responseObj = JSON.parse(json);
+
+                console.log(JSON.parse(json),"json")
+                if (_get(responseObj, 'POSResponse.ErrorCode._text')) {
+                    showErrorAlert({ dispatch: this.props.dispatch, error: _get(responseObj, 'POSResponse.Message._text') })
+
+                }
+
 
             }).catch(err => {
-                debugger;
+                showErrorAlert({ dispatch: this.props.dispatch, error: err.message })
             });
     }
 
