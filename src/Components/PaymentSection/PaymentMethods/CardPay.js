@@ -78,11 +78,14 @@ class CardPay extends React.Component {
                 debugger;
                 var json = convert.xml2json(res.text, { compact: true, spaces: 4 });
                 let responseObj = JSON.parse(json);
+                let POSResponse = _get(responseObj, 'POSResponse');
 
-                console.log(JSON.parse(json),"json")
+                if (_get(POSResponse, 'Decision._text' == 'A')) {
+                    debugger;
+                }
+                console.log(JSON.parse(json), "json")
                 if (_get(responseObj, 'POSResponse.ErrorCode._text')) {
-                    showErrorAlert({ dispatch: this.props.dispatch, error: _get(responseObj, 'POSResponse.Message._text') })
-
+                    showErrorAlert({ dispatch: this.props.dispatch, error: _get(responseObj, 'POSResponse.ErrorCode._text') })
                 }
 
 
