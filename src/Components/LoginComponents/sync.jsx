@@ -52,8 +52,28 @@ class SyncContainer extends Component {
         this.pollProduct();
         this.pollCustomer();
         this.pollCategory();
+        this.fetchFreedomPayDetails();
     }
+    fetchFreedomPayDetails = () => {
+        axiosFetcher({
+            method: 'POST',
+            url: 'Payment/FreedomPay/Config/Get',
+            reqObj: { id: localStorage.getItem('terminalId')},
+            successCb: this.fetchFreedomPayDetailsSuccess,
+            errorCb: (err) => {
+                debugger;
+            }
+        })
+    }
+    fetchFreedomPayDetailsSuccess = (res)=>{
+        localStorage.setItem('freedomPayClientEnvironment',_get(res,'data.freedomPayClientEnvironment'));
+        localStorage.setItem('freedomPayClientUrl',_get(res,'data.freedomPayClientUrl'));
+        localStorage.setItem('freedomPayStoreId',_get(res,'data.freedomPayStoreId'));
+        localStorage.setItem('freedomPayTerminalId',_get(res,'data.freedomPayTerminalId'));
+        localStorage.setItem('merchantReferenceCode',_get(res,'data.merchantReferenceCode'));
 
+        console.log(res,"res is here")
+    }
     handleCategoryFetchSuccess = async (categoryData) => {
         console.log(categoryData.data, 'categoryData.data')
         _get(categoryData, 'data', []).forEach((item, index) => {
@@ -85,7 +105,7 @@ class SyncContainer extends Component {
         let indexResultOfSearch = await productsdb.search({
             fields: ['product.name', 'product.description', 'product.sku'],
             build: true
-        });  
+        });
         let indexResultOfCategory = await productsdb.search({
             fields: ['product.category1', 'product.category2', 'product.category3'],
             build: true

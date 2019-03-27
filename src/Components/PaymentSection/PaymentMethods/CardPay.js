@@ -58,7 +58,7 @@ class CardPay extends React.Component {
     }
 
     makePOSReqObj = () => {
-        let xmlBodyStr = '<POSRequest>\
+        let xmlBodyStr = `<POSRequest>\
         <RequestType>Sale</RequestType>\
         <CardNumber>4111111111111111</CardNumber>\
         <ExpiryDate>09/19</ExpiryDate>\
@@ -67,13 +67,13 @@ class CardPay extends React.Component {
         <ChargeAmount>49</ChargeAmount>\
         <TaxAmount>0</TaxAmount>\
         <TipAmount>0</TipAmount>\
-        <ClientEnvironment>FCCTestClient 4.1.10.3</ClientEnvironment>\
-        <StoreId>1234567</StoreId>\
-        <TerminalId>123456789</TerminalId>\
-        <MerchantReferenceCode>D3F35ED5369A48E9</MerchantReferenceCode>\
+        <ClientEnvironment>${localStorage.getItem('freedomPayClientEnvironment')}</ClientEnvironment>\
+        <StoreId>${localStorage.getItem('freedomPayStoreId')}</StoreId>\
+        <TerminalId>${localStorage.getItem('freedomPayTerminalId')}</TerminalId>\
+        <MerchantReferenceCode>${localStorage.getItem('merchantReferenceCode')}</MerchantReferenceCode>\
         <InvoiceNumber>174211</InvoiceNumber>\
         <Recurring p2:nil="true" xmlns:p2="http://www.w3.org/2001/XMLSchema-instance" />\
-      </POSRequest>';
+      </POSRequest>`;
         return xmlBodyStr;
     }
 
@@ -81,14 +81,14 @@ class CardPay extends React.Component {
         this.handleOpen();
         let POSReqObj = this.makePOSReqObj();
         request
-            .post('http://192.168.1.19:1011')
+            .post(localStorage.getItem('freedomPayClientUrl'))
             .send(POSReqObj) // sends a JSON post body
             .then(res => {
                 var json = convert.xml2json(res.text, { compact: true, spaces: 4 });
                 let responseObj = JSON.parse(json);
                 let POSResponse = _get(responseObj, 'POSResponse');
                 console.log(POSResponse, "POSResponse");
-                if (_get(POSResponse, 'Decision._text') == 'A' && _get(POSResponse, 'ErrorCode._text') == '102') {
+                if (_get(POSResponse, 'Decision._text') == 'E' && _get(POSResponse, 'ErrorCode._text') == '102') {
                     this.posResponseSuccess(res.text, POSResponse);
                     return
                 }
@@ -132,7 +132,7 @@ class CardPay extends React.Component {
     }
 
     refrenceSavedSuccess = (resData) => {
-        this.props.dispatch(commonActionCreater({ cardAmount: this.props.remainingAmount, totalAmount: this.props.totalAmount,cardRefrenceId:resData }, 'CARD_INPUT_HANDLER'));
+        this.props.dispatch(commonActionCreater({ cardAmount: this.props.cardAmount, totalAmount: this.props.totalAmount,cardRefrenceId:resData }, 'CARD_INPUT_HANDLER'));
         this.handleSuccess();
 
     }
@@ -173,6 +173,7 @@ class CardPay extends React.Component {
         return (
             <div className="default-card-pay">
                 <span className='payment-title'>Card Pay</span>
+                {!this.props.cardRefrenceId?
                 <div className="flex-row align-center justify-space-between relative">
                     <div style={{ width: '80%' }}>
                         <TextField
@@ -193,7 +194,12 @@ class CardPay extends React.Component {
               </span>
                     <CloseIcon
                         onClick={() => this.props.onRemovePaymentMethod('showCardPay')} />
+                </div>:
+                <div>
+                    <span>Ref Id:</span>
+                <span className="bold">{this.props.cardRefrenceId}</span>
                 </div>
+                }
                 <CardPaymentDialogue
                     handleOpen={this.handleOpen}
                     handleClose={this.handleClose}
@@ -213,8 +219,10 @@ function mapStateMapToProps(state) {
     let totalAmount = _get(state, 'cart.totalAmount');
     let cardAmount = _get(state, 'PaymentDetails.cardAmount');
     let remainingAmount = _get(state, 'PaymentDetails.remainingAmount')
+    let cardRefrenceId = _get(state, 'PaymentDetails.cardRefrenceId');
 
-    return { totalAmount, cardAmount, remainingAmount };
+
+    return { totalAmount, cardAmount, remainingAmount,cardRefrenceId };
 }
 
 export default connect(mapStateMapToProps)(CardPay);

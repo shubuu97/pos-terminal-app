@@ -293,7 +293,7 @@ class PaymentSection extends React.Component {
             payments.push({
                 paymentMethod: 'CARD',
                 paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.cardAmount) || 0) },
-                paymentReference: ""
+                paymentReference: this.props.cardRefrenceId
             })
         }
         if ((parseFloat(this.props.giftCardAmount) || 0)) {

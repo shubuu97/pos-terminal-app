@@ -130,8 +130,13 @@ class FullWidthTabs extends React.Component {
                         textColor="primary"
                         variant="fullWidth"
                     >
-                        <Tab label="Cart" />
-                        <Tab label="Customer" />
+                        <Tab label="Cart"
+                            className={this.props.cardRefrenceId ? 'disable-button' : null}
+                            disabled={this.props.cardRefrenceId ? true : false}
+                        />
+                        <Tab label="Customer"
+                            className={this.props.cardRefrenceId ? 'disable-button' : null}
+                            disabled={this.props.cardRefrenceId ? true : false} />
                         <Tab className={cartItems.length > 0 ? '' : 'disable-button'} label="Payment" disabled={cartItems.length > 0 ? false : true} />
                     </Tabs>
                 </AppBar>
@@ -167,6 +172,8 @@ function mapStateToProps(state) {
     let cartItems = _get(state, 'cart.cartItems', []);
     let cart = _get(state, 'cart', {});
     let afterSellRedirectToCart = _get(state, 'afterSellRedirectToCart.lookUpData')
-    return { cartItems, cart, afterSellRedirectToCart };
+    let cardRefrenceId = _get(state, 'PaymentDetails.cardRefrenceId');
+
+    return { cartItems, cart, afterSellRedirectToCart, cardRefrenceId };
 }
 export default connect(mapStateToProps)(FullWidthTabs);
