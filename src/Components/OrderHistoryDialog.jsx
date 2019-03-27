@@ -23,6 +23,7 @@ import Slide from '@material-ui/core/Slide';
 import genericPostData from '../Global/dataFetch/genericPostData';
 import OrderRefund from './OrderRefund';
 import HandlePrint from '../Global/PosFunctions/handlePrint';
+import aobLogo from '../assets/images/aobLogodark.png';
 
 const styles = {
     appBar: {
@@ -158,7 +159,7 @@ class OrderHistoryDialog extends React.Component {
         const paymentMethodsView = !_isEmpty(_get(custData, 'sale.payments', [])) && _get(custData, 'sale.payments', []).map((payment) => (
             <React.Fragment>
                 <span>{`Amount: ${_get(payment, 'paymentAmount.currencyCode', '$')} ${_get(payment, 'paymentAmount.amount', 0)}`}</span>
-                <span>{`  Payment Method: ${_get(payment, 'paymentMethod', '')}`}</span>
+                <span>{`  By: ${_get(payment, 'paymentMethod', '')}`}</span>
                 <br />
             </React.Fragment>
         ))
@@ -249,8 +250,8 @@ class OrderHistoryDialog extends React.Component {
         }
         let listItems = _get(orderData,'saleParts',[]).map((item) => (
             <tr>
-                <td>{_get(item, 'product.name', '')}</td>
-                <td>{_get(item, 'product.salePrice.price', 0)}</td>
+                <td>{_isEmpty(item.giftCard) ? _get(item, 'product.name', '') : 'Gift Card'}</td>
+                <td>{_isEmpty(item.giftCard) ? _get(item, 'product.salePrice.price', 0): _get(item, 'giftCard.value.amount',0)}</td>
                 <td>{_get(item, 'saleItem.qty', 0)}</td>
                 <td>{_get(item, 'saleItem.returnQty', 0)}</td>
                 <td>{_get(item, 'saleItem.itemTotalDiscountAmount.amount', 0)}</td>
@@ -365,6 +366,8 @@ class OrderHistoryDialog extends React.Component {
                                 <br />
                                 <label >{`Total Paid: `}</label>
                                 <label style={{ float: 'right' }}>{`${_get(selectedOrder, 'sale.totalAmountPaid.currencyCode', '$')} ${_get(selectedOrder, 'sale.totalAmountPaid.amount', '0')}`}</label>
+                                <br />
+                                <label >{`Payment Method: `}</label>
                                 <div style={{ float: 'right' }}>
                                     {this.showPaymentMethods(this.state.selectedOrder)}
                                 </div>
@@ -403,6 +406,14 @@ class OrderHistoryDialog extends React.Component {
 
         const customerName = _get(selectedOrder,'customer.customer.firstName') + ' ' +
         _get(selectedOrder,'customer.customer.lastName')
+
+        let logo 
+        if(localStorage.getItem('storeLogo') !== '') {
+            logo = localStorage.getItem('storeLogo')
+        } else {
+            logo = {aobLogo}
+        }
+
 
         return (
             <div className='hold-dialogue'>
@@ -451,6 +462,7 @@ class OrderHistoryDialog extends React.Component {
                 <div id='printarea'>
                     <div>
                         <HandlePrint 
+                            logo={logo}
                             type="Order History"
                             cashierName={_get(selectedOrder,'operator.person.firstName') + ' ' + _get(selectedOrder,'operator.person.lastName')}
                             orderId={_get(selectedOrder,'sale.id','')}
