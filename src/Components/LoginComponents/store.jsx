@@ -13,7 +13,7 @@ import Redirect from "react-router/Redirect";
 import InputLabel from '@material-ui/core/InputLabel';
 import SessionDialog from '../SessionComponents/SessionDialog';
 import showMessage from '../../Redux/toastAction';
-
+import PouchDb from 'pouchdb';
 
 const styles = theme => ({
 
@@ -42,7 +42,7 @@ class Store extends React.Component {
     }
 
     handleSubmit = () => {
-        // // this.redirectToPOS = true;
+        // this.redirectToPOS = true;
         // this.isSubmitted = true;
         // const { dispatch, storesReducer } = this.props;
         // let loginData = {
@@ -65,7 +65,6 @@ class Store extends React.Component {
         // this.forceUpdate();
     }
     componentDidMount() {
-
         genericPostData({
             dispatch: this.props.dispatch,
             reqObj: { id: localStorage.getItem('storeId') },
@@ -80,8 +79,32 @@ class Store extends React.Component {
             successCb: this.afterStoreSuccess,
             errorCb: () => this.setState({ isFetching: false })
         })
-
+        // this.saveImageToPouch()
     }
+
+    // saveImageToPouch = () => {
+    //     let blobDb = new PouchDb('blobDb')
+    //     let image = document.getElementById('storeLogo')
+
+    //     var canvas = document.createElement('canvas');
+    //     var context = canvas.getContext('2d');
+    //     context.drawImage(img, 0, 0);
+     
+    //      // Warning: toBlob() isn't supported by every browser.
+    //      // You may want to use blob-util.
+    //         canvas.toBlob(callback, 'image/png');
+    //     }
+        
+    //     var catImage = document.getElementById('cat');
+    //     convertImgToBlob(catImage, function (blob) {
+    //     db.putAttachment('meowth', 'meowth.png', blob, 'image/png').then(function () {
+    //         return db.get('meowth', {attachments: true});
+    //     }).then(function (doc) {
+    //         console.log(doc);
+    //     });
+    //     });
+    // }
+
     afterStoreSuccess = (data) => {
         let countyTaxRate = _get(data, 'tax.countyTaxRate', 0)||0;
         let federalTaxRate = _get(data, 'tax.federalTaxRate', 0)||0;
@@ -169,8 +192,12 @@ class Store extends React.Component {
         // this.props.dispatch(commonActionCreater(true, 'SESSION_START_REDIRECT_TO_LOGIN'));
         // this.props.history.push('/login');
     }
+
     render() {
         let { classes } = this.props
+
+        let image = <img src={localStorage.getItem('storeLogo')} style={{display: "none"}} />
+        console.log(image, 'image is here')
         return (
             <React.Fragment>
                 <FormControl className={classes.formControl} margin="normal" required fullWidth>
@@ -196,6 +223,7 @@ class Store extends React.Component {
                 >
                     Login in to POS
                 </LoaderButton>
+                <img id='logoImage' src={localStorage.getItem('storeLogo')} style={{display: "none"}} />
                 {this.state.showAuthModal ? <AuthModal
                     open={this.state.showAuthModal}
                     handleClose={this.handleClose}
