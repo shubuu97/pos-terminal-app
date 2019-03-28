@@ -60,11 +60,8 @@ class CardPay extends React.Component {
     makePOSReqObj = () => {
         let xmlBodyStr = `<POSRequest>\
         <RequestType>Sale</RequestType>\
-        <CardNumber>4111111111111111</CardNumber>\
-        <ExpiryDate>09/19</ExpiryDate>\
-        <CardType>credit</CardType>\
         <TokenType>2</TokenType>\
-        <ChargeAmount>49</ChargeAmount>\
+        <ChargeAmount>${this.props.cardAmount}</ChargeAmount>\
         <TaxAmount>0</TaxAmount>\
         <TipAmount>0</TipAmount>\
         <ClientEnvironment>${localStorage.getItem('freedomPayClientEnvironment')}</ClientEnvironment>\
