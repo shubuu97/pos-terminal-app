@@ -69,6 +69,7 @@ class CardPay extends React.Component {
         <TerminalId>${localStorage.getItem('freedomPayTerminalId')}</TerminalId>\
         <MerchantReferenceCode>${localStorage.getItem('merchantReferenceCode')}</MerchantReferenceCode>\
         <InvoiceNumber>174211</InvoiceNumber>\
+        <WorkstationId>${localStorage.getItem('freedomPayWorkstationId')}</WorkstationId>\
         <Recurring p2:nil="true" xmlns:p2="http://www.w3.org/2001/XMLSchema-instance" />\
       </POSRequest>`;
         return xmlBodyStr;

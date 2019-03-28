@@ -71,7 +71,7 @@ class SyncContainer extends Component {
         localStorage.setItem('freedomPayStoreId',_get(res,'data.freedomPayStoreId'));
         localStorage.setItem('freedomPayTerminalId',_get(res,'data.freedomPayTerminalId'));
         localStorage.setItem('merchantReferenceCode',_get(res,'data.merchantReferenceCode'));
-
+        localStorage.setItem('freedomPayWorkstationId',_get(res,'data.freedomPayWorkstationId'));
         console.log(res,"res is here")
     }
     handleCategoryFetchSuccess = async (categoryData) => {
