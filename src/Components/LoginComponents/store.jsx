@@ -13,7 +13,8 @@ import Redirect from "react-router/Redirect";
 import InputLabel from '@material-ui/core/InputLabel';
 import SessionDialog from '../SessionComponents/SessionDialog';
 import showMessage from '../../Redux/toastAction';
-
+import PouchDb from 'pouchdb';
+import * as blobUtil from 'blob-util'
 
 const styles = theme => ({
 
@@ -42,7 +43,7 @@ class Store extends React.Component {
     }
 
     handleSubmit = () => {
-        // // this.redirectToPOS = true;
+        // this.redirectToPOS = true;
         // this.isSubmitted = true;
         // const { dispatch, storesReducer } = this.props;
         // let loginData = {
@@ -65,7 +66,6 @@ class Store extends React.Component {
         // this.forceUpdate();
     }
     componentDidMount() {
-
         genericPostData({
             dispatch: this.props.dispatch,
             reqObj: { id: localStorage.getItem('storeId') },
@@ -80,8 +80,35 @@ class Store extends React.Component {
             successCb: this.afterStoreSuccess,
             errorCb: () => this.setState({ isFetching: false })
         })
-
+        // this.saveImageToPouch()
     }
+
+    //! Save image to PouchDb
+
+    // saveImageToPouch = () => {
+    //     let blobDb = new PouchDb('blobDb')
+    //     let image = document.getElementById('logoImage')
+    //     debugger
+    //     blobUtil.imgSrcToBlob(image.src).then((blob) => {
+    //         debugger
+    //         console.log(blob, 'check blob value')
+    //     })
+    //     .catch(err=> {
+    //         debugger
+    //     })
+        //     return blobDb.putAttachment('storeLogo', 'storeLogo.png', blob, 'image/png');
+        //   }).then(() => {
+        //      return blobDb.get('storeLogo', {attachments: true});
+        //   }).then((doc) => {
+        //       debugger
+        //     return blobDb.getAttachment('storeLogo', 'storeLogo.png');
+        //   }).then(function (blob) {
+        //       debugger
+        //     var url = URL.createObjectURL(blob);
+        //     console.log(url, 'here is the url')
+        //   });
+    // }
+
     afterStoreSuccess = (data) => {
         let countyTaxRate = _get(data, 'tax.countyTaxRate', 0)||0;
         let federalTaxRate = _get(data, 'tax.federalTaxRate', 0)||0;
@@ -169,8 +196,10 @@ class Store extends React.Component {
         // this.props.dispatch(commonActionCreater(true, 'SESSION_START_REDIRECT_TO_LOGIN'));
         // this.props.history.push('/login');
     }
+
     render() {
         let { classes } = this.props
+
         return (
             <React.Fragment>
                 <FormControl className={classes.formControl} margin="normal" required fullWidth>
@@ -196,6 +225,11 @@ class Store extends React.Component {
                 >
                     Login in to POS
                 </LoaderButton>
+                
+                {/* Rendering LogoImage so that it will show on offline mode as well */}
+                <img id='logoImage' src={localStorage.getItem('storeLogo')} style={{display: "none"}} />
+
+
                 {this.state.showAuthModal ? <AuthModal
                     open={this.state.showAuthModal}
                     handleClose={this.handleClose}
