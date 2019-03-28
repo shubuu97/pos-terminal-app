@@ -71,8 +71,13 @@ class Product extends React.PureComponent {
         let index = this.props.index;
         let cartItems = _get(this.props, 'cart.cartItems', [])
         let data = _get(this.props, `data`, {});
+        let id = data.id;
+        let regex = /_design.*/g;
+        let isddoc = regex.test(id);
+        console.log(isddoc,"isddoc");
         return (
             <React.Fragment>
+                {!isddoc?
                 <div className='each-tile white-background flex-row relative' id='productCard' onClick={() => this.addToCart(index)} index={this.props.index} key={this.props.key}>
                     <div className='absolute added-item-position'>
                         {(_find(cartItems, { id: data.id })) ? <div className='added-item-count'>{(_find(cartItems, { id: data.id })).qty}</div> : null}
@@ -103,7 +108,7 @@ class Product extends React.PureComponent {
                             </span>
                         </div>
                     </div>
-                </div>
+                </div>:null}
                 {
                     this.state.openModal ?
                         <SimpleModal
