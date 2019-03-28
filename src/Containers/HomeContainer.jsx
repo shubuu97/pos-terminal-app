@@ -200,8 +200,6 @@ class HomeContainer extends React.Component {
         productsdb.allDocs({
             include_docs: true,
             attachments: true,
-            endkey: '_design',
-            'inclusive_end': false,
             limit: 39,
             skip: 0
         }).then((result) => {
