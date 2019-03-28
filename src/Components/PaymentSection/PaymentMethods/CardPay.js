@@ -27,7 +27,7 @@ class CardPay extends React.Component {
             success: false,
             open: false,
             error: false,
-            errorMsg:''
+            errorMsg: ''
         }
     }
 
@@ -60,11 +60,8 @@ class CardPay extends React.Component {
     makePOSReqObj = () => {
         let xmlBodyStr = `<POSRequest>\
         <RequestType>Sale</RequestType>\
-        <CardNumber>4111111111111111</CardNumber>\
-        <ExpiryDate>09/19</ExpiryDate>\
-        <CardType>credit</CardType>\
         <TokenType>2</TokenType>\
-        <ChargeAmount>49</ChargeAmount>\
+        <ChargeAmount>${this.props.cardAmount}</ChargeAmount>\
         <TaxAmount>0</TaxAmount>\
         <TipAmount>0</TipAmount>\
         <ClientEnvironment>${localStorage.getItem('freedomPayClientEnvironment')}</ClientEnvironment>\
@@ -132,7 +129,7 @@ class CardPay extends React.Component {
     }
 
     refrenceSavedSuccess = (resData) => {
-        this.props.dispatch(commonActionCreater({ cardAmount: this.props.cardAmount, totalAmount: this.props.totalAmount,cardRefrenceId:resData }, 'CARD_INPUT_HANDLER'));
+        this.props.dispatch(commonActionCreater({ cardAmount: this.props.cardAmount, totalAmount: this.props.totalAmount, cardRefrenceId: resData }, 'CARD_INPUT_HANDLER'));
         this.handleSuccess();
 
     }
@@ -158,7 +155,7 @@ class CardPay extends React.Component {
             success: true,
             error: false
         })
-        setTimeout(()=>this.handleClose(), 2000);
+        setTimeout(() => this.handleClose(), 2000);
     }
     handleError = (err) => {
         this.setState({
@@ -173,32 +170,32 @@ class CardPay extends React.Component {
         return (
             <div className="default-card-pay">
                 <span className='payment-title'>Card Pay</span>
-                {!this.props.cardRefrenceId?
-                <div className="flex-row align-center justify-space-between relative">
-                    <div style={{ width: '80%' }}>
-                        <TextField
-                            InputLabelProps={{ shrink: true }}
-                            autoFocus
-                            onFocus={() => this.props.currentFocus({ fieldValue: 'cardAmount', handler: 'CARD_INPUT_HANDLER' })}
-                            id="outlined-name"
-                            label="Amount"
-                            value={this.props.cardAmount}
-                            onChange={this.handleChange('cardAmount')}
-                            margin="normal"
-                            variant="outlined"
-                            fullWidth
-                        />
-                    </div>
-                    <span onClick={this.reqPaymentByCard} className="pay-button flex-row justify-center align-center">
-                        pay
+                {!this.props.cardRefrenceId ?
+                    <div className="flex-row align-center justify-space-between relative">
+                        <div style={{ width: '80%' }}>
+                            <TextField
+                                InputLabelProps={{ shrink: true }}
+                                autoFocus
+                                onFocus={() => this.props.currentFocus({ fieldValue: 'cardAmount', handler: 'CARD_INPUT_HANDLER' })}
+                                id="outlined-name"
+                                label="Amount"
+                                value={this.props.cardAmount}
+                                onChange={this.handleChange('cardAmount')}
+                                margin="normal"
+                                variant="outlined"
+                                fullWidth
+                            />
+                        </div>
+                        <span onClick={this.reqPaymentByCard} className="pay-button flex-row justify-center align-center">
+                            pay
               </span>
-                    <CloseIcon
-                        onClick={() => this.props.onRemovePaymentMethod('showCardPay')} />
-                </div>:
-                <div>
-                    <span>Ref Id:</span>
-                <span className="bold">{this.props.cardRefrenceId}</span>
-                </div>
+                        <CloseIcon
+                            onClick={() => this.props.onRemovePaymentMethod('showCardPay')} />
+                    </div> :
+                    <div>
+                        <span>Ref Id:</span>
+                        <span className="bold">{this.props.cardRefrenceId}</span>
+                    </div>
                 }
                 <CardPaymentDialogue
                     handleOpen={this.handleOpen}
@@ -222,7 +219,7 @@ function mapStateMapToProps(state) {
     let cardRefrenceId = _get(state, 'PaymentDetails.cardRefrenceId');
 
 
-    return { totalAmount, cardAmount, remainingAmount,cardRefrenceId };
+    return { totalAmount, cardAmount, remainingAmount, cardRefrenceId };
 }
 
 export default connect(mapStateMapToProps)(CardPay);
