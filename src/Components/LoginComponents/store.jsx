@@ -14,6 +14,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import SessionDialog from '../SessionComponents/SessionDialog';
 import showMessage from '../../Redux/toastAction';
 import PouchDb from 'pouchdb';
+import * as blobUtil from 'blob-util'
 
 const styles = theme => ({
 
@@ -82,27 +83,30 @@ class Store extends React.Component {
         // this.saveImageToPouch()
     }
 
+    //! Save image to PouchDb
+
     // saveImageToPouch = () => {
     //     let blobDb = new PouchDb('blobDb')
-    //     let image = document.getElementById('storeLogo')
-
-    //     var canvas = document.createElement('canvas');
-    //     var context = canvas.getContext('2d');
-    //     context.drawImage(img, 0, 0);
-     
-    //      // Warning: toBlob() isn't supported by every browser.
-    //      // You may want to use blob-util.
-    //         canvas.toBlob(callback, 'image/png');
-    //     }
-        
-    //     var catImage = document.getElementById('cat');
-    //     convertImgToBlob(catImage, function (blob) {
-    //     db.putAttachment('meowth', 'meowth.png', blob, 'image/png').then(function () {
-    //         return db.get('meowth', {attachments: true});
-    //     }).then(function (doc) {
-    //         console.log(doc);
-    //     });
-    //     });
+    //     let image = document.getElementById('logoImage')
+    //     debugger
+    //     blobUtil.imgSrcToBlob(image.src).then((blob) => {
+    //         debugger
+    //         console.log(blob, 'check blob value')
+    //     })
+    //     .catch(err=> {
+    //         debugger
+    //     })
+        //     return blobDb.putAttachment('storeLogo', 'storeLogo.png', blob, 'image/png');
+        //   }).then(() => {
+        //      return blobDb.get('storeLogo', {attachments: true});
+        //   }).then((doc) => {
+        //       debugger
+        //     return blobDb.getAttachment('storeLogo', 'storeLogo.png');
+        //   }).then(function (blob) {
+        //       debugger
+        //     var url = URL.createObjectURL(blob);
+        //     console.log(url, 'here is the url')
+        //   });
     // }
 
     afterStoreSuccess = (data) => {
@@ -196,8 +200,6 @@ class Store extends React.Component {
     render() {
         let { classes } = this.props
 
-        let image = <img src={localStorage.getItem('storeLogo')} style={{display: "none"}} />
-        console.log(image, 'image is here')
         return (
             <React.Fragment>
                 <FormControl className={classes.formControl} margin="normal" required fullWidth>
@@ -223,7 +225,11 @@ class Store extends React.Component {
                 >
                     Login in to POS
                 </LoaderButton>
+                
+                {/* Rendering LogoImage so that it will show on offline mode as well */}
                 <img id='logoImage' src={localStorage.getItem('storeLogo')} style={{display: "none"}} />
+
+
                 {this.state.showAuthModal ? <AuthModal
                     open={this.state.showAuthModal}
                     handleClose={this.handleClose}
