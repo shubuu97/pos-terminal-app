@@ -41,20 +41,6 @@ class ProductsSection extends React.Component {
         }
     }
 
-    logout = () => {
-        localStorage.clear();
-        //logic to destory the dbs
-        let p1 = new PouchDb('customersdb').destroy();
-        let p2 = new PouchDb('productsdb').destroy();
-        let p3 = new PouchDb('categoryDb').destroy();
-        this.setState({ isLoading: true })
-        Promise.all([p1, p2, p3]).then((data) => {
-            this.setState({ isLoading: false });
-            window.location.reload();
-            this.props.history.push('/login')
-        });
-    }
-
     handleChange = (searchText) => {
         this.setState({ clearInput: false })
         if (searchText.length > 3) {
@@ -323,9 +309,6 @@ class ProductsSection extends React.Component {
     }
 
     render() {
-        if (this.state.isLoading) {
-            return <CircularProgress size={24} />
-        }
         let { windowHeight, headerHeight, categoriesHeight } = this.props
         return (
             <div className='pos-products-collection' style={{ height: windowHeight }}>
@@ -340,7 +323,7 @@ class ProductsSection extends React.Component {
                             handleClickOpenSessionContainer={this.props.handleClickOpenSessionContainer}
                             handleClickQuickBook={this.props.handleClickQuickBook}
                             handleSetting = {this.props.handleSetting}
-                            logout={this.logout}
+                            logout={this.props.handleLogout}
                             getProductData = {this.props.getProductData}
                         />
                         <SearchBar
@@ -373,10 +356,6 @@ class ProductsSection extends React.Component {
                     categoriesHeight={categoriesHeight}
                     {...this.props}
                 />
-
-
-                {/* // ! Note - Hiding Pagination, Need hard removal */}
-                {/* <Pagination /> */}
 
                 {/* Products List Component */}
                 <div className='pos-products' id='productList' style={{ height: this.props.productListHeight }} onScroll={this.scroll}>
