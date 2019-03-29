@@ -187,6 +187,46 @@ class ProductsSection extends React.Component {
     //     });
     //   }
 
+    filterResult = (result) => {
+        return new Promise(async (resolve, reject) => {
+            this.resolveArray.push(resolve);
+            if (_get(result, 'rows.length') == 0) {
+                let resolved = this.resolveArray[0];
+
+                resolved(this.filteredResult)
+            }
+
+            let rowsWithPositiveQuantity = result.rows.filter((row) => {
+                if (_get(row, 'doc.inventory.quantity') > 0) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            });
+            this.filteredResult = [...this.filteredResult, ...rowsWithPositiveQuantity];
+            let filteredCount = _get(result, 'rows.length', 0) - rowsWithPositiveQuantity.length;
+            console.log(filteredCount, "filteredCount");
+            if (filteredCount > 0) {
+                let startkey = result.rows[result.rows.length - 1].id;
+                let res = await productsdb.allDocs({
+                    include_docs: true,
+                    startkey,
+                    limit: filteredCount,
+                    skip: 1
+                });
+                this.filterResult(res);
+            }
+            else {
+                debugger;
+                console.log(this.filteredResult)
+                let resolved = this.resolveArray[0];
+                resolved(this.filteredResult);
+            }
+        })
+
+    }
+
     getNextProducts = async () => {
         this.setState({ disable: true, productLoading: true })
         let startkey = this.props.lastItemId
@@ -198,22 +238,46 @@ class ProductsSection extends React.Component {
                 startkey,
                 limit: 39,
                 skip: 1
-            }).then((result) => {
-                debugger
-                result.pagination = {}
-                result.pagination.method = method
-                result.pagination.firstItemId = result.rows[0].id
-                result.pagination.lastItemId = result.rows[result.rows.length - 1].id
-                result.pagination.pageNo = this.props.pageNo
-                result.pagination.startVal = this.props.endVal + 1
-                result.pagination.endVal = result.pagination.pageNo * this.state.itemCount
+            }).then(async (result) => {
+                if (localStorage.getItem("showOutOfStock") == "true") {
+                    //this is the code for filtering the result;
+                        this.filteredResult = [];
+                        this.resolveArray = [];
+                        this.filterResult(result).then((rows) => {
+                            debugger;
+                            let result = { rows }
+                            result.pagination = {}
+                            result.pagination.method = method
+                            result.pagination.firstItemId = result.rows[0].id
+                            result.pagination.lastItemId = result.rows[result.rows.length - 1].id
+                            result.pagination.pageNo = this.props.pageNo
+                            result.pagination.startVal = this.props.endVal + 1
+                            result.pagination.endVal = result.pagination.pageNo * this.state.itemCount
 
-                result.rows = [..._get(this, 'props.productList', []), ...result.rows]
-                if (result.pagination.endVal > this.props.productCount) {
-                    result.pagination.endVal = this.props.productCount
+                            result.rows = [..._get(this, 'props.productList', []), ...result.rows]
+                            if (result.pagination.endVal > this.props.productCount) {
+                                result.pagination.endVal = this.props.productCount
+                            }
+                            this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+                            this.setState({ disable: false, productLoading: false })
+                        });
                 }
-                this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
-                this.setState({ disable: false, productLoading: false })
+                else {
+                    result.pagination = {}
+                    result.pagination.method = method
+                    result.pagination.firstItemId = result.rows[0].id
+                    result.pagination.lastItemId = result.rows[result.rows.length - 1].id
+                    result.pagination.pageNo = this.props.pageNo
+                    result.pagination.startVal = this.props.endVal + 1
+                    result.pagination.endVal = result.pagination.pageNo * this.state.itemCount
+
+                    result.rows = [..._get(this, 'props.productList', []), ...result.rows]
+                    if (result.pagination.endVal > this.props.productCount) {
+                        result.pagination.endVal = this.props.productCount
+                    }
+                    this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+                    this.setState({ disable: false, productLoading: false })
+                }
             }).catch((err) => {
                 console.log(err)
             });
@@ -227,7 +291,7 @@ class ProductsSection extends React.Component {
                 limit: 39,
                 skip: 1
             }).then((result) => {
-                
+
                 result.pagination = {}
                 result.pagination.method = method
                 result.pagination.query = this.props.query
@@ -275,7 +339,9 @@ class ProductsSection extends React.Component {
                             handleHistoryOpen={this.props.handleHistoryOpen}
                             handleClickOpenSessionContainer={this.props.handleClickOpenSessionContainer}
                             handleClickQuickBook={this.props.handleClickQuickBook}
+                            handleSetting = {this.props.handleSetting}
                             logout={this.logout}
+                            getProductData = {this.props.getProductData}
                         />
                         <SearchBar
                             handleChange={this.handleChange}
@@ -318,8 +384,8 @@ class ProductsSection extends React.Component {
                         {...this.props}
                     />
                     {
-                        this.state.productLoading ? 
-                        <div className='fwidth pt-15 flex-row justify-center align-center'><CircularProgress /> <span className='loading-text'>Loading ... </span></div> : null
+                        this.state.productLoading ?
+                            <div className='fwidth pt-15 flex-row justify-center align-center'><CircularProgress /> <span className='loading-text'>Loading ... </span></div> : null
                     }
                 </div>
 

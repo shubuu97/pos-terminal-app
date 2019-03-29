@@ -31,9 +31,11 @@ import SessionContainer from './SessionContainer';
 import LockTerminalDialogue from '../Components/Dialogues/LockTerminalDialogue'
 import OfflineTransactionContainer from './OfflineTransactionContainer';
 import Customer from '../Components/CheckoutSection/Customer';
+import SettingContainer from './SettingContainer';
 
 let SessionDialog = withDialog(SessionContainer)
-let OfflineTransactionDialog = withDialog(OfflineTransactionContainer)
+let OfflineTransactionDialog = withDialog(OfflineTransactionContainer);
+let SettingDialog = withDialog(SettingContainer);
 let transactiondb = new PouchDb('transactiondb')
 
 
@@ -194,23 +196,85 @@ class HomeContainer extends React.Component {
             holdIndex: index
         })
     }
+    filterResult = (result) => {
+        return new Promise(async (resolve, reject) => {
+            this.resolveArray.push(resolve);
+            if (_get(result, 'rows.length') == 0) {
+                let resolved = this.resolveArray[0];
 
+                resolved(this.filteredResult)
+            }
+
+            let rowsWithPositiveQuantity = result.rows.filter((row) => {
+                if (_get(row, 'doc.inventory.quantity') > 0) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            });
+            this.filteredResult = [...this.filteredResult, ...rowsWithPositiveQuantity];
+            let filteredCount = _get(result, 'rows.length', 0) - rowsWithPositiveQuantity.length;
+            console.log(filteredCount, "filteredCount");
+            if (filteredCount > 0) {
+                let startkey = result.rows[result.rows.length - 1].id;
+                let productsdb = new PouchDb('productsdb');
+                let res = await productsdb.allDocs({
+                    include_docs: true,
+                    startkey,
+                    limit: filteredCount,
+                    skip: 1
+                });
+                this.filterResult(res);
+            }
+            else {
+                debugger;
+                console.log(this.filteredResult)
+                let resolved = this.resolveArray[0];
+                resolved(this.filteredResult);
+            }
+        })
+
+    }
     getProductData = () => {
         let productsdb = new PouchDb('productsdb');
         productsdb.allDocs({
             include_docs: true,
             attachments: true,
             limit: 39,
-            skip: 0
-        }).then((result) => {
-            result.pagination = {}
-            result.pagination.method = "allDocs"
-            result.pagination.firstItemId = result.rows[0].id
-            result.pagination.lastItemId = result.rows[result.rows.length - 1].id
-            result.pagination.pageNo = 1
-            result.pagination.startVal = 1
-            result.pagination.endVal = result.rows.length
-            this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+            skip:0
+        }).then(async (result) => {
+            debugger;
+            if (localStorage.getItem("showOutOfStock") == "false") {
+                this.filteredResult = [];
+                this.resolveArray = [];
+                this.filterResult(result).then(async (rows) => {
+                    debugger;
+                    if (rows.length == 0) {
+                        return;
+                    }
+                    let result = { rows };
+
+                    result.pagination = {}
+                    result.pagination.method = "allDocs"
+                    result.pagination.firstItemId = result.rows[0].id
+                    result.pagination.lastItemId = result.rows[result.rows.length - 1].id
+                    result.pagination.pageNo = 1
+                    result.pagination.startVal = 1
+                    result.pagination.endVal = result.rows.length
+                    this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+                })
+            }
+            else {
+                result.pagination = {}
+                result.pagination.method = "allDocs"
+                result.pagination.firstItemId = result.rows[0].id
+                result.pagination.lastItemId = result.rows[result.rows.length - 1].id
+                result.pagination.pageNo = 1
+                result.pagination.startVal = 1
+                result.pagination.endVal = result.rows.length
+                this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+            }
         }).catch((err) => {
             console.log(err)
         });
@@ -312,7 +376,7 @@ class HomeContainer extends React.Component {
 
         let { productList, dispatch, cart } = this.props
         return (
-            <div className='main pos-body'>
+            <div className='main pos-body' >
                 <Products pose={isOpenProduct ? 'open' : 'closed'}>
                     <ProductsSection
                         // * Css Specific props
@@ -332,6 +396,8 @@ class HomeContainer extends React.Component {
                         handleClickOpenSessionContainer={this.handleClickOpenSessionContainer}
                         handleClickQuickBook={() => this.setState({ openQuickBookContainer: true })}
                         handleLockTerminal={this.handleLockTerminal}
+                        handleSetting = {()=> this.setState({ openSetting: true })}
+                        getProductData = {this.getProductData}
                     />
                 </Products>
                 <CheckoutSection
@@ -424,6 +490,18 @@ class HomeContainer extends React.Component {
                         /> : null
                 }
                 {
+                    this.state.openSetting ?
+                        <SettingDialog
+                            title="Settings"
+                            handleClickOpen={() => this.setState({ openSetting: true })}
+                            handleClose={() => this.setState({ openSetting: false })}
+                            open={this.state.openSetting}
+                            getProductData = {this.getProductData}
+                            dispatch={dispatch}
+                            {...this.props}
+                        /> : null
+                }
+                {
                     this.state.openGiftCard &&
                     <GiftCardModel
                         open={this.state.openGiftCard}
@@ -445,7 +523,7 @@ class HomeContainer extends React.Component {
                     handleUnlockTerminal={this.handleUnlockTerminal}
                     handleLogout={this.handleLogout}
                 />
-            </div>
+            </div >
         );
     }
 }
@@ -518,7 +596,7 @@ const updateTimeStampAndDbForInventory = async (res, dispatch, extraArgs) => {
         // updatedInventoryWith_Rev.map((updatedInventory, index) => {
         //     console.log(updatedInventory, productList, "this is the code for updating the current reducer 2");
         //     let res = _find(productList, {id:updatedInventory._id});
-            
+
         //     console.log(updatedInventoryWith_Rev, extraArgs, res, "this is the code for updating the current reducer 3");
 
         // })

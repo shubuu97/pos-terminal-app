@@ -11,6 +11,7 @@ import { withStyles } from '@material-ui/core/styles';
 import blue from '@material-ui/core/colors/blue';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import { Detector } from 'react-detect-offline';
+import SettingContainer from '../Containers/SettingContainer';
 
 const styles = theme => ({
     root: {
@@ -98,6 +99,10 @@ function TemporaryDrawer(props) {
                     <ListItemText primary={'Offline Transactions'} />
                 </ListItem>
                 <Divider />
+                {/* <ListItem button key={6} onClick={props.handleSetting}>
+                    <ListItemText primary={'Settings'} />
+                </ListItem>
+                <Divider /> */}
                 <ListItem button key={6} onClick={props.logout}>
                     <ListItemText primary={'Log Out'} />
                 </ListItem>
@@ -109,7 +114,9 @@ function TemporaryDrawer(props) {
     return (
         <div className="d-flex">
             <HomeIcon className={classes.icon} style={{ color: 'white', padding: '0', fontSize: 50, margin: '5px' }} onClick={toggleDrawer('left', true)} />
-            <Drawer open={state.left} onClose={toggleDrawer('left', false)}>
+           
+            
+            <Drawer className="drawer-parent" open={state.left} onClose={toggleDrawer('left', false)}>
                 <div
                     tabIndex={0}
                     role="button"
@@ -118,7 +125,11 @@ function TemporaryDrawer(props) {
                 >
                     {sideList}
                 </div>
+                <div className="yogi">
+                    <SettingContainer  {...props} />
+                </div>
             </Drawer>
+
         </div>
     );
 }
