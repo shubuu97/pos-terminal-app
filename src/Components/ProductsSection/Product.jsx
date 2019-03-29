@@ -95,7 +95,7 @@ class Product extends React.PureComponent {
                                 <span className='each-card-code'>{_get(data, 'doc.inventory.quantity', 0)}</span>
                             </div>
                             <div className="each-card-price flex-row">
-                                {_get(data, 'doc.product.salePrice.currencyCode', '')} {_get(data, 'doc.product.salePrice.price', 'NaN')}
+                                {_get(data, 'doc.product.salePrice.currencyCode', '')} {_get(data, 'doc.product.salePrice.price', 0).toFixed(2)}
                                 {/* <div className='indicator'></div> */}
                             </div>
                             <span

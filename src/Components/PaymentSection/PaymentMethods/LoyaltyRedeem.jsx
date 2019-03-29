@@ -68,9 +68,6 @@ class CashPay extends React.Component {
         else {
             this.props.dispatch(commonActionCreater({ loyaltyRedeem: '', totalAmount: this.props.totalAmount, points: points }, 'LOYALTY_INPUT_HANDLER'));
         }
-
-
-
     };
 
     componentWillUnmount() {
