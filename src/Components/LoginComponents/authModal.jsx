@@ -57,7 +57,8 @@ class AuthModal extends React.Component {
     handleManagerListError = (error) => {
     }
 
-    handleLogin = () => {
+    handleLogin = (event) => {
+        event.preventDefault();
         let reqObj = {
             id: this.state.manager,
             pin: this.state.pin,
@@ -164,10 +165,10 @@ class AuthModal extends React.Component {
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={this.props.handleClose} color="primary">
-                            Disagree
+                            Cancel
                     </Button>
-                        <Button onClick={this.handleLogin} color="primary">
-                            Agree
+                        <Button type="submit" onClick={this.handleLogin} color="primary">
+                            Submit
                     </Button>
                     </DialogActions>
                 </form>
