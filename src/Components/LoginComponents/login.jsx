@@ -51,6 +51,7 @@ class Login extends React.Component {
         localStorage.setItem('role', _get(decodeToken, 'Operator.role'));
         localStorage.setItem('retailerId', _get(decodeToken, 'Retailer.id'));
         localStorage.setItem('storeLogo', _get(decodeToken, 'Store.image','') || '');
+        localStorage.setItem("showOutOfStock","true");
         // this.props.history.push('/store');
         this.props.handleStepChange(2)
     }
