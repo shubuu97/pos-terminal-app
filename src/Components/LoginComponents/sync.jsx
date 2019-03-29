@@ -89,10 +89,13 @@ class SyncContainer extends Component {
         this.handleCategoryFetchSuccess(categoryData).then((data) => {
             let percentageComplete = this.state.percentageComplete + 100 / this.state.ApiCallCount;
             this.setState({ percentageComplete });
+            if(process.env.NODE_ENV !== 'production')
+            {
             PouchDb.replicate('categoryDb', `http://localhost:5984/categoryDb`, {
                 live: true,
                 retry: true
             });
+        }
         })
             .catch((err) => {
 
@@ -124,10 +127,13 @@ class SyncContainer extends Component {
         this.handleProductFetchSuccess(productData).then((data) => {
             let percentageComplete = this.state.percentageComplete + 100 / this.state.ApiCallCount;
             this.setState({ percentageComplete });
+            if(process.env.NODE_ENV !== 'production')
+            {
             PouchDb.replicate('productsdb', `http://localhost:5984/productsdb`, {
                 live: true,
                 retry: true
             })
+        }
         })
             .catch((err) => {
 
@@ -152,10 +158,13 @@ class SyncContainer extends Component {
         this.handleCustomerFetchSuccess(customerData).then((data) => {
             let percentageComplete = this.state.percentageComplete + 100 / this.state.ApiCallCount;
             this.setState({ percentageComplete });
+            if(process.env.NODE_ENV !== 'production')
+            {
             PouchDb.replicate('customersdb', `http://localhost:5984/customersdb`, {
                 live: true,
                 retry: true
             })
+        }
         })
             .catch((err) => {
                 console.log(err);

@@ -412,10 +412,13 @@ class PaymentSection extends React.Component {
             this.setState({ isLoadingTransaction: false });
             this.props.startPolling();
             this.setState({ receiptData: reqObj, showPaymentReceipt: true, transactionStatus: 'offline' });
+            if(process.env.NODE_ENV !== 'production')
+            {
             PouchDb.replicate('transactiondb', `http://localhost:5984/transactiondb`, {
                 live: true,
                 retry: true
             });
+        }
         })
             .catch((err) => {
                 this.setState({ isLoadingTransaction: false })
