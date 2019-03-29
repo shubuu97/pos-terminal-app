@@ -6,6 +6,8 @@ import _isEmpty from 'lodash/isEmpty';
 import _find from 'lodash/find'
 /* Material Icons */
 import SignalWifiOffOutlined from '@material-ui/icons/SignalWifiOffOutlined'
+/* Material Import */
+import CircularProgress from '@material-ui/core/CircularProgress';
 /* Redux Imports */
 import { connect } from 'react-redux';
 import genericPostData from '../Global/dataFetch/genericPostData';
@@ -59,6 +61,7 @@ class HomeContainer extends React.Component {
             openOrderHistory: false,
             openMiscProduct: false,
             openCartOnHoldOrClear: false,
+            isLoading: false,
         }
     }
 
@@ -242,7 +245,7 @@ class HomeContainer extends React.Component {
             include_docs: true,
             attachments: true,
             limit: 39,
-            skip:0
+            skip: 0
         }).then(async (result) => {
             debugger;
             if (localStorage.getItem("showOutOfStock") == "false") {
@@ -376,7 +379,7 @@ class HomeContainer extends React.Component {
 
         let { productList, dispatch, cart } = this.props
         return (
-            <div className='main pos-body' >
+            <div className='main pos-body relative' >
                 <Products pose={isOpenProduct ? 'open' : 'closed'}>
                     <ProductsSection
                         // * Css Specific props
@@ -396,8 +399,9 @@ class HomeContainer extends React.Component {
                         handleClickOpenSessionContainer={this.handleClickOpenSessionContainer}
                         handleClickQuickBook={() => this.setState({ openQuickBookContainer: true })}
                         handleLockTerminal={this.handleLockTerminal}
-                        handleSetting = {()=> this.setState({ openSetting: true })}
-                        getProductData = {this.getProductData}
+                        handleSetting={() => this.setState({ openSetting: true })}
+                        getProductData={this.getProductData}
+                        handleLogout={this.handleLogout}
                     />
                 </Products>
                 <CheckoutSection
@@ -496,7 +500,7 @@ class HomeContainer extends React.Component {
                             handleClickOpen={() => this.setState({ openSetting: true })}
                             handleClose={() => this.setState({ openSetting: false })}
                             open={this.state.openSetting}
-                            getProductData = {this.getProductData}
+                            getProductData={this.getProductData}
                             dispatch={dispatch}
                             {...this.props}
                         /> : null
@@ -523,6 +527,14 @@ class HomeContainer extends React.Component {
                     handleUnlockTerminal={this.handleUnlockTerminal}
                     handleLogout={this.handleLogout}
                 />
+
+                {
+                    this.state.isLoading ?
+                        <div className=' fwidth fheight absolute flex-column justify-center align-center' style={{ background: "rgba(0,0,0,0.5)" }}>
+                            <CircularProgress size={50} style={{ color: '#fff'}} />
+                            <div className='pt-15' style={{ fontSize: '1.5em', color: '#fff', fontWeight: 'bold' }}>Logging Out</div>
+                        </div> : null
+                }
             </div >
         );
     }
