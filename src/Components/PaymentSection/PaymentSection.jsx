@@ -250,7 +250,7 @@ class PaymentSection extends React.Component {
             else {
                 this.setState({ [fieldValue]: false });
             }
-            this.props.dispatch(commonActionCreater({ loyaltyRedeem: '', totalAmount: this.props.totalAmount }, 'LOYALTY_INPUT_HANDLER'));
+            this.props.dispatch(commonActionCreater({ loyaltyRedeem: '', totalAmount: this.props.totalAmount, points: 0 }, 'LOYALTY_INPUT_HANDLER'));
         }
     }
 

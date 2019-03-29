@@ -40,6 +40,7 @@ let selectedSession = commonStaticReducer('GET_SELECTED_SESSION');
 let sessionRedirectToLogin = commonStaticReducer('SESSION_START_REDIRECT_TO_LOGIN');
 let afterSellRedirectToCart = commonStaticReducer('SWITCH_TAB_NUMBER');
 let lockTerminal = commonStaticReducer('LOCK_TERMINAL');
+let loyaltyRedeem = commonStaticReducer('LOYALTY_INPUT_HANDLER');
 
 
 // let cartItems = cartItemFun('CART_ITEM_LIST');
@@ -71,7 +72,8 @@ let rootRducer = combineReducers({
     lockTerminal,
     sessionDataById,
     productList,
-    zipCodeReducer
+    zipCodeReducer,
+    loyaltyRedeem
 })
 
 export default rootRducer;

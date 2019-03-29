@@ -45,23 +45,32 @@ class CashPay extends React.Component {
     }
 
     handleChange = name => event => {
-        let value = event.target.value;
-
-        let loyaltyRedeemAmount = value * _get(this.props, 'RedemptionRules.redemptionMultiplier');
-
+        debugger
+        let points = event.target.value;
+        let availableRewardPoints = _get(this, 'state.availableRewardPoints', 0);
+        let possiblePoints = this.props.totalAmount.amount / _get(this.props, 'RedemptionRules.redemptionMultiplier', 0);
+        if (points > possiblePoints) {
+            points = possiblePoints
+        }
+        else if(points>availableRewardPoints){
+            points = availableRewardPoints
+        }
+        let loyaltyRedeemAmount = points * _get(this.props, 'RedemptionRules.redemptionMultiplier', 0);
         this.setState({
             loyaltyRedeemAmount: loyaltyRedeemAmount
         })
-
         if (regex.test(loyaltyRedeemAmount)) {
-            this.props.dispatch(commonActionCreater({ loyaltyRedeem: loyaltyRedeemAmount, totalAmount: this.props.totalAmount }, 'LOYALTY_INPUT_HANDLER'));
+            this.props.dispatch(commonActionCreater({ loyaltyRedeem: loyaltyRedeemAmount, totalAmount: this.props.totalAmount, points: points }, 'LOYALTY_INPUT_HANDLER'));
         }
         else if (regex.test(loyaltyRedeemAmount.substring(0, loyaltyRedeemAmount.length - 1))) {
-            this.props.dispatch(commonActionCreater({ loyaltyRedeem: loyaltyRedeemAmount.substring(0, loyaltyRedeemAmount.length - 1), totalAmount: this.props.totalAmount }, 'LOYALTY_INPUT_HANDLER'));
+            this.props.dispatch(commonActionCreater({ loyaltyRedeem: loyaltyRedeemAmount.substring(0, loyaltyRedeemAmount.length - 1), totalAmount: this.props.totalAmount, points: points }, 'LOYALTY_INPUT_HANDLER'));
         }
         else {
-            this.props.dispatch(commonActionCreater({ loyaltyRedeem: '', totalAmount: this.props.totalAmount }, 'LOYALTY_INPUT_HANDLER'));
+            this.props.dispatch(commonActionCreater({ loyaltyRedeem: '', totalAmount: this.props.totalAmount, points: points }, 'LOYALTY_INPUT_HANDLER'));
         }
+
+
+
     };
 
     componentWillUnmount() {
@@ -81,7 +90,6 @@ class CashPay extends React.Component {
                             label="Points"
                             type="tel"
                             //value={this.props.loyaltyRedeem}
-                            onChange={this.handleChange('rewardPay')}
                             margin="outline"
                             onFocus={() => this.props.currentFocus({ fieldValue: 'loyaltyRedeem', handler: 'LOYALTY_INPUT_HANDLER' })}
                             fullWidth
@@ -89,6 +97,8 @@ class CashPay extends React.Component {
                             type='text'
                             variant="outlined"
                             className='mt-10'
+                            value={_get(this.props, 'loyaltyRedeemData.points', '')}
+                            onChange={this.handleChange('rewardPay')}
                         />
                         <div className='flex-row justify-space-between'>
                             {
@@ -116,18 +126,20 @@ class CashPay extends React.Component {
 }
 
 function mapStateMapToProps(state) {
-    let RedemptionRules = _get(state, 'RedemptionRules.lookUpData.redemptionRule')
-    let customerId = _get(state, 'cart.customer.id')
-    let totalAmount = _get(state, 'cart.totalAmount');
-    let loyaltyRedeem = _get(state, 'PaymentDetails.loyaltyRedeem');
-    let remainingAmount = _get(state, 'PaymentDetails.remainingAmount')
+    let RedemptionRules = _get(state, 'RedemptionRules.lookUpData.redemptionRule', {})
+    let customerId = _get(state, 'cart.customer.id', "")
+    let totalAmount = _get(state, 'cart.totalAmount', 0);
+    let loyaltyRedeem = _get(state, 'PaymentDetails.loyaltyRedeem', {});
+    let loyaltyRedeemData = _get(state, 'loyaltyRedeem.lookUpData', {});
+    let remainingAmount = _get(state, 'PaymentDetails.remainingAmount');
 
     return {
         totalAmount,
         loyaltyRedeem,
-        remainingAmount,
         customerId,
-        RedemptionRules
+        RedemptionRules,
+        loyaltyRedeemData,
+        remainingAmount
     };
 }
 
