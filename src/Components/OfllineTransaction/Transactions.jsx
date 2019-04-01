@@ -1,25 +1,23 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 /* Lodash Imports */
 import _get from 'lodash/get';
 /* Material import */
 import Grid from '@material-ui/core/Grid';
-import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-
-
+import CircularProgress from '@material-ui/core/CircularProgress';
 /* Redux Imports */
 /* Component Imports */
+import Transaction from './Transaction';
 /* Pouchdb Imports */
 import PouchDb from 'pouchdb';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Transaction from './Transaction';
+
 let transactiondb = new PouchDb('transactiondb');
 const styles = theme => ({
     root: {
@@ -110,8 +108,8 @@ class Transactions extends React.Component {
                         </ExpansionPanelSummary>
                         <ExpansionPanelDetails>
                             <Typography>
-                               We are synching in background...
-          </Typography>
+                                We are synching in background...
+                            </Typography>
                         </ExpansionPanelDetails>
                     </ExpansionPanel>
                 </div>
