@@ -61,7 +61,7 @@ class SyncContainer extends Component {
             reqObj: { id: localStorage.getItem('terminalId')},
             successCb: this.fetchFreedomPayDetailsSuccess,
             errorCb: (err) => {
-                debugger;
+                
             }
         })
     }

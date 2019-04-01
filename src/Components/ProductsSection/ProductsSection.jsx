@@ -204,7 +204,6 @@ class ProductsSection extends React.Component {
                 this.filterResult(res);
             }
             else {
-                debugger;
                 console.log(this.filteredResult)
                 let resolved = this.resolveArray[0];
                 resolved(this.filteredResult);
@@ -230,7 +229,6 @@ class ProductsSection extends React.Component {
                         this.filteredResult = [];
                         this.resolveArray = [];
                         this.filterResult(result).then((rows) => {
-                            debugger;
                             let result = { rows }
                             result.pagination = {}
                             result.pagination.method = method

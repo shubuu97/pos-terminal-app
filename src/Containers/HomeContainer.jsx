@@ -231,7 +231,6 @@ class HomeContainer extends React.Component {
                 this.filterResult(res);
             }
             else {
-                debugger;
                 console.log(this.filteredResult)
                 let resolved = this.resolveArray[0];
                 resolved(this.filteredResult);
@@ -247,12 +246,10 @@ class HomeContainer extends React.Component {
             limit: 39,
             skip: 0
         }).then(async (result) => {
-            debugger;
             if (localStorage.getItem("showOutOfStock") == "false") {
                 this.filteredResult = [];
                 this.resolveArray = [];
                 this.filterResult(result).then(async (rows) => {
-                    debugger;
                     if (rows.length == 0) {
                         return;
                     }
@@ -597,7 +594,7 @@ const updateTimeStampAndDbForInventory = async (res, dispatch, extraArgs) => {
     let updatedInventory = _get(res, 'data', []) || [];
     let promiseArray = updatedInventory.map(async (product, index) => {
         let productObj = await productsdb.get(product._id);
-        productObj.inventory.quantity = product.inventory.quantity;
+        productObj.inventory.quantity = _get(product, 'inventory.quantity', 0);
         return productObj
     });
     Promise.all(promiseArray).then(async (updatedInventoryWith_Rev) => {

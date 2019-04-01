@@ -45,7 +45,6 @@ class CashPay extends React.Component {
     }
 
     handleChange = name => event => {
-        debugger
         let points = event.target.value;
         let availableRewardPoints = _get(this, 'state.availableRewardPoints', 0);
         let possiblePoints = this.props.totalAmount.amount / _get(this.props, 'RedemptionRules.redemptionMultiplier', 0);
