@@ -215,6 +215,10 @@ p {
     margin-left: 20px !important;
 }
 
+.pad-10 {
+    padding: 10px !important;
+}
+
 .pad-20 {
     padding: 20px !important;
 }
@@ -1569,7 +1573,7 @@ p {
 }
 //This is style for session container
 .session-parent{
-    margin:10px 10px;
+    //margin:10px 10px;
     .session-header{
         display: flex;
         align-items: center;
@@ -1593,6 +1597,16 @@ p {
     .mui-row{
         display:flex;
     }
+    .card-title {
+        font-size: 1.4em;
+    }
+    .card {
+        background: @background-white;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        min-height: 50px;
+        padding: 20px;
+    }
     .numpad-box{
         display:flex;
         flex-wrap:wrap;
@@ -1600,9 +1614,9 @@ p {
     }
     .middle{
         width:100%;
+        padding: 10px;
     }
     .numpad-card{
-        width: 100%;
         background: @primary-d;
         color: @primary-text;
 
@@ -1610,9 +1624,10 @@ p {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 50px;
+            height: 60px;
             border-radius: 5px;
             border: 2px solid rgba(255,255,255,0.8);
+            font-size: 1.2em;
         }
         .big-key{
             width: 59%;
@@ -1621,6 +1636,7 @@ p {
         .small-key{
             width: 28%;
             margin: 1%;
+
         }
     }
 }

@@ -153,7 +153,7 @@ class DenominationDetailsForm extends React.Component {
         return (
             <div className={`mui-container-fluid ${extraClass}`}>
                 <div class="mui-row">
-                    <div class="mui-col-md-6">
+                    <div class="mui-col-md-7 pad-10">
                         <table class="mui-table mui-table--bordered">
                             <thead>
                                 <tr>
@@ -181,7 +181,7 @@ class DenominationDetailsForm extends React.Component {
                         </div> */}
                     </div>
 
-                    <div className="mui-col-md-6 numpad-box">
+                    <div className="mui-col-md-5 numpad-box">
                         <div className="middle">
                             <div className='card numpad-card'>
                                 <span className='card-title'>Numpad</span>
