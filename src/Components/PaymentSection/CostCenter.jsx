@@ -90,7 +90,7 @@ class CostCenter extends React.Component {
         this.props.dispatch(commonActionCreater({
             costCenterType: event.target.value,
             costCenterDepartment: this.props.costCenterDepartment,
-            costCenterAmount: this.props.costCenterAmount,
+            costCenterAmount: this.props.remainingAmount,
             totalAmount: this.props.totalAmount
 
         }, 'COST_CENTER_CHARGE'));
@@ -197,8 +197,8 @@ class CostCenter extends React.Component {
                                     InputLabelProps={{ shrink: true }}
                                     autoFocus
                                     // onFocus={() => this.props.currentFocus({ fieldValue: 'giftPayNumber', handler: 'GIFT_CARD_NUMBER' })}
-                                    id="Charge Type"
-                                    label="Charge Type"
+                                    id="Departement Name"
+                                    label="Departement Name"
                                     type="text"
                                     // value={this.props.giftPayNumber}
                                     onChange={this.handleChangeTextField}
@@ -207,30 +207,30 @@ class CostCenter extends React.Component {
                                     variant="outlined"
                                 />
                             </FormControl>
-                            <div>
-                                <FormControl className={classes.formControl2}>
-                                    <TextField
-                                        InputLabelProps={{ shrink: true }}
-                                        autoFocus
-                                        // onFocus={() => this.props.currentFocus({ fieldValue: 'giftPayNumber', handler: 'GIFT_CARD_NUMBER' })}
-                                        id="Amount To Be Used"
-                                        label="Amount To Be Used"
-                                        type="text"
-                                        // value={this.props.giftPayNumber}
-                                        onChange={this.amountToBeUsed}
-                                        margin="normal"
-                                        fullWidth
-                                        variant="outlined"
-                                    />
+                            <FormControl className={classes.formControl2}>
+                                <TextField
+                                    InputLabelProps={{ shrink: true }}
+                                    // onFocus={() => this.props.currentFocus({ fieldValue: 'giftPayNumber', handler: 'GIFT_CARD_NUMBER' })}
+                                    id="Amount To Be Used"
+                                    label="Amount To Be Used"
+                                    type="text"
+                                    value={this.props.costCenterAmount}
+                                    onChange={this.amountToBeUsed}
+                                    margin="normal"
+                                    fullWidth
+                                    variant="outlined"
+                                />
 
-                                </FormControl>
-                            </div>
+                            </FormControl>
                             <div className="d-flex flex-column justify-center">
                                 <CloseIcon
                                     onClick={this.handleRemove} />
                             </div>
-                          
 
+
+                        </div>
+                        <div className="d-flex">
+                            <span className={classes.themeSpaceing}>{"Cost Center Name:" + this.state.name}</span>
                         </div>
 
                     </div>
