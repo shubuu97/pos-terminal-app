@@ -230,7 +230,7 @@ class PaymentSection extends React.Component {
             else {
                 this.setState({ [fieldValue]: false });
             }
-            this.props.dispatch(commonActionCreater({ empPay: '', totalAmount: this.props.totalAmount }, 'Employee'))
+            this.props.dispatch(commonActionCreater({ empPay: '', totalAmount: this.props.totalAmount }, 'EMPLOYEE_PAYROLL'))
 
         }
         if (fieldValue == 'showGiftPay') {
@@ -293,13 +293,13 @@ class PaymentSection extends React.Component {
                 paymentReference: ""
             })
         }
-        if ((parseFloat(this.props.employeePay) || 0)) {
-            payments.push({
-                paymentMethod: 'EMPLOYEE_PAYROLL_DEDUCT',
-                paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.employeePay) || 0) },
-                paymentReference: ""
-            })
-        }
+        // if ((parseFloat(this.props.employeePay) || 0)) {
+        //     payments.push({
+        //         paymentMethod: 'EMPLOYEE_PAYROLL_DEDUCT',
+        //         paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.employeePay) || 0) },
+        //         paymentReference: ""
+        //     })
+        // }
         if ((parseFloat(this.props.cardAmount) || 0)) {
             payments.push({
                 paymentMethod: 'CARD',
@@ -381,6 +381,29 @@ class PaymentSection extends React.Component {
                 paymentMethod: 'COST_CENTER_CHARGE',
                 paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.costCenterAmount) || 0) },
                 paymentReference: apiResponse,
+            })
+        }
+
+        if ((parseFloat(this.props.employeePay) || 0)) {
+            let url = 'Payment/EmployeePayrollDeduct/Save';
+            let data = {
+                sessionId: localStorage.getItem('sessionId'),
+                retailerId: localStorage.getItem('retailerId'),
+                employeeId: _get(this.props, 'customer.id', ''),
+                value: {
+                    currencyCode: '$',
+                    amount: ((parseFloat(this.props.employeePay) || 0))
+                }
+            }
+            let apiResponse = await this.props.dispatch(postData(`${APPLICATION_BFF_URL}${url}`, data, 'GET_REF_FROM_LOYALTY_REDEEM', {
+                init: 'GET_REF_FROM_LOYALTY_REDEEM_INIT',
+                success: 'GET_REF_FROM_LOYALTY_REDEEM_SUCCESS',
+                error: 'GET_REF_FROM_LOYALTY_REDEEM_ERROR'
+            }))
+            payments.push({
+                paymentMethod: 'EMPLOYEE_PAYROLL_DEDUCT',
+                paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.employeePay) || 0) },
+                paymentReference: apiResponse
             })
         }
 

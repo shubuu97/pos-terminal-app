@@ -86,7 +86,7 @@ const paymentReducer = (state = {
             }
             return (Object.assign({}, state, { costCenterType, costCenterDepartment, costCenterAmount, remainingAmount }));
             break;
-        case 'EMPLOYEE':
+        case 'EMPLOYEE_PAYROLL':
             employeePay = action.data.employeePay;
             paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount)
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
