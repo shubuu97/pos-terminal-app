@@ -71,6 +71,7 @@ class CashPay extends React.Component {
 
     componentWillUnmount() {
         //setting to the 0 again on unmouning
+        debugger
         this.props.dispatch(commonActionCreater({ loyaltyRedeem: '', totalAmount: this.props.totalAmount }, 'LOYALTY_INPUT_HANDLER'));
 
     }

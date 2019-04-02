@@ -41,6 +41,7 @@ let sessionRedirectToLogin = commonStaticReducer('SESSION_START_REDIRECT_TO_LOGI
 let afterSellRedirectToCart = commonStaticReducer('SWITCH_TAB_NUMBER');
 let lockTerminal = commonStaticReducer('LOCK_TERMINAL');
 let loyaltyRedeem = commonStaticReducer('LOYALTY_INPUT_HANDLER');
+let employeePayroll = commonStaticReducer('EMPLOYEE_PAYROLL')
 
 
 // let cartItems = cartItemFun('CART_ITEM_LIST');
@@ -73,7 +74,8 @@ let rootRducer = combineReducers({
     sessionDataById,
     productList,
     zipCodeReducer,
-    loyaltyRedeem
+    loyaltyRedeem,
+    employeePayroll,
 })
 
 export default rootRducer;
