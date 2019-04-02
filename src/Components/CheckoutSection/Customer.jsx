@@ -19,16 +19,6 @@ import Typography from '@material-ui/core/Typography';
 import { fetchAddressFromZip } from '../../actions/common';
 import {connect} from 'react-redux';
 
-// const styles = {
-//     Dialog: {
-//       position: 'relative',
-//       width: '80%'
-//     },
-//     flex: {
-//       flex: 1,
-//     },
-//   };
-
 const DialogTitle = withStyles(theme => ({
     root: {
         borderBottom: `1px solid ${theme.palette.divider}`,
@@ -163,9 +153,7 @@ class Customer extends React.Component {
                                 variant="outlined"
                                 fullWidth="true"
                                 margin='normal'
-
                             />
-
                             <FormSection name="phoneNumber">
                             <div className="mui-row">
                             <div className="mui-col-md-6">
@@ -178,7 +166,6 @@ class Customer extends React.Component {
                                     variant="outlined"
                                     fullWidth="true"
                                     margin='normal'
-
                                 />
                                 </div>
                                 <div className="mui-col-md-6">
@@ -191,13 +178,10 @@ class Customer extends React.Component {
                                     variant="outlined"
                                     fullWidth="true"
                                     margin='normal'
-
                                 />
                                 </div>
                                 </div>
                             </FormSection>
-
-
                             <FormSection name='billingAddress'>
                                 <Field
                                     label="Address Line 1"
@@ -206,7 +190,6 @@ class Customer extends React.Component {
                                     variant="outlined"
                                     fullWidth="true"
                                     margin='normal'
-
                                 />
                                 <Field
                                     label="Address Line 2"
@@ -215,7 +198,6 @@ class Customer extends React.Component {
                                     variant="outlined"
                                     fullWidth="true"
                                     margin='normal'
-
                                 />
                                  <div className="mui-row">
                                  <div className="mui-col-md-6">
@@ -237,7 +219,6 @@ class Customer extends React.Component {
                                         variant="outlined"
                                         fullWidth="true"
                                         margin='normal'
-
                                     />
                                 </div>
                                 </div>
@@ -262,20 +243,17 @@ class Customer extends React.Component {
                                             margin='normal'
 
                                         />
-                                    </div>
-                                    
+                                    </div> 
                                 </div>
                             </FormSection>
                           
                             <DialogActions>
-                            
                                 <Button onClick={this.props.closeModal} className='btnmodalsecondary' variant="outlined">
                                     Cancel
                                 </Button>
                                 <Button type="submit" className='btnmodalprimary' variant="outlined">
                                     Save
                                 </Button>
-                            
                             </DialogActions>
                            
                         </form>
