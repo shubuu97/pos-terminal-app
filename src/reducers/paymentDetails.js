@@ -73,11 +73,17 @@ const paymentReducer = (state = {
             return (Object.assign({}, state, { cardAmount, remainingAmount, cardRefrenceId }));
             break;
         case 'COST_CENTER_CHARGE':
+            debugger;
             costCenterType = action.data.costCenterType;
             costCenterDepartment = action.data.costCenterDepartment;
             costCenterAmount = action.data.costCenterAmount;
-            paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount)
+            paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount);
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
+            if (paymentAmount > parseFloat(totalAmount)) {
+                let amountExceeded = paymentAmount - parseFloat(totalAmount);
+                costCenterAmount = roundUpAmount(parseFloat(costCenterAmount) - parseFloat(amountExceeded));
+                remainingAmount=0;
+            }
             return (Object.assign({}, state, { costCenterType, costCenterDepartment, costCenterAmount, remainingAmount }));
             break;
         case 'EMPLOYEE_PAYROLL':
