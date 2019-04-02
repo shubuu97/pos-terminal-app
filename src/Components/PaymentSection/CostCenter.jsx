@@ -11,6 +11,13 @@ import ListItemText from '@material-ui/core/ListItemText';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import TextField from '@material-ui/core/TextField';
+import CloseIcon from '@material-ui/icons/Close';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import { connect } from 'react-redux';
+import { commonActionCreater } from '../../Redux/commonAction';
+let regex = /^\d*[\.\d]+$/;
+
 
 
 
@@ -26,8 +33,13 @@ const styles = theme => ({
     },
     formControl: {
         margin: theme.spacing.unit,
-        minWidth: 120,
-        maxWidth: 300,
+        minWidth: '80%',
+        maxWidth: 500,
+    },
+    formControl2: {
+        margin: theme.spacing.unit,
+        minWidth: '40%',
+        maxWidth: 500,
     },
     chips: {
         display: 'flex',
@@ -70,51 +82,174 @@ class CostCenter extends React.Component {
     constructor() {
         super();
         this.state = {
+            department: '',
             name: ''
         }
     }
-    handleChange = event => {
+    handleChangeSelectList = event => {
+        this.props.dispatch(commonActionCreater({
+            costCenterType: event.target.value,
+            costCenterDepartment: this.props.costCenterDepartment,
+            costCenterAmount: this.props.costCenterAmount,
+            totalAmount: this.props.totalAmount
+
+        }, 'COST_CENTER_CHARGE'));
         this.setState({ name: event.target.value });
     };
+    handleRemove = () => {
+        this.props.dispatch(commonActionCreater({
+            costCenterType: '',
+            costCenterDepartment: '',
+            costCenterAmount: '',
+            totalAmount: ''
+
+        }, 'COST_CENTER_CHARGE'));
+
+        this.props.onRemovePaymentMethod('showCostCenter');
+    }
+    handleChangeTextField = (event) => {
+        this.props.dispatch(commonActionCreater({
+            costCenterType: this.props.costCenterType,
+            costCenterDepartment: event.target.value,
+            costCenterAmount: this.props.costCenterAmount,
+            totalAmount: this.props.totalAmount
+        }, 'COST_CENTER_CHARGE'));
+        this.setState({ department: event.target.value });
+
+    }
+    amountToBeUsed = (event) => {
+        this.setState({ department: event.target.value });
+        let value = event.target.value;
+
+        if (regex.test(value)) {
+            this.props.dispatch(commonActionCreater({
+                costCenterType: this.props.costCenterType,
+                costCenterDepartment: this.props.costCenterDepartment,
+                costCenterAmount: value,
+                totalAmount: this.props.totalAmount
+            }, 'COST_CENTER_CHARGE'));
+        }
+        else if (regex.test(value.substring(0, value.length - 1))) {
+            this.props.dispatch(commonActionCreater({
+                costCenterType: this.props.costCenterType,
+                costCenterDepartment: this.props.costCenterDepartment,
+                costCenterAmount: value,
+                totalAmount: this.props.totalAmount
+            }, 'COST_CENTER_CHgetValueFromProgressARGE'));
+        }
+        else {
+            this.props.dispatch(commonActionCreater({
+                costCenterType: this.props.costCenterType,
+                costCenterDepartment: this.props.costCenterDepartment,
+                costCenterAmount: '',
+                totalAmount: this.props.totalAmount
+            }, 'COST_CENTER_CHARGE'));
+        }
+
+
+    }
+    componentWillUnmount() {
+        //setting to the 0 again on unmouning
+        this.props.dispatch(commonActionCreater({
+            costCenterType: '',
+            costCenterDepartment: '',
+            costCenterAmount: '',
+            totalAmount: this.props.totalAmount
+        }, 'COST_CENTER_CHARGE'));
+
+    }
 
     render() {
         let { classes } = this.props;
         return (
-            <div>
-                <FormControl className={classes.formControl}>
-                    <InputLabel htmlFor="select-multiple">Cost Cd
-                    </InputLabel>
-                    <Select
-                        value={this.state.name}
-                        onChange={this.handleChange}
-                        MenuProps={MenuProps}
-                    >
+            <div className="default-card-pay">
+                <span className='payment-title'>Cost Center Charge</span>
 
-                        {names.map(name => (
-                            <MenuItem key={name} value={name}>
-                                <ListItemText primary={name} />
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-                <FormControl className={classes.formControl}>
-                    <TextField
-                        InputLabelProps={{ shrink: true }}
-                        autoFocus
-                        // onFocus={() => this.props.currentFocus({ fieldValue: 'giftPayNumber', handler: 'GIFT_CARD_NUMBER' })}
-                        id="giftPayNumber"
-                        label="Gift Card Number"
-                        type="text"
-                        // value={this.props.giftPayNumber}
-                        // onChange={this.handleChange('giftPayNumber')}
-                        margin="normal"
-                        fullWidth
-                        variant="outlined"
-                    />
-                </FormControl>
+                {this.state.name == '' ? <div className="d-flex justify-space-between">
+                    <FormControl className={classes.formControl}>
+                        <InputLabel shrink={true} htmlFor="select-multiple">Cost Center Name
+                    </InputLabel>
+                        <Select
+                            value={this.state.name}
+                            onChange={this.handleChangeSelectList}
+                            autoWidth={true}
+                            MenuProps={MenuProps}
+                        >
+
+                            {names.map(name => (
+                                <MenuItem key={name} value={name}>
+                                    <ListItemText primary={name} />
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    <div className="d-flex flex-column justify-center">
+                        <CloseIcon
+                            onClick={this.handleRemove} />
+                    </div>
+                </div> : null}
+                {this.state.name != '' ?
+
+                    <div>
+                        <div style={{ width: '100%' }} className="d-flex">
+                            <FormControl className={classes.formControl2}>
+                                <TextField
+                                    InputLabelProps={{ shrink: true }}
+                                    autoFocus
+                                    // onFocus={() => this.props.currentFocus({ fieldValue: 'giftPayNumber', handler: 'GIFT_CARD_NUMBER' })}
+                                    id="Charge Type"
+                                    label="Charge Type"
+                                    type="text"
+                                    // value={this.props.giftPayNumber}
+                                    onChange={this.handleChangeTextField}
+                                    margin="normal"
+                                    fullWidth
+                                    variant="outlined"
+                                />
+                            </FormControl>
+                            <div>
+                                <FormControl className={classes.formControl2}>
+                                    <TextField
+                                        InputLabelProps={{ shrink: true }}
+                                        autoFocus
+                                        // onFocus={() => this.props.currentFocus({ fieldValue: 'giftPayNumber', handler: 'GIFT_CARD_NUMBER' })}
+                                        id="Amount To Be Used"
+                                        label="Amount To Be Used"
+                                        type="text"
+                                        // value={this.props.giftPayNumber}
+                                        onChange={this.amountToBeUsed}
+                                        margin="normal"
+                                        fullWidth
+                                        variant="outlined"
+                                    />
+
+                                </FormControl>
+                            </div>
+                            <div className="d-flex flex-column justify-center">
+                                <CloseIcon
+                                    onClick={this.handleRemove} />
+                            </div>
+                          
+
+                        </div>
+
+                    </div>
+
+                    : null}
 
             </div>
         );
     }
+
 }
-export default withStyles(styles, { withTheme: true })(CostCenter);
+
+function mapStateToProps(state) {
+    let costCenterType = state.PaymentDetails.costCenterType;
+    let costCenterAmount = state.PaymentDetails.costCenterAmount;
+    let remainingAmount = state.PaymentDetails.remainingAmount;
+    let costCenterDepartment = state.PaymentDetails.costCenterDepartment;
+    let totalAmount = _get(state, 'cart.totalAmount');
+    return { costCenterType, costCenterAmount, remainingAmount, costCenterDepartment, totalAmount };
+
+}
+export default connect(mapStateToProps)(withStyles(styles, { withTheme: true })(CostCenter));
