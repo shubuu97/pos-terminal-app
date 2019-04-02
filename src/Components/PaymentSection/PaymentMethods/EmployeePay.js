@@ -55,9 +55,8 @@ class EmployeePay extends React.Component {
     }
 
     handleChange = name => event => {
-        debugger
         let value = event.target.value;
-        let availableValue = _get(this, 'state.availableValue', 0);
+        let availableValue = _get(this, 'state.availableValue', 0).toFixed(2);
         let totalValue = _get(this.props, 'totalAmount.amount', 0)
         if(value > availableValue){
             value = availableValue
@@ -99,7 +98,7 @@ class EmployeePay extends React.Component {
                             {
                                 this.state.availableValue ?
                                     <div className='mt-10'>
-                                        Available Amount : {this.state.availableValue}
+                                        Available Amount : {this.state.availableValue.toFixed(2)}
                                     </div> : null
                             }
                             {
