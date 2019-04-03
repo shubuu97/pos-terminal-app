@@ -224,27 +224,32 @@ class ProductsSection extends React.Component {
                 limit: 39,
                 skip: 1
             }).then(async (result) => {
+                if (result.rows.length == 0) {
+                    this.setState({ disable: false, productLoading: false })
+                    return;
+                }
                 if (localStorage.getItem("showOutOfStock") == "true") {
                     //this is the code for filtering the result;
-                        this.filteredResult = [];
-                        this.resolveArray = [];
-                        this.filterResult(result).then((rows) => {
-                            let result = { rows }
-                            result.pagination = {}
-                            result.pagination.method = method
-                            result.pagination.firstItemId = result.rows[0].id
-                            result.pagination.lastItemId = result.rows[result.rows.length - 1].id
-                            result.pagination.pageNo = this.props.pageNo
-                            result.pagination.startVal = this.props.endVal + 1
-                            result.pagination.endVal = result.pagination.pageNo * this.state.itemCount
+                    this.filteredResult = [];
+                    this.resolveArray = [];
+                    this.filterResult(result).then((rows) => {
+                        debugger;
+                        let result = { rows }
+                        result.pagination = {}
+                        result.pagination.method = method
+                        result.pagination.firstItemId = result.rows[0].id
+                        result.pagination.lastItemId = result.rows[result.rows.length - 1].id
+                        result.pagination.pageNo = this.props.pageNo
+                        result.pagination.startVal = this.props.endVal + 1
+                        result.pagination.endVal = result.pagination.pageNo * this.state.itemCount
 
-                            result.rows = [..._get(this, 'props.productList', []), ...result.rows]
-                            if (result.pagination.endVal > this.props.productCount) {
-                                result.pagination.endVal = this.props.productCount
-                            }
-                            this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
-                            this.setState({ disable: false, productLoading: false })
-                        });
+                        result.rows = [..._get(this, 'props.productList', []), ...result.rows]
+                        if (result.pagination.endVal > this.props.productCount) {
+                            result.pagination.endVal = this.props.productCount
+                        }
+                        this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+                        this.setState({ disable: false, productLoading: false })
+                    });
                 }
                 else {
                     result.pagination = {}
@@ -320,9 +325,9 @@ class ProductsSection extends React.Component {
                             handleHistoryOpen={this.props.handleHistoryOpen}
                             handleClickOpenSessionContainer={this.props.handleClickOpenSessionContainer}
                             handleClickQuickBook={this.props.handleClickQuickBook}
-                            handleSetting = {this.props.handleSetting}
+                            handleSetting={this.props.handleSetting}
                             logout={this.props.handleLogout}
-                            getProductData = {this.props.getProductData}
+                            getProductData={this.props.getProductData}
                         />
                         <SearchBar
                             handleChange={this.handleChange}
