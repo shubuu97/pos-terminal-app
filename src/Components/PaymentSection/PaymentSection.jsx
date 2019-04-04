@@ -599,7 +599,7 @@ class PaymentSection extends React.Component {
         let disable = this.props.remainingAmount <= 0 ? { opacity: '0.3', pointerEvents: 'none' } : null
 
         let logo
-        if (localStorage.getItem('storeLogo') !== '') {
+        if (localStorage.getItem('storeLogo')) {
             logo = localStorage.getItem('storeLogo')
         } else {
             logo = aobLogo
