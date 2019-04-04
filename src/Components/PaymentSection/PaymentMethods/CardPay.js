@@ -79,18 +79,24 @@ class CardPay extends React.Component {
         this.handleOpen();
         let POSReqObj = this.makePOSReqObj();
         request
-            .post(localStorage.getItem('freedomPayClientUrl'))
+            .post('http://192.168.1.22:1011')
             .send(POSReqObj) // sends a JSON post body
             .then(res => {
                 var json = convert.xml2json(res.text, { compact: true, spaces: 4 });
                 let responseObj = JSON.parse(json);
                 let POSResponse = _get(responseObj, 'POSResponse');
                 console.log(POSResponse, "POSResponse");
+                debugger;
                 if (_get(POSResponse, 'Decision._text') == 'A' && _get(POSResponse, 'ErrorCode._text') == '100') {
                     this.posResponseSuccess(res.text, POSResponse);
-                    return
+                    return;
                 }
-                if (_get(responseObj, 'POSResponse.ErrorCode._text')) {
+                if (_get(POSResponse, 'ErrorCode._text')) {
+                   if( _get(POSResponse,"Message._text")){
+                    let errMsg = `Error Occured with code:${POSResponse.ErrorCode._text}(${_get(POSResponse,"Message._text")})`;
+                    this.handleError(errMsg);
+                    return;
+                   }
                     let errorObj = codes(POSResponse.ErrorCode._text);
                     console.log(errorObj, "errorObj");
                     let errMsg = `Error Occured with code:${POSResponse.ErrorCode._text}(${_get(errorObj, 'descripton')})`
