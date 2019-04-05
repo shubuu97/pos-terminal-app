@@ -123,10 +123,9 @@ class HomeContainer extends React.Component {
     errorLoyaltyPoint = (err,errCode)=>{
         if(err){
             debugger;
-            if(err=="invalid token")
+            if(errCode==401)
             {
-                debugger;
-
+                this.handleLogout()
             }
         }
     }
@@ -689,7 +688,7 @@ const pollingWrapper = async (propsOfComp, dispatch) => {
 }
 
 
-HomeContainer = pollingHoc(10000, pollingWrapper)(HomeContainer)
+HomeContainer = pollingHoc(30000, pollingWrapper)(HomeContainer)
 
 
 export default connect(mapStateToProps)(HomeContainer)
