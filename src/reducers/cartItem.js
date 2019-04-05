@@ -99,7 +99,7 @@ const cartItem = (state = {
                     let countyTaxRate = localStorage.getItem('countyTaxRate')
                     itemTaxPercent = Number(federalTaxRate) + Number(stateTaxRate) + Number(countyTaxRate);
                     console.log(itemTaxPercent, 'itemTaxPercent')
-                    taxAmount = _get(item, 'itemSubTotal.amount', 0) * itemTaxPercent / 100;
+                    taxAmount = (_get(item, 'itemSubTotal.amount', 0) * itemTaxPercent / 100).toFixed(2);
 
                 }
                 item.itemTaxAmount = {
