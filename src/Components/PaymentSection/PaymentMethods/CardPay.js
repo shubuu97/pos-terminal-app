@@ -79,7 +79,7 @@ class CardPay extends React.Component {
         this.handleOpen();
         let POSReqObj = this.makePOSReqObj();
         request
-            .post('http://192.168.1.22:1011')
+            .post(localStorage.getItem('freedomPayClientUrl'))
             .send(POSReqObj) // sends a JSON post body
             .then(res => {
                 var json = convert.xml2json(res.text, { compact: true, spaces: 4 });
