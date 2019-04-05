@@ -17,6 +17,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Transaction from './Transaction';
 /* Pouchdb Imports */
 import PouchDb from 'pouchdb';
+import SyncBeforeSession from '../SessionComponents/SyncBeforeSessionEnd';
 
 let transactiondb = new PouchDb('transactiondb');
 const styles = theme => ({
@@ -102,15 +103,18 @@ class Transactions extends React.Component {
                                             <span className='summary-title'>Terminal</span>
                                             <span className='summary-money'>{_get(transaction, 'terminalName')}</span>
                                         </div>
+                                        <div className='each-detail flex-column align-center'>
+                                            <span className='summary-title'>Sync</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </ExpansionPanelSummary>
-                        <ExpansionPanelDetails>
+                        {/* <ExpansionPanelDetails>
                             <Typography>
                                 We are synching in background...
                             </Typography>
-                        </ExpansionPanelDetails>
+                        </ExpansionPanelDetails> */}
                     </ExpansionPanel>
                 </div>
             </Grid>)

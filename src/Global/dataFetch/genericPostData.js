@@ -21,18 +21,19 @@ function genericPostData({ dispatch, reqObj, url, constants, identifier, success
         }, 1000);
 
     })
-        .catch((err) => {
+        .catch(({err,errCode}) => {
+            debugger;
             if (typeof err == 'string')
                 dispatch(showMessage({ text: err, isSuccess: false }));
             console.log(err);
-            if (err.code == 500) {
+            if (errCode == 500) {
                 if (err.detail)
                     dispatch(showMessage({ text: err.detail, isSuccess: false }));
 
             }
 
             if (errorCb)
-                errorCb(err)
+                errorCb(err,errCode)
             setTimeout(() => {
                 dispatch(showMessage({}));
                 if (errorTimeOutCb)

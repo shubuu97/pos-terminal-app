@@ -13,6 +13,9 @@ import ReasonDialog from './ReasonDialog';
 import withDialog from '../DialogHoc';
 import ZReport from './ZReport';
 import DialogHoc from '../../Global/Components/HOC/CommonDialogHoc';
+import Pouchdb from 'pouchdb';
+import SyncBeforeSession from './SyncBeforeSessionEnd';
+let transactiondb = new Pouchdb('transactiondb')
 let ZReportDialog = DialogHoc(ZReport);
 
 class SessionDetail extends React.Component {
@@ -97,22 +100,37 @@ class SessionDetail extends React.Component {
     closePlusTransactionDialog = () => {
         this.setState({ showTransactionDialog: false })
     }
-    handleEndSession = () => {
+    handleEndSession = async () => {
         if (this.state.realClosingBalance) {
             if (this.calDiffrence() != 0 && this.state.closeReason == '') {
                 this.setState({ showReasonModal: true });
                 return;
             }
-            this.setState({ isLoading: true })
-            closeSession({
-                dispatch: this.props.dispatch,
-                handleSuccess: this.handleSessionCloseSuccess,
-                handleError: this.handleSessionCloseError,
-                reason: this.state.closeReason,
-                amount: this.state.realClosingBalance,
-                denominationDetails: this.state.denominationDetails,
-                id: _get(this.state, 'session.id')
-            })
+            let res = await transactiondb.allDocs({
+                include_docs: true
+            });
+            if (_get(res, 'rows.length', 0) > 0) {
+                this.setState({ syncBeforeEndSession: true, showReasonModal: false });
+                if(!this.intervalId)
+                this.intervalId = setInterval(this.handleEndSession, 5000);
+            }
+            else {
+                clearInterval(this.intervalId);
+                this.setState({ isLoading: true })
+                this.setState({ syncBeforeEndSession: false, showReasonModal: false });
+                closeSession({
+                    dispatch: this.props.dispatch,
+                    handleSuccess: this.handleSessionCloseSuccess,
+                    handleError: this.handleSessionCloseError,
+                    reason: this.state.closeReason,
+                    amount: this.state.realClosingBalance,
+                    denominationDetails: this.state.denominationDetails,
+                    id: _get(this.state, 'session.id')
+                })
+                return
+            }
+
+
         }
         else {
             this.setState({ closeSessionDialog: true })
@@ -272,8 +290,8 @@ class SessionDetail extends React.Component {
     handlePrintZReport = () => {
         this.setState({ showZReportDialog: true });
     }
-    printZReportRecipet = ()=>{
-        this.setState({ showZReportDialog: false,firePrint:true });
+    printZReportRecipet = () => {
+        this.setState({ showZReportDialog: false, firePrint: true });
     }
 
 
@@ -437,12 +455,16 @@ class SessionDetail extends React.Component {
                 />
                 <ZReportDialog
                     open={this.state.showZReportDialog}
-                    actionName = 'Print'
-                    title = {'Z-Report'}
+                    actionName='Print'
+                    title={'Z-Report'}
                     hide={true}
                     firePrint={this.state.firePrint}
-                    handleClose = {()=>this.setState({showZReportDialog:false})}
+                    handleClose={() => this.setState({ showZReportDialog: false })}
                     actionHandler={this.printZReportRecipet}
+                />
+                <SyncBeforeSession
+                    open={this.state.syncBeforeEndSession}
+                    handleClose={() => this.setState({ syncBeforeEndSession: false })}
                 />
 
             </div>

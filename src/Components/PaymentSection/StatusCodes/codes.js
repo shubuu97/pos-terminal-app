@@ -1,6 +1,5 @@
  const  codes = (code) => {
      code = parseInt(code);
-     debugger;
     switch (code) {
         case 101:
             return {

@@ -120,6 +120,16 @@ class HomeContainer extends React.Component {
             paymentSubmitTransaction,
         })
     }
+    errorLoyaltyPoint = (err,errCode)=>{
+        if(err){
+            debugger;
+            if(err=="invalid token")
+            {
+                debugger;
+
+            }
+        }
+    }
 
     getRuleSet = () => {
         let data = { id: localStorage.getItem('retailerId') }
@@ -135,7 +145,7 @@ class HomeContainer extends React.Component {
             },
             identifier: 'GET_LOYALTY_REDEMPTION_RULES',
             successCb: this.saveRedemptionRules,
-            // errorCb: this.handleGetCustomerSaleDataError
+            errorCb: this.errorLoyaltyPoint
         })
         genericPostData({
             dispatch: this.props.dispatch,
@@ -149,7 +159,7 @@ class HomeContainer extends React.Component {
             },
             identifier: 'GET_LOYALTY_EARNING_RULES',
             successCb: this.saveEarningRules,
-            // errorCb: this.handleGetCustomerSaleDataError
+            errorCb: this.handleErrorRedemption
         })
     }
 
@@ -554,6 +564,7 @@ function mapStateToProps(state) {
 }
 
 const deleteDocFromDb = async (row) => {
+    console.log("###############hi###############")
     //todo implement maxtry
     let rev = row.value.rev;
     return transactiondb.remove(row.id, row.value.rev).
@@ -562,6 +573,7 @@ const deleteDocFromDb = async (row) => {
 }
 
 const OfflineTransactionPusher = async (propsOfComp, dispatch) => {
+    console.log("###OfflineTransaction###")
     let resp = await transactiondb.allDocs({
         include_docs: true,
         attachments: true,
@@ -570,6 +582,7 @@ const OfflineTransactionPusher = async (propsOfComp, dispatch) => {
 
 
     if (rows.length) {
+
         let transactionDoc = _get(rows, '[0].doc.transactionDoc');
         axiosFetcher({
             method: 'POST',
@@ -676,7 +689,7 @@ const pollingWrapper = async (propsOfComp, dispatch) => {
 }
 
 
-HomeContainer = pollingHoc(5000, pollingWrapper)(HomeContainer)
+HomeContainer = pollingHoc(10000, pollingWrapper)(HomeContainer)
 
 
 export default connect(mapStateToProps)(HomeContainer)

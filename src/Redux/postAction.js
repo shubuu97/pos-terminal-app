@@ -21,7 +21,7 @@ return{
 };
 
 export  const receiveError = (subreddit, err, errCode, reject,constants) => {
-    reject(err);
+    reject({err,errCode});
      return({
         type:constants.error,
         subreddit,

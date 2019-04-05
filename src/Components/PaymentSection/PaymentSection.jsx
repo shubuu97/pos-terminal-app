@@ -357,9 +357,7 @@ class PaymentSection extends React.Component {
                 paymentReference: apiResponse,
             })
         }
-        debugger;
         if ((parseFloat(this.props.costCenterAmount) || 0)) {
-            debugger;
             let url = 'Payment/CostCenterCharge/Save';
             let data = {
                 retailerId: localStorage.getItem('retailerId'),

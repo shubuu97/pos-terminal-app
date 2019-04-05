@@ -73,7 +73,6 @@ const paymentReducer = (state = {
             return (Object.assign({}, state, { cardAmount, remainingAmount, cardRefrenceId }));
             break;
         case 'COST_CENTER_CHARGE':
-            debugger;
             costCenterType = action.data.costCenterType;
             costCenterDepartment = action.data.costCenterDepartment;
             costCenterAmount = action.data.costCenterAmount;

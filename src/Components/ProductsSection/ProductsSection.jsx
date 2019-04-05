@@ -233,7 +233,6 @@ class ProductsSection extends React.Component {
                     this.filteredResult = [];
                     this.resolveArray = [];
                     this.filterResult(result).then((rows) => {
-                        debugger;
                         let result = { rows }
                         result.pagination = {}
                         result.pagination.method = method

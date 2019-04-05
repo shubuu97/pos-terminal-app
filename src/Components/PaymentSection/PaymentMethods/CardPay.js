@@ -86,7 +86,6 @@ class CardPay extends React.Component {
                 let responseObj = JSON.parse(json);
                 let POSResponse = _get(responseObj, 'POSResponse');
                 console.log(POSResponse, "POSResponse");
-                debugger;
                 if (_get(POSResponse, 'Decision._text') == 'A' && _get(POSResponse, 'ErrorCode._text') == '100') {
                     this.posResponseSuccess(res.text, POSResponse);
                     return;
