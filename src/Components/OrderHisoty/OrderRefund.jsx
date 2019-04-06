@@ -7,7 +7,7 @@ import _isEmpty from 'lodash/isEmpty';
 import _isArray from 'lodash/isArray';
 import _find from 'lodash/find';
 /* Redux Imports */
-import { commonActionCreater } from '../Redux/commonAction'
+import { commonActionCreater } from '../../Redux/commonAction'
 /* Material Imports */
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -33,8 +33,8 @@ import Slide from '@material-ui/core/Slide';
 /* Material Icons */
 import DeleteIcons from '@material-ui/icons/DeleteOutline';
 /*  */
-import applyCart from '../Global/PosFunctions/applyCart';
-import genericPostData from '../Global/dataFetch/genericPostData';
+import applyCart from '../../Global/PosFunctions/applyCart';
+import genericPostData from '../../Global/dataFetch/genericPostData';
 import { isArray } from 'util';
 import TextField from '@material-ui/core/TextField';
 

@@ -9,7 +9,7 @@ import _find from 'lodash/find';
 import _cloneDeep from 'lodash/cloneDeep';
 import _set from 'lodash/set';
 /* Redux Imports */
-import { commonActionCreater } from '../Redux/commonAction'
+import { commonActionCreater } from '../../Redux/commonAction'
 /* Material Imports */
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -20,10 +20,10 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 /* Material Icons */
-import genericPostData from '../Global/dataFetch/genericPostData';
+import genericPostData from '../../Global/dataFetch/genericPostData';
 import OrderRefund from './OrderRefund';
-import HandlePrint from '../Global/PosFunctions/handlePrint';
-import aobLogo from '../assets/images/aobLogodark.png';
+import HandlePrint from '../../Global/PosFunctions/handlePrint';
+import aobLogo from '../../assets/images/aobLogodark.png';
 
 const styles = {
     appBar: {
