@@ -58,11 +58,11 @@ class EmployeePay extends React.Component {
         let value = event.target.value;
         let availableValue = _get(this, 'state.availableValue', 0).toFixed(2);
         let totalValue = _get(this.props, 'totalAmount.amount', 0)
-        if(value > availableValue){
-            value = availableValue
-        }
         if(value > totalValue){
             value = totalValue
+        }
+        if(value > availableValue){
+            value = availableValue
         }
         if (regex.test(value)) {
             this.props.dispatch(commonActionCreater({ employeePay: value, totalAmount: this.props.totalAmount }, 'EMPLOYEE_PAYROLL'));
@@ -74,6 +74,22 @@ class EmployeePay extends React.Component {
             this.props.dispatch(commonActionCreater({ employeePay: '', totalAmount: this.props.totalAmount }, 'EMPLOYEE_PAYROLL'));
         }
     };
+
+    checkValue = (value) => {
+        let currentValue = value;
+        let availableValue = _get(this, 'state.availableValue', 0).toFixed(2);
+        let totalValue = _get(this.props, 'totalAmount.amount', 0)
+        if(value > totalValue){
+            currentValue = totalValue
+        }
+        if(currentValue > availableValue){
+            currentValue = availableValue
+        }
+        if (currentValue != value){
+            this.props.dispatch(commonActionCreater({ employeePay: currentValue, totalAmount: this.props.totalAmount }, 'EMPLOYEE_PAYROLL'));
+        }
+        return currentValue
+    }
 
     render() {
         return (
@@ -88,7 +104,7 @@ class EmployeePay extends React.Component {
                             type="text"
                             onFocus={() => this.props.currentFocus({ fieldValue: 'employeePay', handler: 'EMPLOYEE_PAYROLL' })}
                             label="Amount"
-                            value={_get(this.props, 'employeePayroll.employeePay')}
+                            value={this.checkValue(_get(this.props, 'employeePayroll.employeePay'))}
                             onChange={this.handleChange('employeePay')}
                             margin="normal"
                             fullWidth
