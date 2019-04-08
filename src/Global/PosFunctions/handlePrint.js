@@ -21,13 +21,13 @@ const HandlePrint = (props) => {
         if (isItemDiscountPercentExist) {
             itemDis = 0
         } else {
-            itemDis = (_get(item, 'itemRegularTotal.amount',0) * _get(item, 'itemDiscountPercent')) / 100
+            itemDis = (_get(item, 'itemRegularTotal.amount', 0) * _get(item, 'itemDiscountPercent')) / 100
         }
         itemSubTotal = ((_get(item, 'doc.product.salePrice.price', 0) * _get(item, 'qty', 1)) - (empDis + itemDis))
         stSubTotal += itemSubTotal
         return (
             <div style={{ display: 'flex', flex: '1', paddingTop: "10px", paddingBottom: "10px", borderBottom: 'dotted 1px #9e9e9e' }}>
-                <div style={{ width: "35%" }}>{_get(item, 'doc.product.isGiftCard', false) ? 'Gift Card' :  _get(item, 'doc.product.name', ' ')}</div>
+                <div style={{ width: "35%" }}>{_get(item, 'doc.product.isGiftCard', false) ? 'Gift Card' : _get(item, 'doc.product.name', ' ')}</div>
                 <div style={{ width: "10%", textAlign: "center" }}>{_get(item, 'qty', '')}</div>
                 <div style={{ width: "30%", textAlign: "right" }}>{_get(item, 'doc.product.salePrice.price', 0).toFixed(2)}<br />
                     <div style={{ fontSize: "9px" }}>
@@ -39,6 +39,33 @@ const HandlePrint = (props) => {
             </div>
         )
     })
+
+    const paymentMethods = (num) => {
+        debugger
+        let method
+        switch (num) {
+            case 0:
+                method = 'Cash'
+                break;
+            case 1:
+                method = 'Card'
+                break;
+            case 2:
+                method = 'Gift Card'
+                break;
+            case 3:
+                method = 'Cost Center Charge'
+                break;
+            case 4:
+                method = 'Employee'
+                break;
+            case 5:
+                method = 'Loyalty'
+                break;
+        }
+
+        return method
+    }
 
     const orderHistory = _get(props, 'itemList', []).map(item => {
         console.log(item, 'checking item')
@@ -52,29 +79,29 @@ const HandlePrint = (props) => {
             empDis = (_get(item, 'saleItem.itemRegularTotal.amount') * _get(item, 'saleItem.employeeDiscountPercent')) / 100
         }
         let itemDis
-        let isItemDisExist = ('itemDiscountPercent' in _get(item, 'saleItem',{}))
-        if(!isItemDisExist) {
+        let isItemDisExist = ('itemDiscountPercent' in _get(item, 'saleItem', {}))
+        if (!isItemDisExist) {
             itemDis = 0
         } else {
-            itemDis = (_get(item,'saleItem.itemRegularTotal.amount', 0) * _get(item,'saleItem.itemDiscountPercent', 0)) / 100   
+            itemDis = (_get(item, 'saleItem.itemRegularTotal.amount', 0) * _get(item, 'saleItem.itemDiscountPercent', 0)) / 100
         }
-        itemSubTotal = (_get(item, 'product.salePrice.price', 0) * _get(item, 'saleItem.qty', 1)) - (empDis + itemDis) 
-        if(_isEmpty(item.giftCard)) {
+        itemSubTotal = (_get(item, 'product.salePrice.price', 0) * _get(item, 'saleItem.qty', 1)) - (empDis + itemDis)
+        if (_isEmpty(item.giftCard)) {
             ohSubTotal += itemSubTotal
         } else {
-            ohSubTotal += _get(item, 'giftCard.value.amount',0)
+            ohSubTotal += _get(item, 'giftCard.value.amount', 0)
         }
         return (
             <div style={{ display: 'flex', flex: '1', paddingTop: "10px", paddingBottom: "10px", borderBottom: 'dotted 1px #9e9e9e' }}>
-                <div style={{ width: "35%", paddingRight: '10px' }}>{_isEmpty(item.giftCard) ? _get(item, 'product.name','') : 'Gift Card'}</div>
+                <div style={{ width: "35%", paddingRight: '10px' }}>{_isEmpty(item.giftCard) ? _get(item, 'product.name', '') : 'Gift Card'}</div>
                 <div style={{ width: "10%", textAlign: "center" }}>{_get(item, 'saleItem.qty', '')}</div>
-                <div style={{ width: "30%", textAlign: "right" }}>{_isEmpty(item.giftCard) ? salePrice.toFixed(2) : _get(item, 'giftCard.value.amount',0)}<br />
+                <div style={{ width: "30%", textAlign: "right" }}>{_isEmpty(item.giftCard) ? salePrice.toFixed(2) : _get(item, 'giftCard.value.amount', 0)}<br />
                     <div style={{ fontSize: "9px" }}>
                         {itemDis == 0 ? '' : <span>(Item Disc.: {itemDis.toFixed(2)})</span>}<br />
                         {empDis == 0 ? '' : <span>(Emp Disc.: {empDis.toFixed(2)})</span>}
                     </div>
                 </div>
-                <div style={{ width: "25%", textAlign: "right" }}>{_isEmpty(item.giftCard) ? itemSubTotal.toFixed(2) : _get(item, 'giftCard.value.amount',0)}</div>
+                <div style={{ width: "25%", textAlign: "right" }}>{_isEmpty(item.giftCard) ? itemSubTotal.toFixed(2) : _get(item, 'giftCard.value.amount', 0)}</div>
             </div>
         )
     })
@@ -93,11 +120,11 @@ const HandlePrint = (props) => {
     let grandTotal = _get(props, 'totalAmount', 0)
     let totalAmountPaid = _get(props, 'totalAmountPaid', 0)
     let changeDue = _get(props, 'changeDue', 0)
-    
+
     return (
         <div style={{ fontSize: "12px", fontFamily: "arial, sans-serif" }} >
             <div style={{ textAlign: "center" }}>
-                <div style={{height: "100px", width: "100%"}}> <img style={{height: "100%", width: "auto"}} src={props.logo}/></div>
+                <div style={{ height: "100px", width: "100%" }}> <img style={{ height: "100%", width: "auto" }} src={props.logo} /></div>
                 <div style={{ marginTop: '15px' }}>{_get(props, 'orderId', '')}</div>
                 <div>{_get(props, 'orderDate', '')}</div>
                 <div style={{ marginTop: '10px' }}><span style={{ color: '#9e9e9e', fontSize: '11px', fontWeight: 'bold' }}>STORE:</span> {_get(props, 'storeName', '')}</div>
@@ -155,7 +182,7 @@ const HandlePrint = (props) => {
                 <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>
                     TOTAL TAX: <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + taxAmount.toFixed(2)}</span>
                 </div>
-                
+
             </div>
             <div style={{ display: 'flex', flex: '1', flexDirection: 'column', borderBottom: 'solid 1px #9e9e9e', paddingTop: "5px", paddingBottom: "5px", marginBottom: "15px" }} >
                 {/* {props.regularTotal &&
@@ -190,9 +217,9 @@ const HandlePrint = (props) => {
                     </div>
                 }
 
-                {props.saleComment && 
-                    <div style={{display:'flex',  justifyContent:'space-between', paddingBottom:"4px"}}>
-                        SALE COMMENT: <span style={{fontWeight:'bold'}}>{_get(props,'saleComment', '---------')}</span>
+                {props.saleComment &&
+                    <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>
+                        SALE COMMENT: <span style={{ fontWeight: 'bold' }}>{_get(props, 'saleComment', '---------')}</span>
                     </div>
                 }
 
@@ -203,7 +230,7 @@ const HandlePrint = (props) => {
                             return (
                                 <div style={{ display: 'flex' }}>
                                     <span style={{ fontWeight: 'bold', textAlign: "right" }}>{_get(props, 'currency', '') + _get(payment, 'paymentAmount.amount', 0).toFixed(2)}<br />
-                                        by {_get(payment, 'paymentMethod', '')}</span>
+                                        by {paymentMethods(_get(payment, 'paymentMethod', 0))}</span>
                                 </div>
                             )
                         })}

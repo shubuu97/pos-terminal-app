@@ -27,7 +27,6 @@ class EmployeePay extends React.Component {
     }
 
     componentWillUnmount() {
-        debugger
         //setting to the 0 again on unmouning
         this.props.dispatch(commonActionCreater({ employeePay: '', totalAmount: this.props.totalAmount }, 'EMPLOYEE_PAYROLL'));
     }

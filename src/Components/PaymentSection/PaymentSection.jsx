@@ -69,6 +69,54 @@ class PaymentSection extends React.Component {
         //Action for destroy all amount reducer
     }
 
+    populatePaymentOptions = () => {
+        let allowedOptions = this.props.paymentMethods;
+        let options = []
+
+        let disable = this.props.remainingAmount <= 0 ? { opacity: '0.3', pointerEvents: 'none' } : null
+        let disableOffline = this.props.offline ? { opacity: '0.3', pointerEvents: 'none' } : null;
+        for (let i = 0; i < allowedOptions.length; i++) {
+            switch (allowedOptions[i]) {
+                case 0:
+                    options.push(
+                        <li style={disable} onClick={this.handleCashPayment} className="cash-method" > Cash</li>
+                    )
+                    break;
+                case 1:
+                    options.push(
+                        <li style={disable} onClick={this.handleCardPayment} variant="outlined" className="card-method" > Debit / Credit Card</li>
+                    )
+                    break;
+                case 2:
+                    options.push(
+                        this.giftCardRender()
+                    )
+                    break;
+                case 3:
+                    options.push(
+                        _get(this.props, 'customer.isEmpPayEnabled') ? <li style={disable || disableOffline} onClick={this.handleCostCenter} variant="outlined" className="card-method">Cost Center Charge</li> : null
+                    )
+                    break;
+                case 4:
+                    options.push(
+                        _get(this.props, 'customer.isEmpPayEnabled') ? < li style={disable || disableOffline} onClick={this.handleEmployeePay} className="employee-section" > Employee</li > : null
+                    )
+                    break;
+                case 5:
+                    options.push(
+                        _get(this.props, 'totalAmount.amount') > _get(this.props, 'redemptionRules.lookUpData.redemptionRule.minimumSaleAmount') && !(_get(this.props, 'customer.guest', false)) ?
+                            <li style={disable || disableOffline} onClick={this.handleLoyaltyRedeem} className="giftcard-section">Redeem Points</li> : null
+                    )
+
+
+                    {/* <li  className="freedompay">Freedom <br/> Pay</li>      */ }
+            }
+        }
+
+
+        return options
+    }
+
     handleCashPayment = () => {
         this.setState({ showCashPay: true })
     }
@@ -287,8 +335,9 @@ class PaymentSection extends React.Component {
 
         let payments = []
         if ((parseFloat(this.props.cashAmount) || 0)) {
+            debugger
             payments.push({
-                paymentMethod: 'CASH',
+                paymentMethod: 0,
                 paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.cashAmount) || 0) },
                 paymentReference: ""
             })
@@ -302,7 +351,7 @@ class PaymentSection extends React.Component {
         // }
         if ((parseFloat(this.props.cardAmount) || 0)) {
             payments.push({
-                paymentMethod: 'CARD',
+                paymentMethod: 1,
                 paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.cardAmount) || 0) },
                 paymentReference: this.props.cardRefrenceId
             })
@@ -331,7 +380,7 @@ class PaymentSection extends React.Component {
                 error: 'GET_GIFT_CARD_PAYMENT_DATA_ERROR'
             }))
             payments.push({
-                paymentMethod: 'GIFT_CARD',
+                paymentMethod: 2,
                 paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.giftCardAmount) || 0) },
                 paymentReference: apiResponse,
             })
@@ -352,7 +401,7 @@ class PaymentSection extends React.Component {
                 error: 'GET_REF_FROM_LOYALTY_REDEEM_ERROR'
             }))
             payments.push({
-                paymentMethod: 'LOYALTY_POINTS',
+                paymentMethod: 5,
                 paymentAmount: { currencyCode: '$', amount: (parseFloat(LoyaltyValue) || 0) },
                 paymentReference: apiResponse,
             })
@@ -361,14 +410,14 @@ class PaymentSection extends React.Component {
             let url = 'Payment/CostCenterCharge/Save';
             let data = {
                 retailerId: localStorage.getItem('retailerId'),
-                terminalId:localStorage.getItem('terminalId'),
+                terminalId: localStorage.getItem('terminalId'),
                 customerId: _get(this.props, 'customer.id', ''),
                 sessionId: localStorage.getItem('sessionId'),
-                operatorId:localStorage.getItem('userId'),
-                storeId:localStorage.getItem('storeId'),
-                departmentName:this.props.costCenterDepartment,
-                chargeType:this.props.costCenterType,
-                value:{currencyCode: '$', amount: (parseFloat(this.props.costCenterAmount) || 0)},
+                operatorId: localStorage.getItem('userId'),
+                storeId: localStorage.getItem('storeId'),
+                departmentName: this.props.costCenterDepartment,
+                chargeType: this.props.costCenterType,
+                value: { currencyCode: '$', amount: (parseFloat(this.props.costCenterAmount) || 0) },
             }
             let apiResponse = await this.props.dispatch(postData(`${APPLICATION_BFF_URL}${url}`, data, 'GET_COST_CENTER_CHARGE', {
                 init: 'GET_COST_CENTER_CHARGE_INIT',
@@ -376,7 +425,7 @@ class PaymentSection extends React.Component {
                 error: 'GET_COST_CENTER_CHARGE_ERROR'
             }))
             payments.push({
-                paymentMethod: 'COST_CENTER_CHARGE',
+                paymentMethod: 3,
                 paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.costCenterAmount) || 0) },
                 paymentReference: apiResponse,
             })
@@ -399,7 +448,7 @@ class PaymentSection extends React.Component {
                 error: 'GET_REF_FROM_LOYALTY_REDEEM_ERROR'
             }))
             payments.push({
-                paymentMethod: 'EMPLOYEE_PAYROLL_DEDUCT',
+                paymentMethod: 4,
                 paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.employeePay) || 0) },
                 paymentReference: apiResponse
             })
@@ -410,7 +459,7 @@ class PaymentSection extends React.Component {
             (parseFloat(this.props.employeePay) || 0) +
             (parseFloat(this.props.cashAmount || 0)) +
             (parseFloat(this.props.giftCardAmount) || 0) +
-            (parseFloat(LoyaltyValue || 0))+
+            (parseFloat(LoyaltyValue || 0)) +
             (parseFloat(this.props.costCenterAmount || 0))
 
         let reqObj = {
@@ -574,18 +623,12 @@ class PaymentSection extends React.Component {
             return (
                 <React.Fragment>
                     <li style={disable} onClick={this.handleGiftCardPayment} className="giftcard-section">Gift Card</li>
-                    {
-                        _get(this.props, 'totalAmount.amount') > _get(this.props, 'redemptionRules.lookUpData.redemptionRule.minimumSaleAmount') && !(_get(this.props, 'customer.guest', false)) ?
-                            <li style={disable} onClick={this.handleLoyaltyRedeem} className="giftcard-section">Redeem Points</li> : null
-                    }
                 </React.Fragment>
             )
         else {
             return (
                 <React.Fragment>
                     <li className='disable-button giftcard-section'>Gift Card</li>
-                    <li className='disable-button giftcard-section'>Redeem Points</li>
-
                 </React.Fragment>
 
             )
@@ -595,8 +638,6 @@ class PaymentSection extends React.Component {
 
     render() {
         let { paymentOptionsPart, paymentMainPart, paymentCalculator, paymentSaleComment, paymentSubmitTransaction } = this.props
-        let disable = this.props.remainingAmount <= 0 ? { opacity: '0.3', pointerEvents: 'none' } : null
-        let disableOffline = this.props.offline?{ opacity: '0.3', pointerEvents: 'none' }:null;
         let logo
         if (localStorage.getItem('storeLogo')) {
             logo = localStorage.getItem('storeLogo')
@@ -609,13 +650,7 @@ class PaymentSection extends React.Component {
                 <div className='flex-column'>
                     <div className='flex-row justify-space-between' style={{ height: paymentOptionsPart }}>
                         <ul className="payment-method">
-                            <li style={disable} onClick={this.handleCashPayment} className="cash-method">Cash</li>
-                            <li style={disable} onClick={this.handleCardPayment} variant="outlined" className="card-method">Debit/Credit Card</li>
-                            {_get(this.props, 'customer.isEmpPayEnabled') ? <li style={disable} onClick={this.handleEmployeePay} disabled={this.props.remainingAmount < 0} className="employee-section">Employee</li> : null}
-                            {this.giftCardRender()} 
-                            {/* <li  className="freedompay">Freedom <br/> Pay</li>      */}
-
-                            <li style={disable||disableOffline} onClick={this.handleCostCenter} variant="outlined" className="card-method">Cost Center Charge</li>
+                            {this.populatePaymentOptions()}
                         </ul>
                     </div>
 
@@ -756,6 +791,7 @@ function mapStateToProps(state) {
     let costCenterAmount = _get(state, 'PaymentDetails.costCenterAmount');
     let costCenterType = _get(state, 'PaymentDetails.costCenterType');
     let costCenterDepartment = _get(state, 'PaymentDetails.costCenterDepartment');
+    let paymentMethods = _get(state, 'storeData.lookUpData.store.paymentMethods')
     return {
         cart,
         cartItems,
@@ -777,7 +813,8 @@ function mapStateToProps(state) {
         cardRefrenceId,
         costCenterAmount,
         costCenterType,
-        costCenterDepartment
+        costCenterDepartment,
+        paymentMethods
 
     }
 }

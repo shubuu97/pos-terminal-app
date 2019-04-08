@@ -123,7 +123,6 @@ class HomeContainer extends React.Component {
     }
     errorLoyaltyPoint = (err, errCode) => {
         if (err) {
-            debugger;
             if (errCode == 401) {
                 this.handleLogout()
             }
