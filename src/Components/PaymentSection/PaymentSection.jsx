@@ -230,7 +230,7 @@ class PaymentSection extends React.Component {
             else {
                 this.setState({ [fieldValue]: false });
             }
-            this.props.dispatch(commonActionCreater({ empPay: '', totalAmount: this.props.totalAmount }, 'EMPLOYEE_PAYROLL'))
+            this.props.dispatch(commonActionCreater({ employeePay: '', totalAmount: this.props.totalAmount }, 'EMPLOYEE_PAYROLL'))
 
         }
         if (fieldValue == 'showGiftPay') {
