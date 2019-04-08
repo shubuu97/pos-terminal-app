@@ -23,7 +23,7 @@ import axiosFetcher from '../Global/dataFetch/axiosFetcher';
 import ProductsSection from '../Components/ProductsSection/ProductsSection'
 import CheckoutSection from '../Components/CheckoutSection/CheckoutSection'
 import PaymentSection from '../Components/PaymentSection/PaymentSection'
-import OrderHistoryDialog from '../Components/OrderHistoryDialog';
+import OrderHistoryDialog from '../Components/OrderHisoty/OrderHistoryDialog';
 import withDialog from '../Components/DialogHoc'
 import HoldDialogue from '../Components/HoldDialogue';
 import AlertCartClear from '../Components/AlertCartClear';
@@ -62,6 +62,7 @@ class HomeContainer extends React.Component {
             openMiscProduct: false,
             openCartOnHoldOrClear: false,
             isLoading: false,
+            offline:true
         }
     }
 
@@ -120,11 +121,10 @@ class HomeContainer extends React.Component {
             paymentSubmitTransaction,
         })
     }
-    errorLoyaltyPoint = (err,errCode)=>{
-        if(err){
+    errorLoyaltyPoint = (err, errCode) => {
+        if (err) {
             debugger;
-            if(errCode==401)
-            {
+            if (errCode == 401) {
                 this.handleLogout()
             }
         }
@@ -363,11 +363,26 @@ class HomeContainer extends React.Component {
     }
 
     showNetworkIndicator = ({ online }) => {
-        if (online)
+        if (online && this.state.offline == true){
+            this.setState({
+                offline:false
+            })
+            return null
+        }
+        else if(online && this.state.offline == false){
+            return null
+        }
+        else if(!online&&this.state.offline==false){
+            this.setState({offline:true})
             return (
-                null
+                <div className='toast-area absolute flex-row justify-center align-center'>
+                    <div className='offline-indicator flex-row justify-center align-center'>
+                        <SignalWifiOffOutlined /> <span className='pl-10'>Uhhh, You are Offline</span>
+                    </div>
+                </div>
             )
-        else {
+        }
+        else{
             return (
                 <div className='toast-area absolute flex-row justify-center align-center'>
                     <div className='offline-indicator flex-row justify-center align-center'>
@@ -388,6 +403,7 @@ class HomeContainer extends React.Component {
             <div className='main pos-body relative' >
                 <Products pose={isOpenProduct ? 'open' : 'closed'}>
                     <ProductsSection
+                        offline={this.state.offline}
                         // * Css Specific props
                         windowHeight={windowHeight}
                         productListHeight={productListHeight}
@@ -411,6 +427,7 @@ class HomeContainer extends React.Component {
                     />
                 </Products>
                 <CheckoutSection
+                    offline={this.state.offline}
                     // * Css Specific props
                     windowHeight={windowHeight}
                     checkoutHeader={checkoutHeader}
@@ -430,6 +447,7 @@ class HomeContainer extends React.Component {
                 <Payment pose={isOpenPayment ? 'open' : 'closed'}>
                     {isOpenPayment ?
                         <PaymentSection
+                            offline={this.state.offline}
                             startPolling={this.props.startPolling}
                             windowHeight={windowHeight}
                             paymentOptionsPart={this.state.paymentOptionsPart}
@@ -443,6 +461,7 @@ class HomeContainer extends React.Component {
                 {
                     this.state.openOnHold ?
                         <HoldDialogue
+                            offline={this.state.offline}
                             handleClickOpenOnHold={() => this.handleClickOpen('openOnHold')}
                             handleCloseOnHold={() => this.handleClose('openOnHold')}
                             handleClickOpenAlertCartClear={() => this.handleClickOpen('openCartOnHoldOrClear')}
@@ -457,6 +476,7 @@ class HomeContainer extends React.Component {
                 {
                     this.state.openCartOnHoldOrClear ?
                         <AlertCartClear
+                            offline={this.state.offline}
                             //handleClickOpenOnHold={() => this.handleClickOpen('openOnHold')}
                             handleCloseOnHold={() => this.handleClose('openOnHold')}
                             //handleClickOpenAlertCartClear={() => this.handleClickOpen('openCartOnHoldOrClear')}
@@ -471,6 +491,7 @@ class HomeContainer extends React.Component {
                 {
                     this.state.openOrderHistory ?
                         <OrderHistoryDialog
+                            offline={this.state.offline}
                             handleClose={this.handleOrderHistoryClose}
                             open={this.state.openOrderHistory}
                             dispatch={dispatch}
@@ -479,6 +500,7 @@ class HomeContainer extends React.Component {
                 {
                     this.state.openSessionContainer ?
                         <SessionDialog
+                            offline={this.state.offline}
                             title="Sesssion List"
                             handleClickOpen={this.handleClickOpenSessionContainer}
                             handleClose={this.handleCloseSessionContainer}
@@ -490,6 +512,7 @@ class HomeContainer extends React.Component {
                 {
                     this.state.openQuickBookContainer ?
                         <OfflineTransactionDialog
+                            offline={this.state.offline}
                             title="Offline Transactions"
                             handleClickOpen={() => this.setState({ openQuickBookContainer: true })}
                             handleClose={() => this.setState({ openQuickBookContainer: false })}
@@ -502,6 +525,7 @@ class HomeContainer extends React.Component {
                 {
                     this.state.openSetting ?
                         <SettingDialog
+                            offline={this.state.offline}
                             title="Settings"
                             handleClickOpen={() => this.setState({ openSetting: true })}
                             handleClose={() => this.setState({ openSetting: false })}
@@ -514,6 +538,7 @@ class HomeContainer extends React.Component {
                 {
                     this.state.openGiftCard &&
                     <GiftCardModel
+                        offline={this.state.offline}
                         open={this.state.openGiftCard}
                         handleClose={() => this.handleGiftCard(false)}
                     />
@@ -521,6 +546,7 @@ class HomeContainer extends React.Component {
                 {
                     this.state.openMiscProduct &&
                     <MiscProductModal
+                        offline={this.state.offline}
                         open={this.state.openMiscProduct}
                         handleClose={() => this.handleMiscProduct(false)}
                     />
@@ -529,6 +555,7 @@ class HomeContainer extends React.Component {
                 <Detector render={this.showNetworkIndicator} />
 
                 <LockTerminalDialogue
+                    offline={this.state.offline}
                     open={this.props.lockState}
                     handleUnlockTerminal={this.handleUnlockTerminal}
                     handleLogout={this.handleLogout}
@@ -537,7 +564,7 @@ class HomeContainer extends React.Component {
                 {
                     this.state.isLoading ?
                         <div className=' fwidth fheight absolute flex-column justify-center align-center' style={{ background: "rgba(0,0,0,0.5)" }}>
-                            <CircularProgress size={50} style={{ color: '#fff'}} />
+                            <CircularProgress size={50} style={{ color: '#fff' }} />
                             <div className='pt-15' style={{ fontSize: '1.5em', color: '#fff', fontWeight: 'bold' }}>Logging Out</div>
                         </div> : null
                 }

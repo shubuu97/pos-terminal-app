@@ -1,5 +1,5 @@
 import React from 'react';
-import { Detector } from 'react-detect-offline';
+// import { Detector } from 'react-detect-offline';
 /* Lodash Imports */
 import _get from 'lodash/get';
 import _findIndex from 'lodash/findIndex';
@@ -157,15 +157,15 @@ class CustomerTab extends React.Component {
                             loadOptions={this.loadOptions}
                             className='fwidth'
                         />
-                        <Detector render={({ online }) => this.handleHideWhenOffline(
-                            { online },
+                        {this.handleHideWhenOffline(
+                            { online:!this.props.offline },
                             [<div className='add-customer flex-row align-center justify-center'>
                                 <PersonAdd onClick={this.handleOpen} style={{ fontSize: '1.3em', color: 'rgba(0,0,0,0.5)', cursor: 'pointer' }} />
                             </div>],
                             [<div className='add-customer flex-row align-center justify-center disable-button'>
                                 <PersonAdd onClick={this.handleOpen} style={{ fontSize: '1.3em', color: 'rgba(0,0,0,0.5)', cursor: 'pointer' }} />
                             </div>]
-                        )} />
+                        )}
                         <Customer
                             open={this.state.open}
                             closeModal={this.handleClose}
@@ -191,15 +191,15 @@ class CustomerTab extends React.Component {
                                 <div className='info-data'>{this.props.employeeId}</div>
                             </div> : null}
                         </div>
-                        <Detector render={({ online }) => this.handleHideWhenOffline(
-                            { online },
+                        {this.handleHideWhenOffline(
+                            { online:!this.props.offline },
                             [<div onClick={this.props.handleHistoryOpen} className='add-customer flex-row align-center justify-center'>
                                 <History style={{ fontSize: '2.3em', color: 'rgba(0,0,0,0.5)' }} />
                             </div>],
                             [<div onClick={this.props.handleHistoryOpen} className='disable-button add-customer flex-row align-center justify-center'>
                                 <History style={{ fontSize: '2.3em', color: 'rgba(0,0,0,0.5)' }} />
                             </div>]
-                        )} />
+                        )}
                     </div>
                     {
                        !guest ? 

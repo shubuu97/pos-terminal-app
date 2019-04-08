@@ -39,6 +39,7 @@ class CheckoutSection extends React.Component {
         return (
             <div className='pos-checkout' style={{height: this.props.windowHeight}}>
                 <TabView
+                    offline={this.props.offline}
                     toggleViewPayment={this.props.toggleViewPayment}
                     toggleViewProduct={this.props.toggleViewProduct}
                     checkoutMainPart={this.props.checkoutMainPart}

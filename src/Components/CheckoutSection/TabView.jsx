@@ -104,6 +104,7 @@ class FullWidthTabs extends React.Component {
         return (
             <TabContainer>
                 <CustomersTab
+                    offline={this.props.offline}
                     cartItems={cartItems}
                     {...this.props}
                     checkoutMainPart={this.props.checkoutMainPart}

@@ -1,5 +1,4 @@
 import React from 'react';
-import { Detector } from 'react-detect-offline';
 /* Lodash Imports */
 import _get from 'lodash/get';
 import _isEmpty from 'lodash/isEmpty';
@@ -302,7 +301,7 @@ class ProductsSection extends React.Component {
         }
     }
 
-    handleHideWhenOffline = ({ online }, onlineContent, offlineContent) => {
+    handleHideWhenOffline = ( online , onlineContent, offlineContent) => {
         if (online) {
             return onlineContent
         }
@@ -319,6 +318,7 @@ class ProductsSection extends React.Component {
                 <div className='pos-header' style={{ height: headerHeight }}>
                     <div className="header-top flex-row align-center justify-space-between pl-10" >
                         <SideDrawer
+                            offline={this.props.offline}
                             // ! Actions
                             handleClickOpenOnHold={this.props.handleClickOpenOnHold}
                             handleHistoryOpen={this.props.handleHistoryOpen}
@@ -334,17 +334,17 @@ class ProductsSection extends React.Component {
                         />
                         <div className="header-right-sec">
                             <ul>
-                                <Detector render={({ online }) => this.handleHideWhenOffline(
-                                    { online },
+                                 {this.handleHideWhenOffline(
+                                     !this.props.offline ,
                                     [<li onClick={this.props.handleMiscProduct}><LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>],
                                     [<li className="disable-button" onClick={this.props.handleMiscProduct}><LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>]
-                                )} />
+                                )}}
 
-                                <Detector render={({ online }) => this.handleHideWhenOffline(
-                                    { online },
+                                 {this.handleHideWhenOffline(
+                                    !this.props.offline ,
                                     [<li onClick={this.props.handleGiftCard}><CardGiftCard style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>],
                                     [<li className="disable-button" onClick={this.props.handleGiftCard}><CardGiftCard style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>]
-                                )} />
+                                )}}
 
                                 <li onClick={this.props.handleLockTerminal}><LockIcon style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>
                                 {/* <li onClick={this.logout}><ExitToApp style={{ color: 'white', padding: '0 10px', fontSize: 33 }}  /></li> */}

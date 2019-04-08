@@ -1,6 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import { Detector } from 'react-detect-offline';
+// import { Detector } from 'react-detect-offline';
 import aobLogo from '../../assets/images/aobLogodark.png';
 /* Lodash Imports */
 import _get from 'lodash/get';
@@ -538,7 +538,8 @@ class PaymentSection extends React.Component {
         return false;
     }
 
-    buttonToRender = ({ online }) => {
+    buttonToRender = () => {
+        let online = !this.props.offline;
         if (online)
             return (<LoaderButton
                 color='primary'
@@ -567,9 +568,9 @@ class PaymentSection extends React.Component {
             [name]: event.target.value,
         });
     };
-    giftCardRender = ({ online }) => {
+    giftCardRender = () => {
         let disable = this.props.remainingAmount <= 0 ? { opacity: '0.3', pointerEvents: 'none' } : null
-        if (online)
+        if (!this.props.offline)
             return (
                 <React.Fragment>
                     <li style={disable} onClick={this.handleGiftCardPayment} className="giftcard-section">Gift Card</li>
@@ -595,7 +596,7 @@ class PaymentSection extends React.Component {
     render() {
         let { paymentOptionsPart, paymentMainPart, paymentCalculator, paymentSaleComment, paymentSubmitTransaction } = this.props
         let disable = this.props.remainingAmount <= 0 ? { opacity: '0.3', pointerEvents: 'none' } : null
-
+        let disableOffline = this.props.offline?{ opacity: '0.3', pointerEvents: 'none' }:null;
         let logo
         if (localStorage.getItem('storeLogo')) {
             logo = localStorage.getItem('storeLogo')
@@ -611,9 +612,10 @@ class PaymentSection extends React.Component {
                             <li style={disable} onClick={this.handleCashPayment} className="cash-method">Cash</li>
                             <li style={disable} onClick={this.handleCardPayment} variant="outlined" className="card-method">Debit/Credit Card</li>
                             {_get(this.props, 'customer.isEmpPayEnabled') ? <li style={disable} onClick={this.handleEmployeePay} disabled={this.props.remainingAmount < 0} className="employee-section">Employee</li> : null}
-                            <Detector render={this.giftCardRender} />
+                            {this.giftCardRender()} 
                             {/* <li  className="freedompay">Freedom <br/> Pay</li>      */}
-                            <li style={disable} onClick={this.handleCostCenter} variant="outlined" className="card-method">Cost Center Charge</li>
+
+                            <li style={disable||disableOffline} onClick={this.handleCostCenter} variant="outlined" className="card-method">Cost Center Charge</li>
                         </ul>
                     </div>
 
@@ -709,8 +711,7 @@ class PaymentSection extends React.Component {
                             </div>
                             <div className="flex-row justify-flex-end mr-10 ml-10 submit-transaction" style={{ height: paymentSubmitTransaction }}>
                                 <div style={{ width: '100%' }}>
-                                    <Detector
-                                        render={this.buttonToRender} />
+                                    {this.buttonToRender()}
                                 </div>
                             </div>
                         </div>

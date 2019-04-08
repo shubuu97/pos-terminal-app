@@ -10,7 +10,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import { withStyles } from '@material-ui/core/styles';
 import blue from '@material-ui/core/colors/blue';
 import SvgIcon from '@material-ui/core/SvgIcon';
-import { Detector } from 'react-detect-offline';
+// import { Detector } from 'react-detect-offline';
 import SettingContainer from '../Containers/SettingContainer';
 
 const styles = theme => ({
@@ -75,25 +75,29 @@ function TemporaryDrawer(props) {
                     <ListItemText primary={'On Hold'} />
                 </ListItem>
                 <Divider />
-                <Detector render={({ online }) => handleHideWhenOffline(
-                    { online },
-                    [<ListItem button key={3} onClick={props.handleClickOpenSessionContainer}>
-                        <ListItemText primary={'Session Management'} />
-                    </ListItem>],
-                    [<ListItem className="disable-button" button key={3} onClick={props.handleClickOpenSessionContainer}>
-                        <ListItemText primary={'Session Management'} />
-                    </ListItem>]
-                )} />
+                <React.Fragment>
+                    {handleHideWhenOffline(
+                        { online:!props.offline },
+                        [<ListItem button key={3} onClick={props.handleClickOpenSessionContainer}>
+                            <ListItemText primary={'Session Management'} />
+                        </ListItem>],
+                        [<ListItem className="disable-button" button key={3} onClick={props.handleClickOpenSessionContainer}>
+                            <ListItemText primary={'Session Management'} />
+                        </ListItem>]
+                    )}
+                </React.Fragment>
                 <Divider />
-                <Detector render={({ online }) => handleHideWhenOffline(
-                    { online },
-                    [<ListItem button key={4} onClick={props.handleHistoryOpen}>
-                        <ListItemText primary={'Terminal History'} />
-                    </ListItem>],
-                    [<ListItem className="disable-button" button key={4} onClick={props.handleHistoryOpen}>
-                        <ListItemText primary={'Terminal History'} />
-                    </ListItem>]
-                )} />
+                <React.Fragment>
+                    {handleHideWhenOffline(
+                        { online:!props.offline },
+                        [<ListItem button key={4} onClick={props.handleHistoryOpen}>
+                            <ListItemText primary={'Terminal History'} />
+                        </ListItem>],
+                        [<ListItem className="disable-button" button key={4} onClick={props.handleHistoryOpen}>
+                            <ListItemText primary={'Terminal History'} />
+                        </ListItem>]
+                    )}
+                </React.Fragment>
                 <Divider />
                 <ListItem button key={5} onClick={props.handleClickQuickBook}>
                     <ListItemText primary={'Offline Transactions'} />
@@ -114,8 +118,8 @@ function TemporaryDrawer(props) {
     return (
         <div className="d-flex">
             <HomeIcon className={classes.icon} style={{ color: 'white', padding: '0', fontSize: 50, margin: '5px' }} onClick={toggleDrawer('left', true)} />
-           
-            
+
+
             <Drawer className="drawer-parent" open={state.left} onClose={toggleDrawer('left', false)}>
                 <div
                     tabIndex={0}
