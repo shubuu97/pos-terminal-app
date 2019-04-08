@@ -99,17 +99,17 @@ const cartItem = (state = {
                     let countyTaxRate = localStorage.getItem('countyTaxRate')
                     itemTaxPercent = Number(federalTaxRate) + Number(stateTaxRate) + Number(countyTaxRate);
                     console.log(itemTaxPercent, 'itemTaxPercent')
-                    taxAmount = _get(item, 'itemSubTotal.amount', 0) * itemTaxPercent / 100;
+                    taxAmount = (_get(item, 'itemSubTotal.amount', 0) * itemTaxPercent / 100).toFixed(2);
 
                 }
                 item.itemTaxAmount = {
                     currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
-                    amount: taxAmount
+                    amount: parseFloat(taxAmount)
                 }
                 item.itemTaxPercent = itemTaxPercent;
                 item.itemEffectiveTotal = {
                     currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
-                    amount: parseFloat((parseFloat(_get(item, 'itemSubTotal.amount', 0)) + taxAmount).toFixed(2))
+                    amount: parseFloat((parseFloat(_get(item, 'itemSubTotal.amount', 0)) + parseFloat(taxAmount)).toFixed(2))
                 }
                 regularTotal += (parseFloat(_get(item, 'doc.product.salePrice.price')) * _get(item, 'qty', 0));
                 cartQty += _get(item, 'qty', 0);
@@ -132,7 +132,7 @@ const cartItem = (state = {
                 }
                 totalTaxAmount = {
                     currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
-                    amount: parseFloat((parseFloat(_get(totalTaxAmount, 'amount', 0)) + taxAmount).toFixed(2))
+                    amount: parseFloat((parseFloat(_get(totalTaxAmount, 'amount', 0)) + parseFloat(taxAmount)).toFixed(2))
                 }
             });
 
