@@ -26,6 +26,7 @@ import PaymentSection from '../Components/PaymentSection/PaymentSection'
 import OrderHistoryDialog from '../Components/OrderHisoty/OrderHistoryDialog';
 import withDialog from '../Components/DialogHoc'
 import OnHoldDialogue from '../Components/Dialogues/HoldCartDialogue/OnHoldDialogue';
+import HistoryDialogue from '../Components/Dialogues/HistoryDialogue.jsx/HistoryDialogue';
 import AlertCartClear from '../Components/AlertCartClear';
 import GiftCardModel from '../Components/ProductsSection/GiftCardModel';
 import MiscProductModal from '../Components/ProductsSection/MiscProductModal';
@@ -62,7 +63,8 @@ class HomeContainer extends React.Component {
             openMiscProduct: false,
             openCartOnHoldOrClear: false,
             isLoading: false,
-            offline:true
+            offline: true,
+            historySidebarItems:[],
         }
     }
 
@@ -362,17 +364,17 @@ class HomeContainer extends React.Component {
     }
 
     showNetworkIndicator = ({ online }) => {
-        if (online && this.state.offline == true){
+        if (online && this.state.offline == true) {
             this.setState({
-                offline:false
+                offline: false
             })
             return null
         }
-        else if(online && this.state.offline == false){
+        else if (online && this.state.offline == false) {
             return null
         }
-        else if(!online&&this.state.offline==false){
-            this.setState({offline:true})
+        else if (!online && this.state.offline == false) {
+            this.setState({ offline: true })
             return (
                 <div className='toast-area absolute flex-row justify-center align-center'>
                     <div className='offline-indicator flex-row justify-center align-center'>
@@ -381,7 +383,7 @@ class HomeContainer extends React.Component {
                 </div>
             )
         }
-        else{
+        else {
             return (
                 <div className='toast-area absolute flex-row justify-center align-center'>
                     <div className='offline-indicator flex-row justify-center align-center'>
@@ -392,6 +394,39 @@ class HomeContainer extends React.Component {
         }
     }
 
+    /* History Actions */
+    handleTransactionPopulate = (limit, skip, timeFrom, timeTo, transctionId) => {
+        let url = 'Sale/GetByTerminalId';
+        let data = { id: localStorage.getItem('terminalId') }
+
+        genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj: data,
+            url: url,
+            constants: {
+                init: 'GET_CUSTOMER_SALE_DATA_INIT',
+                success: 'GET_CUSTOMER_SALE_DATA_SUCCESS',
+                error: 'GET_CUSTOMER_SALE_DATA_ERROR'
+            },
+            identifier: 'GET_CUSTOMER_SALE_DATA',
+        }).then((data)=>{
+            let view = []
+            data.map((transactions)=>{
+                view.push(
+                    <div className='card fwidth'>
+                        Hello 
+                    </div>
+                )
+            })
+            this.setState({
+                historySidebarItems: view
+            })
+        })
+    }
+
+    handleTransactionSearch = () => {
+
+    }
 
     render() {
         let windowHeight = document.documentElement.scrollHeight
@@ -417,6 +452,7 @@ class HomeContainer extends React.Component {
                         // ! Actions
                         handleHistoryOpen={this.handleTerminalHistoryOpen}
                         handleClickOpenOnHold={() => this.handleClickOpen('openOnHold')}
+                        handleClickOpenHistory={() => this.handleClickOpen('openHistoryDialogue')}
                         handleClickOpenSessionContainer={this.handleClickOpenSessionContainer}
                         handleClickQuickBook={() => this.setState({ openQuickBookContainer: true })}
                         handleLockTerminal={this.handleLockTerminal}
@@ -472,6 +508,24 @@ class HomeContainer extends React.Component {
                             dispatch={dispatch}
                         /> : null
                 }
+                {
+                    this.state.openHistoryDialogue ?
+                        <HistoryDialogue
+                            handleSidebarPopulate={(limit, skip, timeFrom, timeTo) => this.handleTransactionPopulate(limit, skip, timeFrom, timeTo)}
+                            handleSearch={this.handleTransactionSearch}
+
+                            
+                            historySidebarItems={this.state.historySidebarItems}
+
+
+
+                            handleClickOpen={() => this.handleClickOpen('openHistoryDialogue')}
+                            handleClose={() => this.handleClose('openHistoryDialogue')}
+                            open={this.state.openHistoryDialogue}
+                            dispatch={dispatch}
+                        /> : null
+                }
+
                 {
                     this.state.openCartOnHoldOrClear ?
                         <AlertCartClear

@@ -33,6 +33,7 @@ const styles = {
 
 function CustomizedInputBase(props) {
   const { classes } = props;
+  console.log(props.handleInput, 'props.handleInput')
   return (
     <Paper className={classes.root} elevation={1} >
       {/* <IconButton className={classes.iconButton} aria-label="Menu">
@@ -48,7 +49,7 @@ function CustomizedInputBase(props) {
         <InputBase
           autoFocus
           className={classes.input}
-          placeholder="Search For Item"
+          placeholder={props.placeholder}
           onChange={(event) => props.handleChange(event.target.value)} />
       }
       <IconButton className={classes.iconButton} aria-label="Search">
