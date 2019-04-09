@@ -45,6 +45,32 @@ class OrderHistoryDialog extends React.Component {
         selectedOrder: {},
     }
 
+    paymentMethods = (num) => {
+        let method
+        switch (num) {
+            case 0:
+                method = 'Cash'
+                break;
+            case 1:
+                method = 'Card'
+                break;
+            case 2:
+                method = 'Gift Card'
+                break;
+            case 3:
+                method = 'Cost Center Charge'
+                break;
+            case 4:
+                method = 'Employee'
+                break;
+            case 5:
+                method = 'Loyalty'
+                break;
+        }
+
+        return method
+    }
+
     componentDidMount() {
 
     }
@@ -159,7 +185,8 @@ class OrderHistoryDialog extends React.Component {
         const paymentMethodsView = !_isEmpty(_get(custData, 'sale.payments', [])) && _get(custData, 'sale.payments', []).map((payment) => (
             <React.Fragment>
                 <span>{`Amount: ${_get(payment, 'paymentAmount.currencyCode', '$')} ${_get(payment, 'paymentAmount.amount', 0)}`}</span>
-                <span>{`  By: ${_get(payment, 'paymentMethod', '')}`}</span>
+                <span>&nbsp;By: {this.paymentMethods(_get(payment, 'paymentMethod', 0))}
+                </span>
                 <br />
             </React.Fragment>
         ))
@@ -408,10 +435,10 @@ class OrderHistoryDialog extends React.Component {
         _get(selectedOrder,'customer.customer.lastName')
 
         let logo 
-        if(localStorage.getItem('storeLogo') !== '') {
+        if(localStorage.getItem('storeLogo')) {
             logo = localStorage.getItem('storeLogo')
         } else {
-            logo = {aobLogo}
+            logo = aobLogo
         }
 
 

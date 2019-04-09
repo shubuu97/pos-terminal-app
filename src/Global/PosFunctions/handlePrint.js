@@ -41,7 +41,6 @@ const HandlePrint = (props) => {
     })
 
     const paymentMethods = (num) => {
-        debugger
         let method
         switch (num) {
             case 0:
