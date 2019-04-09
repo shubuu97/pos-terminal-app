@@ -16,6 +16,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 /* Component Imports */
 import SearchBar from '../../../Global/Components/SearchBar'
+import HistoryDetailArea from './HistoryDetailArea';
+
 
 const styles = {
     appBar: {
@@ -86,9 +88,11 @@ class HistoryDialogue extends React.Component {
                                 </div>
                             </div>
 
-                            <div className='history-main'>
-                                hello
-                            </div>
+                            <HistoryDetailArea
+                                
+                            />
+
+                            
                         </div>
                     </div>
                 </Dialog>
