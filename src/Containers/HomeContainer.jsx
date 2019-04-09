@@ -395,6 +395,39 @@ class HomeContainer extends React.Component {
         }
     }
 
+    makeViewForSideBar = (data) => {
+        debugger;
+        let view = [];
+        data.reverse();
+        data.map((transactions, index) => {
+            view.push(
+                <div key={index} className="card">
+                    <div className={_get(this.state, 'orderId', '') === _get(transactions, 'sale.id', '') ? "active" : ""}>
+                        <div className="mui-row no-gutters history-card-head">
+                            <div className="mui-col-md-4">
+                                {moment(_get(transactions, 'sale.saleCommitTimeStamp.seconds', 0) * 1000).format('MM/DD/YYYY')}
+                            </div>
+                            <div className="mui-col-md-8 text-right">
+                                #{`${_get(transactions, 'sale.id', '')}`}
+                            </div>
+                        </div>
+                        <div className="mui-row no-gutters">
+                            <div className="mui-col-md-6">
+                                <label className="c-name">{_get(transactions, 'customer.customer.firstName', '') + ' ' + _get(transactions, 'customer.customer.lastName', '')}</label>
+                            </div>
+                            <div className="mui-col-md-6 text-right">
+                                <label className="c-name">{`Amount: ${_get(transactions, 'sale.totalAmount.currencyCode', '$')} ${_get(transactions, 'sale.totalAmount.amount', 0)}`}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )
+        })
+        this.setState({
+            historySidebarItems: view
+        })
+    }
+
     /* History Actions */
     handleTransactionPopulate = (limit, skip, timeFrom, timeTo, transctionId) => {
         let url = 'Sale/GetByTerminalId';
@@ -410,40 +443,38 @@ class HomeContainer extends React.Component {
                 error: 'GET_CUSTOMER_SALE_DATA_ERROR'
             },
             identifier: 'GET_CUSTOMER_SALE_DATA',
+            dontShowMessage: true
         }).then((data) => {
-            let view = []
-            data.map((transactions, index) => {
-                view.push(
-                    <div  key={index} className="card">
-                        <div className={_get(this.state, 'orderId', '') === _get(transactions, 'sale.id', '') ? "active" : ""}>
-                            <div className="mui-row no-gutters history-card-head">
-                                <div className="mui-col-md-4">
-                                    {moment(_get(transactions, 'sale.saleCommitTimeStamp.seconds', 0) * 1000).format('MM/DD/YYYY')}
-                                </div>
-                                <div className="mui-col-md-8 text-right">
-                                    #{`${_get(transactions, 'sale.id', '')}`}
-                                </div>
-                            </div>
-                            <div className="mui-row no-gutters">
-                                <div className="mui-col-md-6">
-                                    <label className="c-name">{_get(transactions, 'customer.customer.firstName', '') + ' ' + _get(transactions, 'customer.customer.lastName', '')}</label>
-                                </div>
-                                <div className="mui-col-md-6 text-right">
-                                    <label className="c-name">{`Amount: ${_get(transactions, 'sale.totalAmount.currencyCode', '$')} ${_get(transactions, 'sale.totalAmount.amount', 0)}`}</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )
-            })
-            this.setState({
-                historySidebarItems: view
-            })
+            this.makeViewForSideBar(data);
         })
     }
 
-    handleTransactionSearch = () => {
-
+    handleTransactionSearch = (transactionId) => {
+        if(transactionId==''){
+                this.handleTransactionPopulate();
+                return;
+        }
+        if(transactionId.length>3){
+            genericPostData({
+                dispatch: this.props.dispatch,
+                reqObj: { id: transactionId },
+                url: "Sale/Get",
+                constants: {
+                    init: "SaleById_INIT",
+                    success: "SaleById_SUCCESS",
+                    error: "SaleById_ERROR"
+                },
+                successCb: this.handleTransactionSearchSuccess,
+                errorCb: (err) => console.log(err),
+                identifier: "SaleById",
+                dontShowMessage:true
+            })
+        }
+    }
+    handleTransactionSearchSuccess = (data) => {
+        let arr = [];
+        arr.push(data.sale);
+        this.makeViewForSideBar(arr);
     }
 
     render() {
@@ -783,10 +814,10 @@ const pollingWrapper = async (propsOfComp, dispatch) => {
     OfflineTransactionPusher(propsOfComp, dispatch);
     return;
 
-} 
+}
 
 
-HomeContainer = pollingHoc(30*60*1000, pollingWrapper)(HomeContainer)
+HomeContainer = pollingHoc(30 * 60 * 1000, pollingWrapper)(HomeContainer)
 
 
 export default connect(mapStateToProps)(HomeContainer)
