@@ -2,6 +2,7 @@ import React from 'react';
 /* Lodash Imports */
 import _get from 'lodash/get';
 import RefundHistory from './RefundHistory';
+import RefundDialogue from './RefundDialogue/RefundDialogue';
 /* Material import */
 
 /* Redux Imports */
@@ -14,9 +15,13 @@ class HistoryDetailArea extends React.Component {
     constructor() {
         super();
         this.state = {
-
+            openRefund: false,
         }
     }
+
+    handleRefundClose = () => {
+        this.setState({ openRefund: false });
+    };
 
     showItemList = () => {
         let saleItems = _get(this.props, "selectedSaleTransaction.sale.saleItems", []);
@@ -101,7 +106,7 @@ class HistoryDetailArea extends React.Component {
                         </div>
                         <div className='order-action-section flex-row'>
                             <div className='action-btn flex-row justify-center align-center'>Print</div>
-                            <div className='action-btn flex-row justify-center align-center'>Refund</div>
+                            <div className='action-btn flex-row justify-center align-center' onClick={()=>{this.setState({openRefund: true})}}>Refund</div>
                         </div>
                     </div>
                 </div>
@@ -110,6 +115,15 @@ class HistoryDetailArea extends React.Component {
 
                     />
                 </div>
+
+                {
+                    this.state.openRefund ? 
+                    <RefundDialogue
+                        open={this.state.openRefund}
+                        handleRefundClose={this.handleRefundClose}
+                        selectedSaleTransaction = {this.props.selectedSaleTransaction}
+                    /> : null
+                }
 
             </div>
         );

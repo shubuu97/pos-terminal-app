@@ -355,7 +355,7 @@ class OrderHistoryDialog extends React.Component {
                             <div className="mui-col-md-6" style={{ display: 'flex', paddingLeft: '29px' }}>
                             </div>
                             <div className="mui-col-md-6" style={{ paddingRight: '50px' }}>
-                                <label >{`Tax: `}</label>
+                                <label >{`teTax: `}</label>
                                 <label style={{ float: 'right' }}>{_get(selectedOrder,'sale.totalTaxAmount.currencyCode','$') + _get(selectedOrder,'sale.totalTaxAmount.amount',0)}</label>
                                 <br />
                                 <label >{`Grand Total: `}</label>
