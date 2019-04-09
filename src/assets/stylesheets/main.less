@@ -1925,15 +1925,50 @@ p {
         .transaction-list{
 
         }
+        .card{
+            margin:10px 0;
+        }
     }
     .history-main{
         width: 70%;
         padding: 20px;
+        height: calc(100vh - 90px);
         .history-order-details{
             width: 60%;
+            height: 60vh;
+            overflow-x: hidden;
+            overflow-y: auto;
         }
-        .order-summary{
+        .order-summary-section{
             width: 35%;
+            .order-summary{
+                height: 45vh;
+            }
+        }
+        
+        .card{
+            margin:10px 10px;
+        }
+        .order-action-section{
+            height: calc(15vh - 20px);
+            margin: 10px;
+            .action-btn{
+                width: 50%;
+                background-color: #0f8fad;
+                box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+                border-radius: 5px;
+                color: rgba(255, 255, 255, 1);
+                padding: 10px 30px;
+                font-size: 0.9rem;
+                margin: 5px;
+            }
+        }
+    }
+
+    .refund-detail-section{
+        margin: 10px;
+        .MuiPaper-elevation1{
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
         }
     }
 
@@ -1950,7 +1985,6 @@ p {
         background: @background-white;
         border-radius: 5px;
         box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-        margin:10px 20px;
         min-height: 50px;
         padding: 10px;
        

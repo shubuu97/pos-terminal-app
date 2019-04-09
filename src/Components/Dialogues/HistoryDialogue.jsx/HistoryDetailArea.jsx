@@ -1,6 +1,7 @@
 import React from 'react';
 /* Lodash Imports */
 import _get from 'lodash/get';
+import RefundHistory from './RefundHistory';
 /* Material import */
 
 /* Redux Imports */
@@ -37,7 +38,7 @@ class HistoryDetailArea extends React.Component {
 
     render() {
         return (
-            <div className='history-main flex-column'>
+            <div className='history-main flex-column overflow-y'>
                 <div className='flex-row justify-space-between'>
                     <div className="card history-order-details">
                         <span className='card-title'>Order Details</span>
@@ -56,12 +57,20 @@ class HistoryDetailArea extends React.Component {
                             </table>
                         </div>
                     </div>
-
-                    <div className='card order-summary'>
-                        <span className='card-title'>Summary</span>
+                    <div className='order-summary-section'>
+                        <div className='card order-summary'>
+                            <span className='card-title'>Summary</span>
+                        </div>
+                        <div className='order-action-section flex-row'>
+                            <div className='action-btn flex-row justify-center align-center'>Print</div>
+                            <div className='action-btn flex-row justify-center align-center'>Refund</div>
+                        </div>
                     </div>
-
-
+                </div>
+                <div className='refund-detail-section'>
+                    <RefundHistory
+                    
+                    />
                 </div>
 
             </div>
