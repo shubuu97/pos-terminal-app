@@ -712,10 +712,10 @@ const pollingWrapper = async (propsOfComp, dispatch) => {
     OfflineTransactionPusher(propsOfComp, dispatch);
     return;
 
-}
+} 
 
 
-HomeContainer = pollingHoc(30000, pollingWrapper)(HomeContainer)
+HomeContainer = pollingHoc(30*60*1000, pollingWrapper)(HomeContainer)
 
 
 export default connect(mapStateToProps)(HomeContainer)
