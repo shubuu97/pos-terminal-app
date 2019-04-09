@@ -17,7 +17,7 @@ import AddCircleOutline from '@material-ui/icons/AddCircleOutline';
 import { commonActionCreater } from '../../../Redux/commonAction';
 /* Component Imports */
 import CalculationSection from './CalculationSection'
-import DiscountDialogue from '../DiscountDialogue/DiscountDialogue'
+import DiscountDialogue from '../../Dialogues/DiscountDialogue/DiscountDialogue'
 /* Global Function import */
 import globalClearCart from '../../../Global/PosFunctions/clearCart';
 import addGuestToCart from '../../../Global/PosFunctions/addGuestToCart';

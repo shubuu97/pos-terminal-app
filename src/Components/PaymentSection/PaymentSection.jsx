@@ -75,7 +75,7 @@ class PaymentSection extends React.Component {
 
         let disable = this.props.remainingAmount <= 0 ? { opacity: '0.3', pointerEvents: 'none' } : null
         let disableOffline = this.props.offline ? { opacity: '0.3', pointerEvents: 'none' } : null;
-        for (let i = 0; i < allowedOptions.length; i++) {
+        for (let i = 0; i < _get(allowedOptions, 'length', 0); i++) {
             switch (allowedOptions[i]) {
                 case 0:
                     options.push(

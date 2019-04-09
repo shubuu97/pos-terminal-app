@@ -9,7 +9,7 @@ import _get from 'lodash/get';
 import globalHoldCart from '../../Global/PosFunctions/holdCart';
 /* Component Imports */
 import TabView from './TabView'
-import HoldCartDialogue from './HoldCartDialogue/HoldCartDialogue'
+import HoldCartDialogue from '../Dialogues/HoldCartDialogue/HoldCartDialogue'
 
 
 class CheckoutSection extends React.Component {
