@@ -642,6 +642,7 @@ class PaymentSection extends React.Component {
         if (localStorage.getItem('storeLogo')) {
             logo = localStorage.getItem('storeLogo')
         } else {
+            debugger
             logo = aobLogo
         }
 
