@@ -103,11 +103,15 @@ function TemporaryDrawer(props) {
                     <ListItemText primary={'Offline Transactions'} />
                 </ListItem>
                 <Divider />
+                <ListItem button key={6} onClick={props.handleClickOpenHistory}>
+                    <ListItemText primary={'History'} />
+                </ListItem>
+                <Divider />
                 {/* <ListItem button key={6} onClick={props.handleSetting}>
                     <ListItemText primary={'Settings'} />
                 </ListItem>
                 <Divider /> */}
-                <ListItem button key={6} onClick={props.logout}>
+                <ListItem button key={7} onClick={props.logout}>
                     <ListItemText primary={'Log Out'} />
                 </ListItem>
                 <Divider />
