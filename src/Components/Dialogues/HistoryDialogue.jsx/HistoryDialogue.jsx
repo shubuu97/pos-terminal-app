@@ -89,7 +89,7 @@ class HistoryDialogue extends React.Component {
                             </div>
 
                             <HistoryDetailArea
-                                
+                              selectedSaleTransaction ={this.props.selectedSaleTransaction}
                             />
 
                             

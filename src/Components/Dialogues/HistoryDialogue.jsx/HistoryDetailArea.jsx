@@ -18,24 +18,17 @@ class HistoryDetailArea extends React.Component {
     }
 
     showItemList = () => {
-
+        let saleItems = _get(this.props, "selectedSaleTransaction.sale.saleItems",[]);
+        let saleItemResp = saleItems.map((saleItem) => {
+            return(<tr>
+                <td>{_get(saleItem, "product.name", '')}</td>
+                <td>{_get(saleItem, "qty", 0)}</td>
+                <td>{_get(saleItem, "returnQty", 0)}</td>
+            </tr>)
+        })
         return (
             <React.Fragment>
-                <tr>
-                    <td>Dummy Cell 1-1</td>
-                    <td>Dummy Cell 1-2</td>
-                    <td>Dummy Cell 1-2</td>
-                </tr>
-                <tr>
-                    <td>Dummy Cell 1-1</td>
-                    <td>Dummy Cell 1-2</td>
-                    <td>Dummy Cell 1-2</td>
-                </tr>
-                <tr>
-                    <td>Dummy Cell 1-1</td>
-                    <td>Dummy Cell 1-2</td>
-                    <td>Dummy Cell 1-2</td>
-                </tr>
+                {saleItemResp}
             </React.Fragment>
 
         )

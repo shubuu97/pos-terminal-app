@@ -66,6 +66,7 @@ class HomeContainer extends React.Component {
             isLoading: false,
             offline: true,
             historySidebarItems: [],
+            selectedSaleTransaction:null
         }
     }
 
@@ -394,6 +395,9 @@ class HomeContainer extends React.Component {
             )
         }
     }
+    orderHistorySelect = (selectedSaleTransaction) => {
+        this.setState({ selectedSaleTransaction })
+    }
 
     makeViewForSideBar = (data) => {
         debugger;
@@ -401,7 +405,7 @@ class HomeContainer extends React.Component {
         data.reverse();
         data.map((transactions, index) => {
             view.push(
-                <div key={index} className="card">
+                <div onClick={() => this.orderHistorySelect(transactions)} key={index} className="card">
                     <div className={_get(this.state, 'orderId', '') === _get(transactions, 'sale.id', '') ? "active" : ""}>
                         <div className="mui-row no-gutters history-card-head">
                             <div className="mui-col-md-4">
@@ -450,11 +454,11 @@ class HomeContainer extends React.Component {
     }
 
     handleTransactionSearch = (transactionId) => {
-        if(transactionId==''){
-                this.handleTransactionPopulate();
-                return;
+        if (transactionId == '') {
+            this.handleTransactionPopulate();
+            return;
         }
-        if(transactionId.length>3){
+        if (transactionId.length > 3) {
             genericPostData({
                 dispatch: this.props.dispatch,
                 reqObj: { id: transactionId },
@@ -467,7 +471,7 @@ class HomeContainer extends React.Component {
                 successCb: this.handleTransactionSearchSuccess,
                 errorCb: (err) => console.log(err),
                 identifier: "SaleById",
-                dontShowMessage:true
+                dontShowMessage: true
             })
         }
     }
@@ -565,7 +569,7 @@ class HomeContainer extends React.Component {
 
 
                             historySidebarItems={this.state.historySidebarItems}
-
+                            selectedSaleTransaction={this.state.selectedSaleTransaction}
 
 
                             handleClickOpen={() => this.handleClickOpen('openHistoryDialogue')}
