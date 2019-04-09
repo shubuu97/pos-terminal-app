@@ -82,7 +82,6 @@ const axiosMiddleware = store => next => (action) => {
     })
 
     .catch((error) => {
-      debugger;
       if (error.response) {
         return dispatch(failureHandler(subreddit, error.response.data, error.response.status, reject, constants))
       } else if (error.request) {

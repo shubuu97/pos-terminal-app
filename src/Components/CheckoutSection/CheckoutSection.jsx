@@ -9,7 +9,7 @@ import _get from 'lodash/get';
 import globalHoldCart from '../../Global/PosFunctions/holdCart';
 /* Component Imports */
 import TabView from './TabView'
-import HoldCartDialogue from './HoldCartDialogue/HoldCartDialogue'
+import PutHoldCartDialogue from '../Dialogues/HoldCartDialogue/PutHoldCartDialogue'
 
 
 class CheckoutSection extends React.Component {
@@ -54,7 +54,7 @@ class CheckoutSection extends React.Component {
 
                 {
                     this.state.openOnHold ?
-                        <HoldCartDialogue
+                        <PutHoldCartDialogue
                             handleClickOpen={this.handleClickOpen}
                             handleClose={this.handleClose}
                             open={this.state.openOnHold}

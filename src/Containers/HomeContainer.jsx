@@ -25,7 +25,7 @@ import CheckoutSection from '../Components/CheckoutSection/CheckoutSection'
 import PaymentSection from '../Components/PaymentSection/PaymentSection'
 import OrderHistoryDialog from '../Components/OrderHisoty/OrderHistoryDialog';
 import withDialog from '../Components/DialogHoc'
-import HoldDialogue from '../Components/HoldDialogue';
+import OnHoldDialogue from '../Components/Dialogues/HoldCartDialogue/OnHoldDialogue';
 import AlertCartClear from '../Components/AlertCartClear';
 import GiftCardModel from '../Components/ProductsSection/GiftCardModel';
 import MiscProductModal from '../Components/ProductsSection/MiscProductModal';
@@ -123,7 +123,6 @@ class HomeContainer extends React.Component {
     }
     errorLoyaltyPoint = (err, errCode) => {
         if (err) {
-            debugger;
             if (errCode == 401) {
                 this.handleLogout()
             }
@@ -460,7 +459,7 @@ class HomeContainer extends React.Component {
                 </Payment>
                 {
                     this.state.openOnHold ?
-                        <HoldDialogue
+                        <OnHoldDialogue
                             offline={this.state.offline}
                             handleClickOpenOnHold={() => this.handleClickOpen('openOnHold')}
                             handleCloseOnHold={() => this.handleClose('openOnHold')}
