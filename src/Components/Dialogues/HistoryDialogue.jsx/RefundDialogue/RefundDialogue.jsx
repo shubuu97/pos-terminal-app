@@ -10,6 +10,8 @@ import TextField from '@material-ui/core/TextField';
 /* Material Icons */
 import RemoveCircleIcons from '@material-ui/icons/RemoveCircleOutline';
 import AddIcons from '@material-ui/icons/AddCircleOutline';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 /* Lodash Imports */
 import _get from 'lodash/get';
 
@@ -32,6 +34,8 @@ class RefundDialogue extends React.Component {
     showItemList = () => {
         let saleItems = _get(this.props, "selectedSaleTransaction.sale.saleItems", []);
         let saleItemResp = saleItems.map((saleItem, index) => {
+            if (this.state[`checkbox${index}`] == undefined)
+                this.state[`checkbox${index}`] = true;
             let returnableQty = _get(saleItem, "qty", 0) - _get(saleItem, "returnQty", 0)
             return (<tr>
                 <td>{_get(saleItem, "product.name", '')}</td>
@@ -48,11 +52,16 @@ class RefundDialogue extends React.Component {
                             </div>
                         </div>
                     }
-
-
-
-
                 </td>
+                <td><FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={this.state[`checkbox${index}`]}
+                            onChange={this.handleChangeCB(`checkbox${index}`)}
+                        // value="checkedA"
+                        />
+                    }
+                /></td>
             </tr>)
         })
         return (
@@ -71,7 +80,7 @@ class RefundDialogue extends React.Component {
 
     handleDecreseQuantity = (index, returnableQty) => {
         let returnQty = this.state[`returnQty${index}`]
-        if (returnQty != 0){
+        if (returnQty != 0) {
             this.setState({
                 [`returnQty${index}`]: returnQty - 1
             })
@@ -80,12 +89,54 @@ class RefundDialogue extends React.Component {
 
     handleIncreaseQuantity = (index, returnableQty) => {
         let returnQty = this.state[`returnQty${index}`] || 0
-        if (returnQty < returnableQty){
+        if (returnQty < returnableQty) {
             this.setState({
                 [`returnQty${index}`]: returnQty + 1
-            })
+            });
+            let refundObj = {};
+            let expectedQty = returnQty + 1;
+            let saleItems = _get(this.props, "selectedSaleTransaction.sale.saleItems", []);
+            let selectedSaleItems = saleItems[index];
+            console.log(selectedSaleItems,"selectedSaleItems");
+            
+            let itemSubTotal =  selectedSaleItems.itemSubTotal.amount;
+            let perPriceItemPrice = (itemSubTotal/(selectedSaleItems.qty))
+            let itemRefundSubTotalAmount = perPriceItemPrice*expectedQty;
+
+            refundObj.itemRefundSubTotal =  {currencyCode:"$",amount:itemRefundSubTotalAmount};
+            refundObj.qty = returnQty + 1;
+            refundObj.productId = selectedSaleItems.productId;
+            console.log(refundObj,"refundObj")
+
+            // Amount itemRefundTaxTotal = 4;
+            // Amount itemRefundEffectiveTotal = 5;
+            // bool replenishInventory = 6;
         }
+        // string id = 1;
+        // string saleId = 2;
+        // repeated ReturnItem returnItems= 3;
+        // string operatorId = 4;
+        // string terminalId = 5;
+        // string storeId = 6;
+        // string retailerId = 7;
+        // string sessionId = 8;
+        // google.protobuf.Timestamp timestamp = 9;
+        // string reason = 10;
+        // repeated Payment refunds = 11;
+        // Amount refundSubTotal = 12;
+        // Amount refundTaxTotal = 13;
+        // Amount refundTotal = 14;
+
+        // string productId = 1;
+        // int32 qty = 2;
+        // Amount itemRefundSubTotal = 3;
+        // Amount itemRefundTaxTotal = 4;
+        // Amount itemRefundEffectiveTotal = 5;
+        // bool replenishInventory = 6;
     }
+    handleChangeCB = name => event => {
+        this.setState({ [name]: event.target.checked });
+    };
 
     render() {
         return (
@@ -113,6 +164,8 @@ class RefundDialogue extends React.Component {
                                                     <th>Product</th>
                                                     <th>Returnable Qty</th>
                                                     <th>Return Qty</th>
+                                                    <th>Increase Inventory</th>
+
                                                 </tr>
                                             </thead>
                                             <tbody>

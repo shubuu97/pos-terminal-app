@@ -5,6 +5,7 @@ import RefundHistory from './RefundHistory';
 import RefundDialogue from './RefundDialogue/RefundDialogue';
 /* Material import */
 
+
 /* Redux Imports */
 
 /* Component Imports */
@@ -25,11 +26,12 @@ class HistoryDetailArea extends React.Component {
 
     showItemList = () => {
         let saleItems = _get(this.props, "selectedSaleTransaction.sale.saleItems", []);
-        let saleItemResp = saleItems.map((saleItem) => {
+        let saleItemResp = saleItems.map((saleItem,index) => {
             return (<tr>
                 <td>{_get(saleItem, "product.name", '')}</td>
                 <td>{_get(saleItem, "qty", 0)}</td>
                 <td>{_get(saleItem, "returnQty", 0)}</td>
+
             </tr>)
         })
         return (
@@ -44,14 +46,14 @@ class HistoryDetailArea extends React.Component {
         let selectedOrder = _get(this.props, "selectedSaleTransaction", []);
 
         let summaryPanelContent = <div className="mui-col-md-12" style={{ paddingRight: '50px' }}>
-             <label >{`Status: `}</label>
+            <label >{`Status: `}</label>
             <label style={{ float: 'right' }}>{_get(selectedOrder, 'sale.totalTaxAmount.currencyCode', '$') + _get(selectedOrder, 'sale.totalTaxAmount.amount', 0)}</label>
             <br />
             <label >{`Created Date: `}</label>
             <label style={{ float: 'right' }}>{_get(selectedOrder, 'sale.totalTaxAmount.currencyCode', '$') + _get(selectedOrder, 'sale.totalTaxAmount.amount', 0)}</label>
             <br />
             <label >{`Served By: `}</label>
-            <label style={{ float: 'right' }}>{_get(selectedOrder, 'operator.person.firstName', '') +' ' +_get(selectedOrder, 'operator.person.lastName', '')}</label>
+            <label style={{ float: 'right' }}>{_get(selectedOrder, 'operator.person.firstName', '') + ' ' + _get(selectedOrder, 'operator.person.lastName', '')}</label>
             <br />
             <label >{`Tax: `}</label>
             <label style={{ float: 'right' }}>{_get(selectedOrder, 'sale.totalTaxAmount.currencyCode', '$') + _get(selectedOrder, 'sale.totalTaxAmount.amount', 0)}</label>
@@ -106,7 +108,7 @@ class HistoryDetailArea extends React.Component {
                         </div>
                         <div className='order-action-section flex-row'>
                             <div className='action-btn flex-row justify-center align-center'>Print</div>
-                            <div className='action-btn flex-row justify-center align-center' onClick={()=>{this.setState({openRefund: true})}}>Refund</div>
+                            <div className='action-btn flex-row justify-center align-center' onClick={() => { this.setState({ openRefund: true }) }}>Refund</div>
                         </div>
                     </div>
                 </div>
@@ -117,12 +119,12 @@ class HistoryDetailArea extends React.Component {
                 </div>
 
                 {
-                    this.state.openRefund ? 
-                    <RefundDialogue
-                        open={this.state.openRefund}
-                        handleRefundClose={this.handleRefundClose}
-                        selectedSaleTransaction = {this.props.selectedSaleTransaction}
-                    /> : null
+                    this.state.openRefund ?
+                        <RefundDialogue
+                            open={this.state.openRefund}
+                            handleRefundClose={this.handleRefundClose}
+                            selectedSaleTransaction={this.props.selectedSaleTransaction}
+                        /> : null
                 }
 
             </div>
