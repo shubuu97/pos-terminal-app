@@ -402,8 +402,7 @@ class HomeContainer extends React.Component {
     makeViewForSideBar = (data) => {
         debugger;
         let view = [];
-        data.reverse();
-        data.map((transactions, index) => {
+        (data || []).map((transactions, index) => {
             view.push(
                 <div onClick={() => this.orderHistorySelect(transactions)} key={index} className="card">
                     <div className={_get(this.state, 'orderId', '') === _get(transactions, 'sale.id', '') ? "active" : ""}>
@@ -427,6 +426,7 @@ class HomeContainer extends React.Component {
                 </div>
             )
         })
+        view.reverse();
         this.setState({
             historySidebarItems: view
         })

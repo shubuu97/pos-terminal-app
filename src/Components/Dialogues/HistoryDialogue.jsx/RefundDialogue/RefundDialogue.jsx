@@ -6,7 +6,10 @@ import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import TextField  from '@material-ui/core/TextField';
+import TextField from '@material-ui/core/TextField';
+/* Material Icons */
+import RemoveCircleIcons from '@material-ui/icons/RemoveCircleOutline';
+import AddIcons from '@material-ui/icons/AddCircleOutline';
 /* Lodash Imports */
 import _get from 'lodash/get';
 
@@ -28,11 +31,28 @@ class RefundDialogue extends React.Component {
 
     showItemList = () => {
         let saleItems = _get(this.props, "selectedSaleTransaction.sale.saleItems", []);
-        let saleItemResp = saleItems.map((saleItem) => {
+        let saleItemResp = saleItems.map((saleItem, index) => {
+            let returnableQty = _get(saleItem, "qty", 0) - _get(saleItem, "returnQty", 0)
             return (<tr>
                 <td>{_get(saleItem, "product.name", '')}</td>
-                <td>{_get(saleItem, "qty", 0)}</td>
-                <td></td>
+                <td>{returnableQty}</td>
+                <td>
+
+                    {
+                        <div className='expanded-options'>
+                            <span className='option-title'>Quantity</span>
+                            <div className='flex-row justify-center align-center'>
+                                <RemoveCircleIcons onClick={() => this.handleDecreseQuantity(index, returnableQty)} style={{ fontSize: '1.7em' }} />
+                                <span className='quantity'>{this.state[`returnQty${index}`] || 0}</span>
+                                <AddIcons onClick={() => this.handleIncreaseQuantity(index, returnableQty)} style={{ fontSize: '1.7em' }} />
+                            </div>
+                        </div>
+                    }
+
+
+
+
+                </td>
             </tr>)
         })
         return (
@@ -47,6 +67,24 @@ class RefundDialogue extends React.Component {
         this.setState({
             step: this.state.step + 1
         })
+    }
+
+    handleDecreseQuantity = (index, returnableQty) => {
+        let returnQty = this.state[`returnQty${index}`]
+        if (returnQty != 0){
+            this.setState({
+                [`returnQty${index}`]: returnQty - 1
+            })
+        }
+    }
+
+    handleIncreaseQuantity = (index, returnableQty) => {
+        let returnQty = this.state[`returnQty${index}`] || 0
+        if (returnQty < returnableQty){
+            this.setState({
+                [`returnQty${index}`]: returnQty + 1
+            })
+        }
     }
 
     render() {
