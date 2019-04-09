@@ -4,7 +4,7 @@ import moment from "moment";
 /* Lodash Imports */
 import _get from 'lodash/get';
 /* Redux Imports */
-import { commonActionCreater } from '../Redux/commonAction'
+import { commonActionCreater } from '../../../Redux/commonAction'
 /* Material Imports */
 import { withStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
@@ -14,7 +14,7 @@ import Slide from '@material-ui/core/Slide';
 /* Material Icons */
 import DeleteIcons from '@material-ui/icons/DeleteOutline';
 /*  */
-import applyCart from '../Global/PosFunctions/applyCart'
+import applyCart from '../../../Global/PosFunctions/applyCart'
 
 const styles = {
     appBar: {
