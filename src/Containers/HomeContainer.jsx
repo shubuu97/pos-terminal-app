@@ -1,5 +1,6 @@
 import React from 'react';
 import { Detector } from 'react-detect-offline';
+import moment from "moment";
 /* Lodash Imports */
 import _get from 'lodash/get';
 import _isEmpty from 'lodash/isEmpty';
@@ -64,7 +65,7 @@ class HomeContainer extends React.Component {
             openCartOnHoldOrClear: false,
             isLoading: false,
             offline: true,
-            historySidebarItems:[],
+            historySidebarItems: [],
         }
     }
 
@@ -409,12 +410,29 @@ class HomeContainer extends React.Component {
                 error: 'GET_CUSTOMER_SALE_DATA_ERROR'
             },
             identifier: 'GET_CUSTOMER_SALE_DATA',
-        }).then((data)=>{
+        }).then((data) => {
             let view = []
-            data.map((transactions)=>{
+            data.map((transactions, index) => {
                 view.push(
-                    <div className='card fwidth'>
-                        Hello 
+                    <div  key={index} className="card">
+                        <div className={_get(this.state, 'orderId', '') === _get(transactions, 'sale.id', '') ? "active" : ""}>
+                            <div className="mui-row no-gutters history-card-head">
+                                <div className="mui-col-md-4">
+                                    {moment(_get(transactions, 'sale.saleCommitTimeStamp.seconds', 0) * 1000).format('MM/DD/YYYY')}
+                                </div>
+                                <div className="mui-col-md-8 text-right">
+                                    #{`${_get(transactions, 'sale.id', '')}`}
+                                </div>
+                            </div>
+                            <div className="mui-row no-gutters">
+                                <div className="mui-col-md-6">
+                                    <label className="c-name">{_get(transactions, 'customer.customer.firstName', '') + ' ' + _get(transactions, 'customer.customer.lastName', '')}</label>
+                                </div>
+                                <div className="mui-col-md-6 text-right">
+                                    <label className="c-name">{`Amount: ${_get(transactions, 'sale.totalAmount.currencyCode', '$')} ${_get(transactions, 'sale.totalAmount.amount', 0)}`}</label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 )
             })
@@ -514,7 +532,7 @@ class HomeContainer extends React.Component {
                             handleSidebarPopulate={(limit, skip, timeFrom, timeTo) => this.handleTransactionPopulate(limit, skip, timeFrom, timeTo)}
                             handleSearch={this.handleTransactionSearch}
 
-                            
+
                             historySidebarItems={this.state.historySidebarItems}
 
 
