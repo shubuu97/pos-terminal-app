@@ -90,8 +90,6 @@ class HistoryDialogue extends React.Component {
                                 hello
                             </div>
                         </div>
-
-
                     </div>
                 </Dialog>
             </div>
