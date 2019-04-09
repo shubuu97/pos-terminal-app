@@ -15,7 +15,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 /* Material Icons */
 
 /* Component Imports */
-import SearchBar from '../../ProductsSection/SearchBar';
+import SearchBar from '../../../Global/Components/SearchBar'
 import HistoryDetailArea from './HistoryDetailArea';
 
 
@@ -37,7 +37,7 @@ class HistoryDialogue extends React.Component {
     constructor() {
         super();
         this.state = {
-            searchInput: false,
+            searchInput: '',
         }
     }
 
@@ -45,8 +45,9 @@ class HistoryDialogue extends React.Component {
         this.props.handleSidebarPopulate(1, 2, 3, 4)
     }
 
-    handleSearchChange = () => {
-
+    handleSearchChange = (value) => {
+        this.setState({searchInput:value})
+        this.props.handleSearch(value);
     }
 
     render() {
