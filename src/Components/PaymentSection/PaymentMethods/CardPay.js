@@ -87,28 +87,32 @@ class CardPay extends React.Component {
                 let POSResponse = _get(responseObj, 'POSResponse');
                 console.log(POSResponse, "POSResponse");
                 if (_get(POSResponse, 'Decision._text') == 'A' && _get(POSResponse, 'ErrorCode._text') == '100') {
-                    this.posResponseSuccess(res.text, POSResponse);
+                    this.posResponseSuccess(res.text, POSResponse, false, 1);
                     return;
                 }
+                //if error has text msgs then show the code
                 if (_get(POSResponse, 'ErrorCode._text')) {
-                   if( _get(POSResponse,"Message._text")){
-                    let errMsg = `Error Occured with code:${POSResponse.ErrorCode._text}(${_get(POSResponse,"Message._text")})`;
-                    this.handleError(errMsg);
-                    return;
-                   }
-                    let errorObj = codes(POSResponse.ErrorCode._text);
-                    console.log(errorObj, "errorObj");
+                    debugger;
+                    if (_get(POSResponse, "Message._text")) {
+                        let errMsg = `Error Occured with code:${POSResponse.ErrorCode._text}(${_get(POSResponse, "Message._text")})`;
+                        this.posResponseSuccess(res.text, POSResponse, true, 1, errMsg)
+                        return;
+                    }
+                    //if error dont have the msg then codes giving the msgs
+                    let errorObj = codes(POSResponse.ErrorCode._text, true, 1);
                     let errMsg = `Error Occured with code:${POSResponse.ErrorCode._text}(${_get(errorObj, 'descripton')})`
-                    this.handleError(errMsg)
+                    this.posResponseSuccess(res.text, POSResponse, true, 1, errMsg)
                 }
             }).catch(err => {
+                debugger;
                 // showErrorAlert({ dispatch: this.props.dispatch, error: err.message })
-                this.handleError(err.message)
+                this.posResponseSuccess(null, null, true, 1, err.message)
+
             });
-    }
+    }   
 
-    posResponseSuccess = (xmlRes, POSResponseObj) => {
-
+    posResponseSuccess = (xmlRes, POSResponseObj, error, type, errMsg) => {
+        debugger;
         genericPostData({
             dispatch: this.props.dispatch,
             reqObj: {
@@ -121,6 +125,8 @@ class CardPay extends React.Component {
                 transactionId: _get(POSResponseObj, 'RequestId._text'),
                 requestPayload: this.makePOSReqObj(),
                 responsePayload: xmlRes,
+                error,
+                type
             },
             url: 'Payment/FreedomPay/Transactions/Save',
             constants: {
@@ -129,19 +135,26 @@ class CardPay extends React.Component {
                 error: 'FreedomPaySave_ERROR'
             },
             identifier: 'FreedomPaySave',
-            successCb: this.refrenceSavedSuccess,
-            errorCb: this.refrenceSavedError
+            successCb: (resData) => this.refrenceSavedSuccess(resData, error, type, errMsg),
+            errorCb: this.refrenceSavedError,
+            dontShowMessage:true
         })
     }
 
-    refrenceSavedSuccess = (resData) => {
-        this.props.dispatch(commonActionCreater({ cardAmount: this.props.cardAmount, totalAmount: this.props.totalAmount, cardRefrenceId: resData }, 'CARD_INPUT_HANDLER'));
-        this.handleSuccess();
-
+    refrenceSavedSuccess = (resData, error, type, errMsg) => {
+        debugger;
+        if (!error) {
+            this.props.dispatch(commonActionCreater({ cardAmount: this.props.cardAmount, totalAmount: this.props.totalAmount, cardRefrenceId: resData }, 'CARD_INPUT_HANDLER'));
+            this.handleSuccess();
+        }
+        else {
+            debugger;
+            this.handleError(errMsg)
+        }
     }
 
     refrenceSavedError = (err) => {
-        this.handleError(err);
+        this.handleError("Some Error Ocurred While Saving Refrence To Server");
     }
 
     handleClose = () => {

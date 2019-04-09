@@ -1,5 +1,6 @@
 import React from 'react';
 import { Detector } from 'react-detect-offline';
+import moment from "moment";
 /* Lodash Imports */
 import _get from 'lodash/get';
 import _isEmpty from 'lodash/isEmpty';
@@ -26,6 +27,7 @@ import PaymentSection from '../Components/PaymentSection/PaymentSection'
 import OrderHistoryDialog from '../Components/OrderHisoty/OrderHistoryDialog';
 import withDialog from '../Components/DialogHoc'
 import OnHoldDialogue from '../Components/Dialogues/HoldCartDialogue/OnHoldDialogue';
+import HistoryDialogue from '../Components/Dialogues/HistoryDialogue.jsx/HistoryDialogue';
 import AlertCartClear from '../Components/AlertCartClear';
 import GiftCardModel from '../Components/ProductsSection/GiftCardModel';
 import MiscProductModal from '../Components/ProductsSection/MiscProductModal';
@@ -62,7 +64,9 @@ class HomeContainer extends React.Component {
             openMiscProduct: false,
             openCartOnHoldOrClear: false,
             isLoading: false,
-            offline:true
+            offline: true,
+            historySidebarItems: [],
+            selectedSaleTransaction:null
         }
     }
 
@@ -362,17 +366,17 @@ class HomeContainer extends React.Component {
     }
 
     showNetworkIndicator = ({ online }) => {
-        if (online && this.state.offline == true){
+        if (online && this.state.offline == true) {
             this.setState({
-                offline:false
+                offline: false
             })
             return null
         }
-        else if(online && this.state.offline == false){
+        else if (online && this.state.offline == false) {
             return null
         }
-        else if(!online&&this.state.offline==false){
-            this.setState({offline:true})
+        else if (!online && this.state.offline == false) {
+            this.setState({ offline: true })
             return (
                 <div className='toast-area absolute flex-row justify-center align-center'>
                     <div className='offline-indicator flex-row justify-center align-center'>
@@ -381,7 +385,7 @@ class HomeContainer extends React.Component {
                 </div>
             )
         }
-        else{
+        else {
             return (
                 <div className='toast-area absolute flex-row justify-center align-center'>
                     <div className='offline-indicator flex-row justify-center align-center'>
@@ -391,7 +395,91 @@ class HomeContainer extends React.Component {
             )
         }
     }
+    orderHistorySelect = (selectedSaleTransaction) => {
+        this.setState({ selectedSaleTransaction })
+    }
 
+    makeViewForSideBar = (data) => {
+        debugger;
+        let view = [];
+        (data || []).map((transactions, index) => {
+            view.push(
+                <div onClick={() => this.orderHistorySelect(transactions)} key={index} className="card">
+                    <div className={_get(this.state, 'orderId', '') === _get(transactions, 'sale.id', '') ? "active" : ""}>
+                        <div className="mui-row no-gutters history-card-head">
+                            <div className="mui-col-md-4">
+                                {moment(_get(transactions, 'sale.saleCommitTimeStamp.seconds', 0) * 1000).format('MM/DD/YYYY')}
+                            </div>
+                            <div className="mui-col-md-8 text-right">
+                                #{`${_get(transactions, 'sale.id', '')}`}
+                            </div>
+                        </div>
+                        <div className="mui-row no-gutters">
+                            <div className="mui-col-md-6">
+                                <label className="c-name">{_get(transactions, 'customer.customer.firstName', '') + ' ' + _get(transactions, 'customer.customer.lastName', '')}</label>
+                            </div>
+                            <div className="mui-col-md-6 text-right">
+                                <label className="c-name">{`Amount: ${_get(transactions, 'sale.totalAmount.currencyCode', '$')} ${_get(transactions, 'sale.totalAmount.amount', 0)}`}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )
+        })
+        view.reverse();
+        this.setState({
+            historySidebarItems: view
+        })
+    }
+
+    /* History Actions */
+    handleTransactionPopulate = (limit, skip, timeFrom, timeTo, transctionId) => {
+        let url = 'Sale/GetByTerminalId';
+        let data = { id: localStorage.getItem('terminalId') }
+
+        genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj: data,
+            url: url,
+            constants: {
+                init: 'GET_CUSTOMER_SALE_DATA_INIT',
+                success: 'GET_CUSTOMER_SALE_DATA_SUCCESS',
+                error: 'GET_CUSTOMER_SALE_DATA_ERROR'
+            },
+            identifier: 'GET_CUSTOMER_SALE_DATA',
+            dontShowMessage: true
+        }).then((data) => {
+            this.makeViewForSideBar(data);
+        })
+    }
+
+    handleTransactionSearch = (transactionId) => {
+        if (transactionId == '') {
+            this.handleTransactionPopulate();
+            return;
+        }
+        if (transactionId.length > 3) {
+            genericPostData({
+                dispatch: this.props.dispatch,
+                reqObj: { id: transactionId },
+                url: "Sale/Get",
+                constants: {
+                    init: "SaleById_INIT",
+                    success: "SaleById_SUCCESS",
+                    error: "SaleById_ERROR"
+                },
+                successCb: this.handleTransactionSearchSuccess,
+                errorCb: (err) => console.log(err),
+                identifier: "SaleById",
+                dontShowMessage: true
+            })
+        }
+    }
+    handleTransactionSearchSuccess = (data) => {
+        let arr = [];
+        arr.push(data.sale);
+        this.makeViewForSideBar(arr);
+    }
 
     render() {
         let windowHeight = document.documentElement.scrollHeight
@@ -417,6 +505,7 @@ class HomeContainer extends React.Component {
                         // ! Actions
                         handleHistoryOpen={this.handleTerminalHistoryOpen}
                         handleClickOpenOnHold={() => this.handleClickOpen('openOnHold')}
+                        handleClickOpenHistory={() => this.handleClickOpen('openHistoryDialogue')}
                         handleClickOpenSessionContainer={this.handleClickOpenSessionContainer}
                         handleClickQuickBook={() => this.setState({ openQuickBookContainer: true })}
                         handleLockTerminal={this.handleLockTerminal}
@@ -472,6 +561,24 @@ class HomeContainer extends React.Component {
                             dispatch={dispatch}
                         /> : null
                 }
+                {
+                    this.state.openHistoryDialogue ?
+                        <HistoryDialogue
+                            handleSidebarPopulate={(limit, skip, timeFrom, timeTo) => this.handleTransactionPopulate(limit, skip, timeFrom, timeTo)}
+                            handleSearch={this.handleTransactionSearch}
+
+
+                            historySidebarItems={this.state.historySidebarItems}
+                            selectedSaleTransaction={this.state.selectedSaleTransaction}
+
+
+                            handleClickOpen={() => this.handleClickOpen('openHistoryDialogue')}
+                            handleClose={() => this.handleClose('openHistoryDialogue')}
+                            open={this.state.openHistoryDialogue}
+                            dispatch={dispatch}
+                        /> : null
+                }
+
                 {
                     this.state.openCartOnHoldOrClear ?
                         <AlertCartClear
@@ -714,7 +821,7 @@ const pollingWrapper = async (propsOfComp, dispatch) => {
 }
 
 
-HomeContainer = pollingHoc(30000, pollingWrapper)(HomeContainer)
+HomeContainer = pollingHoc(30 * 60 * 1000, pollingWrapper)(HomeContainer)
 
 
 export default connect(mapStateToProps)(HomeContainer)

@@ -321,6 +321,7 @@ class ProductsSection extends React.Component {
                             offline={this.props.offline}
                             // ! Actions
                             handleClickOpenOnHold={this.props.handleClickOpenOnHold}
+                            handleClickOpenHistory={this.props.handleClickOpenHistory}
                             handleHistoryOpen={this.props.handleHistoryOpen}
                             handleClickOpenSessionContainer={this.props.handleClickOpenSessionContainer}
                             handleClickQuickBook={this.props.handleClickQuickBook}
