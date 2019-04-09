@@ -1534,51 +1534,7 @@ p {
 }
 
 //style for history section
-.history-section {
-    background: @background;
-    height: 100%;
 
-    .history-header {
-        display: flex;
-        align-items: center;
-        height: 50px;
-        background: @primary-d;
-        color: @primary-text;
-        font-size: 1.3em;
-    }
-
-    .history-parent {
-        margin: 10px 10px;
-    }
-    .history-content {
-        margin: 10px 10px;
-    }
-
-    .card {
-        background: @background-white;
-        border-radius: 5px;
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-        margin:10px 0;
-        min-height: 50px;
-        padding: 10px;
-       
-        .card-title {
-            font-size: 1.2em;
-            color: @soft-text;
-        }
-
-        .des {
-            padding: 5px;
-
-        }
-
-        .des-title {
-            font-size: 0.8em;
-            color: @softer-text;
-            padding: 10px 0 3px 0;
-        }
-    }
-}
 
 .active {
     background: skyblue;
@@ -1955,6 +1911,8 @@ p {
 
 .history-section{
     height: 100vh;
+    background: @background;
+
     .history-sidebar{
         width: 30%;
         height: calc(100vh - 90px);
@@ -1971,7 +1929,46 @@ p {
     .history-main{
         width: 70%;
         padding: 20px;
+        .history-order-details{
+            width: 60%;
+        }
+        .order-summary{
+            width: 35%;
+        }
     }
 
+    .history-header {
+        display: flex;
+        align-items: center;
+        height: 50px;
+        background: @primary-d;
+        color: @primary-text;
+        font-size: 1.3em;
+    }
 
+    .card {
+        background: @background-white;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        margin:10px 20px;
+        min-height: 50px;
+        padding: 10px;
+       
+        .card-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: @softer-text;
+        }
+
+        .des {
+            padding: 5px;
+
+        }
+
+        .des-title {
+            font-size: 0.8em;
+            color: @softer-text;
+            padding: 10px 0 3px 0;
+        }
+    }
 }
