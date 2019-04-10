@@ -66,7 +66,8 @@ class HomeContainer extends React.Component {
             isLoading: false,
             offline: true,
             historySidebarItems: [],
-            selectedSaleTransaction:null
+            selectedSaleTransaction: null,
+            historySidebarLoading: false
         }
     }
 
@@ -404,7 +405,7 @@ class HomeContainer extends React.Component {
         let view = [];
         (data || []).map((transactions, index) => {
             view.push(
-                <div onClick={() => this.orderHistorySelect(transactions)} key={index} className="card">
+                <div onClick={() => this.orderHistorySelect(transactions)} key={index} className={this.state.selectedSaleTransaction == transactions ? 'card card-active' : 'card'}>
                     <div className={_get(this.state, 'orderId', '') === _get(transactions, 'sale.id', '') ? "active" : ""}>
                         <div className="mui-row no-gutters history-card-head">
                             <div className="mui-col-md-4">
@@ -428,7 +429,8 @@ class HomeContainer extends React.Component {
         })
         view.reverse();
         this.setState({
-            historySidebarItems: view
+            historySidebarItems: view,
+            historySidebarLoading: false
         })
     }
 
@@ -436,7 +438,9 @@ class HomeContainer extends React.Component {
     handleTransactionPopulate = (limit, skip, timeFrom, timeTo, transctionId) => {
         let url = 'Sale/GetByTerminalId';
         let data = { id: localStorage.getItem('terminalId') }
-
+        this.setState({
+            historySidebarLoading: true
+        })
         genericPostData({
             dispatch: this.props.dispatch,
             reqObj: data,
@@ -459,6 +463,9 @@ class HomeContainer extends React.Component {
             return;
         }
         if (transactionId.length > 3) {
+            this.setState({
+                historySidebarLoading: true
+            })
             genericPostData({
                 dispatch: this.props.dispatch,
                 reqObj: { id: transactionId },
@@ -468,17 +475,15 @@ class HomeContainer extends React.Component {
                     success: "SaleById_SUCCESS",
                     error: "SaleById_ERROR"
                 },
-                successCb: this.handleTransactionSearchSuccess,
                 errorCb: (err) => console.log(err),
                 identifier: "SaleById",
                 dontShowMessage: true
+            }).then((data) => {
+                let arr = [];
+                arr.push(data.sale);
+                this.makeViewForSideBar(arr);
             })
         }
-    }
-    handleTransactionSearchSuccess = (data) => {
-        let arr = [];
-        arr.push(data.sale);
-        this.makeViewForSideBar(arr);
     }
 
     render() {
@@ -570,6 +575,7 @@ class HomeContainer extends React.Component {
 
                             historySidebarItems={this.state.historySidebarItems}
                             selectedSaleTransaction={this.state.selectedSaleTransaction}
+                            historySidebarLoading={this.state.historySidebarLoading}
 
 
                             handleClickOpen={() => this.handleClickOpen('openHistoryDialogue')}
