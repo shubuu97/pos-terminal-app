@@ -6,6 +6,8 @@ import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import CloseIcon from '@material-ui/icons/Close'
+
 import TextField from '@material-ui/core/TextField';
 /* Material Icons */
 import RemoveCircleIcons from '@material-ui/icons/RemoveCircleOutline';
@@ -149,6 +151,120 @@ class RefundDialogue extends React.Component {
         let returnQty = this.state[`returnQty${index}`] || 0
         this.makeReturnArray(index, returnQty, event.target.checked);
     };
+    handleRefundClick = (refundMethod) => (event) => {
+        this.setState({ [refundMethod]: true });
+    }
+
+    onRemoveRefundMethod = (refundMethod) => {
+        this.setState({ [refundMethod]: false })
+    }
+
+    giftCardRefundComponent = () => {
+        return (<div className="default-card-pay">
+            <span className='payment-title'>Gift Card Refund</span>
+            {!this.props.cardRefrenceId ?
+                <div className="flex-row align-center justify-space-between relative">
+                    <div className="d-flex" style={{ width: '80%' }}>
+                        <TextField
+                            InputLabelProps={{ shrink: true }}
+                            autoFocus
+                            // onFocus={() => this.props.currentFocus({ fieldValue: 'cardAmount', handler: 'CARD_INPUT_HANDLER' })}
+                            id="outlined-name"
+                            label="Gift Card Number"
+                            value={this.props.cardAmount}
+                            // onChange={this.handleChange('cardAmount')}
+                            margin="normal"
+                            variant="outlined"
+                            fullWidth
+                        />
+                        <TextField
+                            InputLabelProps={{ shrink: true }}
+                            autoFocus
+                            // onFocus={() => this.props.currentFocus({ fieldValue: 'cardAmount', handler: 'CARD_INPUT_HANDLER' })}
+                            id="outlined-name"
+                            label="Amount"
+                            value={this.props.cardAmount}
+                            // onChange={this.handleChange('cardAmount')}
+                            margin="normal"
+                            variant="outlined"
+                            fullWidth
+                        />
+                    </div>
+                    <span onClick={this.reqPaymentByCard} className="pay-button flex-row justify-center align-center">
+                        Void
+                    </span>
+                    <CloseIcon
+                        onClick={() => this.onRemoveRefundMethod('giftRefund')} />
+                </div> :
+                <div>
+                    <span>Ref Id:</span>
+                    <span className="bold">{this.props.cardRefrenceId}</span>
+                </div>
+            }
+        </div>)
+    }
+
+    cardRefundComponent = () => {
+        return (<div className="default-card-pay">
+            <span className='payment-title'>Card Refund</span>
+            {!this.props.cardRefrenceId ?
+                <div className="flex-row align-center justify-space-between relative">
+                    <div style={{ width: '80%' }}>
+                        <TextField
+                            InputLabelProps={{ shrink: true }}
+                            autoFocus
+                            // onFocus={() => this.props.currentFocus({ fieldValue: 'cardAmount', handler: 'CARD_INPUT_HANDLER' })}
+                            id="outlined-name"
+                            label="Amount"
+                            value={this.props.cardAmount}
+                            // onChange={this.handleChange('cardAmount')}
+                            margin="normal"
+                            variant="outlined"
+                            fullWidth
+                        />
+                    </div>
+                    <span onClick={this.reqPaymentByCard} className="pay-button flex-row justify-center align-center">
+                        Void
+          </span>
+                    <CloseIcon
+                        onClick={() => this.onRemoveRefundMethod('cardRefund')} />
+                </div> :
+                <div>
+                    <span>Ref Id:</span>
+                    <span className="bold">{this.props.cardRefrenceId}</span>
+                </div>
+            }
+        </div>)
+    }
+
+    cashRefundComponent = () => {
+        return (<div className="default-card-pay">
+            <span className='payment-title'>Cash Refund</span>
+            <div className="flex-row align-center justify-space-between">
+                <div style={{ width: '80%' }}>
+                    <TextField
+                        InputLabelProps={{ shrink: true }}
+                        id="cashPay"
+                        label="Amount"
+                        type="tel"
+                        value={this.props.cashAmount}
+                        // onChange={this.handleChange('cashPay')}
+                        margin="outline"
+                        // onFocus={() => this.props.currentFocus({ fieldValue: 'cashAmount', handler: 'CASH_INPUT_HANDLER' })}
+                        fullWidth
+                        autoFocus
+                        type='text'
+                        variant="outlined"
+                        className='mt-10'
+                    />
+                </div>
+                <CloseIcon
+                    onClick={() => this.onRemoveRefundMethod('cashRefund')} />
+
+            </div>
+        </div>)
+    }
+
 
     render() {
         return (
@@ -194,6 +310,20 @@ class RefundDialogue extends React.Component {
                             this.state.step == 2 ?
                                 <div className='refund-step-2 flex-column'>
                                     <span className='card-title'>Refund Methods</span>
+                                    <div className="d-flex justify-space-evenly">
+                                        <Button onClick={this.handleRefundClick("cashRefund")} variant="contained" color="primary">Cash</Button>
+                                        <Button onClick={this.handleRefundClick("cardRefund")} variant="contained" color="primary">Card</Button>
+                                        <Button onClick={this.handleRefundClick("giftRefund")} variant="contained" color="primary">Gift Card</Button>
+                                    </div>
+                                    <div>
+                                        {this.state.cashRefund ? this.cashRefundComponent() : null}
+                                    </div>
+                                    <div>
+                                        {this.state.cardRefund ? this.cardRefundComponent() : null}
+                                    </div>
+                                    <div>
+                                        {this.state.giftRefund ? this.giftCardRefundComponent() : null}
+                                    </div>
 
                                 </div> : null
                         }
