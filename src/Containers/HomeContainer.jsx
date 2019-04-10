@@ -405,7 +405,7 @@ class HomeContainer extends React.Component {
         let view = [];
         (data || []).map((transactions, index) => {
             view.push(
-                <div onClick={() => this.orderHistorySelect(transactions)} key={index} className={this.state.selectedSaleTransaction == transactions ? 'card card-active' : 'card'}>
+                <div onClick={() => this.orderHistorySelect(transactions)} key={index} id={index} className={this.state.selectedSaleTransaction == transactions ? 'card card-active' : 'card'}>
                     <div className={_get(this.state, 'orderId', '') === _get(transactions, 'sale.id', '') ? "active" : ""}>
                         <div className="mui-row no-gutters history-card-head">
                             <div className="mui-col-md-4">

@@ -132,6 +132,12 @@ p {
 .fheight {
     height: 100%;
 }
+.halfwidth {
+    width: 50%;
+}
+.halfheight {
+    height: 50%;
+}
 /* Global */
 
 .flex-row {
@@ -448,6 +454,40 @@ p {
     margin-right: 20px;
     font-size: 18px;
     font-weight: bold;
+}
+
+// Numpad
+.numpad-global{
+    margin: 0 0 10px 0;
+    border-radius: 5px;
+    .numpad-card {
+        background: @primary;
+        color: @primary-text;
+        border-radius: 8px;
+        padding: 10px;
+        .card-title{
+            
+        }
+        .key {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 65px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            font-size: 1.3em;
+        }
+
+        .big-key {
+            width: 59%;
+            margin: 1%;
+        }
+
+        .small-key {
+            width: 28%;
+            margin: 1%;
+        }
+    }
 }
 
 .pos-products-collection {
@@ -2054,3 +2094,4 @@ p {
     }
     
 }
+
