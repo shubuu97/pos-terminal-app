@@ -329,7 +329,7 @@ class RefundDialogue extends React.Component {
                                         </div>
                                     </div>
                                     <div className='halfwidth flex-row justify-flex-end'>
-                                        <div className='numpad-global' style={{ width: '60%' }}>
+                                        <div className='numpad-global' style={{ width: '70%' }}>
                                             <div className='card numpad-card' >
                                                 <span className='card-title' style={{ color: '#fff' }}>Numpad</span>
                                                 <div className='flex-row flex-wrap justify-center pt-15'>

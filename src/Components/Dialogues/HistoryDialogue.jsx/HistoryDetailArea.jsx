@@ -45,39 +45,49 @@ class HistoryDetailArea extends React.Component {
     summaryPanel = () => {
         let selectedOrder = _get(this.props, "selectedSaleTransaction", []);
 
-        let summaryPanelContent = <div className="mui-col-md-12" style={{ paddingRight: '50px' }}>
-            <label >{`Status: `}</label>
-            <label style={{ float: 'right' }}>{_get(selectedOrder, 'sale.totalTaxAmount.currencyCode', '$') + _get(selectedOrder, 'sale.totalTaxAmount.amount', 0)}</label>
-            <br />
-            <label >{`Created Date: `}</label>
-            <label style={{ float: 'right' }}>{_get(selectedOrder, 'sale.totalTaxAmount.currencyCode', '$') + _get(selectedOrder, 'sale.totalTaxAmount.amount', 0)}</label>
-            <br />
-            <label >{`Served By: `}</label>
-            <label style={{ float: 'right' }}>{_get(selectedOrder, 'operator.person.firstName', '') + ' ' + _get(selectedOrder, 'operator.person.lastName', '')}</label>
-            <br />
-            <label >{`Tax: `}</label>
-            <label style={{ float: 'right' }}>{_get(selectedOrder, 'sale.totalTaxAmount.currencyCode', '$') + _get(selectedOrder, 'sale.totalTaxAmount.amount', 0)}</label>
-            <br />
-            <label >{`Grand Total: `}</label>
-            <label style={{ float: 'right' }}>{`${_get(selectedOrder, 'sale.totalAmount.currencyCode', '$')}${_get(selectedOrder, 'sale.totalAmount.amount', 0)}`}</label>
-            <br />
-            <label >{`Returned Amount: `}</label>
-            <label style={{ float: 'right' }}>{_get(selectedOrder, 'sale.totalRefundAmount.currencyCode', '$') + _get(selectedOrder, 'sale.totalRefundAmount.amount', '0')}</label>
-            <br />
-            <label >{`Total Paid: `}</label>
-            <label style={{ float: 'right' }}>{`${_get(selectedOrder, 'sale.totalAmountPaid.currencyCode', '$')}${_get(selectedOrder, 'sale.totalAmountPaid.amount', '0')}`}</label>
-            <br />
-            <label >{`Payment Method: `}</label>
-            <div style={{ float: 'right' }}>
-                {/* {this.showPaymentMethods(this.state.selectedOrder)} */}
+        return (
+            <div className="mui-col-md-12 flex-column mt-10" >
+                <div className='flex-row justify-space-between mb-5'>
+                    <span className='summary-key'>{`Status: `}</span>
+                    <span className='summary-value'>{_get(selectedOrder, 'sale.totalTaxAmount.currencyCode', '$') + _get(selectedOrder, 'sale.totalTaxAmount.amount', 0)}</span>
+                </div>
+                <div className='flex-row justify-space-between mb-5'>
+                    <span className='summary-key'>{`Created Date: `}</span>
+                    <span className='summary-value'>{_get(selectedOrder, 'sale.totalTaxAmount.currencyCode', '$') + _get(selectedOrder, 'sale.totalTaxAmount.amount', 0)}</span>
+                </div>
+                <div className='flex-row justify-space-between mb-5'>
+                    <span className='summary-key'>{`Served By: `}</span>
+                    <span className='summary-value'>{_get(selectedOrder, 'operator.person.firstName', '') + ' ' + _get(selectedOrder, 'operator.person.lastName', '')}</span>
+                </div>
+                <div className='flex-row justify-space-between mb-5'>
+                    <span className='summary-key'>{`Tax: `}</span>
+                    <span className='summary-value'>{_get(selectedOrder, 'sale.totalTaxAmount.currencyCode', '$') + _get(selectedOrder, 'sale.totalTaxAmount.amount', 0)}</span>
+                </div>
+                <div className='flex-row justify-space-between mb-5'>
+                    <span className='summary-key'>{`Grand Total: `}</span>
+                    <span className='summary-value'>{`${_get(selectedOrder, 'sale.totalAmount.currencyCode', '$')}${_get(selectedOrder, 'sale.totalAmount.amount', 0)}`}</span>
+                </div>
+                <div className='flex-row justify-space-between mb-5'>
+                    <span className='summary-key'>{`Returned Amount: `}</span>
+                    <span className='summary-value'>{_get(selectedOrder, 'sale.totalRefundAmount.currencyCode', '$') + _get(selectedOrder, 'sale.totalRefundAmount.amount', '0')}</span>
+                </div>
+                <div className='flex-row justify-space-between mb-5'>
+                    <span className='summary-key'>{`Total Paid: `}</span>
+                    <span className='summary-value'>{`${_get(selectedOrder, 'sale.totalAmountPaid.currencyCode', '$')}${_get(selectedOrder, 'sale.totalAmountPaid.amount', '0')}`}</span>
+                </div>
+                <div className='flex-row justify-space-between mb-5'>
+                    <span className='summary-key'>{`Payment Method: `}</span>
+                    <div style={{ float: 'right' }}>
+                        {/* {this.showPaymentMethods(this.state.selectedOrder)} */}
+                    </div>
+                </div>
+                <div className='flex-row justify-space-between mb-5'>
+                    <span className='summary-key'>{`Change: `}</span>
+                    <span className='summary-value'>{_get(selectedOrder, 'sale.changeDue.currencyCode', 0) + _get(selectedOrder, 'sale.changeDue.amount', 0).toFixed(2)}</span>
+                </div>
+                {/* <span className='summary-value'>{`$ ${_get(selectedOrder, 'sale.paymentAmount', '100.00')}`}</span> */}
             </div>
-            {/* <label style={{ float: 'right' }}>{`$ ${_get(selectedOrder, 'sale.paymentAmount', '100.00')}`}</label> */}
-            <br />
-            <br />
-            <label >{`Change: `}</label>
-            <label style={{ float: 'right' }}>{_get(selectedOrder, 'sale.changeDue.currencyCode', 0) + _get(selectedOrder, 'sale.changeDue.amount', 0).toFixed(2)}</label>
-        </div>
-        return summaryPanelContent;
+        )
     }
 
     render() {
