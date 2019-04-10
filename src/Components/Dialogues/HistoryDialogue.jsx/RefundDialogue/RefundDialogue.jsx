@@ -17,6 +17,13 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 /* Lodash Imports */
 import _get from 'lodash/get';
 import _findIndex from 'lodash/findIndex';
+import _find from 'lodash/find'
+import { commonActionCreater } from '../../../../Redux/commonAction';
+/* Redux Imports */
+import { connect } from 'react-redux';
+import roundUp from '../../../../Global/PosFunctions/roundUp';
+let regex = /^\d*[\.\d]+$/;
+
 
 function Transition(props) {
     return <Slide direction="up" {...props} />;
@@ -28,8 +35,16 @@ class RefundDialogue extends React.Component {
         error: false,
         success: false,
         step: 1,
-        returnItems: []
+        returnItems: [],
+        totalRefundAmount: 0
     };
+
+    componentDidMount(){
+       let payments =  _get(this.props,"selectedSaleTransaction.sale.payments",[]);
+      let paidThroughCardObj =  _find(payments,{paymentMethod:1});
+      let paidThroughCard = _get(paidThroughCardObj,"paymentAmount.amount",0);
+      this.setState({paidThroughCard})
+    }
 
     handleClose = () => {
         this.setState({ open: false });
@@ -90,12 +105,20 @@ class RefundDialogue extends React.Component {
                 [`returnQty${index}`]: expectedQty
             });
             this.makeReturnArray(index, expectedQty);
+            this.calculateTotalRefundAmount();
         }
     }
     calAmounts = (subTotal, quantity, returnQuantity) => {
         let perPriceItemPrice = subTotal / quantity;
         let refundEstimatedAmount = perPriceItemPrice * returnQuantity;
-        return refundEstimatedAmount;
+        return parseFloat(roundUp(refundEstimatedAmount,2));
+    }
+    calculateTotalRefundAmount = () => {
+        let totalRefundAmount = this.state.returnItems.reduce((accumulator, refundItem) => {
+            return accumulator + refundItem.itemRefundEffectiveTotal.amount
+        }, 0);
+        totalRefundAmount = parseFloat(roundUp(totalRefundAmount,2));
+        this.setState({ totalRefundAmount });
     }
     makeReturnArray = (index, expectedQty, replenishInventory) => {
         let refundObj = {};
@@ -134,7 +157,6 @@ class RefundDialogue extends React.Component {
     }
 
     handleIncreaseQuantity = (index, returnableQty) => {
-        debugger;
         let returnQty = this.state[`returnQty${index}`] || 0
         if (returnQty < returnableQty) {
             let expectedQty = returnQty + 1;
@@ -143,6 +165,7 @@ class RefundDialogue extends React.Component {
             });
 
             this.makeReturnArray(index, expectedQty, this.state[`checkbox${index}`]);
+            this.calculateTotalRefundAmount();
         }
 
     }
@@ -156,7 +179,16 @@ class RefundDialogue extends React.Component {
     }
 
     onRemoveRefundMethod = (refundMethod) => {
-        this.setState({ [refundMethod]: false })
+        this.setState({ [refundMethod]: false });
+        if (refundMethod == "cashRefund") {
+            this.props.dispatch(commonActionCreater({ cashAmount: '', amount: this.state.totalRefundAmount }, 'CASH_REFUND_INPUT_HANDLER'));
+        }
+        else if (refundMethod == "cardRefund") {
+            this.props.dispatch(commonActionCreater({ cardAmount: '', amount: this.state.totalRefundAmount,paidThroughCard:this.state.paidThroughCard }, 'CARD_REFUND_INPUT_HANDLER'));
+        }
+        else if (refundMethod == "giftRefund") {
+            this.props.dispatch(commonActionCreater({ giftCardAmount: '', amount: this.state.totalRefundAmount, }, 'GIFTCARD_REFUND_INPUT_HANDLER'));
+        }
     }
 
     giftCardRefundComponent = () => {
@@ -180,19 +212,16 @@ class RefundDialogue extends React.Component {
                         <TextField
                             InputLabelProps={{ shrink: true }}
                             autoFocus
-                            // onFocus={() => this.props.currentFocus({ fieldValue: 'cardAmount', handler: 'CARD_INPUT_HANDLER' })}
+                            onFocus={() => this.currentFocus({ fieldValue: 'giftCardAmount', handler: 'GIFTCARD_REFUND_INPUT_HANDLER' })}
                             id="outlined-name"
                             label="Amount"
-                            value={this.props.cardAmount}
-                            // onChange={this.handleChange('cardAmount')}
+                            value={this.props.giftCardAmount}
+                            onChange={this.handleGiftRefundAmountInput}
                             margin="normal"
                             variant="outlined"
                             fullWidth
                         />
                     </div>
-                    <span onClick={this.reqPaymentByCard} className="pay-button flex-row justify-center align-center">
-                        Void
-                    </span>
                     <CloseIcon
                         onClick={() => this.onRemoveRefundMethod('giftRefund')} />
                 </div> :
@@ -213,19 +242,20 @@ class RefundDialogue extends React.Component {
                         <TextField
                             InputLabelProps={{ shrink: true }}
                             autoFocus
-                            // onFocus={() => this.props.currentFocus({ fieldValue: 'cardAmount', handler: 'CARD_INPUT_HANDLER' })}
+                            onFocus={() => this.currentFocus({ fieldValue: 'cardAmount', handler: 'CARD_REFUND_INPUT_HANDLER' })}
                             id="outlined-name"
                             label="Amount"
                             value={this.props.cardAmount}
-                            // onChange={this.handleChange('cardAmount')}
+                            onChange={this.handleCardRefundAmountInput}
                             margin="normal"
                             variant="outlined"
                             fullWidth
                         />
                     </div>
                     <span onClick={this.reqPaymentByCard} className="pay-button flex-row justify-center align-center">
-                        Void
-          </span>
+                        Void</span>
+                        <span onClick={this.reqPaymentByCard} className="pay-button flex-row justify-center align-center">
+                        {this.state.paidThroughCard}</span>
                     <CloseIcon
                         onClick={() => this.onRemoveRefundMethod('cardRefund')} />
                 </div> :
@@ -236,6 +266,7 @@ class RefundDialogue extends React.Component {
             }
         </div>)
     }
+
 
     cashRefundComponent = () => {
         return (<div className="default-card-pay">
@@ -248,9 +279,9 @@ class RefundDialogue extends React.Component {
                         label="Amount"
                         type="tel"
                         value={this.props.cashAmount}
-                        // onChange={this.handleChange('cashPay')}
+                        onChange={this.handleCashRefundAmountInput}
                         margin="outline"
-                        // onFocus={() => this.props.currentFocus({ fieldValue: 'cashAmount', handler: 'CASH_INPUT_HANDLER' })}
+                        onFocus={() => this.currentFocus({ fieldValue: 'cashAmount', handler: 'CASH_REFUND_INPUT_HANDLER' })}
                         fullWidth
                         autoFocus
                         type='text'
@@ -264,10 +295,62 @@ class RefundDialogue extends React.Component {
             </div>
         </div>)
     }
+    currentFocus = (field) => {
+        this.setState({ currentFocus: field.fieldValue, handler: field.handler })
+    }
+    handleCashRefundAmountInput = event => {
+        let value = event.target.value;
+        if (regex.test(value)) {
+            this.props.dispatch(commonActionCreater({ cashAmount: value, amount: this.state.totalRefundAmount }, 'CASH_REFUND_INPUT_HANDLER'));
+        }
+        else if (regex.test(value.substring(0, value.length - 1))) {
+            this.props.dispatch(commonActionCreater({ cashAmount: value.substring(0, value.length - 1), amount: this.state.totalRefundAmount }, 'CASH_REFUND_INPUT_HANDLER'));
+        }
+        else {
+            this.props.dispatch(commonActionCreater({ cashAmount: '', amount: this.state.totalRefundAmount }, 'CASH_REFUND_INPUT_HANDLER'));
+        }
+    }
+    handleCardRefundAmountInput = event => {
+        debugger;
+        let value = event.target.value;
+        if (regex.test(value)) {
+            this.props.dispatch(commonActionCreater({ cardAmount: value, amount: this.state.totalRefundAmount,paidThroughCard:this.state.paidThroughCard }, 'CARD_REFUND_INPUT_HANDLER'));
+        }
+        else if (regex.test(value.substring(0, value.length - 1))) {
+            this.props.dispatch(commonActionCreater({ cardAmount: value.substring(0, value.length - 1), amount: this.state.totalRefundAmount,paidThroughCard:this.state.paidThroughCard }, 'CARD_REFUND_INPUT_HANDLER'));
+        }
+        else {
+            this.props.dispatch(commonActionCreater({ cardAmount: '', amount: this.state.totalRefundAmount,paidThroughCard:this.state.paidThroughCard }, 'CARD_REFUND_INPUT_HANDLER'));
+        }
+    }
+    handleGiftRefundAmountInput = event => {
+        let value = event.target.value;
+        if (regex.test(value)) {
+            this.props.dispatch(commonActionCreater({ giftCardAmount: value, amount: this.state.totalRefundAmount }, 'GIFTCARD_REFUND_INPUT_HANDLER'));
+        }
+        else if (regex.test(value.substring(0, value.length - 1))) {
+            this.props.dispatch(commonActionCreater({ giftCardAmount: value.substring(0, value.length - 1), amount: this.state.totalRefundAmount }, 'GIFTCARD_REFUND_INPUT_HANDLER'));
+        }
+        else {
+            this.props.dispatch(commonActionCreater({ giftCardAmount: '', amount: this.state.totalRefundAmount }, 'GIFTCARD_REFUND_INPUT_HANDLER'));
+        }
+    }
 
 
-    handleInputChange = () => {
 
+    handleInputChange =  num => event =>  {
+        if (this.state.currentFocus !== '') {
+            let currentFocus = this.state.currentFocus;
+            let focusItemValue = this.props[currentFocus];
+            if (num != '<') {
+                focusItemValue = (focusItemValue || '') + num;
+            }
+            else {
+                focusItemValue = '';
+            }
+
+            this.props.dispatch(commonActionCreater({ [currentFocus]: focusItemValue, amount: this.state.totalRefundAmount }, this.state.handler))
+        }
     }
 
     render() {
@@ -289,6 +372,7 @@ class RefundDialogue extends React.Component {
                             this.state.step == 1 ?
                                 <div className='refund-step-1 flex-column '>
                                     <span className='card-title'>Order Details</span>
+                                    <span className='card-title'>{this.state.totalRefundAmount}</span>
                                     <div className="refund-items overflow-y mui-row" style={{ paddingLeft: '5%', paddingRight: '6%' }}>
                                         <table className="mui-table mui-table--bordered">
                                             <thead>
@@ -313,10 +397,12 @@ class RefundDialogue extends React.Component {
                                 <div className='flex-row'>
                                     <div className='halfwidth'>
                                         <span className='card-title'>Refund Methods</span>
+                                        Total Refund Amount:<span className='card-title'>{this.state.totalRefundAmount}</span><br />
+                                        <span className='card-title'>{this.props.remainingAmount}</span>
                                         <div className="d-flex justify-space-evenly">
-                                            <Button onClick={this.handleRefundClick("cashRefund")} variant="contained" color="primary">Cash</Button>
-                                            <Button onClick={this.handleRefundClick("cardRefund")} variant="contained" color="primary">Card</Button>
-                                            <Button onClick={this.handleRefundClick("giftRefund")} variant="contained" color="primary">Gift Card</Button>
+                                            <Button disabled={this.props.remainingAmount==0} onClick={this.handleRefundClick("cashRefund")} variant="contained" color="primary">Cash</Button>
+                                            {this.state.paidThroughCard>0?<Button disabled={this.props.remainingAmount==0} onClick={this.handleRefundClick("cardRefund")} variant="contained" color="primary">Card</Button>:null}
+                                            <Button disabled={this.props.remainingAmount==0} onClick={this.handleRefundClick("giftRefund")} variant="contained" color="primary">Gift Card</Button>
                                         </div>
                                         <div>
                                             {this.state.cashRefund ? this.cashRefundComponent() : null}
@@ -380,4 +466,13 @@ class RefundDialogue extends React.Component {
     }
 }
 
-export default RefundDialogue;
+function mapStateToProps(state) {
+    let cashAmount = _get(state, 'RefundPaymentDetails.cashAmount');
+    let cardAmount = _get(state, 'RefundPaymentDetails.cardAmount');
+    let giftCardAmount = _get(state, 'RefundPaymentDetails.giftCardAmount');
+
+    let remainingAmount = _get(state, 'RefundPaymentDetails.remainingAmount')
+    let cardRefrenceId = _get(state, 'RefundPaymentDetails.cardRefrenceId');
+    return { cashAmount, cardAmount, giftCardAmount, remainingAmount, cardRefrenceId }
+}
+export default connect(mapStateToProps)(RefundDialogue);
