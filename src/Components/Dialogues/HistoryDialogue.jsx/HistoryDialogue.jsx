@@ -41,12 +41,12 @@ class HistoryDialogue extends React.Component {
         }
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.props.handleSidebarPopulate(1, 2, 3, 4)
     }
 
     handleSearchChange = (value) => {
-        this.setState({searchInput:value})
+        this.setState({ searchInput: value })
         this.props.handleSearch(value);
     }
 
@@ -81,18 +81,25 @@ class HistoryDialogue extends React.Component {
                                 }
                                 <div className='transaction-list flex-column align-center'>
                                     {
-                                        this.props.historySidebarItems.length ? 
-                                        this.props.historySidebarItems :
-                                        <CircularProgress size={50} /> 
+                                        this.props.historySidebarLoading ?
+                                            <CircularProgress size={50} />
+                                            :
+                                            this.props.historySidebarItems.length ?
+                                                this.props.historySidebarItems
+                                                :
+                                                <div>No Data Found</div>
+
                                     }
                                 </div>
                             </div>
 
-                            <HistoryDetailArea
-                              selectedSaleTransaction ={this.props.selectedSaleTransaction}
-                            />
+                            {
+                                this.props.selectedSaleTransaction ?
+                                    <HistoryDetailArea
+                                        selectedSaleTransaction={this.props.selectedSaleTransaction}
+                                    /> : null
+                            }
 
-                            
                         </div>
                     </div>
                 </Dialog>

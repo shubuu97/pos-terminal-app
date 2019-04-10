@@ -26,7 +26,7 @@ class HistoryDetailArea extends React.Component {
 
     showItemList = () => {
         let saleItems = _get(this.props, "selectedSaleTransaction.sale.saleItems", []);
-        let saleItemResp = saleItems.map((saleItem,index) => {
+        let saleItemResp = saleItems.map((saleItem, index) => {
             return (<tr>
                 <td>{_get(saleItem, "product.name", '')}</td>
                 <td>{_get(saleItem, "qty", 0)}</td>
@@ -112,12 +112,15 @@ class HistoryDetailArea extends React.Component {
                         </div>
                     </div>
                 </div>
-                <div className='refund-detail-section'>
-                    <RefundHistory
 
-                    />
-                </div>
+                {/* Refund History Area */}
+                {
+                    <div className='refund-detail-section'>
+                        <RefundHistory />
+                    </div>
+                }
 
+                {/* Refund Dialogue */}
                 {
                     this.state.openRefund ?
                         <RefundDialogue

@@ -266,6 +266,10 @@ class RefundDialogue extends React.Component {
     }
 
 
+    handleInputChange = () => {
+
+    }
+
     render() {
         return (
             <div>
@@ -275,16 +279,16 @@ class RefundDialogue extends React.Component {
                     keepMounted
                     aria-labelledby="alert-dialog-slide-title"
                     aria-describedby="alert-dialog-slide-description"
+                    fullWidth
+                    maxWidth={'md'}
                 >
                     <div className='refund-dialogue'>
 
                         {/* Step 1 */}
-
                         {
                             this.state.step == 1 ?
                                 <div className='refund-step-1 flex-column '>
                                     <span className='card-title'>Order Details</span>
-
                                     <div className="refund-items overflow-y mui-row" style={{ paddingLeft: '5%', paddingRight: '6%' }}>
                                         <table className="mui-table mui-table--bordered">
                                             <thead>
@@ -293,7 +297,6 @@ class RefundDialogue extends React.Component {
                                                     <th>Returnable Qty</th>
                                                     <th>Return Qty</th>
                                                     <th>Increase Inventory</th>
-
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -305,34 +308,58 @@ class RefundDialogue extends React.Component {
                         }
 
                         {/* Step 2 */}
-
                         {
                             this.state.step == 2 ?
-                                <div className='refund-step-2 flex-column'>
-                                    <span className='card-title'>Refund Methods</span>
-                                    <div className="d-flex justify-space-evenly">
-                                        <Button onClick={this.handleRefundClick("cashRefund")} variant="contained" color="primary">Cash</Button>
-                                        <Button onClick={this.handleRefundClick("cardRefund")} variant="contained" color="primary">Card</Button>
-                                        <Button onClick={this.handleRefundClick("giftRefund")} variant="contained" color="primary">Gift Card</Button>
+                                <div className='flex-row'>
+                                    <div className='halfwidth'>
+                                        <span className='card-title'>Refund Methods</span>
+                                        <div className="d-flex justify-space-evenly">
+                                            <Button onClick={this.handleRefundClick("cashRefund")} variant="contained" color="primary">Cash</Button>
+                                            <Button onClick={this.handleRefundClick("cardRefund")} variant="contained" color="primary">Card</Button>
+                                            <Button onClick={this.handleRefundClick("giftRefund")} variant="contained" color="primary">Gift Card</Button>
+                                        </div>
+                                        <div>
+                                            {this.state.cashRefund ? this.cashRefundComponent() : null}
+                                        </div>
+                                        <div>
+                                            {this.state.cardRefund ? this.cardRefundComponent() : null}
+                                        </div>
+                                        <div>
+                                            {this.state.giftRefund ? this.giftCardRefundComponent() : null}
+                                        </div>
                                     </div>
-                                    <div>
-                                        {this.state.cashRefund ? this.cashRefundComponent() : null}
+                                    <div className='halfwidth flex-row justify-flex-end'>
+                                        <div className='numpad-global' style={{ width: '60%' }}>
+                                            <div className='card numpad-card' >
+                                                <span className='card-title' style={{ color: '#fff' }}>Numpad</span>
+                                                <div className='flex-row flex-wrap justify-center pt-15'>
+                                                    <div className='key small-key' onClick={this.handleInputChange('1')}>1</div>
+                                                    <div className='key small-key' onClick={this.handleInputChange('2')}>2</div>
+                                                    <div className='key small-key' onClick={this.handleInputChange('3')}>3</div>
+                                                    <div className='key small-key' onClick={this.handleInputChange('4')}>4</div>
+                                                    <div className='key small-key' onClick={this.handleInputChange('5')}>5</div>
+                                                    <div className='key small-key' onClick={this.handleInputChange('6')}>6</div>
+                                                    <div className='key small-key' onClick={this.handleInputChange('7')}>7</div>
+                                                    <div className='key small-key' onClick={this.handleInputChange('8')}>8</div>
+                                                    <div className='key small-key' onClick={this.handleInputChange('9')}>9</div>
+                                                    <div className='key small-key' onClick={this.handleInputChange('.')}>.</div>
+                                                    <div className='key small-key' onClick={this.handleInputChange('0')}>0</div>
+                                                    <div className='key small-key' onClick={this.handleInputChange('<')}>clr</div>
+                                                    <div className='small-key'></div>
+                                                    <div className='key big-key'>Enter</div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div>
-                                        {this.state.cardRefund ? this.cardRefundComponent() : null}
-                                    </div>
-                                    <div>
-                                        {this.state.giftRefund ? this.giftCardRefundComponent() : null}
-                                    </div>
-
-                                </div> : null
+                                </div>
+                                : null
                         }
 
+                        {/* Step 3 */}
                         {
                             this.state.step == 3 ?
                                 <div className='refund-step-2 flex-column'>
-                                    <span className='card-title'>Success</span>
-
+                                    <span className='card-title'>Success/Faliure</span>
                                 </div> : null
                         }
 
