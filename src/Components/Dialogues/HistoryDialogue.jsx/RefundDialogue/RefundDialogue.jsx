@@ -26,7 +26,7 @@ class RefundDialogue extends React.Component {
         error: false,
         success: false,
         step: 1,
-        returnItems:[]
+        returnItems: []
     };
 
     handleClose = () => {
@@ -59,7 +59,7 @@ class RefundDialogue extends React.Component {
                     control={
                         <Checkbox
                             checked={this.state[`checkbox${index}`]}
-                            onChange={this.handleChangeCB(`checkbox${index}`)}
+                            onChange={this.handleChangeCB(index)}
                         // value="checkedA"
                         />
                     }
@@ -83,9 +83,51 @@ class RefundDialogue extends React.Component {
     handleDecreseQuantity = (index, returnableQty) => {
         let returnQty = this.state[`returnQty${index}`]
         if (returnQty != 0) {
+            let expectedQty = returnQty - 1;
             this.setState({
-                [`returnQty${index}`]: returnQty - 1
-            })
+                [`returnQty${index}`]: expectedQty
+            });
+            this.makeReturnArray(index, expectedQty);
+        }
+    }
+    calAmounts = (subTotal, quantity, returnQuantity) => {
+        let perPriceItemPrice = subTotal / quantity;
+        let refundEstimatedAmount = perPriceItemPrice * returnQuantity;
+        return refundEstimatedAmount;
+    }
+    makeReturnArray = (index, expectedQty, replenishInventory) => {
+        let refundObj = {};
+        let selectedSaleItems = _get(this.props, `selectedSaleTransaction.sale.saleItems[${index}]`, {});
+        console.log(selectedSaleItems, "selectedSaleItems");
+
+        //logic to calculate itemRefundSubTotalAmount;
+        let qty = selectedSaleItems.qty;
+        let itemSubTotal = _get(selectedSaleItems, 'itemSubTotal.amount', 0);
+        let itemTaxAmount = _get(selectedSaleItems, 'itemTaxAmount.amount', 0);
+        let itemEffectiveTotal = _get(selectedSaleItems, 'itemEffectiveTotal.amount', 0);
+
+        let itemRefundSubTotalAmount = this.calAmounts(itemSubTotal, qty, expectedQty);
+        let itemRefundTaxTotalAmount = this.calAmounts(itemTaxAmount, qty, expectedQty);
+        let itemRefundEffectiveTotalAmount = this.calAmounts(itemEffectiveTotal, qty, expectedQty);
+
+
+        refundObj.itemRefundSubTotal = { currencyCode: "$", amount: itemRefundSubTotalAmount };
+        refundObj.itemRefundTaxTotal = { currencyCode: "$", amount: itemRefundTaxTotalAmount };
+        refundObj.itemRefundEffectiveTotal = { currencyCode: "$", amount: itemRefundEffectiveTotalAmount };
+        refundObj.qty = expectedQty;
+        refundObj.productId = selectedSaleItems.productId;
+        refundObj.replenishInventory = replenishInventory;
+        console.log(refundObj, "refundObj");
+
+
+        //logic to find if object already exist in the state
+        let indexOfReturnItem = _findIndex(this.state.returnItems, { 'productId': selectedSaleItems.productId });
+        console.log(indexOfReturnItem, "indexindex");
+        if (indexOfReturnItem == -1) {
+            this.state.returnItems.push(refundObj)
+        }
+        else {
+            this.state.returnItems[indexOfReturnItem] = refundObj;
         }
     }
 
@@ -93,62 +135,19 @@ class RefundDialogue extends React.Component {
         debugger;
         let returnQty = this.state[`returnQty${index}`] || 0
         if (returnQty < returnableQty) {
-            this.setState({
-                [`returnQty${index}`]: returnQty + 1
-            });
-            let refundObj = {};
             let expectedQty = returnQty + 1;
-            let selectedSaleItems = _get(this.props, `selectedSaleTransaction.sale.saleItems[${index}]`,{});
-            console.log(selectedSaleItems,"selectedSaleItems");
-            
-            //logic to calculate itemRefundSubTotalAmount
-            let itemSubTotal =  selectedSaleItems.itemSubTotal.amount;
-            let perPriceItemPrice = (itemSubTotal/(selectedSaleItems.qty))
-            let itemRefundSubTotalAmount = perPriceItemPrice*expectedQty;
+            this.setState({
+                [`returnQty${index}`]: expectedQty
+            });
 
-            refundObj.itemRefundSubTotal =  {currencyCode:"$",amount:itemRefundSubTotalAmount};
-            refundObj.qty = returnQty + 1;
-            refundObj.productId = selectedSaleItems.productId;
-            console.log(refundObj,"refundObj");
-
-
-            //logic to find if object already exist in the state
-        //    let index =  _findIndex( this.state.returnItems, { 'productId':selectedSaleItems.productId});
-        //    console.log(index,"indexindex");
-        //    if(!index){
-        //        this.state.returnItems.push(refundObj)
-        //    }
-        //    else{
-        //        this.state.returnItems[index] =  refundObj;
-        //    }
-            // Amount itemRefundTaxTotal = 4;
-            // Amount itemRefundEffectiveTotal = 5;
-            // bool replenishInventory = 6;
+            this.makeReturnArray(index, expectedQty, this.state[`checkbox${index}`]);
         }
-        // string id = 1;
-        // string saleId = 2;
-        // repeated ReturnItem returnItems= 3;
-        // string operatorId = 4;
-        // string terminalId = 5;
-        // string storeId = 6;
-        // string retailerId = 7;
-        // string sessionId = 8;
-        // google.protobuf.Timestamp timestamp = 9;
-        // string reason = 10;
-        // repeated Payment refunds = 11;
-        // Amount refundSubTotal = 12;
-        // Amount refundTaxTotal = 13;
-        // Amount refundTotal = 14;
 
-        // string productId = 1;
-        // int32 qty = 2;
-        // Amount itemRefundSubTotal = 3;
-        // Amount itemRefundTaxTotal = 4;
-        // Amount itemRefundEffectiveTotal = 5;
-        // bool replenishInventory = 6;
     }
-    handleChangeCB = name => event => {
-        this.setState({ [name]: event.target.checked });
+    handleChangeCB = index => event => {
+        this.setState({ [`checkbox${index}`]: event.target.checked });
+        let returnQty = this.state[`returnQty${index}`] || 0
+        this.makeReturnArray(index, returnQty, event.target.checked);
     };
 
     render() {
