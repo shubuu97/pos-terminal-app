@@ -14,6 +14,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 /* Lodash Imports */
 import _get from 'lodash/get';
+import _findIndex from 'lodash/findIndex';
 
 function Transition(props) {
     return <Slide direction="up" {...props} />;
@@ -25,6 +26,7 @@ class RefundDialogue extends React.Component {
         error: false,
         success: false,
         step: 1,
+        returnItems:[]
     };
 
     handleClose = () => {
@@ -88,6 +90,7 @@ class RefundDialogue extends React.Component {
     }
 
     handleIncreaseQuantity = (index, returnableQty) => {
+        debugger;
         let returnQty = this.state[`returnQty${index}`] || 0
         if (returnQty < returnableQty) {
             this.setState({
@@ -95,10 +98,10 @@ class RefundDialogue extends React.Component {
             });
             let refundObj = {};
             let expectedQty = returnQty + 1;
-            let saleItems = _get(this.props, "selectedSaleTransaction.sale.saleItems", []);
-            let selectedSaleItems = saleItems[index];
+            let selectedSaleItems = _get(this.props, `selectedSaleTransaction.sale.saleItems[${index}]`,{});
             console.log(selectedSaleItems,"selectedSaleItems");
             
+            //logic to calculate itemRefundSubTotalAmount
             let itemSubTotal =  selectedSaleItems.itemSubTotal.amount;
             let perPriceItemPrice = (itemSubTotal/(selectedSaleItems.qty))
             let itemRefundSubTotalAmount = perPriceItemPrice*expectedQty;
@@ -106,8 +109,18 @@ class RefundDialogue extends React.Component {
             refundObj.itemRefundSubTotal =  {currencyCode:"$",amount:itemRefundSubTotalAmount};
             refundObj.qty = returnQty + 1;
             refundObj.productId = selectedSaleItems.productId;
-            console.log(refundObj,"refundObj")
+            console.log(refundObj,"refundObj");
 
+
+            //logic to find if object already exist in the state
+        //    let index =  _findIndex( this.state.returnItems, { 'productId':selectedSaleItems.productId});
+        //    console.log(index,"indexindex");
+        //    if(!index){
+        //        this.state.returnItems.push(refundObj)
+        //    }
+        //    else{
+        //        this.state.returnItems[index] =  refundObj;
+        //    }
             // Amount itemRefundTaxTotal = 4;
             // Amount itemRefundEffectiveTotal = 5;
             // bool replenishInventory = 6;
