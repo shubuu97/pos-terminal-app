@@ -42,10 +42,10 @@ class ProductsSection extends React.Component {
 
     handleChange = (searchText) => {
         this.setState({ clearInput: false })
-        if (searchText.length > 3) {
+        if (searchText.length > 2) {
             productsdb.search({
                 query: searchText,
-                fields: ['product.name', 'product.description', 'product.sku'],
+                fields: ['product.name', 'product.description', 'product.sku', 'product.keywords'],
                 include_docs: true,
                 limit: 39,
                 skip: 0
