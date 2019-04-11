@@ -46,7 +46,6 @@ const refundReducer = (state = {
     let costCenterDepartment = '';
     switch (action.type) {
         case 'CASH_REFUND_INPUT_HANDLER':
-            debugger;
             cashAmount = action.data.cashAmount;
             paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount)
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
@@ -71,7 +70,6 @@ const refundReducer = (state = {
                 break;
             }
             else {
-                debugger;
                 let amountExceeded = expPaymentAmount - parseFloat(totalAmount);
                 cardAmount = roundUpAmount(parseFloat(enteredAmount) - parseFloat(amountExceeded));
                 remainingAmount = 0;

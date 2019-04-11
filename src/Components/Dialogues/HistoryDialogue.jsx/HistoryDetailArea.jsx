@@ -1,10 +1,15 @@
 import React from 'react';
 import moment from "moment";
+import ReactToPrint from 'react-to-print';
 /* Lodash Imports */
 import _get from 'lodash/get';
 import RefundHistory from './RefundHistory';
 import RefundDialogue from './RefundDialogue/RefundDialogue';
 /* Material import */
+import HandlePrint from '../../../Global/PosFunctions/handlePrint';
+import aobLogo from '../../../assets/images/aobLogodark.png';
+import { connect } from 'react-redux';
+import OrderPrintView from './OrderPrintView';
 
 
 /* Redux Imports */
@@ -20,7 +25,16 @@ class HistoryDetailArea extends React.Component {
             openRefund: false,
         }
     }
+    componentDidMount() {
+        let logo
+        if (localStorage.getItem('storeLogo')) {
+            logo = localStorage.getItem('storeLogo')
+        } else {
+            logo = aobLogo
+        }
+        this.setState({ logo })
 
+    }
     handleRefundClose = () => {
         this.setState({ openRefund: false });
     };
@@ -124,8 +138,39 @@ class HistoryDetailArea extends React.Component {
             </div>
         )
     }
+    makePrintContent = () => {
+
+        let printArea =
+
+            console.log(printArea, "printAreaprintArea");
+        return ("printarea")
+    }
+    makeIframeContent = () => {
+        return (<iframe id="ifmcontentstoprint" style={{
+            height: '0px',
+            width: '0px',
+            position: 'absolute'
+        }}></iframe>
+        )
+
+    }
+    handlePrint = () => {
+        var content = this.makePrintContent();
+        var pri = this.makeIframeContent().contentWindow;
+        console.log(pri, content, "contentpri")
+
+        // pri.document.open();
+        // pri.document.write(content.innerHTML);
+        // pri.document.close();
+        // pri.focus();
+        // pri.print();
+    }
 
     render() {
+        const { store } = this.props;
+        let selectedOrder = _get(this.props, "selectedSaleTransaction", []);
+
+
         return (
             <div className='history-main flex-column overflow-y'>
                 <div className='flex-row justify-space-between'>
@@ -152,7 +197,11 @@ class HistoryDetailArea extends React.Component {
                             {this.summaryPanel()}
                         </div>
                         <div className='order-action-section flex-row'>
-                            <div className='action-btn flex-row justify-center align-center'>Print</div>
+                            {/* <div onClick={() => this.handlePrint()} className='action-btn flex-row justify-center align-center'>Re-Print</div> */}
+                            <ReactToPrint
+                                trigger={() => <div className='action-btn flex-row justify-center align-center'>Re-Print</div>}
+                                content={() => this.printElementRef}
+                            />
                             <div className='action-btn flex-row justify-center align-center' onClick={() => { this.setState({ openRefund: true }) }}>Refund</div>
                         </div>
                     </div>
@@ -174,10 +223,30 @@ class HistoryDetailArea extends React.Component {
                             selectedSaleTransaction={this.props.selectedSaleTransaction}
                         /> : null
                 }
+                <div style={{ display: "none" }}>
+                    <OrderPrintView
+                        ref={el => this.printElementRef = el}
+                        store={store}
+                        selectedOrder={selectedOrder}
+                        logo={this.state.logo}
+                    />
+                </div>
+
+
 
             </div>
         );
     }
 }
+function mapStateToProps(state) {
+    let { customerSalesList, storeData } = state;
+    let salesList = customerSalesList.lookUpData || [];
+    let store = storeData.lookUpData || {};
 
-export default HistoryDetailArea;
+    return {
+        salesList,
+        store
+    }
+}
+
+export default connect(mapStateToProps)(HistoryDetailArea);
