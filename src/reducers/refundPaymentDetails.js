@@ -71,11 +71,12 @@ const refundReducer = (state = {
                 break;
             }
             else {
+                debugger;
                 let amountExceeded = expPaymentAmount - parseFloat(totalAmount);
                 cardAmount = roundUpAmount(parseFloat(enteredAmount) - parseFloat(amountExceeded));
                 remainingAmount = 0;
-                if(parseFloat(cardAmount)>amountAvailToRedeem){
-                    remainingAmount =parseFloat(cardAmount)-amountAvailToRedeem ;
+                if (parseFloat(cardAmount) > amountAvailToRedeem) {
+                    remainingAmount = parseFloat(cardAmount) - amountAvailToRedeem;
                     cardAmount = amountAvailToRedeem;
                 }
                 return (Object.assign({}, state, { cardAmount, remainingAmount }));
@@ -110,6 +111,8 @@ const refundReducer = (state = {
             paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount);
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount)
             return (Object.assign({}, state, { remainingAmount }));
+        case 'RESET_REFUND_REDUCER':
+            return (Object.assign({}, state, {cashAmount:'',cardAmount:'',giftCardAmount:'',remainingAmount:totalAmount}));
         default:
             break;
     }

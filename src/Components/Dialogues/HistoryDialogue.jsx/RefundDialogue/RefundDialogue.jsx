@@ -52,11 +52,12 @@ class RefundDialogue extends React.Component {
         let gc = this.props.paymentMethods.findIndex((m) => m == 1)
         let giftPayEnabled = gc == -1 ? false : true
         this.setState({ paidThroughCard, giftPayEnabled });
+        this.props.dispatch(commonActionCreater({}, 'RESET_REFUND_REDUCER'));
+
     };
     componentWillUnmount() {
-        this.props.dispatch(commonActionCreater({ cashAmount: '', amount: this.state.totalRefundAmount }, 'CASH_REFUND_INPUT_HANDLER'));
-        this.props.dispatch(commonActionCreater({ giftCardAmount: '', amount: this.state.totalRefundAmount, }, 'GIFTCARD_REFUND_INPUT_HANDLER'));
-        this.props.dispatch(commonActionCreater({ cardAmount: '', amount: this.state.totalRefundAmount, paidThroughCard: this.state.paidThroughCard }, 'CARD_REFUND_INPUT_HANDLER'));
+
+
     }
 
     handleClose = () => {
@@ -66,7 +67,7 @@ class RefundDialogue extends React.Component {
     showItemList = () => {
         let saleItems = _get(this.props, "selectedSaleTransaction.sale.saleItems", []);
         let saleItemResp = saleItems.map((saleItem, index) => {
-            if(saleItem.saleType==1){
+            if (saleItem.saleType == 1) {
                 return null
             }
             if (this.state[`checkbox${index}`] == undefined)
@@ -74,21 +75,20 @@ class RefundDialogue extends React.Component {
             let returnableQty = _get(saleItem, "qty", 0) - _get(saleItem, "returnQty", 0)
             return (<tr>
                 <td>{_get(saleItem, "product.name", '')}</td>
-                <td>{returnableQty}</td>
-                <td>
+                <td align='center' className='table-text'>{returnableQty}</td>
+                <td align='center'>
 
                     {
                         <div className='expanded-options'>
-                            <span className='option-title'>Quantity</span>
                             <div className='flex-row justify-center align-center'>
-                                <RemoveCircleIcons onClick={() => this.handleDecreseQuantity(index, returnableQty)} style={{ fontSize: '1.7em' }} />
-                                <span className='quantity'>{this.state[`returnQty${index}`] || 0}</span>
-                                <AddIcons onClick={() => this.handleIncreaseQuantity(index, returnableQty)} style={{ fontSize: '1.7em' }} />
+                                <RemoveCircleIcons className='pr-10' onClick={() => this.handleDecreseQuantity(index, returnableQty)} style={{ fontSize: '2.3em' }} />
+                                <span className='quantity table-text'>{this.state[`returnQty${index}`] || 0}</span>
+                                <AddIcons className='pl-10' onClick={() => this.handleIncreaseQuantity(index, returnableQty)} style={{ fontSize: '2.3em' }} />
                             </div>
                         </div>
                     }
                 </td>
-                <td><FormControlLabel
+                <td align='center '><FormControlLabel
                     control={
                         <Checkbox
                             checked={this.state[`checkbox${index}`]}
@@ -111,7 +111,7 @@ class RefundDialogue extends React.Component {
         let saleId = _get(this.props, 'selectedSaleTransaction.sale.id')
         let refunds = [];
         if ((parseFloat(this.props.cashAmount) || 0)) {
-            
+
             refunds.push({
                 paymentMethod: 0,
                 paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.cashAmount) || 0) },
@@ -143,7 +143,7 @@ class RefundDialogue extends React.Component {
                 dontShowMessage: true
             });
             let existingGiftCardId
-            
+
             if (apiRespGetGiftCard) {
                 if (apiRespGetGiftCard.status == 1) {
                     return ({ error: "Gift Card Already Exist" });
@@ -210,9 +210,9 @@ class RefundDialogue extends React.Component {
             timestamp: { seconds: parseInt(new Date().getTime() / 1000) },
             reason: '',
             refunds,
-            refundSubTotal,
-            refundTaxTotal,
-            refundTotal,
+            refundSubTotal: { currencyCode: "$", amount: refundSubTotal },
+            refundTaxTotal: { currencyCode: "$", amount: refundTaxTotal },
+            refundTotal: { currencyCode: "$", amount: refundTotal },
         }
         genericPostData({
             dispatch: this.props.dispatch,
@@ -230,6 +230,9 @@ class RefundDialogue extends React.Component {
     }
 
     handleProceed = async () => {
+        if (this.state.step + 1 == 2) {
+            this.props.dispatch(commonActionCreater({amount: this.state.totalRefundAmount}, 'RESET_REFUND_REDUCER'));
+            }
         if (this.state.step + 1 == 3) {
             this.refundSale().then((data) => {
                 if (_get(data, 'error')) {
@@ -245,7 +248,7 @@ class RefundDialogue extends React.Component {
                 })
             })
                 .catch((err) => {
-                     //retry code will come
+                    //retry code will come
                 })
         }
         else {
@@ -277,6 +280,7 @@ class RefundDialogue extends React.Component {
             return accumulator + refundItem.itemRefundEffectiveTotal.amount
         }, 0);
         totalRefundAmount = parseFloat(roundUp(totalRefundAmount, 2));
+
         this.setState({ totalRefundAmount });
     }
     makeReturnArray = (index, expectedQty, replenishInventory) => {
@@ -466,7 +470,7 @@ class RefundDialogue extends React.Component {
         }
     }
     handleCardRefundAmountInput = event => {
-        
+
         let value = event.target.value;
         if (regex.test(value)) {
             this.props.dispatch(commonActionCreater({ cardAmount: value, amount: this.state.totalRefundAmount, paidThroughCard: this.state.paidThroughCard }, 'CARD_REFUND_INPUT_HANDLER'));
@@ -518,24 +522,22 @@ class RefundDialogue extends React.Component {
                     aria-labelledby="alert-dialog-slide-title"
                     aria-describedby="alert-dialog-slide-description"
                     fullWidth
-                    maxWidth={'md'}
+                    maxWidth={this.state.step == 2 ? 'md' : 'sm'}
                 >
                     <div className='refund-dialogue'>
-
                         {/* Step 1 */}
                         {
                             this.state.step == 1 ?
                                 <div className='refund-step-1 flex-column '>
                                     <span className='card-title'>Order Details</span>
-                                    <span className='card-title'>{this.state.totalRefundAmount}</span>
                                     <div className="refund-items overflow-y mui-row" style={{ paddingLeft: '5%', paddingRight: '6%' }}>
                                         <table className="mui-table mui-table--bordered">
                                             <thead>
                                                 <tr>
                                                     <th>Product</th>
-                                                    <th>Returnable Qty</th>
-                                                    <th>Return Qty</th>
-                                                    <th>Increase Inventory</th>
+                                                    <th style={{ textAlign: 'center' }}>Returnable Qty</th>
+                                                    <th style={{ textAlign: 'center' }}>Return Qty</th>
+                                                    <th style={{ textAlign: 'center' }}>Increase Inventory</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
