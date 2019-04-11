@@ -26,6 +26,7 @@ import roundUp from '../../../../Global/PosFunctions/roundUp';
 import genericPostData from '../../../../Global/dataFetch/genericPostData';
 import { postData } from '../../../../Redux/postAction';
 import { APPLICATION_BFF_URL } from '../../../../Redux/urlConstants';
+import showMessage from '../../../../Redux/toastAction';
 
 let regex = /^\d*[\.\d]+$/;
 
@@ -51,6 +52,11 @@ class RefundDialogue extends React.Component {
         let gc = this.props.paymentMethods.findIndex((m) => m == 1)
         let giftPayEnabled = gc == -1 ? false : true
         this.setState({ paidThroughCard, giftPayEnabled });
+    };
+    componentWillUnmount() {
+        this.props.dispatch(commonActionCreater({ cashAmount: '', amount: this.state.totalRefundAmount }, 'CASH_REFUND_INPUT_HANDLER'));
+        this.props.dispatch(commonActionCreater({ giftCardAmount: '', amount: this.state.totalRefundAmount, }, 'GIFTCARD_REFUND_INPUT_HANDLER'));
+        this.props.dispatch(commonActionCreater({ cardAmount: '', amount: this.state.totalRefundAmount, paidThroughCard: this.state.paidThroughCard }, 'CARD_REFUND_INPUT_HANDLER'));
     }
 
     handleClose = () => {
@@ -102,7 +108,7 @@ class RefundDialogue extends React.Component {
         let saleId = _get(this.props, 'selectedSaleTransaction.sale.id')
         let refunds = [];
         if ((parseFloat(this.props.cashAmount) || 0)) {
-            debugger
+            
             refunds.push({
                 paymentMethod: 0,
                 paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.cashAmount) || 0) },
@@ -117,32 +123,66 @@ class RefundDialogue extends React.Component {
             })
         }
         if ((parseFloat(this.props.giftCardAmount) || 0)) {
-            let url = 'Sale/RedeemValueFromGiftCard';
+
+            let apiRespGetGiftCard = await genericPostData({
+                dispatch: this.props.dispatch,
+                reqObj: {
+                    storeId: localStorage.getItem('storeId'),
+                    code: this.state.giftCode
+                },
+                url: 'GiftCard/GetByCodeAndStore',
+                constants: {
+                    init: 'GET_GIFT_CARD_DATA_REFUND_INIT',
+                    success: 'GET_GIFT_CARD_DATA_REFUND_SUCCESS',
+                    error: 'GET_GIFT_CARD_DATA_REFUND_ERROR'
+                },
+                identifier: 'GET_GIFT_CARD_DATA_REFUND',
+                dontShowMessage: true
+            });
+            let existingGiftCardId
+            
+            if (apiRespGetGiftCard) {
+                if (apiRespGetGiftCard.status == 1) {
+                    return ({ error: "Gift Card Already Exist" });
+                }
+                else {
+                    existingGiftCardId = apiRespGetGiftCard.id
+                }
+            }
+
+            let url = 'GiftCard/Create';
             let value = {};
             let paymentTimeStamp = {
                 seconds: parseInt(new Date().getTime() / 1000),
             }
             _set(value, 'amount', parseFloat(this.props.giftCardAmount));
             _set(value, 'currencyCode', '$');
-            let data = {
-                giftCardId: _get(this.props, 'giftCardData.id', ''),
-                value: value,
-                customerId: _get(this.props, 'customer.id', ''),
-                sessionId: localStorage.getItem('sessionId'),
-                retailerId: localStorage.getItem('retailerId'),
-                paymentTimeStamp: paymentTimeStamp,
-
+            let data = {}
+            data.retailerId = localStorage.getItem('retailerId');
+            data.storeId = localStorage.getItem('storeId');
+            data.value = { amount: this.props.giftCardAmount, currencyCode: "$" };
+            data.giftCode = this.state.giftCode;
+            if (existingGiftCardId) {
+                data.id = existingGiftCardId
             }
+            _set(data, 'createdOn.seconds', parseInt((new Date().getTime()) / 1000));
+            let apiResponse = await genericPostData({
+                dispatch: this.props.dispatch,
+                reqObj: data,
+                url,
+                constants: {
+                    init: 'GIFT_CARD_CREATE_REFUND_INIT',
+                    success: 'GIFT_CARD_CREATE_REFUND_SUCCESS',
+                    error: 'GIFT_CARD_CREATE_REFUND_ERROR'
+                },
+                identifier: 'GIFT_CARD_CREATE_REFUND',
+                dontShowMessage: true
+            });
 
-            let apiResponse = await this.props.dispatch(postData(`${APPLICATION_BFF_URL}${url}`, data, 'GET_GIFT_CARD_PAYMENT_DATA', {
-                init: 'GET_GIFT_CARD_PAYMENT_DATA_INIT',
-                success: 'GET_GIFT_CARD_PAYMENT_DATA_SUCCESS',
-                error: 'GET_GIFT_CARD_PAYMENT_DATA_ERROR'
-            }))
             refunds.push({
                 paymentMethod: 2,
                 paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.giftCardAmount) || 0) },
-                paymentReference: apiResponse,
+                paymentReference: apiResponse.id,
             })
         }
         let refundSubTotal = 0;
@@ -151,8 +191,6 @@ class RefundDialogue extends React.Component {
         let returnItems = this.state.returnItems.filter(returnItem => {
             return returnItem.qty > 0 ? true : false
         });
-        console.log(returnItems, "returnItemsreturnItems");
-        debugger
         returnItems.map(returnItem => {
             refundSubTotal = refundSubTotal + returnItem.itemRefundSubTotal.amount;
             refundTaxTotal = refundTaxTotal + returnItem.itemRefundTaxTotal.amount;
@@ -190,13 +228,21 @@ class RefundDialogue extends React.Component {
 
     handleProceed = async () => {
         if (this.state.step + 1 == 3) {
-            this.refundSale().then(() => {
+            this.refundSale().then((data) => {
+                if (_get(data, 'error')) {
+                    this.props.dispatch(showMessage({ text: _get(data, 'error'), isSuccess: false }));
+                    setTimeout(() => {
+                        this.props.dispatch(showMessage({}));
+                    }, 6000);
+
+                    return;
+                }
                 this.setState({
                     step: this.state.step + 1
                 })
             })
                 .catch((err) => {
-                    debugger //retry code will come
+                     //retry code will come
                 })
         }
         else {
@@ -233,7 +279,6 @@ class RefundDialogue extends React.Component {
     makeReturnArray = (index, expectedQty, replenishInventory) => {
         let refundObj = {};
         let selectedSaleItems = _get(this.props, `selectedSaleTransaction.sale.saleItems[${index}]`, {});
-        console.log(selectedSaleItems, "selectedSaleItems");
 
         //logic to calculate itemRefundSubTotalAmount;
         let qty = selectedSaleItems.qty;
@@ -252,12 +297,10 @@ class RefundDialogue extends React.Component {
         refundObj.qty = expectedQty;
         refundObj.productId = selectedSaleItems.productId;
         refundObj.replenishInventory = replenishInventory;
-        console.log(refundObj, "refundObj");
 
 
         //logic to find if object already exist in the state
         let indexOfReturnItem = _findIndex(this.state.returnItems, { 'productId': selectedSaleItems.productId });
-        console.log(indexOfReturnItem, "indexindex");
         if (indexOfReturnItem == -1) {
             this.state.returnItems.push(refundObj)
         }
@@ -310,11 +353,10 @@ class RefundDialogue extends React.Component {
                         <TextField
                             InputLabelProps={{ shrink: true }}
                             autoFocus
-                            // onFocus={() => this.props.currentFocus({ fieldValue: 'cardAmount', handler: 'CARD_INPUT_HANDLER' })}
                             id="outlined-name"
                             label="Gift Card Number"
-                            value={this.props.cardAmount}
-                            // onChange={this.handleChange('cardAmount')}
+                            value={this.state.giftCode}
+                            onChange={(event) => this.setState({ giftCode: event.target.value })}
                             margin="normal"
                             variant="outlined"
                             fullWidth
@@ -421,7 +463,7 @@ class RefundDialogue extends React.Component {
         }
     }
     handleCardRefundAmountInput = event => {
-        debugger;
+        
         let value = event.target.value;
         if (regex.test(value)) {
             this.props.dispatch(commonActionCreater({ cardAmount: value, amount: this.state.totalRefundAmount, paidThroughCard: this.state.paidThroughCard }, 'CARD_REFUND_INPUT_HANDLER'));
