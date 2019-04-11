@@ -398,7 +398,6 @@ class HomeContainer extends React.Component {
     }
     orderHistorySelect = (selectedSaleTransaction) => {
         console.log('Class', _get(this.state, 'selectedSaleTransaction', false))
-        debugger
         if(_get(this.state, 'selectedSaleTransaction', false) && _get(this.state, 'selectedSaleTransaction') != selectedSaleTransaction.sale.id){
             document.getElementById(_get(this.state, 'selectedSaleTransaction.sale.id')).className = 'card'
         }

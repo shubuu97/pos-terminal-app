@@ -169,8 +169,7 @@ class HistoryDetailArea extends React.Component {
     render() {
         const { store } = this.props;
         let selectedOrder = _get(this.props, "selectedSaleTransaction", []);
-
-
+        console.log(selectedOrder, 'selectedOrder selectedOrder')
         return (
             <div className='history-main flex-column overflow-y'>
                 <div className='flex-row justify-space-between'>
@@ -208,10 +207,11 @@ class HistoryDetailArea extends React.Component {
                 </div>
 
                 {/* Refund History Area */}
-                {
-                    <div className='refund-detail-section'>
-                        <RefundHistory />
+                {_get(selectedOrder.sale,'returns',[]).map(returnData => {
+                    return <div className='refund-detail-section'>
+                        <RefundHistory data={returnData} />
                     </div>
+                })
                 }
 
                 {/* Refund Dialogue */}

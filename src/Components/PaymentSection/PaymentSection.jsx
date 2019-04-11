@@ -236,7 +236,6 @@ class PaymentSection extends React.Component {
     }
 
     handleInputChange = num => event => {
-        debugger
         if (this.state.currentFocus !== '') {
             let currentFocus = this.state.currentFocus;
             let focusItemValue
@@ -348,7 +347,6 @@ class PaymentSection extends React.Component {
 
         let payments = []
         if ((parseFloat(this.props.cashAmount) || 0)) {
-            debugger
             payments.push({
                 paymentMethod: 0,
                 paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.cashAmount) || 0) },
