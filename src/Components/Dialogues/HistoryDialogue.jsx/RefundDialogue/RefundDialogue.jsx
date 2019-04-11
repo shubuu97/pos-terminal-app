@@ -66,6 +66,9 @@ class RefundDialogue extends React.Component {
     showItemList = () => {
         let saleItems = _get(this.props, "selectedSaleTransaction.sale.saleItems", []);
         let saleItemResp = saleItems.map((saleItem, index) => {
+            if(saleItem.saleType==1){
+                return null
+            }
             if (this.state[`checkbox${index}`] == undefined)
                 this.state[`checkbox${index}`] = true;
             let returnableQty = _get(saleItem, "qty", 0) - _get(saleItem, "returnQty", 0)
@@ -214,7 +217,7 @@ class RefundDialogue extends React.Component {
         genericPostData({
             dispatch: this.props.dispatch,
             reqObj,
-            url: "Sale/Refund",
+            url: "Sale/CreateReturnTransaction",
             constants: {
                 init: "Sale_Refund_INIT",
                 success: "Sale_Refund_SUCCESS",
