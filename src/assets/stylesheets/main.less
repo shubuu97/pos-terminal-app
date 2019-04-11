@@ -132,6 +132,12 @@ p {
 .fheight {
     height: 100%;
 }
+.halfwidth {
+    width: 50%;
+}
+.halfheight {
+    height: 50%;
+}
 /* Global */
 
 .flex-row {
@@ -165,6 +171,9 @@ p {
 }
 .justify-space-around {
     justify-content: space-around
+}
+.justify-space-evenly {
+    justify-content: space-evenly
 }
 
 .justify-flex-end {
@@ -286,7 +295,13 @@ p {
 .pt-10 {
     padding-top: 10px !important;
 }
+.pl-5 {
+    padding-left: 5px !important;
+}
 
+.pr-5 {
+    padding-right: 5px !important;
+}
 .pl-10 {
     padding-left: 10px !important;
 }
@@ -294,6 +309,7 @@ p {
 .pr-10 {
     padding-right: 10px !important;
 }
+
 
 .pt-15 {
     padding-top: 15px !important;
@@ -418,6 +434,12 @@ p {
 
 
 /* Home Styles */
+.sidedrawer-user-text{
+    font-size: 1.2em;
+    font-weight: bold;
+    color: @softer-text;
+    padding-top: 5px;
+}
 .d-flex{
     display: flex;
 }
@@ -448,6 +470,40 @@ p {
     margin-right: 20px;
     font-size: 18px;
     font-weight: bold;
+}
+
+// Numpad
+.numpad-global{
+    margin: 0 0 10px 0;
+    border-radius: 5px;
+    .numpad-card {
+        background: @primary;
+        color: @primary-text;
+        border-radius: 8px;
+        padding: 10px;
+        .card-title{
+            
+        }
+        .key {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 65px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            font-size: 1.3em;
+        }
+
+        .big-key {
+            width: 59%;
+            margin: 1%;
+        }
+
+        .small-key {
+            width: 28%;
+            margin: 1%;
+        }
+    }
 }
 
 .pos-products-collection {
@@ -1924,6 +1980,11 @@ p {
         }
         .transaction-list{
 
+            .history-card-head {
+                padding: 10px;
+                background: rgba(193, 191, 191, 0.6);
+                margin-bottom: 10px;
+            }
         }
         .card{
             margin:10px 0;
@@ -1943,6 +2004,14 @@ p {
             width: 35%;
             .order-summary{
                 height: 45vh;
+            }
+            .summary-key{
+                font-size: 0.9em;
+                color: @softer-text;
+            }
+            .summary-value{
+                font-size: 1em;
+                color: @soft-text;
             }
         }
         
@@ -1985,7 +2054,6 @@ p {
         background: @background-white;
         border-radius: 5px;
         box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-        min-height: 50px;
         padding: 10px;
        
         .card-title {
@@ -2004,6 +2072,17 @@ p {
             color: @softer-text;
             padding: 10px 0 3px 0;
         }
+    }
+
+    .title{
+        font-size: 1.2em;
+        font-weight: bold;
+        color: @softer-text;
+        padding-bottom: 10px;
+    }
+
+    .card-active{
+        background: #d3e1e6;
     }
 }
 
@@ -2024,6 +2103,9 @@ p {
         .refund-items{
             
         }
+        .table-text{
+            font-size: 1.2em
+        }
     }
 
     .refund-action-section{
@@ -2043,3 +2125,4 @@ p {
     }
     
 }
+

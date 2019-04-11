@@ -51,13 +51,10 @@ class CashPay extends React.Component {
         if (points > possiblePoints) {
             points = possiblePoints
         }
-        else if(points>availableRewardPoints){
+        if (points > availableRewardPoints){
             points = availableRewardPoints
         }
         let loyaltyRedeemAmount = points * _get(this.props, 'RedemptionRules.redemptionMultiplier', 0);
-        this.setState({
-            loyaltyRedeemAmount: loyaltyRedeemAmount
-        })
         if (regex.test(loyaltyRedeemAmount)) {
             this.props.dispatch(commonActionCreater({ loyaltyRedeem: loyaltyRedeemAmount, totalAmount: this.props.totalAmount, points: points }, 'LOYALTY_INPUT_HANDLER'));
         }
@@ -68,6 +65,23 @@ class CashPay extends React.Component {
             this.props.dispatch(commonActionCreater({ loyaltyRedeem: '', totalAmount: this.props.totalAmount, points: points }, 'LOYALTY_INPUT_HANDLER'));
         }
     };
+
+    checkValue = (value) => {
+        let points = value;
+        let availableRewardPoints = _get(this, 'state.availableRewardPoints', 0);
+        let possiblePoints = this.props.totalAmount.amount / _get(this.props, 'RedemptionRules.redemptionMultiplier', 0);
+        if (points > possiblePoints) {
+            points = possiblePoints
+        }
+        if (points > availableRewardPoints){
+            points = availableRewardPoints
+        }
+        let loyaltyRedeemAmount = points * _get(this.props, 'RedemptionRules.redemptionMultiplier', 0);
+        if (points != value){
+            this.props.dispatch(commonActionCreater({ loyaltyRedeem: loyaltyRedeemAmount, totalAmount: this.props.totalAmount, points: points }, 'LOYALTY_INPUT_HANDLER'));
+        }
+        return points
+    }
 
     componentWillUnmount() {
         //setting to the 0 again on unmouning
@@ -82,10 +96,9 @@ class CashPay extends React.Component {
                     <div style={{ width: '80%' }} className='flex-column'>
                         <TextField
                             InputLabelProps={{ shrink: true }}
-                            id="rewardPay"
+                            id="loyaltyRedeem"
                             label="Points"
                             type="tel"
-                            //value={this.props.loyaltyRedeem}
                             margin="outline"
                             onFocus={() => this.props.currentFocus({ fieldValue: 'loyaltyRedeem', handler: 'LOYALTY_INPUT_HANDLER' })}
                             fullWidth
@@ -93,7 +106,7 @@ class CashPay extends React.Component {
                             type='text'
                             variant="outlined"
                             className='mt-10'
-                            value={_get(this.props, 'loyaltyRedeemData.points', '')}
+                            value={this.checkValue(_get(this.props, 'loyaltyRedeemData.points', ''))}
                             onChange={this.handleChange('rewardPay')}
                         />
                         <div className='flex-row justify-space-between'>
@@ -104,9 +117,9 @@ class CashPay extends React.Component {
                                     </div> : null
                             }
                             {
-                                this.state.loyaltyRedeemAmount ?
+                                _get(this.props, 'loyaltyRedeemData.loyaltyRedeem', false) ?
                                     <div className='mt-10'>
-                                        Value : {this.state.loyaltyRedeemAmount}
+                                        Value : {_get(this.props, 'loyaltyRedeemData.loyaltyRedeem', '')}
                                     </div> : null
                             }
                         </div>

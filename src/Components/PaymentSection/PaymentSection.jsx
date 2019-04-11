@@ -236,17 +236,30 @@ class PaymentSection extends React.Component {
     }
 
     handleInputChange = num => event => {
+        debugger
         if (this.state.currentFocus !== '') {
             let currentFocus = this.state.currentFocus;
-            let focusItemValue = this.props[currentFocus];
+            let focusItemValue
+            if(currentFocus == 'loyaltyRedeem'){
+                focusItemValue = this.props.loyaltyRedeemData.points;
+            }
+            else{
+                focusItemValue = this.props[currentFocus];
+            }
             if (num != '<') {
                 focusItemValue = (focusItemValue || '') + num;
             }
             else {
                 focusItemValue = '';
             }
-
-            this.props.dispatch(commonActionCreater({ [currentFocus]: focusItemValue, totalAmount: this.props.totalAmount }, this.state.handler))
+            if(currentFocus == 'loyaltyRedeem'){
+                let loyaltyRedeemAmount = focusItemValue * _get(this.props, 'RedemptionRules.redemptionMultiplier', 0);
+                this.props.dispatch(commonActionCreater({ loyaltyRedeem: loyaltyRedeemAmount, totalAmount: this.props.totalAmount, points: focusItemValue }, 'LOYALTY_INPUT_HANDLER'));
+            }
+            else{
+                this.props.dispatch(commonActionCreater({ [currentFocus]: focusItemValue, totalAmount: this.props.totalAmount }, this.state.handler))
+            }
+            
         }
     }
     currentFocus = (field) => {
@@ -630,9 +643,7 @@ class PaymentSection extends React.Component {
                 <React.Fragment>
                     <li className='disable-button giftcard-section'>Gift Card</li>
                 </React.Fragment>
-
             )
-
         }
     }
 
@@ -642,7 +653,6 @@ class PaymentSection extends React.Component {
         if (localStorage.getItem('storeLogo')) {
             logo = localStorage.getItem('storeLogo')
         } else {
-            debugger
             logo = aobLogo
         }
 
@@ -771,6 +781,7 @@ class PaymentSection extends React.Component {
 }
 
 function mapStateToProps(state) {
+    let RedemptionRules = _get(state, 'RedemptionRules.lookUpData.redemptionRule', {})
     let cartItems = _get(state, 'cart.cartItems');
     let customer = _get(state, 'cart.customer');
     let totalAmount = _get(state, 'cart.totalAmount');
@@ -780,6 +791,7 @@ function mapStateToProps(state) {
     let giftCardPayment = _get(state, 'giftCardPaymentData.lookUpData', {});
     let cashAmount = _get(state, 'PaymentDetails.cashAmount');
     let loyaltyRedeem = _get(state, 'PaymentDetails.loyaltyRedeem');
+    let loyaltyRedeemData = _get(state, 'loyaltyRedeem.lookUpData', {});
     let cardAmount = _get(state, 'PaymentDetails.cardAmount');
     let giftCardAmount = _get(state, 'PaymentDetails.giftCardAmount');
     let giftPayNumber = _get(state, 'PaymentDetails.giftPayNumber');
@@ -794,10 +806,12 @@ function mapStateToProps(state) {
     let costCenterDepartment = _get(state, 'PaymentDetails.costCenterDepartment');
     let paymentMethods = _get(state, 'storeData.lookUpData.store.paymentMethods')
     return {
+        RedemptionRules,
         cart,
         cartItems,
         cashAmount,
         loyaltyRedeem,
+        loyaltyRedeemData,
         cardAmount,
         employeePay,
         giftCardAmount,

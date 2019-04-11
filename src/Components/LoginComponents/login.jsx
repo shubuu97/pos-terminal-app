@@ -9,7 +9,6 @@ import jwtDecode from 'jwt-decode';
 import genericPostData from '../../Global/dataFetch/genericPostData';
 import _get from 'lodash/get';
 
-
 class Login extends React.Component {
     constructor(props) {
         super(props);
@@ -51,7 +50,7 @@ class Login extends React.Component {
         localStorage.setItem('role', _get(decodeToken, 'Operator.role'));
         localStorage.setItem('retailerId', _get(decodeToken, 'Retailer.id'));
         localStorage.setItem('storeLogo', _get(decodeToken, 'Store.image','') || '');
-        localStorage.setItem("showOutOfStock","true");
+        localStorage.setItem("showOutOfStock","false");
         // this.props.history.push('/store');
         this.props.handleStepChange(2)
     }

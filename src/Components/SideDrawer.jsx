@@ -62,9 +62,6 @@ function TemporaryDrawer(props) {
 
     const sideList = (
         <div>
-            <div className='pb-30'>
-
-            </div>
             <List>
                 <Divider />
                 <ListItem button key={1}>
@@ -77,7 +74,7 @@ function TemporaryDrawer(props) {
                 <Divider />
                 <React.Fragment>
                     {handleHideWhenOffline(
-                        { online:!props.offline },
+                        { online: !props.offline },
                         [<ListItem button key={3} onClick={props.handleClickOpenSessionContainer}>
                             <ListItemText primary={'Session Management'} />
                         </ListItem>],
@@ -89,7 +86,7 @@ function TemporaryDrawer(props) {
                 <Divider />
                 <React.Fragment>
                     {handleHideWhenOffline(
-                        { online:!props.offline },
+                        { online: !props.offline },
                         [<ListItem button key={4} onClick={props.handleHistoryOpen}>
                             <ListItemText primary={'Terminal History'} />
                         </ListItem>],
@@ -122,18 +119,24 @@ function TemporaryDrawer(props) {
     return (
         <div className="d-flex">
             <HomeIcon className={classes.icon} style={{ color: 'white', padding: '0', fontSize: 50, margin: '5px' }} onClick={toggleDrawer('left', true)} />
-    
+
 
             <Drawer className="drawer-parent" open={state.left} onClose={toggleDrawer('left', false)}>
-                <div
-                    tabIndex={0}
-                    role="button"
-                    onClick={toggleDrawer('left', false)}
-                    onKeyDown={toggleDrawer('left', false)}
-                >
-                    {sideList}
+                <div>
+                    <div className='flex-row justify-space-between pad-10'>
+                        <span className='sidedrawer-user-text'>Hello, {localStorage.getItem('userName')}</span>
+                    </div>
+                    <div
+                        tabIndex={0}
+                        role="button"
+                        onClick={toggleDrawer('left', false)}
+                        onKeyDown={toggleDrawer('left', false)}
+                    >
+                        {sideList}
+                    </div>
                 </div>
-                <div className="yogi">
+
+                <div>
                     <SettingContainer  {...props} />
                 </div>
             </Drawer>

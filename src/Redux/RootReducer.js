@@ -15,6 +15,7 @@ import cart from '../reducers/cartItem';
 import cartHoldData from '../reducers/holdCartItem';
 import ShowToast from './toastReducer';
 import PaymentDetails from '../reducers/paymentDetails';
+import RefundPaymentDetails from '../reducers/refundPaymentDetails'
 import productList from '../reducers/productList'
 import zipCodeReducer from '../reducers/zipCodeReducer';
 // import cartOrderDetailsFun from './commonStaticReducer';
@@ -76,6 +77,7 @@ let rootRducer = combineReducers({
     zipCodeReducer,
     loyaltyRedeem,
     employeePayroll,
+    RefundPaymentDetails
 })
 
 export default rootRducer;
