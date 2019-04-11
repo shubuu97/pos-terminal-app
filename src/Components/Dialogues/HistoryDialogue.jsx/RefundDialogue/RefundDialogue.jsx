@@ -17,11 +17,16 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 /* Lodash Imports */
 import _get from 'lodash/get';
 import _findIndex from 'lodash/findIndex';
-import _find from 'lodash/find'
+import _find from 'lodash/find';
+import _set from 'lodash/set';
 import { commonActionCreater } from '../../../../Redux/commonAction';
 /* Redux Imports */
 import { connect } from 'react-redux';
 import roundUp from '../../../../Global/PosFunctions/roundUp';
+import genericPostData from '../../../../Global/dataFetch/genericPostData';
+import { postData } from '../../../../Redux/postAction';
+import { APPLICATION_BFF_URL } from '../../../../Redux/urlConstants';
+
 let regex = /^\d*[\.\d]+$/;
 
 
@@ -43,9 +48,9 @@ class RefundDialogue extends React.Component {
         let payments = _get(this.props, "selectedSaleTransaction.sale.payments", []);
         let paidThroughCardObj = _find(payments, { paymentMethod: 1 });
         let paidThroughCard = _get(paidThroughCardObj, "paymentAmount.amount", 0);
-        let gc = this.props.paymentMethods.findIndex((m)=>m==1)
-        let giftPayEnabled =  gc==-1?false:true
-        this.setState({ paidThroughCard,giftPayEnabled });
+        let gc = this.props.paymentMethods.findIndex((m) => m == 1)
+        let giftPayEnabled = gc == -1 ? false : true
+        this.setState({ paidThroughCard, giftPayEnabled });
     }
 
     handleClose = () => {
@@ -93,10 +98,113 @@ class RefundDialogue extends React.Component {
         )
     }
 
-    handleProceed = () => {
-        this.setState({
-            step: this.state.step + 1
+    refundSale = async () => {
+        let saleId = _get(this.props, 'selectedSaleTransaction.sale.id')
+        let refunds = [];
+        if ((parseFloat(this.props.cashAmount) || 0)) {
+            debugger
+            refunds.push({
+                paymentMethod: 0,
+                paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.cashAmount) || 0) },
+                paymentReference: ""
+            })
+        }
+        if ((parseFloat(this.props.cardAmount) || 0)) {
+            refunds.push({
+                paymentMethod: 1,
+                paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.cardAmount) || 0) },
+                paymentReference: this.props.cardRefrenceId
+            })
+        }
+        if ((parseFloat(this.props.giftCardAmount) || 0)) {
+            let url = 'Sale/RedeemValueFromGiftCard';
+            let value = {};
+            let paymentTimeStamp = {
+                seconds: parseInt(new Date().getTime() / 1000),
+            }
+            _set(value, 'amount', parseFloat(this.props.giftCardAmount));
+            _set(value, 'currencyCode', '$');
+            let data = {
+                giftCardId: _get(this.props, 'giftCardData.id', ''),
+                value: value,
+                customerId: _get(this.props, 'customer.id', ''),
+                sessionId: localStorage.getItem('sessionId'),
+                retailerId: localStorage.getItem('retailerId'),
+                paymentTimeStamp: paymentTimeStamp,
+
+            }
+
+            let apiResponse = await this.props.dispatch(postData(`${APPLICATION_BFF_URL}${url}`, data, 'GET_GIFT_CARD_PAYMENT_DATA', {
+                init: 'GET_GIFT_CARD_PAYMENT_DATA_INIT',
+                success: 'GET_GIFT_CARD_PAYMENT_DATA_SUCCESS',
+                error: 'GET_GIFT_CARD_PAYMENT_DATA_ERROR'
+            }))
+            refunds.push({
+                paymentMethod: 2,
+                paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.giftCardAmount) || 0) },
+                paymentReference: apiResponse,
+            })
+        }
+        let refundSubTotal = 0;
+        let refundTaxTotal = 0;
+        let refundTotal = 0;
+        let returnItems = this.state.returnItems.filter(returnItem => {
+            return returnItem.qty > 0 ? true : false
+        });
+        console.log(returnItems, "returnItemsreturnItems");
+        debugger
+        returnItems.map(returnItem => {
+            refundSubTotal = refundSubTotal + returnItem.itemRefundSubTotal.amount;
+            refundTaxTotal = refundTaxTotal + returnItem.itemRefundTaxTotal.amount;
+            refundTotal = refundTotal + returnItem.itemRefundEffectiveTotal.amount;
         })
+        let reqObj = {
+            saleId,
+            returnItems,
+            operatorId: localStorage.getItem("userId"),
+            terminalId: localStorage.getItem("terminalId"),
+            storeId: localStorage.getItem("storeId"),
+            retailerId: localStorage.getItem("retailerId"),
+            sessionId: localStorage.getItem("sessionId"),
+            timestamp: { seconds: parseInt(new Date().getTime() / 1000) },
+            reason: '',
+            refunds,
+            refundSubTotal,
+            refundTaxTotal,
+            refundTotal,
+        }
+        genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj,
+            url: "Sale/Refund",
+            constants: {
+                init: "Sale_Refund_INIT",
+                success: "Sale_Refund_SUCCESS",
+                error: "Sale_Refund_ERROR"
+            },
+            identifier: "Sale_Refund",
+            successCb: this.saleRefundSuccess,
+            errorCb: this.saleRefundError
+        })
+    }
+
+    handleProceed = async () => {
+        if (this.state.step + 1 == 3) {
+            this.refundSale().then(() => {
+                this.setState({
+                    step: this.state.step + 1
+                })
+            })
+                .catch((err) => {
+                    debugger //retry code will come
+                })
+        }
+        else {
+            this.setState({
+                step: this.state.step + 1
+            })
+        }
+
     }
 
     handleDecreseQuantity = (index, returnableQty) => {
@@ -404,7 +512,7 @@ class RefundDialogue extends React.Component {
                                         <div className="d-flex justify-space-evenly">
                                             <Button disabled={this.props.remainingAmount == 0} onClick={this.handleRefundClick("cashRefund")} variant="contained" color="primary">Cash</Button>
                                             {this.state.paidThroughCard > 0 ? <Button disabled={this.props.remainingAmount == 0} onClick={this.handleRefundClick("cardRefund")} variant="contained" color="primary">Card</Button> : null}
-                                           {this.state.giftPayEnabled?<Button disabled={this.props.remainingAmount == 0} onClick={this.handleRefundClick("giftRefund")} variant="contained" color="primary">Gift Card</Button>:null}
+                                            {this.state.giftPayEnabled ? <Button disabled={this.props.remainingAmount == 0} onClick={this.handleRefundClick("giftRefund")} variant="contained" color="primary">Gift Card</Button> : null}
                                         </div>
                                         <div>
                                             {this.state.cashRefund ? this.cashRefundComponent() : null}
@@ -475,7 +583,7 @@ function mapStateToProps(state) {
 
     let remainingAmount = _get(state, 'RefundPaymentDetails.remainingAmount')
     let cardRefrenceId = _get(state, 'RefundPaymentDetails.cardRefrenceId');
-    let paymentMethods = _get(state,"storeData.lookUpData.store.paymentMethods",[]);
-    return { cashAmount, cardAmount, giftCardAmount, remainingAmount, cardRefrenceId,paymentMethods }
+    let paymentMethods = _get(state, "storeData.lookUpData.store.paymentMethods", []);
+    return { cashAmount, cardAmount, giftCardAmount, remainingAmount, cardRefrenceId, paymentMethods }
 }
 export default connect(mapStateToProps)(RefundDialogue);
