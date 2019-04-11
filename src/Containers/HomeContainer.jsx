@@ -397,15 +397,20 @@ class HomeContainer extends React.Component {
         }
     }
     orderHistorySelect = (selectedSaleTransaction) => {
+        console.log('Class', _get(this.state, 'selectedSaleTransaction', false))
+        debugger
+        if(_get(this.state, 'selectedSaleTransaction', false) && _get(this.state, 'selectedSaleTransaction') != selectedSaleTransaction.sale.id){
+            document.getElementById(_get(this.state, 'selectedSaleTransaction.sale.id')).className = 'card'
+        }
+        document.getElementById(selectedSaleTransaction.sale.id).className = 'card card-active'
         this.setState({ selectedSaleTransaction })
     }
 
     makeViewForSideBar = (data) => {
-        debugger;
         let view = [];
         (data || []).map((transactions, index) => {
             view.push(
-                <div onClick={() => this.orderHistorySelect(transactions)} key={index} id={index} className={this.state.selectedSaleTransaction == transactions ? 'card card-active' : 'card'}>
+                <div onClick={() => {this.orderHistorySelect(transactions)}} key={index} id={transactions.sale.id} className={this.state.selectedSaleTransaction == transactions ? 'card card-active' : 'card'}>
                     <div className={_get(this.state, 'orderId', '') === _get(transactions, 'sale.id', '') ? "active" : ""}>
                         <div className="mui-row no-gutters history-card-head">
                             <div className="mui-col-md-4">
