@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import moment from "moment";
 /* Lodash Imports */
 import _get from 'lodash/get';
 /* Redux Imports */
@@ -88,11 +87,9 @@ class HistoryDialogue extends React.Component {
                                                 this.props.historySidebarItems
                                                 :
                                                 <div>No Data Found</div>
-
                                     }
                                 </div>
                             </div>
-
                             {
                                 this.props.selectedSaleTransaction ?
                                     <HistoryDetailArea
@@ -100,7 +97,6 @@ class HistoryDialogue extends React.Component {
                                         handleHistoryClose = {this.props.handleClose}
                                     /> : null
                             }
-
                         </div>
                     </div>
                 </Dialog>

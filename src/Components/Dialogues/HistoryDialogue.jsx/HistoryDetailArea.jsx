@@ -174,6 +174,27 @@ class HistoryDetailArea extends React.Component {
 
     }
 
+    handleRefundButton = () => {
+        let saleItems = _get(this.props, "selectedSaleTransaction.sale.saleItems", []);
+       saleItems =  saleItems.filter((saleItem, index)=>{
+           debugger
+        if (saleItem.saleType == 2) {
+            return false
+        }
+        return true
+    })
+    debugger
+        let saleItemResp = saleItems.every((saleItem, index) => {
+            let returnableQty = _get(saleItem, "qty", 0) - _get(saleItem, "returnQty", 0)
+            if(returnableQty>0){
+                return true
+            }
+            return false
+        });
+
+        return saleItemResp
+    }
+
     render() {
         const { store } = this.props;
         let selectedOrder = _get(this.props, "selectedSaleTransaction", []);
@@ -209,7 +230,7 @@ class HistoryDetailArea extends React.Component {
                                 trigger={() => <div className='action-btn flex-row justify-center align-center'>Re-Print</div>}
                                 content={() => this.printElementRef}
                             />
-                            <div className='action-btn flex-row justify-center align-center' onClick={() => { this.setState({ openRefund: true }) }}>Refund</div>
+                            <div className={this.handleRefundButton() ? ' action-btn flex-row justify-center align-center' : 'disable-button action-btn flex-row justify-center align-center'} onClick={() => { this.setState({ openRefund: true }) }}>Refund</div>
                         </div>
                     </div>
                 </div>
