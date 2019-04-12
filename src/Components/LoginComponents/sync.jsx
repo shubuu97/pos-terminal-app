@@ -107,7 +107,7 @@ class SyncContainer extends Component {
         let result = await productsdb.bulkDocs(_get(productData, 'data', []));
         console.log("############### making index of product ###############")
         let indexResultOfSearch = await productsdb.search({
-            fields: ['product.name', 'product.description', 'product.sku'],
+            fields: ['product.name', 'product.description', 'product.sku','product.keywords'],
             build: true
         });
         console.log("############### making index of Category ###############")
