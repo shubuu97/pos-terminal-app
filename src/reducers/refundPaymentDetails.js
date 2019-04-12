@@ -22,9 +22,9 @@ const roundUpAmount = (amount) => {
     let decimalCount = decimalPlaces(amount);
     if (decimalCount > 2) {
         amount = roundUp(amount, 2);
-        return amount
+        return parseFloat(amount);
     }
-    return amount;
+    return parseFloat(amount);;
 }
 
 
