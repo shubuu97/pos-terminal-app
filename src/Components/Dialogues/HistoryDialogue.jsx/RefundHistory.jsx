@@ -42,7 +42,7 @@ class RefundHistory extends React.Component {
     let saleItems = _get(this.props.data, "returnItems", []);
     let saleItemResp = saleItems.map((saleItem, index) => {
       return (<tr>
-        <td>{_get(saleItem, "productId", '')}</td>
+        <td>{_get(saleItem, "returnProduct.name", '')}</td>
         <td>{_get(saleItem, "qty", 0)}</td>
         <td>{_get(saleItem, "itemRefundEffectiveTotal.amount", 0)}</td>
 
@@ -63,8 +63,10 @@ class RefundHistory extends React.Component {
     return (
       <ExpansionPanel expanded={expanded === 'panel1'} onChange={this.handleChange('panel1')}>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography className={classes.secondaryHeading}>Refund Date:</Typography>
           <Typography className={classes.heading}>{moment.utc(_get(data, 'timestamp.seconds', 0) * 1000).format('DD/MM/YYYY hh:mm:ss')}</Typography>
-          <Typography className={classes.secondaryHeading}>Refund Date: {_get(data, 'refundTotal.amount', 0).toFixed(2)}</Typography>
+          <Typography className={classes.secondaryHeading}>   Refund Amount:</Typography>
+          <Typography className={classes.heading}>{_get(data, 'refundTotal.amount', 0).toFixed(2)}</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
           <Typography>
@@ -84,7 +86,7 @@ class RefundHistory extends React.Component {
             </div>
             <div>
               <ReactToPrint
-                trigger={() => <div className='action-btn flex-row justify-center align-center'>Print Refund Receipt</div>}
+                trigger={() => <Button variant="contained" color="primary">Print Refund Receipt</Button>}
                 content={() => this.printElementRef}
               />
             </div>
@@ -94,7 +96,7 @@ class RefundHistory extends React.Component {
                 store={this.props.store}
                 selectedOrder={this.props.selectedOrder}
                 logo={this.props.logo}
-                data = {this.props.data}
+                data={this.props.data}
               />
             </div>
           </Typography>

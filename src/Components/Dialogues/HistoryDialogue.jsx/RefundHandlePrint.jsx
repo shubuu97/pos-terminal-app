@@ -19,12 +19,12 @@ const HandlePrint = (props) => {
     let saleItemResp = saleItems.map((saleItem, index) => {
         return (<div style={{ display: 'flex', flex: '1', paddingTop: "10px", paddingBottom: "10px", borderBottom: 'dotted 1px #9e9e9e' }}>
             < div style={{ width: "35%" }
-            }> {_get(saleItem, 'doc.product.isGiftCard', false) ? 'Gift Card' : _get(saleItem, "productId", '')}</div >
+            }> {_get(saleItem, 'doc.product.isGiftCard', false) ? 'Gift Card' : _get(saleItem, "returnProduct.name", '')}</div >
             <div style={{ width: "10%", textAlign: "center" }}>{_get(saleItem, "qty", 0)}</div>
-            <div style={{ width: "30%", textAlign: "right" }}>{_get(saleItem, 'doc.product.salePrice.price', 0).toFixed(2)}<br />
+            <div style={{ width: "30%", textAlign: "right" }}>{(_get(saleItem, "itemRefundEffectiveTotal.amount", 0)/_get(saleItem, "qty", 0)).toFixed(2)}<br />
 
             </div>
-            <div style={{ width: "25%", textAlign: "right" }}>{_get(saleItem, "itemRefundEffectiveTotal.amount", 0).toFixed(2)}</div>
+        <div style={{ width: "25%", textAlign: "right" }}>{_get(saleItem, "itemRefundEffectiveTotal.amount", 0).toFixed(2)}</div>
         </div >)
     })
 
