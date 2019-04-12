@@ -24,7 +24,7 @@ const roundUpAmount = (amount) => {
         amount = roundUp(amount, 2);
         return parseFloat(amount);
     }
-    return parseFloat(amount);;
+    return parseFloat(amount);
 }
 
 
