@@ -118,7 +118,7 @@ class HistoryDetailArea extends React.Component {
                 </div>
                 <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Returned Amount: `}</span>
-                    <span className='summary-value'>{_get(selectedOrder, 'sale.totalRefundAmount.currencyCode', '$') + _get(selectedOrder, 'sale.totalRefundAmount.amount', '0')}</span>
+                    <span className='summary-value'>{_get(selectedOrder, 'sale.totalRefundAmount.currencyCode', '$') + this.calcReturnedAmountTotal()}</span>
                 </div>
                 <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Total Paid: `}</span>
@@ -165,6 +165,14 @@ class HistoryDetailArea extends React.Component {
         // pri.focus();
         // pri.print();
     }
+    calcReturnedAmountTotal = () => {
+        let returns = _get(this.props, "selectedSaleTransaction.sale.returns", []);
+       let TotalRefundAmount =  returns.reduce((acc, returnObj) => {
+            return (acc + returnObj.refundTotal.amount)
+        },0);
+        return TotalRefundAmount;
+
+    }
 
     render() {
         const { store } = this.props;
@@ -207,7 +215,7 @@ class HistoryDetailArea extends React.Component {
                 </div>
 
                 {/* Refund History Area */}
-                {_get(selectedOrder.sale,'returns',[]).map(returnData => {
+                {_get(selectedOrder.sale, 'returns', []).map(returnData => {
                     return <div className='refund-detail-section'>
                         <RefundHistory data={returnData} />
                     </div>
