@@ -27,6 +27,8 @@ import genericPostData from '../../../../Global/dataFetch/genericPostData';
 import { postData } from '../../../../Redux/postAction';
 import { APPLICATION_BFF_URL } from '../../../../Redux/urlConstants';
 import showMessage from '../../../../Redux/toastAction';
+import HandlePrint from '../../../../Global/PosFunctions/handlePrint';
+import RefundPrintView from '../RefundPrintView';
 
 let regex = /^\d*[\.\d]+$/;
 
@@ -42,7 +44,8 @@ class RefundDialogue extends React.Component {
         success: false,
         step: 1,
         returnItems: [],
-        totalRefundAmount: 0
+        totalRefundAmount: 0,
+        returns: []
     };
 
     componentDidMount() {
@@ -214,7 +217,7 @@ class RefundDialogue extends React.Component {
             refundTaxTotal: { currencyCode: "$", amount: refundTaxTotal },
             refundTotal: { currencyCode: "$", amount: refundTotal },
         }
-        genericPostData({
+        let saleRefundRes = await genericPostData({
             dispatch: this.props.dispatch,
             reqObj,
             url: "Sale/CreateReturnTransaction",
@@ -227,36 +230,51 @@ class RefundDialogue extends React.Component {
             successCb: this.saleRefundSuccess,
             errorCb: this.saleRefundError
         })
+
+        return saleRefundRes;
     }
 
-    handleProceed = async () => {
-        if (this.state.step + 1 == 2) {
+    handleProceed = () => {
+        let nextStep = this.state.step + 1
+        if (nextStep == 2) {
             this.props.dispatch(commonActionCreater({ amount: this.state.totalRefundAmount }, 'RESET_REFUND_REDUCER'));
+            this.setState({
+                step: this.state.step + 1
+            })
         }
-        if (this.state.step + 1 == 3) {
+        else if (nextStep == 3) {
             this.refundSale().then((data) => {
                 if (_get(data, 'error')) {
                     this.props.dispatch(showMessage({ text: _get(data, 'error'), isSuccess: false }));
                     setTimeout(() => {
                         this.props.dispatch(showMessage({}));
                     }, 6000);
-
                     return;
                 }
+                debugger
                 this.setState({
-                    step: this.state.step + 1
-                })
+                    returns: data
+                }, this.handlePrint())
+                
             })
                 .catch((err) => {
-                    //retry code will come
+                    this.props.dispatch(showMessage({ text: _get(err, 'error'), isSuccess: false }));
+                    setTimeout(() => {
+                        this.props.dispatch(showMessage({}));
+                    }, 6000);
                 })
         }
-        else {
-            this.setState({
-                step: this.state.step + 1
-            })
-        }
 
+    }
+
+    handlePrint = () => {
+        var content = document.getElementById('printarea');
+        var pri = document.getElementById('ifmcontentstoprint').contentWindow;
+        pri.document.open();
+        pri.document.write(content.innerHTML);
+        pri.document.close();
+        pri.focus();
+        pri.print();
     }
 
     handleDecreseQuantity = (index, returnableQty) => {
@@ -624,13 +642,24 @@ class RefundDialogue extends React.Component {
                                 : null
                         }
 
-                        {/* Step 3 */}
-                        {
-                            this.state.step == 3 ?
-                                <div className='refund-step-2 flex-column'>
-                                    <span className='card-title'>Success/Faliure</span>
-                                </div> : null
-                        }
+
+                        <iframe id="ifmcontentstoprint" style={{
+                            height: '0px',
+                            width: '0px',
+                            position: 'absolute'
+                        }}></iframe>
+                        
+                        <div id='printarea' className='none'>
+                            <div>
+                                <RefundPrintView
+                                    store={this.props.store}
+                                    selectedOrder={this.props.selectedSaleTransaction}
+                                    logo={this.props.logo}
+                                    data = {this.state.returns}
+                                />
+                            </div>
+                        </div>
+
 
 
                         {
@@ -650,13 +679,23 @@ class RefundDialogue extends React.Component {
 }
 
 function mapStateToProps(state) {
+    let { storeData } = state;
     let cashAmount = _get(state, 'RefundPaymentDetails.cashAmount');
     let cardAmount = _get(state, 'RefundPaymentDetails.cardAmount');
     let giftCardAmount = _get(state, 'RefundPaymentDetails.giftCardAmount');
-
+    let store = storeData.lookUpData || {};
     let remainingAmount = _get(state, 'RefundPaymentDetails.remainingAmount')
     let cardRefrenceId = _get(state, 'RefundPaymentDetails.cardRefrenceId');
     let paymentMethods = _get(state, "storeData.lookUpData.store.paymentMethods", []);
-    return { cashAmount, cardAmount, giftCardAmount, remainingAmount, cardRefrenceId, paymentMethods }
+
+    return { 
+        cashAmount, 
+        cardAmount, 
+        giftCardAmount, 
+        remainingAmount, 
+        store,
+        cardRefrenceId, 
+        paymentMethods 
+    }
 }
 export default connect(mapStateToProps)(RefundDialogue);

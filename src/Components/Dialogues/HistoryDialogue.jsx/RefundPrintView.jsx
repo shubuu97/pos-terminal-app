@@ -2,7 +2,7 @@ import React from 'react';
 /* Lodash Imports */
 import _get from 'lodash/get';
 /* Material import */
-import HandlePrint from './RefundHandlePrint';
+import RefundHandlePrint from './RefundHandlePrint';
 /* Redux Imports */
 import moment from 'moment';
 import aobLogo from '../../../assets/images/aobLogodark.png';
@@ -34,7 +34,7 @@ render() {
         // console.log(this.props.logo, 'gugfhfyfyuf');
     return (
         <div style={{padding: "50px"}} >
-            <HandlePrint
+            <RefundHandlePrint
                 logo={this.props.logo}
                 data={this.props.data}
                 type="Refund History"

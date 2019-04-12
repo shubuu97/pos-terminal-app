@@ -233,6 +233,7 @@ class HistoryDetailArea extends React.Component {
                             open={this.state.openRefund}
                             handleRefundClose={this.handleRefundClose}
                             selectedSaleTransaction={this.props.selectedSaleTransaction}
+                            logo={this.state.logo}
                         /> : null
                 }
                 <div style={{ display: "none" }}>
