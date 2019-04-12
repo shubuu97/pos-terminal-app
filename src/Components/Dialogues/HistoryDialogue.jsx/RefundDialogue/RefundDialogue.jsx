@@ -279,8 +279,8 @@ class RefundDialogue extends React.Component {
         pri.document.close();
         pri.focus();
         pri.print();
-        this.props.handleRefundClose()
-        this.props.handleHistoryClose()
+        this.props.handleRefundClose();
+        window.location.reload();
     }
 
     handleDecreseQuantity = (index, returnableQty) => {

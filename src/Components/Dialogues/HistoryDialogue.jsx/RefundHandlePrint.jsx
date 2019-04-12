@@ -6,6 +6,8 @@ import paymentMethods from '../../../Global/PosFunctions/paymentMethods';
 
 var Barcode = require('react-barcode');
 
+
+
 const HandlePrint = (props) => {
     let taxAmount = _get(props, 'totalTax', 0)
     let grandTotal = _get(props, 'totalAmount', 0)
