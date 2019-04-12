@@ -97,6 +97,7 @@ class HistoryDialogue extends React.Component {
                                 this.props.selectedSaleTransaction ?
                                     <HistoryDetailArea
                                         selectedSaleTransaction={this.props.selectedSaleTransaction}
+                                        handleHistoryClose = {this.props.handleClose}
                                     /> : null
                             }
 

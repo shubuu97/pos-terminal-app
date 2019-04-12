@@ -45,7 +45,7 @@ class RefundDialogue extends React.Component {
         step: 1,
         returnItems: [],
         totalRefundAmount: 0,
-        returns: []
+        returnObj: null
     };
 
     componentDidMount() {
@@ -235,6 +235,7 @@ class RefundDialogue extends React.Component {
     }
 
     handleProceed = () => {
+        debugger
         let nextStep = this.state.step + 1
         if (nextStep == 2) {
             this.props.dispatch(commonActionCreater({ amount: this.state.totalRefundAmount }, 'RESET_REFUND_REDUCER'));
@@ -252,10 +253,13 @@ class RefundDialogue extends React.Component {
                     return;
                 }
                 debugger
+                let length = _get(data, 'sale.returns', []).length;
+                let returnObj = _get(data, `sale.returns[${length - 1}]`, {})
+                console.log(returnObj, 'mayuk')
                 this.setState({
-                    returns: data
-                }, this.handlePrint())
-                
+                    returnObj,
+                    print:true
+                })
             })
                 .catch((err) => {
                     this.props.dispatch(showMessage({ text: _get(err, 'error'), isSuccess: false }));
@@ -275,6 +279,8 @@ class RefundDialogue extends React.Component {
         pri.document.close();
         pri.focus();
         pri.print();
+        this.props.handleRefundClose()
+        this.props.handleHistoryClose()
     }
 
     handleDecreseQuantity = (index, returnableQty) => {
@@ -532,6 +538,8 @@ class RefundDialogue extends React.Component {
     }
 
     render() {
+        if(this.state.print)
+        debugger;
         return (
             <div>
                 <Dialog
@@ -648,17 +656,22 @@ class RefundDialogue extends React.Component {
                             width: '0px',
                             position: 'absolute'
                         }}></iframe>
-                        
-                        <div id='printarea' className='none'>
-                            <div>
-                                <RefundPrintView
-                                    store={this.props.store}
-                                    selectedOrder={this.props.selectedSaleTransaction}
-                                    logo={this.props.logo}
-                                    data = {this.state.returns}
-                                />
-                            </div>
-                        </div>
+
+                        {
+                                <div id='printarea' className='none'>
+                                    <div>
+                                        <RefundPrintView
+                                            store={this.props.store}
+                                            selectedOrder={this.props.selectedSaleTransaction}
+                                            logo={this.props.logo}
+                                            data={this.state.returnObj}
+                                            print={this.state.print ? true : false}
+                                            handlePrint={this.handlePrint}
+                                        />
+                                    </div>
+                                </div>
+                        }
+
 
 
 
@@ -688,14 +701,14 @@ function mapStateToProps(state) {
     let cardRefrenceId = _get(state, 'RefundPaymentDetails.cardRefrenceId');
     let paymentMethods = _get(state, "storeData.lookUpData.store.paymentMethods", []);
 
-    return { 
-        cashAmount, 
-        cardAmount, 
-        giftCardAmount, 
-        remainingAmount, 
+    return {
+        cashAmount,
+        cardAmount,
+        giftCardAmount,
+        remainingAmount,
         store,
-        cardRefrenceId, 
-        paymentMethods 
+        cardRefrenceId,
+        paymentMethods
     }
 }
 export default connect(mapStateToProps)(RefundDialogue);
