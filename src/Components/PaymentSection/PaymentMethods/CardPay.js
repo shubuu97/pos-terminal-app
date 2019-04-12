@@ -92,7 +92,6 @@ class CardPay extends React.Component {
                 }
                 //if error has text msgs then show the code
                 if (_get(POSResponse, 'ErrorCode._text')) {
-                    debugger;
                     if (_get(POSResponse, "Message._text")) {
                         let errMsg = `Error Occured with code:${POSResponse.ErrorCode._text}(${_get(POSResponse, "Message._text")})`;
                         this.posResponseSuccess(res.text, POSResponse, true, 1, errMsg)
@@ -104,7 +103,6 @@ class CardPay extends React.Component {
                     this.posResponseSuccess(res.text, POSResponse, true, 1, errMsg)
                 }
             }).catch(err => {
-                debugger;
                 // showErrorAlert({ dispatch: this.props.dispatch, error: err.message })
                 this.posResponseSuccess(null, null, true, 1, err.message)
 
@@ -112,7 +110,6 @@ class CardPay extends React.Component {
     }   
 
     posResponseSuccess = (xmlRes, POSResponseObj, error, type, errMsg) => {
-        debugger;
         genericPostData({
             dispatch: this.props.dispatch,
             reqObj: {
@@ -142,13 +139,11 @@ class CardPay extends React.Component {
     }
 
     refrenceSavedSuccess = (resData, error, type, errMsg) => {
-        debugger;
         if (!error) {
             this.props.dispatch(commonActionCreater({ cardAmount: this.props.cardAmount, totalAmount: this.props.totalAmount, cardRefrenceId: resData }, 'CARD_INPUT_HANDLER'));
             this.handleSuccess();
         }
         else {
-            debugger;
             this.handleError(errMsg)
         }
     }

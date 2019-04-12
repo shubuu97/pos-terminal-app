@@ -89,7 +89,6 @@ class CustomerTab extends React.Component {
         let employeeDiscount = _get(doc, 'value.employeeDiscount', 0);
         let storeId = localStorage.getItem('storeId');
         let empStoreId = _get(doc, 'value.employeeStoreId', '')
-        debugger
         //populating cart reducer with customer
         this.setState({ value: '' })
         if(storeId == empStoreId){

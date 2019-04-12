@@ -1,9 +1,15 @@
 import React from 'react';
+import moment from "moment";
+import ReactToPrint from 'react-to-print';
 /* Lodash Imports */
 import _get from 'lodash/get';
 import RefundHistory from './RefundHistory';
 import RefundDialogue from './RefundDialogue/RefundDialogue';
 /* Material import */
+import HandlePrint from '../../../Global/PosFunctions/handlePrint';
+import aobLogo from '../../../assets/images/aobLogodark.png';
+import { connect } from 'react-redux';
+import OrderPrintView from './OrderPrintView';
 
 
 /* Redux Imports */
@@ -19,7 +25,16 @@ class HistoryDetailArea extends React.Component {
             openRefund: false,
         }
     }
+    componentDidMount() {
+        let logo
+        if (localStorage.getItem('storeLogo')) {
+            logo = localStorage.getItem('storeLogo')
+        } else {
+            logo = aobLogo
+        }
+        this.setState({ logo })
 
+    }
     handleRefundClose = () => {
         this.setState({ openRefund: false });
     };
@@ -42,18 +57,52 @@ class HistoryDetailArea extends React.Component {
         )
 
     }
+    paymentMethods = (num) => {
+        let method
+        switch (num) {
+            case 0:
+                method = 'Cash'
+                break;
+            case 1:
+                method = 'Card'
+                break;
+            case 2:
+                method = 'Gift Card'
+                break;
+            case 3:
+                method = 'Cost Center Charge'
+                break;
+            case 4:
+                method = 'Employee'
+                break;
+            case 5:
+                method = 'Loyalty'
+                break;
+        }
+
+        return method
+    }
+    showPaymentMethods = () => {
+        const paymentMethodsView = _get(this.props.selectedSaleTransaction, 'sale.payments', []).map((payment) => (
+            <div className='flex-row justify-space-between mb-5'>
+                <span className='summary-key'>{this.paymentMethods(_get(payment, 'paymentMethod', 0))}</span>
+                <span className='summary-value'>{`${_get(payment, 'paymentAmount.currencyCode', '$')} ${_get(payment, 'paymentAmount.amount', 0)}`}</span>
+            </div>
+        ))
+        return (
+            <React.Fragment>
+                {paymentMethodsView}
+            </React.Fragment>
+        )
+    }
     summaryPanel = () => {
         let selectedOrder = _get(this.props, "selectedSaleTransaction", []);
 
         return (
             <div className="mui-col-md-12 flex-column mt-10" >
                 <div className='flex-row justify-space-between mb-5'>
-                    <span className='summary-key'>{`Status: `}</span>
-                    <span className='summary-value'>{_get(selectedOrder, 'sale.totalTaxAmount.currencyCode', '$') + _get(selectedOrder, 'sale.totalTaxAmount.amount', 0)}</span>
-                </div>
-                <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Created Date: `}</span>
-                    <span className='summary-value'>{_get(selectedOrder, 'sale.totalTaxAmount.currencyCode', '$') + _get(selectedOrder, 'sale.totalTaxAmount.amount', 0)}</span>
+                    <span className='summary-value'>{moment(_get(selectedOrder, 'sale.saleCommitTimeStamp.seconds', 0) * 1000).format('MM/DD/YYYY')}</span>
                 </div>
                 <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Served By: `}</span>
@@ -69,28 +118,66 @@ class HistoryDetailArea extends React.Component {
                 </div>
                 <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Returned Amount: `}</span>
-                    <span className='summary-value'>{_get(selectedOrder, 'sale.totalRefundAmount.currencyCode', '$') + _get(selectedOrder, 'sale.totalRefundAmount.amount', '0')}</span>
+                    <span className='summary-value'>{_get(selectedOrder, 'sale.totalRefundAmount.currencyCode', '$') + this.calcReturnedAmountTotal()}</span>
                 </div>
                 <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Total Paid: `}</span>
                     <span className='summary-value'>{`${_get(selectedOrder, 'sale.totalAmountPaid.currencyCode', '$')}${_get(selectedOrder, 'sale.totalAmountPaid.amount', '0')}`}</span>
                 </div>
                 <div className='flex-row justify-space-between mb-5'>
-                    <span className='summary-key'>{`Payment Method: `}</span>
-                    <div style={{ float: 'right' }}>
-                        {/* {this.showPaymentMethods(this.state.selectedOrder)} */}
-                    </div>
-                </div>
-                <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Change: `}</span>
                     <span className='summary-value'>{_get(selectedOrder, 'sale.changeDue.currencyCode', 0) + _get(selectedOrder, 'sale.changeDue.amount', 0).toFixed(2)}</span>
                 </div>
+                <div className="flex-column">
+                    <span>Payment Methods</span>
+                    {this.showPaymentMethods()}
+                </div>
+
+
                 {/* <span className='summary-value'>{`$ ${_get(selectedOrder, 'sale.paymentAmount', '100.00')}`}</span> */}
             </div>
         )
     }
+    makePrintContent = () => {
+
+        let printArea =
+
+            console.log(printArea, "printAreaprintArea");
+        return ("printarea")
+    }
+    makeIframeContent = () => {
+        return (<iframe id="ifmcontentstoprint" style={{
+            height: '0px',
+            width: '0px',
+            position: 'absolute'
+        }}></iframe>
+        )
+
+    }
+    handlePrint = () => {
+        var content = this.makePrintContent();
+        var pri = this.makeIframeContent().contentWindow;
+        console.log(pri, content, "contentpri")
+
+        // pri.document.open();
+        // pri.document.write(content.innerHTML);
+        // pri.document.close();
+        // pri.focus();
+        // pri.print();
+    }
+    calcReturnedAmountTotal = () => {
+        let returns = _get(this.props, "selectedSaleTransaction.sale.returns", []);
+        let TotalRefundAmount = returns.reduce((acc, returnObj) => {
+            return (acc + returnObj.refundTotal.amount)
+        }, 0);
+        return TotalRefundAmount;
+
+    }
 
     render() {
+        const { store } = this.props;
+        let selectedOrder = _get(this.props, "selectedSaleTransaction", []);
+        console.log(selectedOrder, 'selectedOrder selectedOrder')
         return (
             <div className='history-main flex-column overflow-y'>
                 <div className='flex-row justify-space-between'>
@@ -117,17 +204,26 @@ class HistoryDetailArea extends React.Component {
                             {this.summaryPanel()}
                         </div>
                         <div className='order-action-section flex-row'>
-                            <div className='action-btn flex-row justify-center align-center'>Print</div>
+                            {/* <div onClick={() => this.handlePrint()} className='action-btn flex-row justify-center align-center'>Re-Print</div> */}
+                            <ReactToPrint
+                                trigger={() => <div className='action-btn flex-row justify-center align-center'>Re-Print</div>}
+                                content={() => this.printElementRef}
+                            />
                             <div className='action-btn flex-row justify-center align-center' onClick={() => { this.setState({ openRefund: true }) }}>Refund</div>
                         </div>
                     </div>
                 </div>
 
                 {/* Refund History Area */}
-                {
-                    <div className='refund-detail-section'>
-                        <RefundHistory />
+                {_get(selectedOrder.sale, 'returns', []).map(returnData => {
+                    return <div className='refund-detail-section'>
+                        <RefundHistory
+                            store={store}
+                            selectedOrder={selectedOrder}
+                            logo={this.state.logo}
+                            data={returnData} />
                     </div>
+                })
                 }
 
                 {/* Refund Dialogue */}
@@ -139,10 +235,30 @@ class HistoryDetailArea extends React.Component {
                             selectedSaleTransaction={this.props.selectedSaleTransaction}
                         /> : null
                 }
+                <div style={{ display: "none" }}>
+                    <OrderPrintView
+                        ref={el => this.printElementRef = el}
+                        store={store}
+                        selectedOrder={selectedOrder}
+                        logo={this.state.logo}
+                    />
+                </div>
+
+
 
             </div>
         );
     }
 }
+function mapStateToProps(state) {
+    let { customerSalesList, storeData } = state;
+    let salesList = customerSalesList.lookUpData || [];
+    let store = storeData.lookUpData || {};
 
-export default HistoryDetailArea;
+    return {
+        salesList,
+        store
+    }
+}
+
+export default connect(mapStateToProps)(HistoryDetailArea);
