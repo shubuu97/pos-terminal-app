@@ -167,9 +167,9 @@ class HistoryDetailArea extends React.Component {
     }
     calcReturnedAmountTotal = () => {
         let returns = _get(this.props, "selectedSaleTransaction.sale.returns", []);
-       let TotalRefundAmount =  returns.reduce((acc, returnObj) => {
+        let TotalRefundAmount = returns.reduce((acc, returnObj) => {
             return (acc + returnObj.refundTotal.amount)
-        },0);
+        }, 0);
         return TotalRefundAmount;
 
     }
@@ -217,7 +217,11 @@ class HistoryDetailArea extends React.Component {
                 {/* Refund History Area */}
                 {_get(selectedOrder.sale, 'returns', []).map(returnData => {
                     return <div className='refund-detail-section'>
-                        <RefundHistory data={returnData} />
+                        <RefundHistory
+                            store={store}
+                            selectedOrder={selectedOrder}
+                            logo={this.state.logo}
+                            data={returnData} />
                     </div>
                 })
                 }
