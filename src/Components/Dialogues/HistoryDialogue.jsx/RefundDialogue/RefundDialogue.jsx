@@ -58,10 +58,6 @@ class RefundDialogue extends React.Component {
         this.props.dispatch(commonActionCreater({}, 'RESET_REFUND_REDUCER'));
 
     };
-    componentWillUnmount() {
-
-
-    }
 
     handleClose = () => {
         this.setState({ open: false });

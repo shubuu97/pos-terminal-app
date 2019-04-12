@@ -194,6 +194,13 @@ class HomeContainer extends React.Component {
 
     handleClose = (name) => {
         this.setState({ [name]: false });
+        if(name = 'openHistoryDialogue'){
+            this.setState({
+                historySidebarItems: [],
+                selectedSaleTransaction: null,
+                historySidebarLoading: false 
+            })
+        }
     };
     handleClickOpenSessionContainer = () => {
         this.setState({ openSessionContainer: true });
@@ -575,20 +582,15 @@ class HomeContainer extends React.Component {
                         <HistoryDialogue
                             handleSidebarPopulate={(limit, skip, timeFrom, timeTo) => this.handleTransactionPopulate(limit, skip, timeFrom, timeTo)}
                             handleSearch={this.handleTransactionSearch}
-
-
                             historySidebarItems={this.state.historySidebarItems}
                             selectedSaleTransaction={this.state.selectedSaleTransaction}
                             historySidebarLoading={this.state.historySidebarLoading}
-
-
                             handleClickOpen={() => this.handleClickOpen('openHistoryDialogue')}
                             handleClose={() => this.handleClose('openHistoryDialogue')}
                             open={this.state.openHistoryDialogue}
                             dispatch={dispatch}
                         /> : null
                 }
-
                 {
                     this.state.openCartOnHoldOrClear ?
                         <AlertCartClear
