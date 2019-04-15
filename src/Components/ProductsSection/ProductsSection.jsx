@@ -301,7 +301,8 @@ class ProductsSection extends React.Component {
         }
     }
 
-    handleHideWhenOffline = ( online , onlineContent, offlineContent) => {
+    handleHideWhenOffline = (online, onlineContent, offlineContent) => {
+        debugger
         if (online) {
             return onlineContent
         }
@@ -335,17 +336,24 @@ class ProductsSection extends React.Component {
                         />
                         <div className="header-right-sec">
                             <ul>
-                                 {this.handleHideWhenOffline(
-                                     !this.props.offline ,
-                                    [<li onClick={this.props.handleMiscProduct}><LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>],
-                                    [<li className="disable-button" onClick={this.props.handleMiscProduct}><LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>]
-                                )}
+                                {
+                                    this.handleHideWhenOffline(
+                                        !this.props.offline,
+                                        [<li onClick={this.props.handleMiscProduct}><LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>],
+                                        [<li className="disable-button" onClick={this.props.handleMiscProduct}><LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>]
+                                    )
+                                }
 
-                                 {this.handleHideWhenOffline(
-                                    !this.props.offline ,
-                                    [<li onClick={this.props.handleGiftCard}><CardGiftCard style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>],
-                                    [<li className="disable-button" onClick={this.props.handleGiftCard}><CardGiftCard style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>]
-                                )}
+                                {
+                                    this.props.paymentMethods.findIndex((m) => m == 2)>0 ?
+                                        this.handleHideWhenOffline(
+                                            !this.props.offline,
+
+                                            [<li onClick={this.props.handleGiftCard}><CardGiftCard style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>],
+
+                                            [<li className="disable-button" onClick={this.props.handleGiftCard}><CardGiftCard style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>]
+                                        ) : null
+                                }
 
                                 <li onClick={this.props.handleLockTerminal}><LockIcon style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>
                                 {/* <li onClick={this.logout}><ExitToApp style={{ color: 'white', padding: '0 10px', fontSize: 33 }}  /></li> */}
@@ -387,7 +395,8 @@ const mapStateToProps = state => {
     let pageNo = _get(productList, 'lookUpData.pagination.pageNo', '')
     let startVal = _get(productList, 'lookUpData.pagination.startVal', '')
     let endVal = _get(productList, 'lookUpData.pagination.endVal', '')
-    console.log(lastItemId, 'lastItemId', firstItemId, 'firstItemId', pageNo, 'pageNo', startVal, 'startVal', endVal, 'endVal')
+    let paymentMethods = _get(state, 'storeData.lookUpData.store.paymentMethods', [])
+
     return {
         productCount,
         lastItemId,
@@ -398,6 +407,7 @@ const mapStateToProps = state => {
         pageNo,
         startVal,
         endVal,
+        paymentMethods,
     }
 }
 
