@@ -76,9 +76,9 @@ class CustomizedBreadcrumbs extends React.Component {
               </Avatar>}
             onClick={() => props.homeClickHandler()}
           />
-            {selectedCurrentCategory.categoryType >= 0 &&!clearCategory && <StyledBreadcrumb label={selectedRootCategory.name} onClick={() => props.categoryClickHandler(selectedRootCategory)} />}
-            {selectedCurrentCategory.categoryType >= 1 &&!clearCategory && <StyledBreadcrumb label={selectedSubCategory.name} onClick={() => props.categoryClickHandler(selectedSubCategory)} />}
-            {selectedCurrentCategory.categoryType >= 2 &&!clearCategory && <StyledBreadcrumb label={selectedLeafCategory.name} />}
+            {selectedCurrentCategory.categoryType >= 0 && <StyledBreadcrumb label={selectedRootCategory.name} onClick={() => props.categoryClickHandler(selectedRootCategory)} />}
+            {selectedCurrentCategory.categoryType >= 1 && <StyledBreadcrumb label={selectedSubCategory.name} onClick={() => props.categoryClickHandler(selectedSubCategory)} />}
+            {selectedCurrentCategory.categoryType >= 2 && <StyledBreadcrumb label={selectedLeafCategory.name} />}
         </Breadcrumbs>
       </Paper>
     );
