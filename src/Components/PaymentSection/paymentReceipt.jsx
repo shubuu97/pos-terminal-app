@@ -42,6 +42,11 @@ class PaymentReceipt extends React.Component {
         addGuestToCart(this.props.dispatch);
         this.props.handleClose();
         this.props.dispatch(commonActionCreater(1, 'SWITCH_TAB_NUMBER'));
+        this.props.dispatch(commonActionCreater(true, 'RESET_PRODUCT'));
+        this.props.dispatch(commonActionCreater(true, 'RESET_CATEGORY'));
+
+
+        // window.location.reload();
     }
 
     handlePrint = () => {

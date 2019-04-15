@@ -40,6 +40,9 @@ let EarningRules = commonReducer('GET_LOYALTY_EARNING_RULES');
 let selectedSession = commonStaticReducer('GET_SELECTED_SESSION');
 let sessionRedirectToLogin = commonStaticReducer('SESSION_START_REDIRECT_TO_LOGIN');
 let afterSellRedirectToCart = commonStaticReducer('SWITCH_TAB_NUMBER');
+let resetCategory = commonStaticReducer('RESET_CATEGORY');
+let resetProduct = commonStaticReducer('RESET_PRODUCT');
+
 let lockTerminal = commonStaticReducer('LOCK_TERMINAL');
 let loyaltyRedeem = commonStaticReducer('LOYALTY_INPUT_HANDLER');
 let employeePayroll = commonStaticReducer('EMPLOYEE_PAYROLL')
@@ -77,7 +80,9 @@ let rootRducer = combineReducers({
     zipCodeReducer,
     loyaltyRedeem,
     employeePayroll,
-    RefundPaymentDetails
+    RefundPaymentDetails,
+    resetProduct,
+    resetCategory,
 })
 
 export default rootRducer;

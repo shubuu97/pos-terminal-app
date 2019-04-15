@@ -302,12 +302,17 @@ class ProductsSection extends React.Component {
     }
 
     handleHideWhenOffline = (online, onlineContent, offlineContent) => {
-        debugger
         if (online) {
             return onlineContent
         }
         else
             return offlineContent
+    }
+    componentDidUpdate() {
+        if (this.props.resetProduct == true) {
+            this.setState({ clearInput: true });
+            this.props.dispatch(commonActionCreater(false, 'RESET_PRODUCT'));
+        }
     }
 
     render() {
@@ -321,6 +326,7 @@ class ProductsSection extends React.Component {
                         <SideDrawer
                             offline={this.props.offline}
                             // ! Actions
+                            handleTransactionPopulate = {this.props.handleTransactionPopulate}
                             handleClickOpenOnHold={this.props.handleClickOpenOnHold}
                             handleClickOpenHistory={this.props.handleClickOpenHistory}
                             handleHistoryOpen={this.props.handleHistoryOpen}
@@ -396,6 +402,7 @@ const mapStateToProps = state => {
     let startVal = _get(productList, 'lookUpData.pagination.startVal', '')
     let endVal = _get(productList, 'lookUpData.pagination.endVal', '')
     let paymentMethods = _get(state, 'storeData.lookUpData.store.paymentMethods', [])
+    let resetProduct = _get(state, 'resetProduct.lookUpData')
 
     return {
         productCount,
@@ -408,6 +415,7 @@ const mapStateToProps = state => {
         startVal,
         endVal,
         paymentMethods,
+        resetProduct
     }
 }
 

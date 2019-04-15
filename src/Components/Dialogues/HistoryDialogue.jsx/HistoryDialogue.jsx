@@ -41,10 +41,11 @@ class HistoryDialogue extends React.Component {
     }
 
     componentDidMount() {
-        this.props.handleSidebarPopulate(1, 2, 3, 4)
+        //this.props.handleSidebarPopulate()
     }
 
     handleSearchChange = (value) => {
+        debugger;
         this.setState({ searchInput: value })
         this.props.handleSearch(value);
     }

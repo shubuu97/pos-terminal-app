@@ -3,6 +3,7 @@ import { Detector } from 'react-detect-offline';
 import moment from "moment";
 /* Lodash Imports */
 import _get from 'lodash/get';
+import _set from 'lodash/set';
 import _isEmpty from 'lodash/isEmpty';
 import _find from 'lodash/find'
 /* Material Icons */
@@ -324,12 +325,16 @@ class HomeContainer extends React.Component {
         })
     }
     handleHistoryOpen = () => {
-        let url = 'Sale/GetByCustomerId';
-        let data = { id: _get(this.props, 'customer.id', '') }
-        this.getOrderHistory(url, data)
-        this.setState({
-            openOrderHistory: true,
-        });
+        debugger;
+        // let url = 'Sale/GetByCustomerId';
+        // let data = { id: _get(this.props, 'customer.id', '') }
+        // this.getOrderHistory(url, data)
+        // this.setState({
+        //     openOrderHistory: true,
+        // });
+        this.setState({openHistoryDialogue:true});
+        this.handleTransactionPopulate(_get(this.props, 'customer.id',null));
+
     }
     handleGetCustomerSaleData = (data) => {
 
@@ -446,9 +451,14 @@ class HomeContainer extends React.Component {
     }
 
     /* History Actions */
-    handleTransactionPopulate = (limit, skip, timeFrom, timeTo, transctionId) => {
+    handleTransactionPopulate = (customerId,limit, skip, timeFrom, timeTo) => {
+        debugger;
         let url = 'Sale/GetByTerminalId';
         let data = { id: localStorage.getItem('terminalId') }
+        if(customerId){
+            data.id = customerId;
+            url = "Sale/GetByCustomerId"
+        }
         this.setState({
             historySidebarLoading: true
         })
@@ -470,6 +480,7 @@ class HomeContainer extends React.Component {
 
     handleTransactionSearch = (transactionId) => {
         if (transactionId == '') {
+            debugger;
             this.handleTransactionPopulate();
             return;
         }
@@ -518,6 +529,7 @@ class HomeContainer extends React.Component {
                         history={this.props.history}
                         paymentMethods={this.props.paymentMethods}
                         // ! Actions
+                        handleTransactionPopulate = {this.handleTransactionPopulate}
                         handleHistoryOpen={this.handleTerminalHistoryOpen}
                         handleClickOpenOnHold={() => this.handleClickOpen('openOnHold')}
                         handleClickOpenHistory={() => this.handleClickOpen('openHistoryDialogue')}
@@ -754,7 +766,7 @@ const updateTimeStampAndDbForInventory = async (res, dispatch, extraArgs) => {
     let updatedInventory = _get(res, 'data', []) || [];
     let promiseArray = updatedInventory.map(async (product, index) => {
         let productObj = await productsdb.get(product._id);
-        productObj.inventory.quantity = _get(product, 'inventory.quantity', 0);
+        _set(productObj,'inventory.quantity',_get(product, 'inventory.quantity', 0));
         return productObj
     });
     Promise.all(promiseArray).then(async (updatedInventoryWith_Rev) => {
@@ -836,7 +848,7 @@ const pollingWrapper = async (propsOfComp, dispatch) => {
 }
 
 
-HomeContainer = pollingHoc(30 * 60 * 1000, pollingWrapper)(HomeContainer)
+HomeContainer = pollingHoc(60 * 1000, pollingWrapper)(HomeContainer)
 
 
 export default connect(mapStateToProps)(HomeContainer)

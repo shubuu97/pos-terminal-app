@@ -52,7 +52,7 @@ class RefundDialogue extends React.Component {
         let payments = _get(this.props, "selectedSaleTransaction.sale.payments", []);
         let paidThroughCardObj = _find(payments, { paymentMethod: 1 });
         let paidThroughCard = _get(paidThroughCardObj, "paymentAmount.amount", 0);
-        let gc = this.props.paymentMethods.findIndex((m) => m == 1)
+        let gc = this.props.paymentMethods.findIndex((m) => m == 2)
         let giftPayEnabled = gc == -1 ? false : true
         this.setState({ paidThroughCard, giftPayEnabled });
         this.props.dispatch(commonActionCreater({}, 'RESET_REFUND_REDUCER'));
