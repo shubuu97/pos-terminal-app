@@ -326,6 +326,7 @@ class ProductsSection extends React.Component {
                         <SideDrawer
                             offline={this.props.offline}
                             // ! Actions
+                            handleTransactionPopulate = {this.props.handleTransactionPopulate}
                             handleClickOpenOnHold={this.props.handleClickOpenOnHold}
                             handleClickOpenHistory={this.props.handleClickOpenHistory}
                             handleHistoryOpen={this.props.handleHistoryOpen}

@@ -100,7 +100,7 @@ function TemporaryDrawer(props) {
                     <ListItemText primary={'Offline Transactions'} />
                 </ListItem>
                 <Divider />
-                <ListItem button key={6} onClick={props.handleClickOpenHistory}>
+                <ListItem button key={6} onClick={()=>{props.handleClickOpenHistory();props.handleTransactionPopulate()}}>
                     <ListItemText primary={'History'} />
                 </ListItem>
                 <Divider />

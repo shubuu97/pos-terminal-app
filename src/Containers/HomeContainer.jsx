@@ -325,12 +325,16 @@ class HomeContainer extends React.Component {
         })
     }
     handleHistoryOpen = () => {
-        let url = 'Sale/GetByCustomerId';
-        let data = { id: _get(this.props, 'customer.id', '') }
-        this.getOrderHistory(url, data)
-        this.setState({
-            openOrderHistory: true,
-        });
+        debugger;
+        // let url = 'Sale/GetByCustomerId';
+        // let data = { id: _get(this.props, 'customer.id', '') }
+        // this.getOrderHistory(url, data)
+        // this.setState({
+        //     openOrderHistory: true,
+        // });
+        this.setState({openHistoryDialogue:true});
+        this.handleTransactionPopulate(_get(this.props, 'customer.id',null));
+
     }
     handleGetCustomerSaleData = (data) => {
 
@@ -447,9 +451,14 @@ class HomeContainer extends React.Component {
     }
 
     /* History Actions */
-    handleTransactionPopulate = (limit, skip, timeFrom, timeTo, transctionId) => {
+    handleTransactionPopulate = (customerId,limit, skip, timeFrom, timeTo) => {
+        debugger;
         let url = 'Sale/GetByTerminalId';
         let data = { id: localStorage.getItem('terminalId') }
+        if(customerId){
+            data.id = customerId;
+            url = "Sale/GetByCustomerId"
+        }
         this.setState({
             historySidebarLoading: true
         })
@@ -471,6 +480,7 @@ class HomeContainer extends React.Component {
 
     handleTransactionSearch = (transactionId) => {
         if (transactionId == '') {
+            debugger;
             this.handleTransactionPopulate();
             return;
         }
@@ -520,6 +530,7 @@ class HomeContainer extends React.Component {
                         handleGiftCard={() => this.handleGiftCard(true)}
                         handleMiscProduct={() => this.handleMiscProduct(true)}
                         // ! Actions
+                        handleTransactionPopulate = {this.handleTransactionPopulate}
                         handleHistoryOpen={this.handleTerminalHistoryOpen}
                         handleClickOpenOnHold={() => this.handleClickOpen('openOnHold')}
                         handleClickOpenHistory={() => this.handleClickOpen('openHistoryDialogue')}
