@@ -114,10 +114,10 @@ class CardPay extends React.Component {
             dispatch: this.props.dispatch,
             reqObj: {
                 retailerId: localStorage.getItem('retailerId'),
-                customerId: localStorage.getItem('customerId'),
+                customerId: _get(this.props, 'customer.id'),
                 storeId: localStorage.getItem('storeId'),
                 terminalId: localStorage.getItem('terminalId'),
-                operatorId: localStorage.getItem('operatorId'),
+                operatorId: localStorage.getItem('userId'),
                 sessionId: localStorage.getItem('sessionId'),
                 transactionId: _get(POSResponseObj, 'RequestId._text'),
                 requestPayload: this.makePOSReqObj(),
@@ -231,9 +231,10 @@ function mapStateMapToProps(state) {
     let cardAmount = _get(state, 'PaymentDetails.cardAmount');
     let remainingAmount = _get(state, 'PaymentDetails.remainingAmount')
     let cardRefrenceId = _get(state, 'PaymentDetails.cardRefrenceId');
+    let customer = _get(state,'cart.customer')
 
 
-    return { totalAmount, cardAmount, remainingAmount, cardRefrenceId };
+    return { totalAmount, cardAmount, remainingAmount, cardRefrenceId,customer };
 }
 
 export default connect(mapStateMapToProps)(CardPay);
