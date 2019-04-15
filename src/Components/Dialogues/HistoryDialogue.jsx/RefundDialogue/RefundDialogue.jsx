@@ -29,6 +29,11 @@ import { APPLICATION_BFF_URL } from '../../../../Redux/urlConstants';
 import showMessage from '../../../../Redux/toastAction';
 import HandlePrint from '../../../../Global/PosFunctions/handlePrint';
 import RefundPrintView from '../RefundPrintView';
+import { format } from 'url';
+const request = require('superagent');
+const convert = require('xml-js');
+
+
 
 let regex = /^\d*[\.\d]+$/;
 
@@ -45,17 +50,25 @@ class RefundDialogue extends React.Component {
         step: 1,
         returnItems: [],
         totalRefundAmount: 0,
-        returnObj: null
+        returnObj: null,
+        cardLoading: false
     };
 
     componentDidMount() {
         let payments = _get(this.props, "selectedSaleTransaction.sale.payments", []);
         let paidThroughCardObj = _find(payments, { paymentMethod: 1 });
         let paidThroughCard = _get(paidThroughCardObj, "paymentAmount.amount", 0);
+        let paymentReferenceNumber = _get(paidThroughCardObj, "paymentReference", 0);
         let gc = this.props.paymentMethods.findIndex((m) => m == 2)
-        let giftPayEnabled = gc == -1 ? false : true
-        this.setState({ paidThroughCard, giftPayEnabled });
+        let giftPayEnabled = gc == -1 ? false : true;
+        let saleCommitTimeStamp = _get(this.props, "selectedSaleTransaction.sale.saleCommitTimeStamp.seconds", 0);
+        let saleDate = new Date(saleCommitTimeStamp * 1000);
+        let diffrenceOfDates = saleDate.getDate() - (new Date()).getDate();
+        console.log(diffrenceOfDates, "########diffrenceOfDates#######");
+        let saleCommitedToday = diffrenceOfDates == 0 ? true : false
+        this.setState({ paidThroughCard, giftPayEnabled, saleCommitedToday, paymentReferenceNumber });
         this.props.dispatch(commonActionCreater({}, 'RESET_REFUND_REDUCER'));
+
 
     };
 
@@ -432,8 +445,15 @@ class RefundDialogue extends React.Component {
                             fullWidth
                         />
                     </div>
-                    <span onClick={this.reqPaymentByCard} className="pay-button flex-row justify-center align-center">
-                        Void</span>
+                    {
+                        this.state.cardLoading ?
+                            <div>Loading...</div> :
+                            <React.Fragment>
+                                {this.state.saleCommitedToday ?
+                                    <span onClick={this.triggerFreedomPayRefund} className="pay-button flex-row justify-center align-center">Void</span> :
+                                    <span onClick={this.triggerFreedomPayRefund} className="pay-button flex-row justify-center align-center">Refund</span>}
+                            </React.Fragment>
+                    }
                     <span onClick={this.reqPaymentByCard} className="pay-button flex-row justify-center align-center">
                         {this.state.paidThroughCard}</span>
                     <CloseIcon
@@ -445,6 +465,61 @@ class RefundDialogue extends React.Component {
                 </div>
             }
         </div>)
+    }
+    makePOSReqObj = () => {
+        let xmlBodyStr;
+        if (this.state.saleCommitedToday) {
+            xmlBodyStr = `<POSRequest>\
+            <RequestType>Void</RequestType>\
+            <TokenType>2</TokenType>\
+            <RequestId>${_get(this.state,'paymentReferenceNumber')}</RequestId>\
+            <ClientEnvironment>${localStorage.getItem('freedomPayClientEnvironment')}</ClientEnvironment>\
+            <StoreId>${localStorage.getItem('freedomPayStoreId')}</StoreId>\
+            <TerminalId>${localStorage.getItem('freedomPayTerminalId')}</TerminalId>\
+            <MerchantReferenceCode>${localStorage.getItem('merchantReferenceCode')}</MerchantReferenceCode>\
+            <InvoiceNumber>174211</InvoiceNumber>\
+            <WorkstationId>${localStorage.getItem('freedomPayWorkstationId')}</WorkstationId>\
+            <Recurring p2:nil="true" xmlns:p2="http://www.w3.org/2001/XMLSchema-instance" />\
+          </POSRequest>`;
+        }
+        else {
+
+        }
+        return xmlBodyStr;
+    }
+    triggerFreedomPayRefund = () => {
+        this.setState({ cardLoading: true })
+        let POSReqObj = this.makePOSReqObj();
+        request
+            .post(localStorage.getItem('freedomPayClientUrl'))
+            .send(POSReqObj) // sends a JSON post body
+            .then(res => {
+                this.setState({ cardLoading: false })
+                var json = convert.xml2json(res.text, { compact: true, spaces: 4 });
+                let responseObj = JSON.parse(json);
+                let POSResponse = _get(responseObj, 'POSResponse');
+                console.log(POSResponse, "POSResponse");
+                // if (_get(POSResponse, 'Decision._text') == 'A' && _get(POSResponse, 'ErrorCode._text') == '100') {
+                //     this.posResponseSuccess(res.text, POSResponse, false, 1);
+                //     return;
+                // }
+                // //if error has text msgs then show the code
+                // if (_get(POSResponse, 'ErrorCode._text')) {
+                //     if (_get(POSResponse, "Message._text")) {
+                //         let errMsg = `Error Occured with code:${POSResponse.ErrorCode._text}(${_get(POSResponse, "Message._text")})`;
+                //         this.posResponseSuccess(res.text, POSResponse, true, 1, errMsg)
+                //         return;
+                //     }
+                //     //if error dont have the msg then codes giving the msgs
+                //     let errorObj = codes(POSResponse.ErrorCode._text, true, 1);
+                //     let errMsg = `Error Occured with code:${POSResponse.ErrorCode._text}(${_get(errorObj, 'descripton')})`
+                //     this.posResponseSuccess(res.text, POSResponse, true, 1, errMsg)
+                // }
+            }).catch(err => {
+                // showErrorAlert({ dispatch: this.props.dispatch, error: err.message })
+                this.setState({ cardLoading: false })
+
+            });
     }
 
 
@@ -584,7 +659,7 @@ class RefundDialogue extends React.Component {
                                                 variant="contained"
                                                 color="primary">Cash</div>
                                             <div
-                                                className={(this.props.remainingAmount == 0 || this.state.paidThroughCard <= 0) ? 'disable-button refund-method-btn' : 'refund-method-btn'}
+                                                // className={(this.props.remainingAmount == 0 || this.state.paidThroughCard <= 0) ? 'disable-button refund-method-btn' : 'refund-method-btn'}
                                                 onClick={this.handleRefundClick("cardRefund")}
                                                 variant="contained"
                                                 color="primary">Card</div>
