@@ -8,6 +8,9 @@ import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import moment from 'moment';
 import _get from 'lodash/get';
+import Button from "@material-ui/core/Button";
+import ReactToPrint from 'react-to-print';
+import RefundPrintView from './RefundPrintView';
 
 const styles = theme => ({
   root: {
@@ -38,17 +41,17 @@ class RefundHistory extends React.Component {
   showItemList = () => {
     let saleItems = _get(this.props.data, "returnItems", []);
     let saleItemResp = saleItems.map((saleItem, index) => {
-        return (<tr>
-            <td>{_get(saleItem, "productId", '')}</td>
-            <td>{_get(saleItem, "qty", 0)}</td>
-            <td>{_get(saleItem, "itemRefundEffectiveTotal.amount", 0)}</td>
+      return (<tr>
+        <td>{_get(saleItem, "returnProduct.name", '')}</td>
+        <td>{_get(saleItem, "qty", 0)}</td>
+        <td>{_get(saleItem, "itemRefundEffectiveTotal.amount", 0)}</td>
 
-        </tr>)
+      </tr>)
     })
     return (
-        <React.Fragment>
-            {saleItemResp}
-        </React.Fragment>
+      <React.Fragment>
+        {saleItemResp}
+      </React.Fragment>
     )
   }
 
@@ -60,28 +63,45 @@ class RefundHistory extends React.Component {
     return (
       <ExpansionPanel expanded={expanded === 'panel1'} onChange={this.handleChange('panel1')}>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography className={classes.heading}>{moment.utc(_get(data,'timestamp.seconds',0) * 1000).format('DD/MM/YYYY hh:mm:ss')}</Typography>
-          <Typography className={classes.secondaryHeading}>Refund Date: {_get(data,'refundTotal.amount',0).toFixed(2)}</Typography>
+          <Typography className={classes.secondaryHeading}>Refund Date:</Typography>
+          <Typography className={classes.heading}>{moment.utc(_get(data, 'timestamp.seconds', 0) * 1000).format('DD/MM/YYYY hh:mm:ss')}</Typography>
+          <Typography className={classes.secondaryHeading}>   Refund Amount:</Typography>
+          <Typography className={classes.heading}>{_get(data, 'refundTotal.amount', 0).toFixed(2)}</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
           <Typography>
             <div className="mui-row" style={{ paddingLeft: '5%', paddingRight: '6%' }}>
-                <table className="mui-table mui-table--bordered">
-                    <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Qty</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {this.showItemList()}
-                    </tbody>
-                </table>
+              <table className="mui-table mui-table--bordered">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {this.showItemList()}
+                </tbody>
+              </table>
             </div>
-            </Typography>
+            <div>
+              <ReactToPrint
+                trigger={() => <Button variant="contained" color="primary">Print Refund Receipt</Button>}
+                content={() => this.printElementRef}
+              />
+            </div>
+            <div style={{ display: "none" }}>
+              <RefundPrintView
+                ref={el => this.printElementRef = el}
+                store={this.props.store}
+                selectedOrder={this.props.selectedOrder}
+                logo={this.props.logo}
+                data={this.props.data}
+              />
+            </div>
+          </Typography>
         </ExpansionPanelDetails>
-      </ExpansionPanel>
+      </ExpansionPanel >
     )
   }
 

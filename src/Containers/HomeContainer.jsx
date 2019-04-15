@@ -3,6 +3,7 @@ import { Detector } from 'react-detect-offline';
 import moment from "moment";
 /* Lodash Imports */
 import _get from 'lodash/get';
+import _set from 'lodash/set';
 import _isEmpty from 'lodash/isEmpty';
 import _find from 'lodash/find'
 /* Material Icons */
@@ -194,6 +195,13 @@ class HomeContainer extends React.Component {
 
     handleClose = (name) => {
         this.setState({ [name]: false });
+        if(name = 'openHistoryDialogue'){
+            this.setState({
+                historySidebarItems: [],
+                selectedSaleTransaction: null,
+                historySidebarLoading: false 
+            })
+        }
     };
     handleClickOpenSessionContainer = () => {
         this.setState({ openSessionContainer: true });
@@ -575,20 +583,15 @@ class HomeContainer extends React.Component {
                         <HistoryDialogue
                             handleSidebarPopulate={(limit, skip, timeFrom, timeTo) => this.handleTransactionPopulate(limit, skip, timeFrom, timeTo)}
                             handleSearch={this.handleTransactionSearch}
-
-
                             historySidebarItems={this.state.historySidebarItems}
                             selectedSaleTransaction={this.state.selectedSaleTransaction}
                             historySidebarLoading={this.state.historySidebarLoading}
-
-
                             handleClickOpen={() => this.handleClickOpen('openHistoryDialogue')}
                             handleClose={() => this.handleClose('openHistoryDialogue')}
                             open={this.state.openHistoryDialogue}
                             dispatch={dispatch}
                         /> : null
                 }
-
                 {
                     this.state.openCartOnHoldOrClear ?
                         <AlertCartClear
@@ -749,7 +752,7 @@ const updateTimeStampAndDbForInventory = async (res, dispatch, extraArgs) => {
     let updatedInventory = _get(res, 'data', []) || [];
     let promiseArray = updatedInventory.map(async (product, index) => {
         let productObj = await productsdb.get(product._id);
-        productObj.inventory.quantity = _get(product, 'inventory.quantity', 0);
+        _set(productObj,'inventory.quantity',_get(product, 'inventory.quantity', 0));
         return productObj
     });
     Promise.all(promiseArray).then(async (updatedInventoryWith_Rev) => {
@@ -831,7 +834,7 @@ const pollingWrapper = async (propsOfComp, dispatch) => {
 }
 
 
-HomeContainer = pollingHoc(30 * 60 * 1000, pollingWrapper)(HomeContainer)
+HomeContainer = pollingHoc(60 * 1000, pollingWrapper)(HomeContainer)
 
 
 export default connect(mapStateToProps)(HomeContainer)

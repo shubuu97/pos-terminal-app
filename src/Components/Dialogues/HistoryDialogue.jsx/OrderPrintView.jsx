@@ -34,7 +34,7 @@ render() {
     return (
         <div style={{padding: "50px"}} >
             <HandlePrint
-                logo={localStorage.getItem('storeLogo')}
+                logo={this.props.logo}
                 type="Order History"
                 cashierName={_get(selectedOrder, 'operator.person.firstName') + ' ' + _get(selectedOrder, 'operator.person.lastName')}
                 orderId={_get(selectedOrder, 'sale.id', '')}

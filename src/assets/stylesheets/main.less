@@ -221,7 +221,7 @@ p {
 }
 
 .ml-10{
-    margin-left: 10px;
+    margin-left: 10px !important;
 }
 
 .m-10 {
@@ -2095,7 +2095,6 @@ p {
     .card-title{
         font-size: 1.3em;
         color: @softer-text;
-        padding-bottom: 10px;
         font-weight: bold;
     }
     .refund-step-1{
@@ -2107,12 +2106,68 @@ p {
             font-size: 1.2em
         }
     }
+    .refund-step-2{
+        .title{
+            min-height: 50px;
+            justify-content: center;
+            margin: 2px;
+            height: 70px;
+            line-height: 18px;
+            background: @primary;
+            color: @primary-text;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            flex: 1;
+            justify-content: space-around;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 8px;
+            padding: 0 5px;
+
+        }
+        .refund-method-btn{
+            min-height: 50px;
+            justify-content: center;
+            margin: 2px;
+            border-bottom: solid 3px #8dc4de;
+            height: 70px;
+            line-height: 18px;
+            text-align: center;
+            background: #beeaff;
+            position: relative;
+            box-sizing: border-box;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            flex: 1;
+            justify-content: space-around;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+        .info-title{
+            font-size: 0.9em;
+            color: rgba(0,0,0,0.7);
+        }
+        .info-value{
+            font-size: 1.2em;
+            color: rgba(0,0,0,0.8);
+        }
+        .payment-title{
+            font-size: 1.2em;
+            font-weight: bold;
+            color: rgba(0,0,0,0.6)
+        }
+    }
 
     .refund-action-section{
-        align-self: flex-end;
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
         height: 20%;
         .action-btn{
-            width: 20%;
+            width: 10%;
             background-color: #0f8fad;
             box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
             border-radius: 5px;

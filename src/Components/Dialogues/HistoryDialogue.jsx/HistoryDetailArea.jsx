@@ -118,7 +118,7 @@ class HistoryDetailArea extends React.Component {
                 </div>
                 <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Returned Amount: `}</span>
-                    <span className='summary-value'>{_get(selectedOrder, 'sale.totalRefundAmount.currencyCode', '$') + _get(selectedOrder, 'sale.totalRefundAmount.amount', '0')}</span>
+                    <span className='summary-value'>{_get(selectedOrder, 'sale.totalRefundAmount.currencyCode', '$') + this.calcReturnedAmountTotal()}</span>
                 </div>
                 <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Total Paid: `}</span>
@@ -165,6 +165,35 @@ class HistoryDetailArea extends React.Component {
         // pri.focus();
         // pri.print();
     }
+    calcReturnedAmountTotal = () => {
+        let returns = _get(this.props, "selectedSaleTransaction.sale.returns", []);
+        let TotalRefundAmount = returns.reduce((acc, returnObj) => {
+            return (acc + returnObj.refundTotal.amount)
+        }, 0);
+        return TotalRefundAmount;
+
+    }
+
+    handleRefundButton = () => {
+        let saleItems = _get(this.props, "selectedSaleTransaction.sale.saleItems", []);
+       saleItems =  saleItems.filter((saleItem, index)=>{
+           debugger
+        if (saleItem.saleType == 2) {
+            return false
+        }
+        return true
+    })
+    debugger
+        let saleItemResp = saleItems.every((saleItem, index) => {
+            let returnableQty = _get(saleItem, "qty", 0) - _get(saleItem, "returnQty", 0)
+            if(returnableQty>0){
+                return true
+            }
+            return false
+        });
+
+        return saleItemResp
+    }
 
     render() {
         const { store } = this.props;
@@ -201,15 +230,19 @@ class HistoryDetailArea extends React.Component {
                                 trigger={() => <div className='action-btn flex-row justify-center align-center'>Re-Print</div>}
                                 content={() => this.printElementRef}
                             />
-                            <div className='action-btn flex-row justify-center align-center' onClick={() => { this.setState({ openRefund: true }) }}>Refund</div>
+                            <div className={this.handleRefundButton() ? ' action-btn flex-row justify-center align-center' : 'disable-button action-btn flex-row justify-center align-center'} onClick={() => { this.setState({ openRefund: true }) }}>Refund</div>
                         </div>
                     </div>
                 </div>
 
                 {/* Refund History Area */}
-                {_get(selectedOrder.sale,'returns',[]).map(returnData => {
+                {_get(selectedOrder.sale, 'returns', []).map(returnData => {
                     return <div className='refund-detail-section'>
-                        <RefundHistory data={returnData} />
+                        <RefundHistory
+                            store={store}
+                            selectedOrder={selectedOrder}
+                            logo={this.state.logo}
+                            data={returnData} />
                     </div>
                 })
                 }
@@ -220,7 +253,9 @@ class HistoryDetailArea extends React.Component {
                         <RefundDialogue
                             open={this.state.openRefund}
                             handleRefundClose={this.handleRefundClose}
+                            handleHistoryClose={this.props.handleHistoryClose}
                             selectedSaleTransaction={this.props.selectedSaleTransaction}
+                            logo={this.state.logo}
                         /> : null
                 }
                 <div style={{ display: "none" }}>

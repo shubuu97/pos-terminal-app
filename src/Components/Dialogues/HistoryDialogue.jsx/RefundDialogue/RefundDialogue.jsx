@@ -27,6 +27,8 @@ import genericPostData from '../../../../Global/dataFetch/genericPostData';
 import { postData } from '../../../../Redux/postAction';
 import { APPLICATION_BFF_URL } from '../../../../Redux/urlConstants';
 import showMessage from '../../../../Redux/toastAction';
+import HandlePrint from '../../../../Global/PosFunctions/handlePrint';
+import RefundPrintView from '../RefundPrintView';
 
 let regex = /^\d*[\.\d]+$/;
 
@@ -42,7 +44,8 @@ class RefundDialogue extends React.Component {
         success: false,
         step: 1,
         returnItems: [],
-        totalRefundAmount: 0
+        totalRefundAmount: 0,
+        returnObj: null
     };
 
     componentDidMount() {
@@ -55,10 +58,6 @@ class RefundDialogue extends React.Component {
         this.props.dispatch(commonActionCreater({}, 'RESET_REFUND_REDUCER'));
 
     };
-    componentWillUnmount() {
-
-
-    }
 
     handleClose = () => {
         this.setState({ open: false });
@@ -214,7 +213,7 @@ class RefundDialogue extends React.Component {
             refundTaxTotal: { currencyCode: "$", amount: refundTaxTotal },
             refundTotal: { currencyCode: "$", amount: refundTotal },
         }
-        genericPostData({
+        let saleRefundRes = await genericPostData({
             dispatch: this.props.dispatch,
             reqObj,
             url: "Sale/CreateReturnTransaction",
@@ -227,36 +226,57 @@ class RefundDialogue extends React.Component {
             successCb: this.saleRefundSuccess,
             errorCb: this.saleRefundError
         })
+
+        return saleRefundRes;
     }
 
-    handleProceed = async () => {
-        if (this.state.step + 1 == 2) {
-            this.props.dispatch(commonActionCreater({amount: this.state.totalRefundAmount}, 'RESET_REFUND_REDUCER'));
-            }
-        if (this.state.step + 1 == 3) {
+    handleProceed = () => {
+        debugger
+        let nextStep = this.state.step + 1
+        if (nextStep == 2) {
+            this.props.dispatch(commonActionCreater({ amount: this.state.totalRefundAmount }, 'RESET_REFUND_REDUCER'));
+            this.setState({
+                step: this.state.step + 1
+            })
+        }
+        else if (nextStep == 3) {
             this.refundSale().then((data) => {
                 if (_get(data, 'error')) {
                     this.props.dispatch(showMessage({ text: _get(data, 'error'), isSuccess: false }));
                     setTimeout(() => {
                         this.props.dispatch(showMessage({}));
                     }, 6000);
-
                     return;
                 }
+                debugger
+                let length = _get(data, 'sale.returns', []).length;
+                let returnObj = _get(data, `sale.returns[${length - 1}]`, {})
+                console.log(returnObj, 'mayuk')
                 this.setState({
-                    step: this.state.step + 1
+                    returnObj,
+                    print:true
                 })
             })
                 .catch((err) => {
-                    //retry code will come
+                    this.props.dispatch(showMessage({ text: _get(err, 'error'), isSuccess: false }));
+                    setTimeout(() => {
+                        this.props.dispatch(showMessage({}));
+                    }, 6000);
                 })
         }
-        else {
-            this.setState({
-                step: this.state.step + 1
-            })
-        }
 
+    }
+
+    handlePrint = () => {
+        var content = document.getElementById('printarea');
+        var pri = document.getElementById('ifmcontentstoprint').contentWindow;
+        pri.document.open();
+        pri.document.write(content.innerHTML);
+        pri.document.close();
+        pri.focus();
+        pri.print();
+        this.props.handleRefundClose();
+        window.location.reload();
     }
 
     handleDecreseQuantity = (index, returnableQty) => {
@@ -379,6 +399,7 @@ class RefundDialogue extends React.Component {
                             margin="normal"
                             variant="outlined"
                             fullWidth
+                            className='ml-10'
                         />
                     </div>
                     <CloseIcon
@@ -513,6 +534,8 @@ class RefundDialogue extends React.Component {
     }
 
     render() {
+        if(this.state.print)
+        debugger;
         return (
             <div>
                 <Dialog
@@ -551,46 +574,71 @@ class RefundDialogue extends React.Component {
                         {/* Step 2 */}
                         {
                             this.state.step == 2 ?
-                                <div className='flex-row'>
-                                    <div className='halfwidth'>
-                                        <span className='card-title'>Refund Methods</span>
-                                        Total Refund Amount:<span className='card-title'>{this.state.totalRefundAmount}</span><br />
-                                        <span className='card-title'>{this.props.remainingAmount}</span>
-                                        <div className="d-flex justify-space-evenly">
-                                            <Button disabled={this.props.remainingAmount == 0} onClick={this.handleRefundClick("cashRefund")} variant="contained" color="primary">Cash</Button>
-                                            {this.state.paidThroughCard > 0 ? <Button disabled={this.props.remainingAmount == 0} onClick={this.handleRefundClick("cardRefund")} variant="contained" color="primary">Card</Button> : null}
-                                            {this.state.giftPayEnabled ? <Button disabled={this.props.remainingAmount == 0} onClick={this.handleRefundClick("giftRefund")} variant="contained" color="primary">Gift Card</Button> : null}
+                                <div className='refund-step-2 flex-row justify-space-between'>
+                                    <div style={{ width: '63%' }}>
+                                        <div className='flex-row align-center'>
+                                            <span className='title'>Refund Methods</span>
+                                            <div
+                                                className={this.props.remainingAmount == 0 ? 'disable-button refund-method-btn' : 'refund-method-btn'}
+                                                onClick={this.handleRefundClick("cashRefund")}
+                                                variant="contained"
+                                                color="primary">Cash</div>
+                                            <div
+                                                className={(this.props.remainingAmount == 0 || this.state.paidThroughCard <= 0) ? 'disable-button refund-method-btn' : 'refund-method-btn'}
+                                                onClick={this.handleRefundClick("cardRefund")}
+                                                variant="contained"
+                                                color="primary">Card</div>
+                                            {
+                                                this.state.giftPayEnabled ?
+                                                    <div
+                                                        className={this.props.remainingAmount == 0 ? 'disable-button refund-method-btn' : 'refund-method-btn'}
+                                                        onClick={this.handleRefundClick("giftRefund")}
+                                                        variant="contained"
+                                                        color="primary">Gift Card</div> : null
+                                            }
+
                                         </div>
-                                        <div>
-                                            {this.state.cashRefund ? this.cashRefundComponent() : null}
+                                        <div className='flex-row fwidth mt-10'>
+                                            <div className='flex-column pl-5 halfwidth'>
+                                                <span className='info-title'>Total Refund Amount</span>
+                                                <span className='info-value'>{this.state.totalRefundAmount}</span>
+                                            </div>
+                                            <div className='flex-column pl-5 halfwidth'>
+                                                <span className='info-title'>Remaining Refund Amount</span>
+                                                <span className='info-value'>{this.props.remainingAmount}</span>
+                                            </div>
                                         </div>
-                                        <div>
-                                            {this.state.cardRefund ? this.cardRefundComponent() : null}
-                                        </div>
-                                        <div>
-                                            {this.state.giftRefund ? this.giftCardRefundComponent() : null}
+
+                                        <div className='mt-10'>
+                                            <div className='mt-10'>
+                                                {this.state.cashRefund ? this.cashRefundComponent() : null}
+                                            </div>
+                                            <div className='mt-10'>
+                                                {this.state.cardRefund ? this.cardRefundComponent() : null}
+                                            </div>
+                                            <div className='mt-10'>
+                                                {this.state.giftRefund ? this.giftCardRefundComponent() : null}
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className='halfwidth flex-row justify-flex-end'>
-                                        <div className='numpad-global' style={{ width: '70%' }}>
-                                            <div className='card numpad-card' >
-                                                <span className='card-title' style={{ color: '#fff' }}>Numpad</span>
-                                                <div className='flex-row flex-wrap justify-center pt-15'>
-                                                    <div className='key small-key' onClick={this.handleInputChange('1')}>1</div>
-                                                    <div className='key small-key' onClick={this.handleInputChange('2')}>2</div>
-                                                    <div className='key small-key' onClick={this.handleInputChange('3')}>3</div>
-                                                    <div className='key small-key' onClick={this.handleInputChange('4')}>4</div>
-                                                    <div className='key small-key' onClick={this.handleInputChange('5')}>5</div>
-                                                    <div className='key small-key' onClick={this.handleInputChange('6')}>6</div>
-                                                    <div className='key small-key' onClick={this.handleInputChange('7')}>7</div>
-                                                    <div className='key small-key' onClick={this.handleInputChange('8')}>8</div>
-                                                    <div className='key small-key' onClick={this.handleInputChange('9')}>9</div>
-                                                    <div className='key small-key' onClick={this.handleInputChange('.')}>.</div>
-                                                    <div className='key small-key' onClick={this.handleInputChange('0')}>0</div>
-                                                    <div className='key small-key' onClick={this.handleInputChange('<')}>clr</div>
-                                                    <div className='small-key'></div>
-                                                    <div className='key big-key'>Enter</div>
-                                                </div>
+                                    <div className='numpad-global' style={{ width: '35%' }}>
+                                        <div className='card numpad-card' >
+                                            <span className='card-title' style={{ color: '#fff' }}>Numpad</span>
+                                            <div className='flex-row flex-wrap justify-center pt-15'>
+                                                <div className='key small-key' onClick={this.handleInputChange('1')}>1</div>
+                                                <div className='key small-key' onClick={this.handleInputChange('2')}>2</div>
+                                                <div className='key small-key' onClick={this.handleInputChange('3')}>3</div>
+                                                <div className='key small-key' onClick={this.handleInputChange('4')}>4</div>
+                                                <div className='key small-key' onClick={this.handleInputChange('5')}>5</div>
+                                                <div className='key small-key' onClick={this.handleInputChange('6')}>6</div>
+                                                <div className='key small-key' onClick={this.handleInputChange('7')}>7</div>
+                                                <div className='key small-key' onClick={this.handleInputChange('8')}>8</div>
+                                                <div className='key small-key' onClick={this.handleInputChange('9')}>9</div>
+                                                <div className='key small-key' onClick={this.handleInputChange('.')}>.</div>
+                                                <div className='key small-key' onClick={this.handleInputChange('0')}>0</div>
+                                                <div className='key small-key' onClick={this.handleInputChange('<')}>clr</div>
+                                                <div className='small-key'></div>
+                                                <div className='key big-key'>Enter</div>
                                             </div>
                                         </div>
                                     </div>
@@ -598,13 +646,29 @@ class RefundDialogue extends React.Component {
                                 : null
                         }
 
-                        {/* Step 3 */}
+
+                        <iframe id="ifmcontentstoprint" style={{
+                            height: '0px',
+                            width: '0px',
+                            position: 'absolute'
+                        }}></iframe>
+
                         {
-                            this.state.step == 3 ?
-                                <div className='refund-step-2 flex-column'>
-                                    <span className='card-title'>Success/Faliure</span>
-                                </div> : null
+                                <div id='printarea' className='none'>
+                                    <div>
+                                        <RefundPrintView
+                                            store={this.props.store}
+                                            selectedOrder={this.props.selectedSaleTransaction}
+                                            logo={this.props.logo}
+                                            data={this.state.returnObj}
+                                            print={this.state.print ? true : false}
+                                            handlePrint={this.handlePrint}
+                                        />
+                                    </div>
+                                </div>
                         }
+
+
 
 
                         {
@@ -624,13 +688,23 @@ class RefundDialogue extends React.Component {
 }
 
 function mapStateToProps(state) {
+    let { storeData } = state;
     let cashAmount = _get(state, 'RefundPaymentDetails.cashAmount');
     let cardAmount = _get(state, 'RefundPaymentDetails.cardAmount');
     let giftCardAmount = _get(state, 'RefundPaymentDetails.giftCardAmount');
-
+    let store = storeData.lookUpData || {};
     let remainingAmount = _get(state, 'RefundPaymentDetails.remainingAmount')
     let cardRefrenceId = _get(state, 'RefundPaymentDetails.cardRefrenceId');
     let paymentMethods = _get(state, "storeData.lookUpData.store.paymentMethods", []);
-    return { cashAmount, cardAmount, giftCardAmount, remainingAmount, cardRefrenceId, paymentMethods }
+
+    return {
+        cashAmount,
+        cardAmount,
+        giftCardAmount,
+        remainingAmount,
+        store,
+        cardRefrenceId,
+        paymentMethods
+    }
 }
 export default connect(mapStateToProps)(RefundDialogue);
