@@ -527,8 +527,7 @@ class HomeContainer extends React.Component {
                         cart={cart}
                         dispatch={dispatch}
                         history={this.props.history}
-                        handleGiftCard={() => this.handleGiftCard(true)}
-                        handleMiscProduct={() => this.handleMiscProduct(true)}
+                        paymentMethods={this.props.paymentMethods}
                         // ! Actions
                         handleTransactionPopulate = {this.handleTransactionPopulate}
                         handleHistoryOpen={this.handleTerminalHistoryOpen}
@@ -540,6 +539,8 @@ class HomeContainer extends React.Component {
                         handleSetting={() => this.setState({ openSetting: true })}
                         getProductData={this.getProductData}
                         handleLogout={this.handleLogout}
+                        handleGiftCard={() => this.handleGiftCard(true)}
+                        handleMiscProduct={() => this.handleMiscProduct(true)}
                     />
                 </Products>
                 <CheckoutSection
@@ -709,13 +710,15 @@ function mapStateToProps(state) {
     let holdCartData = _get(cartHoldData, 'holdedItems', []);
     let customer = _get(cart, 'customer', {});
     let lockState = _get(lockTerminal, 'lookUpData.lock', false);
+    let paymentMethods = _get(state, 'storeData.lookUpData.store.paymentMethods')
 
     return {
         productList,
         cart,
         holdCartData,
         customer,
-        lockState
+        lockState,
+        paymentMethods
     }
 }
 

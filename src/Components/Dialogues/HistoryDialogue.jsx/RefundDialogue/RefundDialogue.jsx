@@ -254,7 +254,7 @@ class RefundDialogue extends React.Component {
                 console.log(returnObj, 'mayuk')
                 this.setState({
                     returnObj,
-                    print:true
+                    print: true
                 })
             })
                 .catch((err) => {
@@ -534,8 +534,8 @@ class RefundDialogue extends React.Component {
     }
 
     render() {
-        if(this.state.print)
-        debugger;
+        if (this.state.print)
+            debugger;
         return (
             <div>
                 <Dialog
@@ -589,12 +589,13 @@ class RefundDialogue extends React.Component {
                                                 variant="contained"
                                                 color="primary">Card</div>
                                             {
-                                                this.state.giftPayEnabled ?
-                                                    <div
-                                                        className={this.props.remainingAmount == 0 ? 'disable-button refund-method-btn' : 'refund-method-btn'}
-                                                        onClick={this.handleRefundClick("giftRefund")}
-                                                        variant="contained"
-                                                        color="primary">Gift Card</div> : null
+                                                this.props.paymentMethods.findIndex((m) => m == 2) > 0 ?
+                                                    this.state.giftPayEnabled ?
+                                                        <div
+                                                            className={this.props.remainingAmount == 0 ? 'disable-button refund-method-btn' : 'refund-method-btn'}
+                                                            onClick={this.handleRefundClick("giftRefund")}
+                                                            variant="contained"
+                                                            color="primary">Gift Card</div> : null : null
                                             }
 
                                         </div>
@@ -654,18 +655,18 @@ class RefundDialogue extends React.Component {
                         }}></iframe>
 
                         {
-                                <div id='printarea' className='none'>
-                                    <div>
-                                        <RefundPrintView
-                                            store={this.props.store}
-                                            selectedOrder={this.props.selectedSaleTransaction}
-                                            logo={this.props.logo}
-                                            data={this.state.returnObj}
-                                            print={this.state.print ? true : false}
-                                            handlePrint={this.handlePrint}
-                                        />
-                                    </div>
+                            <div id='printarea' className='none'>
+                                <div>
+                                    <RefundPrintView
+                                        store={this.props.store}
+                                        selectedOrder={this.props.selectedSaleTransaction}
+                                        logo={this.props.logo}
+                                        data={this.state.returnObj}
+                                        print={this.state.print ? true : false}
+                                        handlePrint={this.handlePrint}
+                                    />
                                 </div>
+                            </div>
                         }
 
 
