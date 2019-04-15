@@ -15,7 +15,8 @@ import ZReport from './ZReport';
 import DialogHoc from '../../Global/Components/HOC/CommonDialogHoc';
 import Pouchdb from 'pouchdb';
 import SyncBeforeSession from './SyncBeforeSessionEnd';
-let transactiondb = new Pouchdb('transactiondb')
+let transactiondb = new Pouchdb('transactiondb');
+
 let ZReportDialog = DialogHoc(ZReport);
 
 class SessionDetail extends React.Component {
@@ -111,8 +112,8 @@ class SessionDetail extends React.Component {
             });
             if (_get(res, 'rows.length', 0) > 0) {
                 this.setState({ syncBeforeEndSession: true, showReasonModal: false });
-                if(!this.intervalId)
-                this.intervalId = setInterval(this.handleEndSession, 5000);
+                if (!this.intervalId)
+                    this.intervalId = setInterval(this.handleEndSession, 5000);
             }
             else {
                 clearInterval(this.intervalId);
@@ -293,7 +294,16 @@ class SessionDetail extends React.Component {
     printZReportRecipet = () => {
         this.setState({ showZReportDialog: false, firePrint: true });
     }
-
+    handlePrint = () => {
+        var content = document.getElementById('printarea');
+        var pri = document.getElementById('ifmcontentstoprint').contentWindow;
+        pri.document.open();
+        pri.document.write(content.innerHTML);
+        pri.document.close();
+        pri.focus();
+        pri.print();
+        window.location.reload();
+    }
 
     render() {
         let manager = _get(this.state, 'manager');
@@ -403,6 +413,7 @@ class SessionDetail extends React.Component {
                     <div className='mui-row'>
                         <div className="mui-col-md-12 text-center">
                             <Button
+                                onClick={this.handlePrint}
                                 variant='outlined'
                                 color='primary' style={{ marginRight: "1%" }}>Open Cash Drawer</Button>
                             <Button
@@ -466,7 +477,14 @@ class SessionDetail extends React.Component {
                     open={this.state.syncBeforeEndSession}
                     handleClose={() => this.setState({ syncBeforeEndSession: false })}
                 />
-
+                <iframe id="ifmcontentstoprint" style={{
+                    height: '0px',
+                    width: '0px',
+                    position: 'absolute'
+                }}></iframe>
+                <div style={{ display: 'none' }}>
+                    <div id="printarea"><p>{moment().format('MM-DD-YYYY,hh:mm:ss')}</p></div>
+                </div>
             </div>
         )
     }
