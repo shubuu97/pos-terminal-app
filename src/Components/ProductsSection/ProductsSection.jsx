@@ -301,12 +301,18 @@ class ProductsSection extends React.Component {
         }
     }
 
-    handleHideWhenOffline = ( online , onlineContent, offlineContent) => {
+    handleHideWhenOffline = (online, onlineContent, offlineContent) => {
         if (online) {
             return onlineContent
         }
         else
             return offlineContent
+    }
+    componentDidUpdate() {
+        if (this.props.resetProduct == true) {
+            this.setState({ clearInput: true });
+            this.props.dispatch(commonActionCreater(false, 'RESET_PRODUCT'));
+        }
     }
 
     render() {
@@ -335,14 +341,14 @@ class ProductsSection extends React.Component {
                         />
                         <div className="header-right-sec">
                             <ul>
-                                 {this.handleHideWhenOffline(
-                                     !this.props.offline ,
+                                {this.handleHideWhenOffline(
+                                    !this.props.offline,
                                     [<li onClick={this.props.handleMiscProduct}><LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>],
                                     [<li className="disable-button" onClick={this.props.handleMiscProduct}><LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>]
                                 )}
 
-                                 {this.handleHideWhenOffline(
-                                    !this.props.offline ,
+                                {this.handleHideWhenOffline(
+                                    !this.props.offline,
                                     [<li onClick={this.props.handleGiftCard}><CardGiftCard style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>],
                                     [<li className="disable-button" onClick={this.props.handleGiftCard}><CardGiftCard style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>]
                                 )}
@@ -387,6 +393,7 @@ const mapStateToProps = state => {
     let pageNo = _get(productList, 'lookUpData.pagination.pageNo', '')
     let startVal = _get(productList, 'lookUpData.pagination.startVal', '')
     let endVal = _get(productList, 'lookUpData.pagination.endVal', '')
+    let resetProduct = _get(state, 'resetProduct.lookUpData')
     console.log(lastItemId, 'lastItemId', firstItemId, 'firstItemId', pageNo, 'pageNo', startVal, 'startVal', endVal, 'endVal')
     return {
         productCount,
@@ -398,6 +405,7 @@ const mapStateToProps = state => {
         pageNo,
         startVal,
         endVal,
+        resetProduct
     }
 }
 

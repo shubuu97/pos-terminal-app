@@ -7,6 +7,9 @@ import Breadcrumbs from '@material-ui/lab/Breadcrumbs';
 import Chip from '@material-ui/core/Chip';
 import Avatar from '@material-ui/core/Avatar';
 import HomeIcon from '@material-ui/icons/Home';
+import { connect } from 'react-redux';
+import { commonActionCreater } from '../../../Redux/commonAction';
+import _get from 'lodash/get';
 
 const styles = theme => ({
   root: {
@@ -42,32 +45,53 @@ CustomBreadcrumb.propTypes = {
 
 const StyledBreadcrumb = withStyles(styles)(CustomBreadcrumb);
 
-function CustomizedBreadcrumbs(props) {
+class CustomizedBreadcrumbs extends React.Component {
 
-  const { classes, selectedRootCategory, selectedSubCategory, selectedLeafCategory, selectedCurrentCategory} = props;
-  return (
-    <Paper className={classes.root}>
-      <Breadcrumbs arial-label="Breadcrumb">
+  constructor(props) {
+    super(props)
+    this.state = {};
+  }
 
-        <StyledBreadcrumb
+  componentDidUpdate() {
+    if (this.props.resetCategory == true) {
+      debugger;
+      this.props.homeClickHandler()
+      this.setState({ clearCategory: true });
+      this.props.dispatch(commonActionCreater(false, 'RESET_CATEGORY'));
+    }
+  }
+  render() {
+    const { classes, selectedRootCategory, selectedSubCategory, selectedLeafCategory, selectedCurrentCategory } = this.props;
+    let props = this.props;
+    const {clearCategory} = this.state
+    return (
+      <Paper className={classes.root}>
+        <Breadcrumbs arial-label="Breadcrumb">
+
+          <StyledBreadcrumb
             label="Home"
             avatar={
-            <Avatar className={classes.avatar}>
-              <HomeIcon />
-            </Avatar>}
+              <Avatar className={classes.avatar}>
+                <HomeIcon />
+              </Avatar>}
             onClick={() => props.homeClickHandler()}
-        />
-
-        {selectedCurrentCategory.categoryType >= 0 && <StyledBreadcrumb label={selectedRootCategory.name} onClick={() => props.categoryClickHandler(selectedRootCategory)} />}
-        {selectedCurrentCategory.categoryType >= 1 && <StyledBreadcrumb label={selectedSubCategory.name} onClick={() => props.categoryClickHandler(selectedSubCategory)} />}
-        {selectedCurrentCategory.categoryType >= 2 && <StyledBreadcrumb label={selectedLeafCategory.name} />}
-      </Breadcrumbs>
-    </Paper>
-  );
+          />
+            {selectedCurrentCategory.categoryType >= 0 &&!clearCategory && <StyledBreadcrumb label={selectedRootCategory.name} onClick={() => props.categoryClickHandler(selectedRootCategory)} />}
+            {selectedCurrentCategory.categoryType >= 1 &&!clearCategory && <StyledBreadcrumb label={selectedSubCategory.name} onClick={() => props.categoryClickHandler(selectedSubCategory)} />}
+            {selectedCurrentCategory.categoryType >= 2 &&!clearCategory && <StyledBreadcrumb label={selectedLeafCategory.name} />}
+        </Breadcrumbs>
+      </Paper>
+    );
+  }
 }
 
 CustomizedBreadcrumbs.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(CustomizedBreadcrumbs);
+function mapStateToProps(state) {
+  let resetCategory = _get(state, 'resetCategory.lookUpData')
+  return { resetCategory }
+}
+
+export default connect(mapStateToProps)(withStyles(styles)(CustomizedBreadcrumbs));
