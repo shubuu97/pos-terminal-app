@@ -1,5 +1,6 @@
 
 import * as COMMON_CONSTANTS from '../constants/common';
+import { APPLICATION_BFF_URL } from '../Redux/urlConstants';
 
 var status='';
 
@@ -23,11 +24,11 @@ const receiveAddressFromZip = (subreddit, json, status )=> ({
     receivedAt: Date.now()
 })
 
-export const fetchAddressFromZip = (subreddit, data) => dispatch => {
+export const fetchAddressFromZip = (subreddit, url, data) => dispatch => {
     
     dispatch(requestAddressFromZip(subreddit));
     
-    fetch("http://13.126.59.19:20029/api/Reference/GetZipCodeData", { method: 'POST',
+    fetch(`${APPLICATION_BFF_URL}${url}`, { method: 'POST',
     headers: {
         "Content-type": "application/json",
         "Authorization":`Bearer ${localStorage.getItem("Token")}`

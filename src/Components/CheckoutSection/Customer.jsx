@@ -77,7 +77,8 @@ class Customer extends React.Component {
             zipCode: postalCode,
             countryShortCode: "US"
         }
-        this.props.dispatch(fetchAddressFromZip('', reqObj))
+        let url = 'Reference/GetZipCodeData'
+        this.props.dispatch(fetchAddressFromZip('', url, reqObj))
     }
 
     componentWillReceiveProps(props) {
