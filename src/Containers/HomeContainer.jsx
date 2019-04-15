@@ -3,6 +3,7 @@ import { Detector } from 'react-detect-offline';
 import moment from "moment";
 /* Lodash Imports */
 import _get from 'lodash/get';
+import _set from 'lodash/set';
 import _isEmpty from 'lodash/isEmpty';
 import _find from 'lodash/find'
 /* Material Icons */
@@ -751,7 +752,7 @@ const updateTimeStampAndDbForInventory = async (res, dispatch, extraArgs) => {
     let updatedInventory = _get(res, 'data', []) || [];
     let promiseArray = updatedInventory.map(async (product, index) => {
         let productObj = await productsdb.get(product._id);
-        productObj.inventory.quantity = _get(product, 'inventory.quantity', 0);
+        _set(productObj,'inventory.quantity') =  _get(product, 'inventory.quantity', 0);
         return productObj
     });
     Promise.all(promiseArray).then(async (updatedInventoryWith_Rev) => {
@@ -833,7 +834,7 @@ const pollingWrapper = async (propsOfComp, dispatch) => {
 }
 
 
-HomeContainer = pollingHoc(30 * 60 * 1000, pollingWrapper)(HomeContainer)
+HomeContainer = pollingHoc(60 * 1000, pollingWrapper)(HomeContainer)
 
 
 export default connect(mapStateToProps)(HomeContainer)
