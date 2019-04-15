@@ -39,6 +39,7 @@ class CashPay extends React.Component {
     }
 
     handleCustomerDataSuccess = (data) => {
+        debugger
         this.setState({
             availableRewardPoints: _get(data, 'rewardPoints', 0)
         })
@@ -53,6 +54,9 @@ class CashPay extends React.Component {
         }
         if (points > availableRewardPoints){
             points = availableRewardPoints
+        }
+        if(!regex.test(points)){
+            points = 0
         }
         let loyaltyRedeemAmount = points * _get(this.props, 'RedemptionRules.redemptionMultiplier', 0);
         if (regex.test(loyaltyRedeemAmount)) {
@@ -111,7 +115,7 @@ class CashPay extends React.Component {
                         />
                         <div className='flex-row justify-space-between'>
                             {
-                                this.state.availableRewardPoints ?
+                                this.state.availableRewardPoints >= 0 ?
                                     <div className='mt-10'>
                                         Available Points : {this.state.availableRewardPoints}
                                     </div> : null
