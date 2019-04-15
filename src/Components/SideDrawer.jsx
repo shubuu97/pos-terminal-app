@@ -87,7 +87,7 @@ function TemporaryDrawer(props) {
                 <React.Fragment>
                     {handleHideWhenOffline(
                         { online: !props.offline },
-                        [<ListItem button key={4} onClick={props.handleHistoryOpen}>
+                        [<ListItem button key={4} onClick={()=>{props.handleClickOpenHistory();props.handleTransactionPopulate()}}>
                             <ListItemText primary={'Terminal History'} />
                         </ListItem>],
                         [<ListItem className="disable-button" button key={4} onClick={props.handleHistoryOpen}>
@@ -98,16 +98,8 @@ function TemporaryDrawer(props) {
                 <Divider />
                 <ListItem button key={5} onClick={props.handleClickQuickBook}>
                     <ListItemText primary={'Offline Transactions'} />
-                </ListItem>
+                </ListItem> 
                 <Divider />
-                <ListItem button key={6} onClick={()=>{props.handleClickOpenHistory();props.handleTransactionPopulate()}}>
-                    <ListItemText primary={'History'} />
-                </ListItem>
-                <Divider />
-                {/* <ListItem button key={6} onClick={props.handleSetting}>
-                    <ListItemText primary={'Settings'} />
-                </ListItem>
-                <Divider /> */}
                 <ListItem button key={7} onClick={props.logout}>
                     <ListItemText primary={'Log Out'} />
                 </ListItem>
