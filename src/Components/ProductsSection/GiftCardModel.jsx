@@ -139,6 +139,14 @@ class GiftCardModal extends React.Component {
     }
 
     addGiftCard = (e, index) => {
+        let val = _get(this.state.giftCard,'giftCode','');
+        let url1 = 'GiftCard/GetByCodeAndStore';
+        let reqBody = {
+            storeId: localStorage.getItem('storeId'),
+            code: val,
+        }
+        this.getExistingGiftCard(url1, reqBody, this.handleGetGiftcardDataSuccess, this.handleGetGiftCardDataError);
+
         this.setState({isLoading: true})
         let data = { ...this.state.giftCard };
         if (!data.id) {
@@ -151,43 +159,47 @@ class GiftCardModal extends React.Component {
     }
 
     handleAddToCart = () => {
-        let cartItems = _get(this, 'props.cart.cartItems', []);
-        let doc = {};
-        let isExist = false
-        let check = cartItems.map(item => {
-            if(item.id == this.props.giftCard.id) {
-                isExist = true
-            }
-        })
-        _set(doc, 'product.id', _get(this.props, 'giftCard.id', ''));
-        _set(doc, 'product.isGiftCard', true);
-        _set(doc, 'product.name', _get(this.state, 'giftCard.giftCode', ''));
-        _set(doc, 'product.salePrice.currencyCode', _get(this.state, 'giftCard.value.currencyCode', ''));
-        _set(doc, 'product.salePrice.price', _get(this.state, 'giftCard.value.amount', 0));
-        let data = {
-            id: _get(this.props, 'giftCard.id', ''),
-            value: _get(this.state, 'giftCard.value', {}),
-            doc: doc,
-        }
-        let reqObj
-        if(isExist) {
-            let index = _findIndex(cartItems, ['id', this.props.giftCard.id]);        
-            reqObj = [
-                ...cartItems
-            ]
-            reqObj[index].doc.product.salePrice.price = this.state.giftCard.value.amount;
+        if(this.state.isGiftCodeError) {
+            
         } else {
-            reqObj = [
-                ...cartItems,
-                {
-                    ...data,
-                    qty: 1,
-                    saleType: 1,
+            let cartItems = _get(this, 'props.cart.cartItems', []);
+            let doc = {};
+            let isExist = false
+            let check = cartItems.map(item => {
+                if(item.id == this.props.giftCard.id) {
+                    isExist = true
                 }
-            ];
+            })
+            _set(doc, 'product.id', _get(this.props, 'giftCard.id', ''));
+            _set(doc, 'product.isGiftCard', true);
+            _set(doc, 'product.name', _get(this.state, 'giftCard.giftCode', ''));
+            _set(doc, 'product.salePrice.currencyCode', _get(this.state, 'giftCard.value.currencyCode', ''));
+            _set(doc, 'product.salePrice.price', _get(this.state, 'giftCard.value.amount', 0));
+            let data = {
+                id: _get(this.props, 'giftCard.id', ''),
+                value: _get(this.state, 'giftCard.value', {}),
+                doc: doc,
+            }
+            let reqObj
+            if(isExist) {
+                let index = _findIndex(cartItems, ['id', this.props.giftCard.id]);        
+                reqObj = [
+                    ...cartItems
+                ]
+                reqObj[index].doc.product.salePrice.price = this.state.giftCard.value.amount;
+            } else {
+                reqObj = [
+                    ...cartItems,
+                    {
+                        ...data,
+                        qty: 1,
+                        saleType: 1,
+                    }
+                ];
+            }
+            this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
+            this.props.handleClose();
         }
-        this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
-        this.props.handleClose();
     }
 
     handleBlur = (e) => {
