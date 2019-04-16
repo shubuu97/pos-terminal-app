@@ -62,6 +62,11 @@ const paymentReducer = (state = {
             paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount)
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
             loyaltyRedeem = roundUpAmount(loyaltyRedeem);
+            if (paymentAmount > parseFloat(totalAmount)) {
+                let amountExceeded = paymentAmount - parseFloat(totalAmount);
+                loyaltyRedeem = roundUpAmount(parseFloat(loyaltyRedeem) - parseFloat(amountExceeded));
+                remainingAmount = 0;
+            }
             return (Object.assign({}, state, { loyaltyRedeem, remainingAmount }));
             break;
         case 'CARD_INPUT_HANDLER':
@@ -70,6 +75,11 @@ const paymentReducer = (state = {
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
             cardAmount = roundUpAmount(cardAmount);
             let cardRefrenceId = action.data.cardRefrenceId
+            if (paymentAmount > parseFloat(totalAmount)) {
+                let amountExceeded = paymentAmount - parseFloat(totalAmount);
+                cardAmount = roundUpAmount(parseFloat(cardAmount) - parseFloat(amountExceeded));
+                remainingAmount = 0;
+            }
             return (Object.assign({}, state, { cardAmount, remainingAmount, cardRefrenceId }));
             break;
         case 'COST_CENTER_CHARGE':
@@ -81,16 +91,34 @@ const paymentReducer = (state = {
             if (paymentAmount > parseFloat(totalAmount)) {
                 let amountExceeded = paymentAmount - parseFloat(totalAmount);
                 costCenterAmount = roundUpAmount(parseFloat(costCenterAmount) - parseFloat(amountExceeded));
-                remainingAmount=0;
+                remainingAmount = 0;
             }
             return (Object.assign({}, state, { costCenterType, costCenterDepartment, costCenterAmount, remainingAmount }));
             break;
         case 'EMPLOYEE_PAYROLL':
+            amountAvailToRedeem = _get(state, 'employeeAvailableAmount.limit.amount');
             employeePay = action.data.employeePay;
             paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount)
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
             employeePay = roundUpAmount(employeePay);
-            return (Object.assign({}, state, { employeePay, remainingAmount }));
+            if (parseFloat(amountAvailToRedeem) >= (parseFloat(employeePay) || 0) && remainingAmount >= 0) {
+                paymentAmount = paymentAmount;
+                remainingAmount = remainingAmount;
+                giftCardAmount = roundUpAmount(employeePay);
+                return (Object.assign({}, state, { employeePay, remainingAmount }));
+                break;
+            }
+            else {
+                let amountExceeded = paymentAmount - parseFloat(totalAmount);
+                employeePay = roundUpAmount(parseFloat(employeePay) - parseFloat(amountExceeded));
+                remainingAmount = 0;
+                if (parseFloat(employeePay) > amountAvailToRedeem) {
+                    remainingAmount = parseFloat(employeePay) - amountAvailToRedeem;
+                    employeePay = amountAvailToRedeem;
+                }
+                return (Object.assign({}, state, { employeePay, remainingAmount }));
+                break;
+            }
             break;
         case 'GIFT_AMOUNT_TO_REDEEM':
             let amountAvailToRedeem = _get(state, 'giftCardData.value.amount');
@@ -131,8 +159,9 @@ const paymentReducer = (state = {
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount)
             return (Object.assign({}, state, { remainingAmount }));
         case 'CHECK_GIFT_CARD_DATA_SUCCESS':
-            console.log(action.data)
             return (Object.assign({}, state, { giftCardData: action.data }));
+        case 'GET_EMPLOYEE_DATA_SUCCESS':
+            return (Object.assign({}, state, { employeeAvailableAmount: action.data }));
         default:
             break;
     }

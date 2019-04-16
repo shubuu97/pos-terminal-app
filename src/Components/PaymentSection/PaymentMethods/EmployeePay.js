@@ -35,7 +35,7 @@ class EmployeePay extends React.Component {
         genericPostData({
             dispatch: this.props.dispatch,
             url: 'Employee/PayrollLimit/Get',
-            reqObj: { id: _get(this.props, 'customer.id')},
+            reqObj: { id: _get(this.props, 'customer.id') },
             constants: {
                 init: 'GET_EMPLOYEE_DATA_INIT',
                 success: 'GET_EMPLOYEE_DATA_SUCCESS',
@@ -57,17 +57,11 @@ class EmployeePay extends React.Component {
         let value = event.target.value;
         let availableValue = _get(this, 'state.availableValue', 0).toFixed(2);
         let totalValue = _get(this.props, 'totalAmount.amount', 0)
-        if(value > totalValue){
-            value = totalValue
-        }
-        if(value > availableValue){
-            value = availableValue
-        }
         if (regex.test(value)) {
             this.props.dispatch(commonActionCreater({ employeePay: value, totalAmount: this.props.totalAmount }, 'EMPLOYEE_PAYROLL'));
         }
         else if (regex.test(value.substring(0, value.length - 1))) {
-            this.props.dispatch(commonActionCreater({ employee_PAYROLLPay: value.substring(0, value.length - 1), totalAmount: this.props.totalAmount }, 'EMPLOYEE_PAYROLL'));
+            this.props.dispatch(commonActionCreater({ employeePay: value.substring(0, value.length - 1), totalAmount: this.props.totalAmount }, 'EMPLOYEE_PAYROLL'));
         }
         else {
             this.props.dispatch(commonActionCreater({ employeePay: '', totalAmount: this.props.totalAmount }, 'EMPLOYEE_PAYROLL'));
@@ -78,13 +72,13 @@ class EmployeePay extends React.Component {
         let currentValue = value;
         let availableValue = _get(this, 'state.availableValue', 0).toFixed(2);
         let totalValue = _get(this.props, 'totalAmount.amount', 0)
-        if(value > totalValue){
+        if (value > totalValue) {
             currentValue = totalValue
         }
-        if(currentValue > availableValue){
+        if (currentValue > availableValue) {
             currentValue = availableValue
         }
-        if (currentValue != value){
+        if (currentValue != value) {
             this.props.dispatch(commonActionCreater({ employeePay: currentValue, totalAmount: this.props.totalAmount }, 'EMPLOYEE_PAYROLL'));
         }
         return currentValue
@@ -103,7 +97,7 @@ class EmployeePay extends React.Component {
                             type="text"
                             onFocus={() => this.props.currentFocus({ fieldValue: 'employeePay', handler: 'EMPLOYEE_PAYROLL' })}
                             label="Amount"
-                            value={this.checkValue(_get(this.props, 'employeePayroll.employeePay'))}
+                            value={_get(this.props, 'employeePay')}
                             onChange={this.handleChange('employeePay')}
                             margin="normal"
                             fullWidth
@@ -140,9 +134,9 @@ function mapStateMapToProps(state) {
     let remainingAmount = _get(state, 'PaymentDetails.remainingAmount')
     let employeePayroll = _get(state, 'employeePayroll.lookUpData', {});
 
-    return { 
-        totalAmount, 
-        employeePay, 
+    return {
+        totalAmount,
+        employeePay,
         remainingAmount,
         employeePayroll
     };
