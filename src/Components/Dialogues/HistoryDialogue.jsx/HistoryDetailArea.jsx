@@ -174,25 +174,22 @@ class HistoryDetailArea extends React.Component {
 
     }
 
-    handleRefundButton = () => {
+    everyQtyReturned = () => {
         let saleItems = _get(this.props, "selectedSaleTransaction.sale.saleItems", []);
        saleItems =  saleItems.filter((saleItem, index)=>{
-           debugger
         if (saleItem.saleType == 2) {
             return false
         }
         return true
     })
-    debugger
-        let saleItemResp = saleItems.every((saleItem, index) => {
+        let everyQtyReturned = saleItems.every((saleItem, index) => {
             let returnableQty = _get(saleItem, "qty", 0) - _get(saleItem, "returnQty", 0)
             if(returnableQty>0){
-                return true
+                return false
             }
-            return false
+            return true
         });
-
-        return saleItemResp
+        return everyQtyReturned
     }
 
     render() {
@@ -230,7 +227,7 @@ class HistoryDetailArea extends React.Component {
                                 trigger={() => <div className='action-btn flex-row justify-center align-center'>Re-Print</div>}
                                 content={() => this.printElementRef}
                             />
-                            <div className={this.handleRefundButton() ? ' action-btn flex-row justify-center align-center' : 'disable-button action-btn flex-row justify-center align-center'} onClick={() => { this.setState({ openRefund: true }) }}>Refund</div>
+                            <div className={this.everyQtyReturned() ? 'disable-button action-btn flex-row justify-center align-center' : ' action-btn flex-row justify-center align-center'} onClick={() => { this.setState({ openRefund: true }) }}>Refund</div>
                         </div>
                     </div>
                 </div>

@@ -659,7 +659,7 @@ class RefundDialogue extends React.Component {
                                                 variant="contained"
                                                 color="primary">Cash</div>
                                             <div
-                                                // className={(this.props.remainingAmount == 0 || this.state.paidThroughCard <= 0) ? 'disable-button refund-method-btn' : 'refund-method-btn'}
+                                                className={(this.props.remainingAmount == 0 || this.state.paidThroughCard <= 0) ? 'disable-button refund-method-btn' : 'refund-method-btn'}
                                                 onClick={this.handleRefundClick("cardRefund")}
                                                 variant="contained"
                                                 color="primary">Card</div>
