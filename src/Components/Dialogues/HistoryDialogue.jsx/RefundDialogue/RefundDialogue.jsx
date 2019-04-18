@@ -100,15 +100,20 @@ class RefundDialogue extends React.Component {
                         </div>
                     }
                 </td>
-                <td align='center '><FormControlLabel
-                    control={
-                        <Checkbox
-                            checked={this.state[`checkbox${index}`]}
-                            onChange={this.handleChangeCB(index)}
-                        // value="checkedA"
-                        />
-                    }
-                /></td>
+                {
+                    _get(saleItem, 'product.misc', false) ?
+                        <td align='center '></td> :
+                        <td align='center '><FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={this.state[`checkbox${index}`]}
+                                    onChange={this.handleChangeCB(index)}
+                                // value="checkedA"
+                                />
+                            }
+                        /></td>
+                }
+
             </tr>)
         })
         return (
@@ -472,7 +477,7 @@ class RefundDialogue extends React.Component {
             xmlBodyStr = `<POSRequest>\
             <RequestType>Void</RequestType>\
             <TokenType>2</TokenType>\
-            <RequestId>${_get(this.state,'paymentReferenceNumber')}</RequestId>\
+            <RequestId>${_get(this.state, 'paymentReferenceNumber')}</RequestId>\
             <ClientEnvironment>${localStorage.getItem('freedomPayClientEnvironment')}</ClientEnvironment>\
             <StoreId>${localStorage.getItem('freedomPayStoreId')}</StoreId>\
             <TerminalId>${localStorage.getItem('freedomPayTerminalId')}</TerminalId>\
