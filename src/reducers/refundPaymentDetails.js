@@ -14,17 +14,18 @@ const calcPaymentAmount = (a, b, c, d, e, f) => {
 };
 
 const calcRemainingAmount = (totalAmt, paymentAmt) => {
-    let remAmt = (parseFloat(totalAmt) - parseFloat(paymentAmt)) || 0;
+    let remAmt = ((parseFloat(totalAmt) - parseFloat(paymentAmt)) || 0).toFixed(2);
     return remAmt;
 
 }
 const roundUpAmount = (amount) => {
+    debugger
     let decimalCount = decimalPlaces(amount);
     if (decimalCount > 2) {
         amount = roundUp(amount, 2);
         return parseFloat(amount);
     }
-    return parseFloat(amount);
+    return (parseFloat(amount) || 0);
 }
 
 
