@@ -42,7 +42,7 @@ class RefundPrintView extends React.Component {
             _get(selectedOrder, 'customer.customer.lastName');
         // console.log(this.props.logo, 'gugfhfyfyuf');
         return (
-            <div style={{ padding: "50px" }} >
+            <div>
                 <RefundHandlePrint
                     logo={this.props.logo}
                     data={this.props.data}

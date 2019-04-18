@@ -121,25 +121,24 @@ const HandlePrint = (props) => {
     let changeDue = _get(props, 'changeDue', 0)
 
     return (
-        <div style={{ fontSize: "12px", fontFamily: "arial, sans-serif" }} >
+        <div style={{ fontSize: "12px", fontFamily: "arial, sans-serif", color:'black' }} >
             <div style={{ textAlign: "center" }}>
-                <div style={{ height: "100px", width: "100%" }}> <img style={{ height: "100%", width: "auto" }} src={props.logo} /></div>
+                <div style={{width: "100%" }}> <img style={{ height: "auto", width: "100%" }} src={props.logo} /></div>
                 <div style={{ marginTop: '15px' }}>{_get(props, 'orderId', '')}</div>
                 <div>{_get(props, 'orderDate', '')}</div>
-                <div style={{ marginTop: '10px' }}><span style={{ color: '#9e9e9e', fontSize: '11px', fontWeight: 'bold' }}>STORE:</span> {_get(props, 'storeName', '')}</div>
-                <div><span style={{ color: '#9e9e9e', fontSize: '11px', fontWeight: 'bold' }}>ADDRESS:</span> {_get(props, 'storeAddress', '')}</div>
-
-                <div style={{ marginTop: '10px' }}><span style={{ color: '#9e9e9e', fontSize: '11px', fontWeight: 'bold' }}>CASHIER:</span> {_get(props, 'cashierName', '')}</div>
+                <div style={{ marginTop: '10px' }}><span style={{ fontSize: '11px', fontWeight: 'bold' }}>STORE:</span> {_get(props, 'storeName', '')}</div>
+                <div><span style={{ fontSize: '11px', fontWeight: 'bold' }}>ADDRESS:</span> {_get(props, 'storeAddress', '')}</div>
+                <div style={{ marginTop: '10px' }}><span style={{ fontSize: '11px', fontWeight: 'bold' }}>CASHIER:</span> {_get(props, 'cashierName', '')}</div>
 
                 {/* Hiding Staff Id */}
-                {/* <div><span style={{ color: '#9e9e9e', fontSize: '11px', fontWeight: 'bold' }}>STAFF ID:</span> {_get(props, 'staffId', '')}</div> */}
+                {/* <div><span style={{ fontSize: '11px', fontWeight: 'bold' }}>STAFF ID:</span> {_get(props, 'staffId', '')}</div> */}
 
-                <div><span style={{ color: '#9e9e9e', fontSize: '11px', fontWeight: 'bold' }}>TERMINAL:</span> {_get(props, 'terminalName', '')}</div>
+                <div><span style={{ fontSize: '11px', fontWeight: 'bold' }}>TERMINAL:</span> {_get(props, 'terminalName', '')}</div>
 
 
-                <div style={{ marginTop: '10px' }}><span style={{ color: '#9e9e9e', fontSize: '11px', fontWeight: 'bold' }}>CUSTOMER:</span> {_get(props, 'customerName', '')}</div>
+                <div style={{ marginTop: '10px' }}><span style={{ fontSize: '11px', fontWeight: 'bold' }}>CUSTOMER:</span> {_get(props, 'customerName', '')}</div>
 
-                <div style={{ padding: '10px 0 10px 0', fontSize: "15px" }}><strong style={{ color: '#9e9e9e', fontSize: '14px', fontWeight: 'bold' }}>INVOICE:</strong></div>
+                <div style={{ padding: '10px 0 10px 0', fontSize: "15px" }}><strong style={{ fontSize: '14px', fontWeight: 'bold' }}>INVOICE:</strong></div>
             </div>
             <div >
                 <div style={{ display: 'flex', flex: '1', borderTop: 'solid 1px #9e9e9e', borderBottom: 'solid 1px #9e9e9e', paddingTop: "10px", paddingBottom: "10px" }} >

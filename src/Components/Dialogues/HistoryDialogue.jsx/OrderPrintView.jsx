@@ -32,7 +32,7 @@ render() {
         _get(selectedOrder, 'customer.customer.lastName');
         // console.log(this.props.logo, 'gugfhfyfyuf')
     return (
-        <div style={{padding: "50px"}} >
+        <div>
             <HandlePrint
                 logo={this.props.logo}
                 type="Order History"
