@@ -31,35 +31,44 @@ const styles = {
   },
 };
 
-function CustomizedInputBase(props) {
-  const { classes } = props;
-  return (
-    <Paper className={classes.root} elevation={1} >
-      {/* <IconButton className={classes.iconButton} aria-label="Menu">
-        <MenuIcon />
-      </IconButton> */}
-      {props.handleInput ?
-        <InputBase
-          autoFocus
-          value=''
-          className={classes.input}
-          placeholder="Search For Item"
-          onChange={(event) => props.handleChange(event.target.value)} /> :
-        <InputBase
-          autoFocus
-          className={classes.input}
-          placeholder="Search For Item"
-          onChange={(event) => props.handleChange(event.target.value)} />
-      }
-      <IconButton className={classes.iconButton} aria-label="Search">
-        <SearchIcon />
-      </IconButton>
-      {/* <Divider className={classes.divider} />
-      <IconButton color="primary" className={classes.iconButton} aria-label="Directions">
-        <DirectionsIcon />
-      </IconButton> */}
-    </Paper>
-  );
+class CustomizedInputBase extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    if(this.focusInput) {
+      this.focusInput.focus()
+    }
+    const { classes } = this.props;
+    return (
+      <Paper className={classes.root} elevation={1} >
+        {/* <IconButton className={classes.iconButton} aria-label="Menu">
+          <MenuIcon />
+        </IconButton> */}
+        {this.props.handleInput ?
+          <InputBase
+            inputRef={(val) => {this.focusInput = val}}
+            value=''
+            className={classes.input}
+            placeholder="Search For Item"
+            onChange={(event) => this.props.handleChange(event.target.value)} /> :
+          <InputBase
+            inputRef={(val) => {this.focusInput = val}}
+            className={classes.input}
+            placeholder="Search For Item"
+            onChange={(event) => this.props.handleChange(event.target.value)} />
+        }
+        <IconButton className={classes.iconButton} aria-label="Search">
+          <SearchIcon />
+        </IconButton>
+        {/* <Divider className={classes.divider} />
+        <IconButton color="primary" className={classes.iconButton} aria-label="Directions">
+          <DirectionsIcon />
+        </IconButton> */}
+      </Paper>
+    ); 
+  }
 }
 
 CustomizedInputBase.propTypes = {
