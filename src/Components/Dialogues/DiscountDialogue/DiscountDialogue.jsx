@@ -84,10 +84,30 @@ class DiscountDialogue extends React.Component {
 
     handleDiscount = () => {
         let type = this.state.type
+        let discount = 0
         if(this.props.identifier != 'Discount'){
             type = '%'
+            let item = this.props.cart.cartItems[this.props.itemIndex]
+            let allowedDiscountPercent = item.allowedDiscountPercent
+            if(this.state.discount <= allowedDiscountPercent){
+                discount = this.state.discount
+            }
+            else{
+                alert('Discount exceeds the limit')
+            }
         }
-        this.props.handleDiscount(this.state.discount, this.props.identifier, this.props.itemIndex, type)
+        else{
+            let allowedCartDiscount = _get(this.props, 'cart.allowedCartDiscount', 0)
+            if(this.state.discount <= allowedCartDiscount){
+                discount = this.state.discount
+            }
+            else{
+                alert('Discount exceeds the limit')
+            }
+        }
+
+
+        this.props.handleDiscount(discount, this.props.identifier, this.props.itemIndex, type)
         this.setState({
             discount: ''
         })

@@ -9,7 +9,6 @@ const Products = (props) => {
     
     let productList = _get(props, 'productList', [])
     let products 
-    console.log(productList, 'productList')
     if(productList.length == 0) {
         products = <div className="no-product-found">
             <h1>No Product Found!</h1>

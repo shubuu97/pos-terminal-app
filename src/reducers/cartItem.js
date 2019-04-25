@@ -3,32 +3,48 @@ import _get from 'lodash/get'
 const cartItem = (state = {
     cartItems: [],
 }, action) => {
+    // ! Static limit for max discount set to 80%
+    let maxAllowedDiscount = 80
+    let employeeDiscountPercent = _get(state, 'empDiscount', 0)
+    let cartDiscountRemoved = false
     switch (action.type) {
         case 'ADD_DISCOUNT_TO_CART':
-
             // * Calculating Discountable Total
             let discountableCartTotal = 0
             action.data.cartItems.forEach(item => {
                 if (_get(item, 'doc.product.discountable', false)) {
-                    discountableCartTotal =+ parseFloat((parseFloat(_get(item, 'doc.product.salePrice.price', 0)) * _get(item, 'qty', 0)).toFixed(2))
+                    discountableCartTotal = + parseFloat((parseFloat(_get(item, 'doc.product.salePrice.price', 0)) * _get(item, 'qty', 0)).toFixed(2))
                 }
             })
-
+            // * Deciding if discount in "Absolute" or "Percent"
             let cartDiscountPercent, cartAbsoluteValue
             if (action.data.type === '%') {
                 cartDiscountPercent = _get(action, 'data.cartDiscount', 0)
                 cartAbsoluteValue = false
             }
             else {
+                // * Converting "Absolute" to "Percentage" and saving both to reducer
                 let discountValue = parseFloat(_get(action, 'data.cartDiscount', 0));
                 let absolutePer = Number(discountValue / discountableCartTotal);
                 cartDiscountPercent = parseFloat((absolutePer * 100).toFixed(2));
                 cartAbsoluteValue = _get(action, 'data.cartDiscount', 0)
             }
-            return Object.assign({}, state, {
-                cartDiscountPercent,
-                cartAbsoluteValue
-            });
+
+
+            if (cartDiscountPercent + employeeDiscountPercent <= maxAllowedDiscount) {
+                return Object.assign({}, state, {
+                    cartDiscountPercent,
+                    cartAbsoluteValue
+                });
+            }
+            else {
+                return Object.assign({}, state, {
+                    cartDiscountPercent: 0,
+                    cartAbsoluteValue: false,
+                    cartDiscountRemoved: true
+                });
+            }
+
             break;
         case 'ADD_CUSTOMER_TO_CART':
             return Object.assign({}, state, {
@@ -48,9 +64,12 @@ const cartItem = (state = {
             });
             break;
         case 'CART_ITEM_LIST':
-            debugger
-            // * Initializing Required Fields *
-            let employeeDiscountPercent = _get(state, 'empDiscount', 0)
+
+            // ****** Initializing Required Fields ******
+            let cartDiscountPercentage = _get(state, 'cartDiscountPercent', 0)
+            let sumDiscount = employeeDiscountPercent + cartDiscountPercentage
+            let allowedCartDiscount = maxAllowedDiscount
+
             let regularTotal = 0
             let cartQty = 0
             let netTotal = 0
@@ -84,13 +103,20 @@ const cartItem = (state = {
 
 
 
-            // * Looping through each Item in the Cart *
+            // ****** Looping through each Item in the Cart ******
             action.data.forEach(item => {
                 let discountable = _get(item, 'doc.product.discountable', false)
+
+                // * Calculating : RegularTotal = SalePrice * Qty
                 item.itemRegularTotal = {
                     currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
                     amount: parseFloat((parseFloat(_get(item, 'doc.product.salePrice.price', 0)) * _get(item, 'qty', 0)).toFixed(2))
                 }
+
+
+                // ****** Item Discount calculations ******
+
+                // Checkinging if item is discountable
                 if (discountable) {
                     item.cartDiscountPercent = parseFloat(_get(state, 'cartDiscountPercent', 0))
                     item.employeeDiscountPercent = employeeDiscountPercent
@@ -99,19 +125,45 @@ const cartItem = (state = {
                     item.cartDiscountPercent = 0
                     item.employeeDiscountPercent = 0
                 }
-                let totalPercentDiscount = parseFloat(_get(item, 'itemDiscountPercent', 0)) + parseFloat(_get(item, 'cartDiscountPercent', 0)) + parseFloat(_get(item, 'employeeDiscountPercent', 0))
-                let thisItemDiscountAmount = (parseFloat(_get(item, 'itemRegularTotal.amount', 0)) * parseFloat(_get(item, 'itemDiscountPercent', 0)) / 100)
-                let thisCartDiscountAmount = (parseFloat(_get(item, 'itemRegularTotal.amount', 0)) * parseFloat(_get(item, 'cartDiscountPercent', 0)) / 100)
-                let thisEmployeemDiscountAmount = (parseFloat(_get(item, 'itemRegularTotal.amount', 0)) * parseFloat(_get(item, 'employeeDiscountPercent', 0)) / 100)
 
-                item.itemTotalDiscountAmount = {
-                    currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
-                    amount: parseFloat((parseFloat(_get(item, 'itemRegularTotal.amount', 0)) * totalPercentDiscount / 100).toFixed(2))
+
+                let totalPercentDiscount = parseFloat(_get(item, 'itemDiscountPercent', 0)) + parseFloat(_get(item, 'cartDiscountPercent', 0)) + parseFloat(_get(item, 'employeeDiscountPercent', 0))
+                let thisItemDiscountAmount = 0, thisCartDiscountAmount = 0, thisEmployeemDiscountAmount = 0
+
+                if (totalPercentDiscount <= maxAllowedDiscount) {
+                    thisItemDiscountAmount = (parseFloat(_get(item, 'itemRegularTotal.amount', 0)) * parseFloat(_get(item, 'itemDiscountPercent', 0)) / 100)
+                    thisCartDiscountAmount = (parseFloat(_get(item, 'itemRegularTotal.amount', 0)) * parseFloat(_get(item, 'cartDiscountPercent', 0)) / 100)
+                    thisEmployeemDiscountAmount = (parseFloat(_get(item, 'itemRegularTotal.amount', 0)) * parseFloat(_get(item, 'employeeDiscountPercent', 0)) / 100)
+                    item.itemTotalDiscountAmount = {
+                        currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
+                        amount: parseFloat((parseFloat(_get(item, 'itemRegularTotal.amount', 0)) * totalPercentDiscount / 100).toFixed(2))
+                    }
+                    item.itemSubTotal = {
+                        currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
+                        amount: parseFloat((parseFloat(_get(item, 'itemRegularTotal.amount', 0)) - parseFloat(_get(item, 'itemTotalDiscountAmount.amount', 0))).toFixed(2))
+                    }
+                    item.allowedDiscountPercent = maxAllowedDiscount - totalPercentDiscount
                 }
-                item.itemSubTotal = {
-                    currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
-                    amount: parseFloat((parseFloat(_get(item, 'itemRegularTotal.amount', 0)) - parseFloat(_get(item, 'itemTotalDiscountAmount.amount', 0))).toFixed(2))
+                else if (parseFloat(_get(item, 'cartDiscountPercent', 0)) + parseFloat(_get(item, 'employeeDiscountPercent', 0)) <= maxAllowedDiscount) {
+                    thisItemDiscountAmount = 0
+                    item.itemDiscountPercent = 0
+                    thisCartDiscountAmount = (parseFloat(_get(item, 'itemRegularTotal.amount', 0)) * parseFloat(_get(item, 'cartDiscountPercent', 0)) / 100)
+                    thisEmployeemDiscountAmount = (parseFloat(_get(item, 'itemRegularTotal.amount', 0)) * parseFloat(_get(item, 'employeeDiscountPercent', 0)) / 100)
+                    item.itemTotalDiscountAmount = {
+                        currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
+                        amount: parseFloat((parseFloat(_get(item, 'itemRegularTotal.amount', 0)) * (parseFloat(_get(item, 'cartDiscountPercent', 0)) + parseFloat(_get(item, 'employeeDiscountPercent', 0))) / 100).toFixed(2))
+                    }
+                    item.itemSubTotal = {
+                        currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
+                        amount: parseFloat((parseFloat(_get(item, 'itemRegularTotal.amount', 0)) - parseFloat(_get(item, 'itemTotalDiscountAmount.amount', 0))).toFixed(2))
+                    }
+                    item.allowedDiscountPercent = maxAllowedDiscount - (parseFloat(_get(item, 'cartDiscountPercent', 0)) + parseFloat(_get(item, 'employeeDiscountPercent', 0)))
                 }
+                if (allowedCartDiscount >= item.allowedDiscountPercent) {
+                    allowedCartDiscount = item.allowedDiscountPercent + parseFloat(_get(item, 'cartDiscountPercent', 0))
+                }
+
+                // ****** Tax Calculations ******
                 let isTaxable = ("isTaxable" in item.doc.product)
                 let itemTaxPercent = 0
                 let taxAmount = 0;
@@ -179,7 +231,8 @@ const cartItem = (state = {
                 netTotal: netTotal.toFixed(2),
                 totalDiscount,
                 loyaltyEarned,
-                discountableAmount
+                discountableAmount,
+                allowedCartDiscount
             });
             break;
     }
