@@ -36,10 +36,13 @@ class CustomizedInputBase extends React.Component {
     super(props);
   }
 
-  render() {
-    if(this.focusInput) {
+  componentDidUpdate() {
+    if(this.props.isOpenProduct) {
       this.focusInput.focus()
     }
+  }
+
+  render() {
     const { classes } = this.props;
     return (
       <Paper className={classes.root} elevation={1} >

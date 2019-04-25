@@ -341,6 +341,7 @@ class ProductsSection extends React.Component {
                             getProductData={this.props.getProductData}
                         />
                         <SearchBar
+                            isOpenProduct={this.props.isOpenProduct}
                             handleChange={this.handleChange}
                             handleInput={this.state.clearInput}
                         />
