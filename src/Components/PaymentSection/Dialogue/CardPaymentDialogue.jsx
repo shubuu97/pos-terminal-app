@@ -51,7 +51,7 @@ class CardPaymentDialogue extends React.Component {
                   </div>
                   <div className='error-actions'>
                     <Button className='action' variant="contained" onClick={this.props.handleClose}>Cancel</Button>
-                    <Button className='action' variant="contained">Retry</Button>
+                    <Button onClick={()=>this.props.reqPaymentByCard()} className='action' variant="contained">Retry</Button>
                   </div>
                 </div> : null
             }

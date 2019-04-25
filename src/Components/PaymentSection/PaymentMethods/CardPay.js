@@ -212,6 +212,7 @@ class CardPay extends React.Component {
                     </div>
                 }
                 <CardPaymentDialogue
+                    reqPaymentByCard={this.reqPaymentByCard}
                     handleOpen={this.handleOpen}
                     handleClose={this.handleClose}
                     handleSuccess={this.handleSuccess}

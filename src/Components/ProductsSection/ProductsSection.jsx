@@ -115,7 +115,12 @@ class ProductsSection extends React.Component {
                         cartObj = [...cartItems]
                         cartObj[index].qty = qty;
                     }
-                    this.props.dispatch(commonActionCreater(0, 'ADD_DISCOUNT_TO_CART'));
+
+                    let cartDiscountObj = {}
+                    cartDiscountObj.type = ''
+                    cartDiscountObj.cartDiscount = 0
+                    cartDiscountObj.cartItems = cartObj
+                    this.props.dispatch(commonActionCreater(cartDiscountObj, 'ADD_DISCOUNT_TO_CART'));
                     this.props.dispatch(commonActionCreater(cartObj, 'CART_ITEM_LIST'));
                 } else {
                     this.setState({ clearInput: true})
@@ -330,7 +335,7 @@ class ProductsSection extends React.Component {
                         <SideDrawer
                             offline={this.props.offline}
                             // ! Actions
-                            handleTransactionPopulate = {this.props.handleTransactionPopulate}
+                            handleTransactionPopulate={this.props.handleTransactionPopulate}
                             handleClickOpenOnHold={this.props.handleClickOpenOnHold}
                             handleClickOpenHistory={this.props.handleClickOpenHistory}
                             handleHistoryOpen={this.props.handleHistoryOpen}
@@ -356,7 +361,7 @@ class ProductsSection extends React.Component {
                                 }
 
                                 {
-                                    this.props.paymentMethods.findIndex((m) => m == 2)>0 ?
+                                    this.props.paymentMethods.findIndex((m) => m == 2) > 0 ?
                                         this.handleHideWhenOffline(
                                             !this.props.offline,
 
