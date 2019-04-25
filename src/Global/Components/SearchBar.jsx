@@ -33,19 +33,28 @@ const styles = {
 
 function CustomizedInputBase(props) {
   const { classes } = props;
-  console.log(props.handleInput, 'props.handleInput')
+  var searchInput = document.getElementById("searchInput");
+  if (searchInput) {
+    searchInput.addEventListener("keydown", function (e) {
+      if (e.keyCode === 13) {  //checks whether the pressed key is "Enter"
+        props.handleChange(document.getElementById('searchInput').value)
+      }
+    });
+  }
   return (
     <Paper className={classes.root} elevation={1} >
       {/* <IconButton className={classes.iconButton} aria-label="Menu">
         <MenuIcon />
       </IconButton> */}
-        <InputBase
-          autoFocus
-          className={classes.input}
-          placeholder={props.placeholder}
-          onChange={(event) => props.handleChange(event.target.value)} />
+      <InputBase
+        className={classes.input}
+        placeholder={props.placeholder}
+        id='searchInput'
+      />
       <IconButton className={classes.iconButton} aria-label="Search">
-        <SearchIcon />
+        <SearchIcon
+          onClick={() => props.handleChange(document.getElementById('searchInput').value)}
+        />
       </IconButton>
       {/* <Divider className={classes.divider} />
       <IconButton color="primary" className={classes.iconButton} aria-label="Directions">

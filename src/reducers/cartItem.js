@@ -13,7 +13,7 @@ const cartItem = (state = {
             let discountableCartTotal = 0
             action.data.cartItems.forEach(item => {
                 if (_get(item, 'doc.product.discountable', false)) {
-                    discountableCartTotal = + parseFloat((parseFloat(_get(item, 'doc.product.salePrice.price', 0)) * _get(item, 'qty', 0)).toFixed(2))
+                    discountableCartTotal += parseFloat((parseFloat(_get(item, 'doc.product.salePrice.price', 0)) * _get(item, 'qty', 0)).toFixed(2))
                 }
             })
             // * Deciding if discount in "Absolute" or "Percent"
@@ -34,14 +34,16 @@ const cartItem = (state = {
             if (cartDiscountPercent + employeeDiscountPercent <= maxAllowedDiscount) {
                 return Object.assign({}, state, {
                     cartDiscountPercent,
-                    cartAbsoluteValue
+                    cartAbsoluteValue,
+                    discountableCartTotal
                 });
             }
             else {
                 return Object.assign({}, state, {
                     cartDiscountPercent: 0,
                     cartAbsoluteValue: false,
-                    cartDiscountRemoved: true
+                    cartDiscountRemoved: true,
+                    discountableCartTotal
                 });
             }
 
@@ -120,7 +122,7 @@ const cartItem = (state = {
                 if (discountable) {
                     item.cartDiscountPercent = parseFloat(_get(state, 'cartDiscountPercent', 0))
                     item.employeeDiscountPercent = employeeDiscountPercent
-                    discountableAmount = + parseFloat((parseFloat(_get(item, 'doc.product.salePrice.price', 0)) * _get(item, 'qty', 0)).toFixed(2))
+                    discountableAmount += parseFloat((parseFloat(_get(item, 'doc.product.salePrice.price', 0)) * _get(item, 'qty', 0)).toFixed(2))
                 } else {
                     item.cartDiscountPercent = 0
                     item.employeeDiscountPercent = 0
