@@ -95,26 +95,27 @@ class OrdersTab extends React.Component {
         this.setState({ open: false });
     };
 
-    handleCartDiscountRemove = () => {
-        this.props.dispatch(commonActionCreater(0, 'ADD_DISCOUNT_TO_CART'));
-        this.props.dispatch(commonActionCreater(this.props.cartItems, 'CART_ITEM_LIST'));
+    handleCartDiscountRemove = (cartItems) => {
+        let cartDiscountObj = {}
+        cartDiscountObj.type = ''
+        cartDiscountObj.cartDiscount = 0
+        cartDiscountObj.cartItems = cartItems
+        this.props.dispatch(commonActionCreater(cartDiscountObj, 'ADD_DISCOUNT_TO_CART'));
+        this.props.dispatch(commonActionCreater(cartItems, 'CART_ITEM_LIST'));
     }
-
 
     // * Functions to Update Cart Reducers 
     handleDelete = (item) => {
         let cartItems = [...this.props.cartItems];
         let index = _findIndex(cartItems, ['id', item.id]);
         cartItems.splice(index, 1);
-        this.props.dispatch(commonActionCreater(0, 'ADD_DISCOUNT_TO_CART'));
-        this.props.dispatch(commonActionCreater(cartItems, 'CART_ITEM_LIST'));
+        this.handleCartDiscountRemove(cartItems)
     };
     handleIncreaseQuantity = (item) => {
         let cartItems = [...this.props.cartItems];
         let index = _findIndex(cartItems, ['id', item.id]);
         cartItems[index].qty = cartItems[index].qty + 1;
-        this.props.dispatch(commonActionCreater(0, 'ADD_DISCOUNT_TO_CART'));
-        this.props.dispatch(commonActionCreater(cartItems, 'CART_ITEM_LIST'));
+        this.handleCartDiscountRemove(cartItems)
     };
     handleDecreseQuantity = (item) => {
         let cartItems = [...this.props.cartItems];
@@ -123,40 +124,24 @@ class OrdersTab extends React.Component {
         if (cartItems[index].qty == 0) {
             cartItems.splice(index, 1);
         }
-        this.props.dispatch(commonActionCreater(0, 'ADD_DISCOUNT_TO_CART'));
-        this.props.dispatch(commonActionCreater(cartItems, 'CART_ITEM_LIST'));
+        this.handleCartDiscountRemove(cartItems)
     };
     handleDiscount = (data, identifier, index, type) => {
         let cartItems = _get(this, 'props.cart.cartItems', []);
-        console.log('cartitems', cartItems);
-        let cartDiscountPercent = 0;
-        // let maxDiscount = 80;
-        if (type === '$') {
-            let cartTotal = 0;
-            let discountableCartTotal = 0
-            _isArray(cartItems) && cartItems.map((cartItem) => {
-                cartTotal += Number(_get(cartItem, 'itemRegularTotal.amount', 0));
-                if(_get(cartItem, 'doc.product.discountable', false)){
-                    discountableCartTotal += Number(_get(cartItem, 'itemRegularTotal.amount', 0));
-                }
-            })
-            let discountDoll = parseFloat(data);
-            let absolutePer = Number(discountDoll / discountableCartTotal);
-            cartDiscountPercent = parseFloat((absolutePer * 100).toFixed(2));
-        } else {
-            cartDiscountPercent = parseFloat(data);
-        }
+
+        // * Making object for CartDiscount
+        let cartDiscountObj = {}
+        cartDiscountObj.type = type
+        cartDiscountObj.cartDiscount = parseFloat(data)
+
+        // * Making object for Cart reducer
         let reqObj = [
             ...cartItems
         ]
+        cartDiscountObj.cartItems = reqObj
         if (identifier == 'Discount') {
-            // if(cartDiscountPercent < maxDiscount) {
-            this.props.dispatch(commonActionCreater(cartDiscountPercent, 'ADD_DISCOUNT_TO_CART'));
+            this.props.dispatch(commonActionCreater(cartDiscountObj, 'ADD_DISCOUNT_TO_CART'));
             this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
-            // } else {
-            //     alert('discount should be less than 80%');
-            // }
-
         }
         else if (identifier == 'ItemDiscount') {
             reqObj[index].itemDiscountPercent = parseFloat(data);

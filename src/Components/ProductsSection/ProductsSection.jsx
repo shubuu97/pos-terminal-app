@@ -45,11 +45,14 @@ class ProductsSection extends React.Component {
         if (searchText.length > 2) {
             productsdb.search({
                 query: searchText,
-                fields: ['product.name', 'product.description', 'product.sku', 'product.keywords'],
+                fields: ['product.name', 'product.description', 'product.sku', 'product.keywords', 'product.upcCode'],
                 include_docs: true,
                 limit: 39,
                 skip: 0
             }).then((result) => {
+                if(_isEmpty(result.rows)) {
+                this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+                }
                 this.setState({ clearInput: false })
                 result.pagination = {}
                 result.pagination.method = "search"
@@ -60,7 +63,6 @@ class ProductsSection extends React.Component {
                 result.pagination.pageNo = 1
                 result.pagination.startVal = 1
                 result.pagination.endVal = result.rows.length
-
                 this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
             })
                 .catch((err) => {
@@ -87,7 +89,7 @@ class ProductsSection extends React.Component {
                 console.log(err)
             });
         }
-        if (searchText.length === 12 || searchText.length === 11 || searchText.length === 13) {
+        if ((/^[0-9-]{4,}[0-9]$/).test(searchText)) {
             let noSearchText = Number(searchText)
             productsdb.find({
                 selector: { "product.upcCode": noSearchText }
@@ -113,8 +115,15 @@ class ProductsSection extends React.Component {
                         cartObj = [...cartItems]
                         cartObj[index].qty = qty;
                     }
-                    this.props.dispatch(commonActionCreater(0, 'ADD_DISCOUNT_TO_CART'));
+
+                    let cartDiscountObj = {}
+                    cartDiscountObj.type = ''
+                    cartDiscountObj.cartDiscount = 0
+                    cartDiscountObj.cartItems = cartObj
+                    this.props.dispatch(commonActionCreater(cartDiscountObj, 'ADD_DISCOUNT_TO_CART'));
                     this.props.dispatch(commonActionCreater(cartObj, 'CART_ITEM_LIST'));
+                } else {
+                    this.setState({ clearInput: true})
                 }
             })
         }
@@ -326,7 +335,7 @@ class ProductsSection extends React.Component {
                         <SideDrawer
                             offline={this.props.offline}
                             // ! Actions
-                            handleTransactionPopulate = {this.props.handleTransactionPopulate}
+                            handleTransactionPopulate={this.props.handleTransactionPopulate}
                             handleClickOpenOnHold={this.props.handleClickOpenOnHold}
                             handleClickOpenHistory={this.props.handleClickOpenHistory}
                             handleHistoryOpen={this.props.handleHistoryOpen}
@@ -337,6 +346,7 @@ class ProductsSection extends React.Component {
                             getProductData={this.props.getProductData}
                         />
                         <SearchBar
+                            isOpenProduct={this.props.isOpenProduct}
                             handleChange={this.handleChange}
                             handleInput={this.state.clearInput}
                         />
@@ -351,7 +361,7 @@ class ProductsSection extends React.Component {
                                 }
 
                                 {
-                                    this.props.paymentMethods.findIndex((m) => m == 2)>0 ?
+                                    this.props.paymentMethods.findIndex((m) => m == 2) > 0 ?
                                         this.handleHideWhenOffline(
                                             !this.props.offline,
 

@@ -562,6 +562,7 @@ class HomeContainer extends React.Component {
                         handleLogout={this.handleLogout}
                         handleGiftCard={() => this.handleGiftCard(true)}
                         handleMiscProduct={() => this.handleMiscProduct(true)}
+                        isOpenProduct={isOpenProduct}
                     />
                 </Products>
                 <CheckoutSection
