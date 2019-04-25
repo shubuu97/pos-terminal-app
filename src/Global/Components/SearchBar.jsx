@@ -33,7 +33,6 @@ const styles = {
 
 function CustomizedInputBase(props) {
   const { classes } = props;
-  console.log(props.handleInput, 'props.handleInput')
   return (
     <Paper className={classes.root} elevation={1} >
       {/* <IconButton className={classes.iconButton} aria-label="Menu">
@@ -41,10 +40,13 @@ function CustomizedInputBase(props) {
       </IconButton> */}
         <InputBase
           className={classes.input}
-          placeholder={props.placeholder}
-          onChange={(event) => props.handleChange(event.target.value)} />
+          placeholder={props.placeholder} 
+          id='searchInput'
+          />
       <IconButton className={classes.iconButton} aria-label="Search">
-        <SearchIcon />
+        <SearchIcon 
+          onClick = {() => props.handleChange(document.getElementById('searchInput').value)}
+        />
       </IconButton>
       {/* <Divider className={classes.divider} />
       <IconButton color="primary" className={classes.iconButton} aria-label="Directions">
