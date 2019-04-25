@@ -53,7 +53,12 @@ class Product extends React.PureComponent {
                 reqObj[index].qty = qty;
                 this.setState({ qty })
             }
-            this.props.dispatch(commonActionCreater(0, 'ADD_DISCOUNT_TO_CART'));
+
+            let cartDiscountObj = {}
+            cartDiscountObj.type = ''
+            cartDiscountObj.cartDiscount = 0
+            cartDiscountObj.cartItems = reqObj
+            this.props.dispatch(commonActionCreater(cartDiscountObj, 'ADD_DISCOUNT_TO_CART'));
             this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
         }
     }
@@ -74,41 +79,41 @@ class Product extends React.PureComponent {
         let id = data.id;
         let regex = /_design.*/g;
         let isddoc = regex.test(id);
-        console.log(isddoc,"isddoc");
+        console.log(isddoc, "isddoc");
         return (
             <React.Fragment>
-                {!isddoc?
-                <div className='each-tile white-background flex-row relative' id='productCard' onClick={() => this.addToCart(index)} index={this.props.index} key={this.props.key}>
-                    <div className='absolute added-item-position'>
-                        {(_find(cartItems, { id: data.id })) ? <div className='added-item-count'>{(_find(cartItems, { id: data.id })).qty}</div> : null}
-                    </div>
-                    <div className='product-image'>
-                        <img src={_get(data, 'doc.product.image') || DefaultImage} alt="" />
-                    </div>
-                    <div className='flex-column justify-space-between product-info'>
-                        <div className='flex-column fwidth'>
-                            <div className='truncate'>
-                                <span className="each-card-name">{_get(data, 'doc.product.name', 'undefined')}</span>
-                            </div>
-                            <div className='truncate'>
-                                <span className="each-card-code-head">Available Quantity : </span>
-                                <span className='each-card-code'>{_get(data, 'doc.inventory.quantity', 0)}</span>
-                            </div>
-                            <div className="each-card-price flex-row">
-                                {_get(data, 'doc.product.salePrice.currencyCode', '')} {_get(data, 'doc.product.salePrice.price', 0).toFixed(2)}
-                                {/* <div className='indicator'></div> */}
-                            </div>
-                            <span
-                                onMouseLeave={() => this.setState({ iconSelected: false })}
-                                onMouseEnter={() => this.setState({ iconSelected: true })}
-                                onClick={() => this.viewProductDetails(index)}
-                                className="quick-view each-card-more"
-                                title="View Details">
-                                <InfoOutlined style={{ color: '#000' }} />
-                            </span>
+                {!isddoc ?
+                    <div className='each-tile white-background flex-row relative' id='productCard' onClick={() => this.addToCart(index)} index={this.props.index} key={this.props.key}>
+                        <div className='absolute added-item-position'>
+                            {(_find(cartItems, { id: data.id })) ? <div className='added-item-count'>{(_find(cartItems, { id: data.id })).qty}</div> : null}
                         </div>
-                    </div>
-                </div>:null}
+                        <div className='product-image'>
+                            <img src={_get(data, 'doc.product.image') || DefaultImage} alt="" />
+                        </div>
+                        <div className='flex-column justify-space-between product-info'>
+                            <div className='flex-column fwidth'>
+                                <div className='truncate'>
+                                    <span className="each-card-name">{_get(data, 'doc.product.name', 'undefined')}</span>
+                                </div>
+                                <div className='truncate'>
+                                    <span className="each-card-code-head">Available Quantity : </span>
+                                    <span className='each-card-code'>{_get(data, 'doc.inventory.quantity', 0)}</span>
+                                </div>
+                                <div className="each-card-price flex-row">
+                                    {_get(data, 'doc.product.salePrice.currencyCode', '')} {_get(data, 'doc.product.salePrice.price', 0).toFixed(2)}
+                                    {/* <div className='indicator'></div> */}
+                                </div>
+                                <span
+                                    onMouseLeave={() => this.setState({ iconSelected: false })}
+                                    onMouseEnter={() => this.setState({ iconSelected: true })}
+                                    onClick={() => this.viewProductDetails(index)}
+                                    className="quick-view each-card-more"
+                                    title="View Details">
+                                    <InfoOutlined style={{ color: '#000' }} />
+                                </span>
+                            </div>
+                        </div>
+                    </div> : null}
                 {
                     this.state.openModal ?
                         <SimpleModal

@@ -5,10 +5,30 @@ const cartItem = (state = {
 }, action) => {
     switch (action.type) {
         case 'ADD_DISCOUNT_TO_CART':
-            let newState = Object.assign({}, state, {
-                cartDiscountPercent: action.data,
+
+            // * Calculating Discountable Total
+            let discountableCartTotal = 0
+            action.data.cartItems.forEach(item => {
+                if (_get(item, 'doc.product.discountable', false)) {
+                    discountableCartTotal =+ parseFloat((parseFloat(_get(item, 'doc.product.salePrice.price', 0)) * _get(item, 'qty', 0)).toFixed(2))
+                }
+            })
+
+            let cartDiscountPercent, cartAbsoluteValue
+            if (action.data.type === '%') {
+                cartDiscountPercent = _get(action, 'data.cartDiscount', 0)
+                cartAbsoluteValue = false
+            }
+            else {
+                let discountValue = parseFloat(_get(action, 'data.cartDiscount', 0));
+                let absolutePer = Number(discountValue / discountableCartTotal);
+                cartDiscountPercent = parseFloat((absolutePer * 100).toFixed(2));
+                cartAbsoluteValue = _get(action, 'data.cartDiscount', 0)
+            }
+            return Object.assign({}, state, {
+                cartDiscountPercent,
+                cartAbsoluteValue
             });
-            return newState
             break;
         case 'ADD_CUSTOMER_TO_CART':
             return Object.assign({}, state, {
@@ -28,8 +48,8 @@ const cartItem = (state = {
             });
             break;
         case 'CART_ITEM_LIST':
-
-            // * Initializing Required Fields 
+            debugger
+            // * Initializing Required Fields *
             let employeeDiscountPercent = _get(state, 'empDiscount', 0)
             let regularTotal = 0
             let cartQty = 0
@@ -39,6 +59,7 @@ const cartItem = (state = {
                 currencyCode: '$',
                 amount: 0
             }
+            let discountableAmount = 0
             let itemDiscountAmount = {
                 currencyCode: '$',
                 amount: 0
@@ -55,15 +76,15 @@ const cartItem = (state = {
                 currencyCode: '$',
                 amount: 0
             }
-
             let earningLoyaltyRules = {
                 minimumSaleAmount: _get(state, 'earningRules.earningRule.minimumSaleAmount', 0),
                 earningMultiplier: _get(state, 'earningRules.earningRule.earningMultiplier', 0)
             }
-
             let loyaltyEarned = 0
 
-            // * Looping through each Item in the Cart
+
+
+            // * Looping through each Item in the Cart *
             action.data.forEach(item => {
                 let discountable = _get(item, 'doc.product.discountable', false)
                 item.itemRegularTotal = {
@@ -73,6 +94,7 @@ const cartItem = (state = {
                 if (discountable) {
                     item.cartDiscountPercent = parseFloat(_get(state, 'cartDiscountPercent', 0))
                     item.employeeDiscountPercent = employeeDiscountPercent
+                    discountableAmount = + parseFloat((parseFloat(_get(item, 'doc.product.salePrice.price', 0)) * _get(item, 'qty', 0)).toFixed(2))
                 } else {
                     item.cartDiscountPercent = 0
                     item.employeeDiscountPercent = 0
@@ -156,7 +178,8 @@ const cartItem = (state = {
                 totalTaxAmount,
                 netTotal: netTotal.toFixed(2),
                 totalDiscount,
-                loyaltyEarned
+                loyaltyEarned,
+                discountableAmount
             });
             break;
     }
