@@ -47,6 +47,7 @@ class CheckoutSection extends React.Component {
                     checkoutactionArea={this.props.checkoutactionArea}
                     checkoutcartArea={this.props.checkoutcartArea}
                     checkoutCustomerArea={this.props.checkoutCustomerArea}
+                    cart={this.props.cart}
                     // ! Actions
                     handleClickOpen={this.handleClickOpen}
                     handleHistoryOpen={this.props.handleHistoryOpen}

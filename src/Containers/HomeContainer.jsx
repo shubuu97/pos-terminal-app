@@ -81,8 +81,29 @@ class HomeContainer extends React.Component {
             this.calcHeight();
             this.getRuleSet();
             this.getProductData();
+            this.fetchFreedomPayDetails();
             this.props.startPolling();
         }
+    }
+    fetchFreedomPayDetails = () => {
+        axiosFetcher({
+            method: 'POST',
+            url: 'Payment/FreedomPay/Config/Get',
+            reqObj: { id: localStorage.getItem('terminalId') },
+            successCb: this.fetchFreedomPayDetailsSuccess,
+            errorCb: (err) => {
+            
+            }
+        })
+    }
+    fetchFreedomPayDetailsSuccess = (res) => {
+        localStorage.setItem('freedomPayClientEnvironment', _get(res, 'data.freedomPayClientEnvironment'));
+        localStorage.setItem('freedomPayClientUrl', _get(res, 'data.freedomPayClientUrl'));
+        localStorage.setItem('freedomPayStoreId', _get(res, 'data.freedomPayStoreId'));
+        localStorage.setItem('freedomPayTerminalId', _get(res, 'data.freedomPayTerminalId'));
+        localStorage.setItem('merchantReferenceCode', _get(res, 'data.merchantReferenceCode'));
+        localStorage.setItem('freedomPayWorkstationId', _get(res, 'data.freedomPayWorkstationId'));
+        console.log(res, "res is here")
     }
 
     calcHeight() {
@@ -195,11 +216,11 @@ class HomeContainer extends React.Component {
 
     handleClose = (name) => {
         this.setState({ [name]: false });
-        if(name = 'openHistoryDialogue'){
+        if (name = 'openHistoryDialogue') {
             this.setState({
                 historySidebarItems: [],
                 selectedSaleTransaction: null,
-                historySidebarLoading: false 
+                historySidebarLoading: false
             })
         }
     };
@@ -325,15 +346,15 @@ class HomeContainer extends React.Component {
         })
     }
     handleHistoryOpen = () => {
-        debugger;
+        
         // let url = 'Sale/GetByCustomerId';
         // let data = { id: _get(this.props, 'customer.id', '') }
         // this.getOrderHistory(url, data)
         // this.setState({
         //     openOrderHistory: true,
         // });
-        this.setState({openHistoryDialogue:true});
-        this.handleTransactionPopulate(_get(this.props, 'customer.id',null));
+        this.setState({ openHistoryDialogue: true });
+        this.handleTransactionPopulate(_get(this.props, 'customer.id', null));
 
     }
     handleGetCustomerSaleData = (data) => {
@@ -410,7 +431,7 @@ class HomeContainer extends React.Component {
     }
     orderHistorySelect = (selectedSaleTransaction) => {
         console.log('Class', _get(this.state, 'selectedSaleTransaction', false))
-        if(_get(this.state, 'selectedSaleTransaction', false) && _get(this.state, 'selectedSaleTransaction') != selectedSaleTransaction.sale.id){
+        if (_get(this.state, 'selectedSaleTransaction', false) && _get(this.state, 'selectedSaleTransaction') != selectedSaleTransaction.sale.id) {
             document.getElementById(_get(this.state, 'selectedSaleTransaction.sale.id')).className = 'card'
         }
         document.getElementById(selectedSaleTransaction.sale.id).className = 'card card-active'
@@ -421,7 +442,7 @@ class HomeContainer extends React.Component {
         let view = [];
         (data || []).map((transactions, index) => {
             view.push(
-                <div onClick={() => {this.orderHistorySelect(transactions)}} key={index} id={transactions.sale.id} className={this.state.selectedSaleTransaction == transactions ? 'card card-active' : 'card'}>
+                <div onClick={() => { this.orderHistorySelect(transactions) }} key={index} id={transactions.sale.id} className={this.state.selectedSaleTransaction == transactions ? 'card card-active' : 'card'}>
                     <div className={_get(this.state, 'orderId', '') === _get(transactions, 'sale.id', '') ? "active" : ""}>
                         <div className="mui-row no-gutters history-card-head">
                             <div className="mui-col-md-4">
@@ -451,11 +472,11 @@ class HomeContainer extends React.Component {
     }
 
     /* History Actions */
-    handleTransactionPopulate = (customerId,limit, skip, timeFrom, timeTo) => {
-        debugger;
+    handleTransactionPopulate = (customerId, limit, skip, timeFrom, timeTo) => {
+        
         let url = 'Sale/GetByTerminalId';
         let data = { id: localStorage.getItem('terminalId') }
-        if(customerId){
+        if (customerId) {
             data.id = customerId;
             url = "Sale/GetByCustomerId"
         }
@@ -480,7 +501,7 @@ class HomeContainer extends React.Component {
 
     handleTransactionSearch = (transactionId) => {
         if (transactionId == '') {
-            debugger;
+            
             this.handleTransactionPopulate();
             return;
         }
@@ -529,7 +550,7 @@ class HomeContainer extends React.Component {
                         history={this.props.history}
                         paymentMethods={this.props.paymentMethods}
                         // ! Actions
-                        handleTransactionPopulate = {this.handleTransactionPopulate}
+                        handleTransactionPopulate={this.handleTransactionPopulate}
                         handleHistoryOpen={this.handleTerminalHistoryOpen}
                         handleClickOpenOnHold={() => this.handleClickOpen('openOnHold')}
                         handleClickOpenHistory={() => this.handleClickOpen('openHistoryDialogue')}
@@ -760,18 +781,21 @@ const OfflineTransactionPusher = async (propsOfComp, dispatch) => {
     }
 }
 const updateTimeStampAndDbForInventory = async (res, dispatch, extraArgs) => {
+    
     let tempInvetoryUpdateTime = localStorage.getItem('tempInvetoryUpdateTime');
     localStorage.setItem('invetoryUpdateTime', tempInvetoryUpdateTime)
 
     let productsdb = new PouchDb('productsdb');
     let updatedInventory = _get(res, 'data', []) || [];
     let promiseArray = updatedInventory.map(async (product, index) => {
-        let productObj = await productsdb.get(product._id);
-        _set(productObj,'inventory.quantity',_get(product, 'inventory.quantity', 0));
+        let productObj = await productsdb.get(product._id).then(data=>data).catch(err=>updatedInventory[index]);
+        _set(productObj, 'inventory.quantity', _get(product, 'inventory.quantity', 0));
         return productObj
     });
-    Promise.all(promiseArray).then(async (updatedInventoryWith_Rev) => {
+    Promise.all(promiseArray).then(async ([...updatedInventoryWith_Rev]) => {
+        
         let resOfUpdateBulk = await productsdb.bulkDocs(updatedInventoryWith_Rev);
+        // let resOfUpdateBulkOfUnexisting = await productsdb.bulkDocs(unexistingProducts);
         //!this is the code for updating the current reducer;
         // console.log(updatedInventoryWith_Rev, extraArgs, "this is the code for updating the current reducer 1");
         // let productList = _get(extraArgs, 'productList', []) || [];
@@ -782,6 +806,8 @@ const updateTimeStampAndDbForInventory = async (res, dispatch, extraArgs) => {
         //     console.log(updatedInventoryWith_Rev, extraArgs, res, "this is the code for updating the current reducer 3");
 
         // })
+    }).catch((err) => {
+        
     })
 
 }

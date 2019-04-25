@@ -289,6 +289,7 @@ class OrdersTab extends React.Component {
                     itemIndex={this.state.itemIndex}
                     forCart={this.state.forCart}
                     cartTotal={this.state.cartTotal}
+                    cart={this.props.cart}
                 />
                 <div style={{ height: checkoutcartArea }}>
                     {/* <div className='cart-items' id='cartItemHeading'>
