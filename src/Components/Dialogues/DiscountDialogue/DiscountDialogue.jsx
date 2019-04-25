@@ -91,6 +91,7 @@ class DiscountDialogue extends React.Component {
             let allowedDiscountPercent = item.allowedDiscountPercent
             if(this.state.discount <= allowedDiscountPercent){
                 discount = this.state.discount
+                this.handleSuccessDiscountAdd(discount, this.props.identifier, this.props.itemIndex, type)
             }
             else{
                 alert('Discount exceeds the limit')
@@ -98,16 +99,31 @@ class DiscountDialogue extends React.Component {
         }
         else{
             let allowedCartDiscount = _get(this.props, 'cart.allowedCartDiscount', 0)
-            if(this.state.discount <= allowedCartDiscount){
-                discount = this.state.discount
+            if(this.state.type == '%'){
+                if(this.state.discount <= allowedCartDiscount){
+                    discount = this.state.discount
+                    this.handleSuccessDiscountAdd(discount, this.props.identifier, this.props.itemIndex, type)
+                }
+                else{
+                    alert('Discount exceeds the limit')
+                }
             }
             else{
-                alert('Discount exceeds the limit')
+                debugger
+                let discountableAmount = _get(this.props, 'cart.discountableCartTotal', 0)
+                if(this.state.discount <= (allowedCartDiscount*(discountableAmount/100))){
+                    discount = this.state.discount
+                    this.handleSuccessDiscountAdd(discount, this.props.identifier, this.props.itemIndex, type)
+                }
+                else{
+                    alert('Discount exceeds the limit')
+                }
             }
         }
+    }
 
-
-        this.props.handleDiscount(discount, this.props.identifier, this.props.itemIndex, type)
+    handleSuccessDiscountAdd = (discount, identifier, itemIndex, type) => {
+        this.props.handleDiscount(discount, identifier, itemIndex, type)
         this.setState({
             discount: ''
         })
