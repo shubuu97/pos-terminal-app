@@ -40,7 +40,6 @@ function CustomizedInputBase(props) {
         <MenuIcon />
       </IconButton> */}
         <InputBase
-          autoFocus
           className={classes.input}
           placeholder={props.placeholder}
           onChange={(event) => props.handleChange(event.target.value)} />

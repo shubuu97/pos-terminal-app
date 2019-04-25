@@ -446,7 +446,7 @@ class HomeContainer extends React.Component {
                     <div className={_get(this.state, 'orderId', '') === _get(transactions, 'sale.id', '') ? "active" : ""}>
                         <div className="mui-row no-gutters history-card-head">
                             <div className="mui-col-md-4">
-                                {moment(_get(transactions, 'sale.saleCommitTimeStamp.seconds', 0) * 1000).format('MM/DD/YYYY')}
+                                {moment(_get(transactions, 'sale.saleCommitTimeStamp.seconds', 0) * 1000).format('MMMM Do YYYY, h:mm:ss a')}
                             </div>
                             <div className="mui-col-md-8 text-right">
                                 #{`${_get(transactions, 'sale.id', '')}`}
@@ -505,7 +505,7 @@ class HomeContainer extends React.Component {
             this.handleTransactionPopulate();
             return;
         }
-        if (transactionId.length > 3) {
+        if (transactionId.length > 0) {
             this.setState({
                 historySidebarLoading: true
             })

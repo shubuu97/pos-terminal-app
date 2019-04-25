@@ -45,7 +45,6 @@ class HistoryDialogue extends React.Component {
     }
 
     handleSearchChange = (value) => {
-        debugger;
         this.setState({ searchInput: value })
         this.props.handleSearch(value);
     }
