@@ -90,7 +90,7 @@ class CalculationSection extends React.Component {
                         </div>
                         <div className='cart-each-details'>
                             <span className='cart-title'>Tax</span>
-                            <span className='cart-amount'>{_get(cart, 'totalTaxAmount.currencyCode')}{_get(cart, 'totalTaxAmount.amount')}</span>
+                            <span className='cart-amount'>{_get(cart, 'totalTaxAmount.currencyCode')}{_get(cart, 'totalTaxAmount.amount',0).toFixed(2)}</span>
                         </div>
                     </div>
                     <div className="cart-total">
