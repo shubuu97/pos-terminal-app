@@ -110,7 +110,6 @@ class HomeContainer extends React.Component {
     }
 
     calcHeight() {
-        debugger
         let windowHeight = document.documentElement.clientHeight
         // ! Product Section Calculations
         let headerHeight = 70;
@@ -411,7 +410,6 @@ class HomeContainer extends React.Component {
         let p3 = new PouchDb(`categoryDb${localStorage.getItem('storeId')}`).destroy();
         this.setState({ isLoading: true })
         Promise.all([p1, p2, p3]).then((data) => {
-            debugger;
             localStorage.clear();
             this.setState({ isLoading: false });
             window.location.reload();
