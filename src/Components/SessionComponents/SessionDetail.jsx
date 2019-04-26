@@ -15,7 +15,6 @@ import ZReport from './ZReport';
 import DialogHoc from '../../Global/Components/HOC/CommonDialogHoc';
 import Pouchdb from 'pouchdb';
 import SyncBeforeSession from './SyncBeforeSessionEnd';
-let transactiondb = new Pouchdb('transactiondb');
 
 let ZReportDialog = DialogHoc(ZReport);
 
@@ -107,6 +106,7 @@ class SessionDetail extends React.Component {
                 this.setState({ showReasonModal: true });
                 return;
             }
+            let transactiondb = new Pouchdb(`transactiondb${localStorage.getItem('storeId')}`);
             let res = await transactiondb.allDocs({
                 include_docs: true
             });
