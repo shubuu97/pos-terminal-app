@@ -108,6 +108,13 @@ class HistoryDetailArea extends React.Component {
                     <span className='summary-key'>{`Served By: `}</span>
                     <span className='summary-value'>{_get(selectedOrder, 'operator.person.firstName', '') + ' ' + _get(selectedOrder, 'operator.person.lastName', '')}</span>
                 </div>
+                {
+                    (_get(selectedOrder, 'sale.cartDiscountAmount.amount', 0) + _get(selectedOrder, 'sale.employeeDiscountAmount.amount', 0) + _get(selectedOrder, 'sale.itemDiscountAmount.amount', 0)) > 0 ?
+                        <div className='flex-row justify-space-between mb-5'>
+                            <span className='summary-key'>{`Discounts: `}</span>
+                            <span className='summary-value'>{_get(selectedOrder, 'sale.cartDiscountAmount.currencyCode', '$') + (_get(selectedOrder, 'sale.cartDiscountAmount.amount', 0) + _get(selectedOrder, 'sale.employeeDiscountAmount.amount', 0) + _get(selectedOrder, 'sale.itemDiscountAmount.amount', 0))}</span>
+                        </div> : null
+                }
                 <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Tax: `}</span>
                     <span className='summary-value'>{_get(selectedOrder, 'sale.totalTaxAmount.currencyCode', '$') + _get(selectedOrder, 'sale.totalTaxAmount.amount', 0)}</span>
@@ -176,15 +183,15 @@ class HistoryDetailArea extends React.Component {
 
     everyQtyReturned = () => {
         let saleItems = _get(this.props, "selectedSaleTransaction.sale.saleItems", []);
-       saleItems =  saleItems.filter((saleItem, index)=>{
-        if (saleItem.saleType == 2) {
-            return false
-        }
-        return true
-    })
+        saleItems = saleItems.filter((saleItem, index) => {
+            if (saleItem.saleType == 2) {
+                return false
+            }
+            return true
+        })
         let everyQtyReturned = saleItems.every((saleItem, index) => {
             let returnableQty = _get(saleItem, "qty", 0) - _get(saleItem, "returnQty", 0)
-            if(returnableQty>0){
+            if (returnableQty > 0) {
                 return false
             }
             return true

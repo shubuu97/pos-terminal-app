@@ -50,9 +50,6 @@ class ProductsSection extends React.Component {
                 limit: 39,
                 skip: 0
             }).then((result) => {
-                if(_isEmpty(result.rows)) {
-                this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
-                }
                 this.setState({ clearInput: false })
                 result.pagination = {}
                 result.pagination.method = "search"
@@ -123,6 +120,7 @@ class ProductsSection extends React.Component {
                     this.props.dispatch(commonActionCreater(cartDiscountObj, 'ADD_DISCOUNT_TO_CART'));
                     this.props.dispatch(commonActionCreater(cartObj, 'CART_ITEM_LIST'));
                 } else {
+                    this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS')) ;
                     this.setState({ clearInput: true})
                 }
             })
