@@ -39,7 +39,6 @@ class CashPay extends React.Component {
     }
 
     handleCustomerDataSuccess = (data) => {
-        debugger
         this.setState({
             availableRewardPoints: _get(data, 'rewardPoints', 0)
         })

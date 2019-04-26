@@ -24,7 +24,7 @@ class PaginationComponent extends React.Component {
   getPrevProducts = () => {
     this.setState({ disable: true })
     let startkey = this.props.firstItemId 
-    let productsdb = new PouchDb('productsdb');
+    let productsdb = new PouchDb(`productsdb${localStorage.getItem('storeId')}`);
       productsdb.allDocs({
           include_docs: true,
           descending: true,
@@ -50,7 +50,7 @@ class PaginationComponent extends React.Component {
   getNextProducts = () => {
     this.setState({ disable: true })
     let startkey = this.props.lastItemId  
-    let productsdb = new PouchDb('productsdb');
+    let productsdb = new PouchDb(`productsdb${localStorage.getItem('storeId')}`);
       productsdb.allDocs({
           include_docs: true,
           startkey,

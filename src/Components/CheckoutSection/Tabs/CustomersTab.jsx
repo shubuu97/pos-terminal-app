@@ -26,8 +26,6 @@ import {reset} from 'redux-form';
 
 PouchDb.plugin(PAM);
 PouchDb.plugin(require('pouchdb-quick-search'));
-let customerdb = new PouchDb('customersdb');
-
 const styles = theme => ({
     darkColor: {
         background: theme.palette.secondary.light,
@@ -64,6 +62,7 @@ class CustomerTab extends React.Component {
 
     loadOptions = (searchText, callback) => {
         console.log(searchText, "");
+        let customerdb = new PouchDb(`customersdb${localStorage.getItem('storeId')}`);
         customerdb.search({
             query: searchText,
             fields: ['customer.firstName', 'customer.lastName', 'email', 'phoneNumber.phoneNumber', 'employeeId'],
