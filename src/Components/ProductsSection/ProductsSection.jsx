@@ -28,12 +28,12 @@ PouchDb.plugin(PAM);
 PouchDb.plugin(Find);
 PouchDb.plugin(require('pouchdb-quick-search'));
 
-let productsdb = new PouchDb("productsdb");
 
 class ProductsSection extends React.Component {
 
     constructor() {
         super();
+        this.productsdb = new PouchDb(`productsdb${localStorage.getItem("storeId")}`);
         this.state = {
             clearInput: false,
             productLoading: false
@@ -43,7 +43,7 @@ class ProductsSection extends React.Component {
     handleChange = (searchText) => {
         this.setState({ clearInput: false })
         if (searchText.length > 2) {
-            productsdb.search({
+            this.productsdb.search({
                 query: searchText,
                 fields: ['product.name', 'product.description', 'product.sku', 'product.keywords', 'product.upcCode'],
                 include_docs: true,
@@ -67,7 +67,7 @@ class ProductsSection extends React.Component {
                 })
         } else if (searchText == '') {
             this.setState({ clearInput: false })
-            productsdb.allDocs({
+            this.productsdb.allDocs({
                 include_docs: true,
                 attachments: true,
                 limit: 39,
@@ -88,7 +88,7 @@ class ProductsSection extends React.Component {
         }
         if ((/^[0-9-]{4,}[0-9]$/).test(searchText)) {
             let noSearchText = Number(searchText)
-            productsdb.find({
+            this.productsdb.find({
                 selector: { "product.upcCode": noSearchText }
             }).then((result) => {
                 if (!_isEmpty(result.docs)) {
@@ -156,8 +156,8 @@ class ProductsSection extends React.Component {
     // getPrevProducts = () => {
     //     this.setState({ disable: true })
     //     let startkey = this.props.firstItemId 
-    //     let productsdb = new PouchDb('productsdb');
-    //       productsdb.allDocs({
+    //     let this.productsdb = new PouchDb('this.productsdb');
+    //       this.productsdb.allDocs({
     //           include_docs: true,
     //           descending: true,
     //           startkey,
@@ -201,7 +201,7 @@ class ProductsSection extends React.Component {
             console.log(filteredCount, "filteredCount");
             if (filteredCount > 0) {
                 let startkey = result.rows[result.rows.length - 1].id;
-                let res = await productsdb.allDocs({
+                let res = await this.productsdb.allDocs({
                     include_docs: true,
                     startkey,
                     limit: filteredCount,
@@ -222,9 +222,8 @@ class ProductsSection extends React.Component {
         this.setState({ disable: true, productLoading: true })
         let startkey = this.props.lastItemId
         let method = this.props.method
-        let productsdb = new PouchDb('productsdb');
         if (method == 'allDocs') {
-            productsdb.allDocs({
+            this.productsdb.allDocs({
                 include_docs: true,
                 startkey,
                 limit: 39,
@@ -277,7 +276,7 @@ class ProductsSection extends React.Component {
             });
         }
         else if (method == 'search' || method == 'categories') {
-            productsdb.search({
+            this.productsdb.search({
                 query: this.props.query,
                 fields: this.props.fields,
                 include_docs: true,

@@ -14,7 +14,7 @@ import PAM from "pouchdb-adapter-memory"
 PouchDb.plugin(Find);
 PouchDb.plugin(PAM);
 
-let categoryDb = new PouchDb("categoryDb");
+// let categoryDb = new PouchDb(`categoryDb${localStorage.getItem("storeId")}`);
 
 class Categories extends Component {
   constructor(props) {
@@ -46,6 +46,7 @@ class Categories extends Component {
   }
 
   componentDidMount() {
+    let categoryDb = new PouchDb(`categoryDb${localStorage.getItem("storeId")}`);
     categoryDb
       .find({
         selector: { categoryType: 0 }
@@ -84,7 +85,7 @@ class Categories extends Component {
     if (category.categoryType === 2) {
       this.setState({ leafCategory: category });
     }
-
+    let categoryDb = new PouchDb(`categoryDb${localStorage.getItem("storeId")}`);
     categoryDb
       .find({
         selector: { parentCategoryId: category.id }
@@ -98,7 +99,7 @@ class Categories extends Component {
         console.log(err);
       });
 
-    let productsdb = new PouchDb("productsdb");
+    let productsdb = new PouchDb(`productsdb${localStorage.getItem("storeId")}`);
     productsdb
       .search({
         query: category.id,
@@ -131,6 +132,7 @@ class Categories extends Component {
   };
 
   getCategory = level => {
+    let categoryDb = new PouchDb(`categoryDb${localStorage.getItem("storeId")}`);
     categoryDb
       .find({
         selector: { categoryType: level }
@@ -146,7 +148,7 @@ class Categories extends Component {
   };
 
   getProductData = () => {
-    let productsdb = new PouchDb("productsdb");
+    let productsdb = new PouchDb(`productsdb${localStorage.getItem("storeId")}`);
     productsdb
       .allDocs({
         include_docs: true,

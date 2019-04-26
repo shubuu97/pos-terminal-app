@@ -19,7 +19,6 @@ import Transaction from './Transaction';
 import PouchDb from 'pouchdb';
 import SyncBeforeSession from '../SessionComponents/SyncBeforeSessionEnd';
 
-let transactiondb = new PouchDb('transactiondb');
 const styles = theme => ({
     root: {
         flexGrow: 1,
@@ -53,7 +52,8 @@ class Transactions extends React.Component {
         }
     }
     componentDidMount() {
-        this.setState({ isLoading: true })
+        this.setState({ isLoading: true });
+        let transactiondb = new PouchDb(`transactiondb${localStorage.getItem('storeId')}`);
         transactiondb.allDocs({
             include_docs: true,
         }).then((data) => {

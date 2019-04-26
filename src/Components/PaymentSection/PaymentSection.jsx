@@ -32,7 +32,6 @@ import PaymentReceipt from './paymentReceipt';
 import CostCenter from './CostCenter';
 
 
-let transactiondb = new PouchDb('transactiondb')
 /* style */
 
 class PaymentSection extends React.Component {
@@ -239,10 +238,10 @@ class PaymentSection extends React.Component {
         if (this.state.currentFocus !== '') {
             let currentFocus = this.state.currentFocus;
             let focusItemValue
-            if(currentFocus == 'loyaltyRedeem'){
+            if (currentFocus == 'loyaltyRedeem') {
                 focusItemValue = this.props.loyaltyRedeemData.points;
             }
-            else{
+            else {
                 focusItemValue = this.props[currentFocus];
             }
             if (num != '<') {
@@ -251,14 +250,14 @@ class PaymentSection extends React.Component {
             else {
                 focusItemValue = '';
             }
-            if(currentFocus == 'loyaltyRedeem'){
+            if (currentFocus == 'loyaltyRedeem') {
                 let loyaltyRedeemAmount = focusItemValue * _get(this.props, 'RedemptionRules.redemptionMultiplier', 0);
                 this.props.dispatch(commonActionCreater({ loyaltyRedeem: loyaltyRedeemAmount, totalAmount: this.props.totalAmount, points: focusItemValue }, 'LOYALTY_INPUT_HANDLER'));
             }
-            else{
+            else {
                 this.props.dispatch(commonActionCreater({ [currentFocus]: focusItemValue, totalAmount: this.props.totalAmount }, this.state.handler))
             }
-            
+
         }
     }
     currentFocus = (field) => {
@@ -518,11 +517,11 @@ class PaymentSection extends React.Component {
         })
             .catch((error) => {
                 this.setState({ isLoadingTransaction: false });
-                showErrorAlert({ dispatch: this.props.dispatch, error: _get(error,'err','') })
+                showErrorAlert({ dispatch: this.props.dispatch, error: _get(error, 'err', '') })
             })
     }
     handleSaleTransactionOffline = (reqObj) => {
-
+        let transactiondb = new PouchDb(`transactiondb${localStorage.getItem('storeId')}`)
         transactiondb.put({
             _id: reqObj.id,
             id: reqObj.id,
@@ -531,12 +530,12 @@ class PaymentSection extends React.Component {
             this.setState({ isLoadingTransaction: false });
             this.props.startPolling();
             this.setState({ receiptData: reqObj, showPaymentReceipt: true, transactionStatus: 'offline' });
-            if (process.env.NODE_ENV !== 'production') {
-                PouchDb.replicate('transactiondb', `http://localhost:5984/transactiondb`, {
-                    live: true,
-                    retry: true
-                });
-            }
+            // if (process.env.NODE_ENV !== 'production') {
+            //     PouchDb.replicate('transactiondb', `http://localhost:5984/transactiondb`, {
+            //         live: true,
+            //         retry: true
+            //     });
+            // }
         })
             .catch((err) => {
                 this.setState({ isLoadingTransaction: false })
