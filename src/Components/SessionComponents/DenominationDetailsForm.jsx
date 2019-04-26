@@ -59,11 +59,12 @@ class DenominationDetailsForm extends React.Component {
         })
     }
     handleChange = name => event => {
-
-        this.setState({
-            [name]: event.target.value,
-            amount: getDenominationTotal({...this.state,[name]: event.target.value})
-        });
+        if(event.target.value >= 0 || event.target.value == '') {
+            this.setState({
+                [name]: event.target.value,
+                amount: getDenominationTotal({...this.state,[name]: event.target.value})
+            });
+        } 
     };
     calculateTotalValue = (type) => {
         return type.value * (parseFloat(this.state[type.stateName]) || 0)
