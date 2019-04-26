@@ -613,7 +613,6 @@ class RefundDialogue extends React.Component {
     }
 
     render() {
-        if (this.state.print)
         return (
             <div>
                 <Dialog
