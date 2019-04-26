@@ -41,7 +41,6 @@ import SettingContainer from './SettingContainer';
 let SessionDialog = withDialog(SessionContainer)
 let OfflineTransactionDialog = withDialog(OfflineTransactionContainer);
 let SettingDialog = withDialog(SettingContainer);
-let transactiondb = new PouchDb('transactiondb')
 
 
 /* Pose Animation Configs */
@@ -92,7 +91,7 @@ class HomeContainer extends React.Component {
             reqObj: { id: localStorage.getItem('terminalId') },
             successCb: this.fetchFreedomPayDetailsSuccess,
             errorCb: (err) => {
-            
+
             }
         })
     }
@@ -263,7 +262,7 @@ class HomeContainer extends React.Component {
             console.log(filteredCount, "filteredCount");
             if (filteredCount > 0) {
                 let startkey = result.rows[result.rows.length - 1].id;
-                let productsdb = new PouchDb('productsdb');
+                let productsdb = new PouchDb(`productsdb${localStorage.getItem('storeId')}`);
                 let res = await productsdb.allDocs({
                     include_docs: true,
                     startkey,
@@ -281,7 +280,7 @@ class HomeContainer extends React.Component {
 
     }
     getProductData = () => {
-        let productsdb = new PouchDb('productsdb');
+        let productsdb = new PouchDb(`productsdb${localStorage.getItem('storeId')}`);
         productsdb.allDocs({
             include_docs: true,
             attachments: true,
@@ -346,7 +345,7 @@ class HomeContainer extends React.Component {
         })
     }
     handleHistoryOpen = () => {
-        
+
         // let url = 'Sale/GetByCustomerId';
         // let data = { id: _get(this.props, 'customer.id', '') }
         // this.getOrderHistory(url, data)
@@ -386,13 +385,14 @@ class HomeContainer extends React.Component {
     }
 
     handleLogout = () => {
-        localStorage.clear();
         //logic to destory the dbs
-        let p1 = new PouchDb('customersdb').destroy();
-        let p2 = new PouchDb('productsdb').destroy();
-        let p3 = new PouchDb('categoryDb').destroy();
+        let p1 = new PouchDb(`customersdb${localStorage.getItem('storeId')}`).destroy();
+        let p2 = new PouchDb(`productsdb${localStorage.getItem('storeId')}`).destroy();
+        let p3 = new PouchDb(`categoryDb${localStorage.getItem('storeId')}`).destroy();
         this.setState({ isLoading: true })
         Promise.all([p1, p2, p3]).then((data) => {
+            debugger;
+            localStorage.clear();
             this.setState({ isLoading: false });
             window.location.reload();
             this.props.history.push('/login')
@@ -473,7 +473,7 @@ class HomeContainer extends React.Component {
 
     /* History Actions */
     handleTransactionPopulate = (customerId, limit, skip, timeFrom, timeTo) => {
-        
+
         let url = 'Sale/GetByTerminalId';
         let data = { id: localStorage.getItem('terminalId') }
         if (customerId) {
@@ -501,7 +501,7 @@ class HomeContainer extends React.Component {
 
     handleTransactionSearch = (transactionId) => {
         if (transactionId == '') {
-            
+
             this.handleTransactionPopulate();
             return;
         }
@@ -748,13 +748,16 @@ const deleteDocFromDb = async (row) => {
     console.log("###############hi###############")
     //todo implement maxtry
     let rev = row.value.rev;
+    let transactiondb = new PouchDb(`transactiondb${localStorage.getItem('storeId')}`)
+
     return transactiondb.remove(row.id, row.value.rev).
         then(() => true).
         catch(() => false);
 }
 
 const OfflineTransactionPusher = async (propsOfComp, dispatch) => {
-    console.log("###OfflineTransaction###")
+    console.log("###OfflineTransaction###");
+   let transactiondb = new PouchDb(`transactiondb${localStorage.getItem('storeId')}`)
     let resp = await transactiondb.allDocs({
         include_docs: true,
         attachments: true,
@@ -781,19 +784,19 @@ const OfflineTransactionPusher = async (propsOfComp, dispatch) => {
     }
 }
 const updateTimeStampAndDbForInventory = async (res, dispatch, extraArgs) => {
-    
+
     let tempInvetoryUpdateTime = localStorage.getItem('tempInvetoryUpdateTime');
     localStorage.setItem('invetoryUpdateTime', tempInvetoryUpdateTime)
 
-    let productsdb = new PouchDb('productsdb');
+    let productsdb = new PouchDb(`productsdb${localStorage.getItem('storeId')}`);
     let updatedInventory = _get(res, 'data', []) || [];
     let promiseArray = updatedInventory.map(async (product, index) => {
-        let productObj = await productsdb.get(product._id).then(data=>data).catch(err=>updatedInventory[index]);
+        let productObj = await productsdb.get(product._id).then(data => data).catch(err => updatedInventory[index]);
         _set(productObj, 'inventory.quantity', _get(product, 'inventory.quantity', 0));
         return productObj
     });
     Promise.all(promiseArray).then(async ([...updatedInventoryWith_Rev]) => {
-        
+        debugger;
         let resOfUpdateBulk = await productsdb.bulkDocs(updatedInventoryWith_Rev);
         // let resOfUpdateBulkOfUnexisting = await productsdb.bulkDocs(unexistingProducts);
         //!this is the code for updating the current reducer;
@@ -807,7 +810,7 @@ const updateTimeStampAndDbForInventory = async (res, dispatch, extraArgs) => {
 
         // })
     }).catch((err) => {
-        
+
     })
 
 }
@@ -836,7 +839,7 @@ const updateTimeStampAndDbForCustomer = async (res) => {
     let tempCustomerTime = localStorage.getItem('tempCustomerTime');
     localStorage.setItem('CustomerTime', tempCustomerTime)
 
-    let customerdb = new PouchDb('customersdb');
+    let customerdb = new PouchDb(`customersdb${localStorage.getItem('storeId')}`);
     let updatedCustomer = _get(res, 'data', []) || [];
     updatedCustomer.forEach((item, index) => {
         item._id = item.id
