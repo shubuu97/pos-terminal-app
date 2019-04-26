@@ -58,7 +58,7 @@ class MiscProductModal extends React.Component {
     state = {
         name: '',
         upcCode: '',
-        isTaxable: false,
+        isTaxable: true,
     }
 
     rand() {
@@ -102,6 +102,7 @@ class MiscProductModal extends React.Component {
         data.salePrice = salePrice;
         data.upcCode = Number(data.upcCode);
         data.retailerId = localStorage.getItem('retailerId');
+        data.discountable = true
         delete data.price;
         let url = 'MiscProduct/Create';
         this.saveMiscProduct(url, data, this.handleSaveMiscProductSuccess, this.handleSaveMiscProductError);
@@ -200,7 +201,7 @@ class MiscProductModal extends React.Component {
                                 </div>
                                 <div className="mui-col-md-6 mt-10">
                                     <FormControlLabel
-                                        control={<Checkbox onChange={(event, value) => this.handleChange(value, 'isTaxable')} value="isTaxable" color="primary" />}
+                                        control={<Checkbox onChange={(event, value) => this.handleChange(value, 'isTaxable')} value="isTaxable" color="primary" checked={this.state.isTaxable} />}
                                         label="Taxable"
                                     />
                                 </div>
