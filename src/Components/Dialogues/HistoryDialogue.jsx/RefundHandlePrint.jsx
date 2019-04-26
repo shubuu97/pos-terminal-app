@@ -34,8 +34,10 @@ const HandlePrint = (props) => {
         <div style={{ fontSize: "12px", fontFamily: "arial, sans-serif",color:'black' }} >
             <div style={{ textAlign: "center" }}>
                 <div style={{  width: "100%" }}> <img style={{ height: "auto", width: "100%" }} src={props.logo} /></div>
-                <div style={{ marginTop: '15px' }}>{_get(props, 'orderId', '')}</div>
-                <div>{_get(props, 'orderDate', '')}</div>
+                <div style={{ marginTop: '10px' }}><span style={{  fontSize: '11px', fontWeight: 'bold' }}>ORDER ID:</span> {_get(props, 'orderId', '')}</div>
+                <div style={{ marginTop: '10px' }}><span style={{  fontSize: '11px', fontWeight: 'bold' }}>REFUND ORDER ID:</span> {_get(props, 'refundorderId', '')}</div>
+                <div style={{ marginTop: '10px' }}><span style={{  fontSize: '11px', fontWeight: 'bold' }}>ORDER DATE:</span> {_get(props, 'orderDate', '')}</div>
+                <div style={{ marginTop: '10px' }}><span style={{  fontSize: '11px', fontWeight: 'bold' }}>REFUND DATE:</span> {_get(props, 'refundDate', '')}</div>
                 <div style={{ marginTop: '10px' }}><span style={{  fontSize: '11px', fontWeight: 'bold' }}>STORE:</span> {_get(props, 'storeName', '')}</div>
                 <div><span style={{  fontSize: '11px', fontWeight: 'bold' }}>ADDRESS:</span> {_get(props, 'storeAddress', '')}</div>
                 <div style={{ marginTop: '10px' }}><span style={{  fontSize: '11px', fontWeight: 'bold' }}>CASHIER:</span> {_get(props, 'cashierName', '')}</div>

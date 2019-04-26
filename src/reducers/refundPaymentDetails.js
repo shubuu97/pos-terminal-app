@@ -19,7 +19,6 @@ const calcRemainingAmount = (totalAmt, paymentAmt) => {
 
 }
 const roundUpAmount = (amount) => {
-    debugger
     let decimalCount = decimalPlaces(amount);
     if (decimalCount > 2) {
         amount = roundUp(amount, 2);

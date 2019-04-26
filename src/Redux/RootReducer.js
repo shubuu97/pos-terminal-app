@@ -46,7 +46,7 @@ let resetProduct = commonStaticReducer('RESET_PRODUCT');
 let lockTerminal = commonStaticReducer('LOCK_TERMINAL');
 let loyaltyRedeem = commonStaticReducer('LOYALTY_INPUT_HANDLER');
 let employeePayroll = commonStaticReducer('EMPLOYEE_PAYROLL')
-
+let isCustomerTabOpen = commonStaticReducer('IS_CUSTOMER_DIALOGUE_OPEN')
 
 // let cartItems = cartItemFun('CART_ITEM_LIST');
 // let cartOrderDetails = cartOrderDetailsFun('ORDER_DETAILS');
@@ -83,6 +83,7 @@ let rootRducer = combineReducers({
     RefundPaymentDetails,
     resetProduct,
     resetCategory,
+    isCustomerTabOpen
 })
 
 export default rootRducer;

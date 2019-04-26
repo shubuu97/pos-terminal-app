@@ -110,11 +110,13 @@ class CustomerTab extends React.Component {
 
     handleOpen = () => {
         this.setState({ open: true })
+        this.props.dispatch(commonActionCreater(true, 'IS_CUSTOMER_DIALOGUE_OPEN'))
     }
 
     handleClose = (props) => {
         // ! Uncomment if you want to clear form values onclick of cancel button 
         this.props.dispatch(reset('CustomerForm'));
+        this.props.dispatch(commonActionCreater(false, 'IS_CUSTOMER_DIALOGUE_OPEN'))
         this.setState({ open: false })
     }
 

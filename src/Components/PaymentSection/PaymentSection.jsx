@@ -516,7 +516,6 @@ class PaymentSection extends React.Component {
 
         })
             .catch((error) => {
-                debugger;
                 this.setState({ isLoadingTransaction: false });
                 showErrorAlert({ dispatch: this.props.dispatch, error: _get(error, 'err', '') })
             })

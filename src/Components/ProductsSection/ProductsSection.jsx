@@ -344,6 +344,8 @@ class ProductsSection extends React.Component {
                         />
                         <SearchBar
                             isOpenProduct={this.props.isOpenProduct}
+                            isOpenHistoryDialogue={this.props.isOpenHistoryDialogue}
+                            isCustomerTabOpen={this.props.isCustomerTabOpen.lookUpData}
                             handleChange={this.handleChange}
                             handleInput={this.state.clearInput}
                         />
@@ -399,6 +401,7 @@ class ProductsSection extends React.Component {
 
 const mapStateToProps = state => {
     let { productList } = state
+    let isCustomerTabOpen = state.isCustomerTabOpen
     let productCount = _get(productList, 'lookUpData.total_rows', '')
     let lastItemId = _get(productList, 'lookUpData.pagination.lastItemId', '')
     let firstItemId = _get(productList, 'lookUpData.pagination.firstItemId', '')
@@ -422,7 +425,8 @@ const mapStateToProps = state => {
         startVal,
         endVal,
         paymentMethods,
-        resetProduct
+        resetProduct,
+        isCustomerTabOpen
     }
 }
 

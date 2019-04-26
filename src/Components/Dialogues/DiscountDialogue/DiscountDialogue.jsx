@@ -109,7 +109,6 @@ class DiscountDialogue extends React.Component {
                 }
             }
             else{
-                debugger
                 let discountableAmount = _get(this.props, 'cart.discountableCartTotal', 0)
                 if(this.state.discount <= (allowedCartDiscount*(discountableAmount/100))){
                     discount = this.state.discount
