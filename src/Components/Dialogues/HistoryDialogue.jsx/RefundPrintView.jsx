@@ -28,9 +28,9 @@ class RefundPrintView extends React.Component {
 
     render() {
         const { store, data } = this.props;
-        console.log(data, 'jgyfxyfsyfs')
         let address = _get(store, 'store.address', '')
         let selectedOrder = _get(this.props, "selectedOrder", []);
+        console.log(selectedOrder, 'selectedOrderselectedOrder check')
         let storeAddress = _get(address, 'addressLine1', '') + ', ' +
             _get(address, 'addressLine2', '') + ', ' + _get(address, 'city', '') + ', ' +
             _get(address, 'state', '') + ', ' + _get(address, 'country', '') + ', ' +
@@ -38,7 +38,6 @@ class RefundPrintView extends React.Component {
 
         const customerName = _get(selectedOrder, 'customer.customer.firstName') + ' ' +
             _get(selectedOrder, 'customer.customer.lastName');
-        // console.log(this.props.logo, 'gugfhfyfyuf');
         return (
             <div>
                 <RefundHandlePrint
@@ -46,11 +45,13 @@ class RefundPrintView extends React.Component {
                     data={this.props.data}
                     type="Refund History"
                     cashierName={_get(selectedOrder, 'operator.person.firstName') + ' ' + _get(selectedOrder, 'operator.person.lastName')}
-                    orderId={_get(data, 'id', '')}
+                    orderId={_get(selectedOrder,'sale.id','')}
+                    refundorderId={_get(data, 'id', '')}
                     currency='$'
                     saleComment={_get(data, 'reason', '')}
                     itemList={_get(data, 'returnItems', [])}
-                    orderDate={moment(_get(data, 'timestamp.seconds', 0) * 1000).format('llll')}
+                    refundDate={moment(_get(data, 'timestamp.seconds', 0) * 1000).format('llll')}
+                    orderDate={moment(_get(selectedOrder, 'sale.saleTimeStamp.seconds', 0) * 1000).format('llll')}
                     storeName={_get(selectedOrder, 'store.name', '')}
                     storeAddress={storeAddress}
                     customerName={customerName}
