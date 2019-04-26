@@ -37,12 +37,13 @@ class CustomizedInputBase extends React.Component {
   }
 
   componentDidUpdate() {
-    if(this.props.isOpenProduct && !this.props.isOpenHistoryDialogue) {
+    if(this.props.isOpenProduct && !this.props.isOpenHistoryDialogue && !this.props.isCustomerTabOpen) {
       this.focusInput.focus()
     }
   }
 
   render() {
+    console.log(this.props.isCustomerTabOpen, 'isCustomerTabOpen')
     const { classes } = this.props;
     return (
       <Paper className={classes.root} elevation={1} >
@@ -78,4 +79,4 @@ CustomizedInputBase.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(CustomizedInputBase);
+export default (withStyles(styles)(CustomizedInputBase));

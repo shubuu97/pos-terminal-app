@@ -84,6 +84,7 @@ class HomeContainer extends React.Component {
             this.fetchFreedomPayDetails();
             this.props.startPolling();
         }
+        this.props.dispatch(commonActionCreater(false, 'IS_CUSTOMER_DIALOGUE_OPEN'))
     }
     fetchFreedomPayDetails = () => {
         axiosFetcher({
