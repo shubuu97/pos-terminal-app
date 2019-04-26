@@ -37,7 +37,7 @@ class CustomizedInputBase extends React.Component {
   }
 
   componentDidUpdate() {
-    if(this.props.isOpenProduct) {
+    if(this.props.isOpenProduct && !this.props.isOpenHistoryDialogue) {
       this.focusInput.focus()
     }
   }

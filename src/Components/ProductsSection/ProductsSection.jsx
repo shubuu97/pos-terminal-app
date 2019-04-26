@@ -345,6 +345,7 @@ class ProductsSection extends React.Component {
                         />
                         <SearchBar
                             isOpenProduct={this.props.isOpenProduct}
+                            isOpenHistoryDialogue={this.props.isOpenHistoryDialogue}
                             handleChange={this.handleChange}
                             handleInput={this.state.clearInput}
                         />

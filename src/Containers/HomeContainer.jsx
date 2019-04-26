@@ -68,7 +68,8 @@ class HomeContainer extends React.Component {
             offline: true,
             historySidebarItems: [],
             selectedSaleTransaction: null,
-            historySidebarLoading: false
+            historySidebarLoading: false,
+            openHistoryDialogue: false
         }
     }
 
@@ -563,6 +564,7 @@ class HomeContainer extends React.Component {
                         handleGiftCard={() => this.handleGiftCard(true)}
                         handleMiscProduct={() => this.handleMiscProduct(true)}
                         isOpenProduct={isOpenProduct}
+                        isOpenHistoryDialogue={this.state.openHistoryDialogue}
                     />
                 </Products>
                 <CheckoutSection
