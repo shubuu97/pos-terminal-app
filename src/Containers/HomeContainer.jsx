@@ -8,6 +8,8 @@ import _isEmpty from 'lodash/isEmpty';
 import _find from 'lodash/find'
 /* Material Icons */
 import SignalWifiOffOutlined from '@material-ui/icons/SignalWifiOffOutlined'
+import FullScreen from '@material-ui/icons/Fullscreen'
+import FullscreenExit from '@material-ui/icons/FullscreenExit'
 /* Material Import */
 import CircularProgress from '@material-ui/core/CircularProgress';
 /* Redux Imports */
@@ -68,7 +70,8 @@ class HomeContainer extends React.Component {
             offline: true,
             historySidebarItems: [],
             selectedSaleTransaction: null,
-            historySidebarLoading: false
+            historySidebarLoading: false,
+            toggleFullScreen: false
         }
     }
 
@@ -92,7 +95,7 @@ class HomeContainer extends React.Component {
             reqObj: { id: localStorage.getItem('terminalId') },
             successCb: this.fetchFreedomPayDetailsSuccess,
             errorCb: (err) => {
-            
+
             }
         })
     }
@@ -107,7 +110,8 @@ class HomeContainer extends React.Component {
     }
 
     calcHeight() {
-        let windowHeight = document.documentElement.scrollHeight
+        debugger
+        let windowHeight = document.documentElement.clientHeight
         // ! Product Section Calculations
         let headerHeight = 70;
         let categoriesHeight = 90;
@@ -129,7 +133,23 @@ class HomeContainer extends React.Component {
         let paymentSaleComment = paymentMainPart * 0.10;
         let paymentSubmitTransaction = paymentMainPart * 0.10;
 
+        console.log("Screen Height Calc - windowHeight=", windowHeight,
+            ' headerHeight=', headerHeight,
+            ' categoriesHeight=', categoriesHeight,
+            ' productListHeight=', productListHeight,
+            ' checkoutHeader=', checkoutHeader,
+            ' checkoutMainPart=', checkoutMainPart,
+            ' checkoutcalcArea=', checkoutcalcArea,
+            ' checkoutactionArea=', checkoutactionArea,
+            ' checkoutcartArea=', checkoutcartArea,
+            ' checkoutCustomerArea=', checkoutCustomerArea,
+            ' paymentOptionsPart=', paymentOptionsPart,
+            ' paymentMainPart=', paymentMainPart,
+            ' paymentCalculator=', paymentCalculator,
+            ' paymentSaleComment=', paymentSaleComment,
+            ' paymentSubmitTransaction=', paymentSubmitTransaction,
 
+        )
         this.setState({
             windowHeight,
             headerHeight,
@@ -346,7 +366,6 @@ class HomeContainer extends React.Component {
         })
     }
     handleHistoryOpen = () => {
-        
         // let url = 'Sale/GetByCustomerId';
         // let data = { id: _get(this.props, 'customer.id', '') }
         // this.getOrderHistory(url, data)
@@ -473,7 +492,6 @@ class HomeContainer extends React.Component {
 
     /* History Actions */
     handleTransactionPopulate = (customerId, limit, skip, timeFrom, timeTo) => {
-        
         let url = 'Sale/GetByTerminalId';
         let data = { id: localStorage.getItem('terminalId') }
         if (customerId) {
@@ -501,7 +519,6 @@ class HomeContainer extends React.Component {
 
     handleTransactionSearch = (transactionId) => {
         if (transactionId == '') {
-            
             this.handleTransactionPopulate();
             return;
         }
@@ -528,6 +545,39 @@ class HomeContainer extends React.Component {
             })
         }
     }
+
+    toggleFullscreen = () => {
+        let elem = document.documentElement;
+        if (!document.fullscreenElement && !document.mozFullScreenElement &&
+            !document.webkitFullscreenElement && !document.msFullscreenElement) {
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.msRequestFullscreen) {
+                elem.msRequestFullscreen();
+            } else if (elem.mozRequestFullScreen) {
+                elem.mozRequestFullScreen();
+            } else if (elem.webkitRequestFullscreen) {
+                elem.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+            }
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            }
+        }
+        this.setState({
+            toggleFullScreen: !this.state.toggleFullScreen
+        })
+        setTimeout(() => {
+            this.calcHeight()
+        }, 100);
+    }
+
 
     render() {
         let windowHeight = document.documentElement.scrollHeight
@@ -721,7 +771,17 @@ class HomeContainer extends React.Component {
                             <div className='pt-15' style={{ fontSize: '1.5em', color: '#fff', fontWeight: 'bold' }}>Logging Out</div>
                         </div> : null
                 }
-            </div >
+
+                <div className='flex-row justify-center align-center full-screen-button'>
+                    {
+                        this.state.toggleFullScreen ?
+                            <FullscreenExit className='flex-row' onClick={this.toggleFullscreen} /> :
+                            <FullScreen className='flex-row' onClick={this.toggleFullscreen} />
+                    }
+                </div>
+
+
+            </div>
         );
     }
 }
@@ -781,19 +841,19 @@ const OfflineTransactionPusher = async (propsOfComp, dispatch) => {
     }
 }
 const updateTimeStampAndDbForInventory = async (res, dispatch, extraArgs) => {
-    
+
     let tempInvetoryUpdateTime = localStorage.getItem('tempInvetoryUpdateTime');
     localStorage.setItem('invetoryUpdateTime', tempInvetoryUpdateTime)
 
     let productsdb = new PouchDb('productsdb');
     let updatedInventory = _get(res, 'data', []) || [];
     let promiseArray = updatedInventory.map(async (product, index) => {
-        let productObj = await productsdb.get(product._id).then(data=>data).catch(err=>updatedInventory[index]);
+        let productObj = await productsdb.get(product._id).then(data => data).catch(err => updatedInventory[index]);
         _set(productObj, 'inventory.quantity', _get(product, 'inventory.quantity', 0));
         return productObj
     });
     Promise.all(promiseArray).then(async ([...updatedInventoryWith_Rev]) => {
-        
+
         let resOfUpdateBulk = await productsdb.bulkDocs(updatedInventoryWith_Rev);
         // let resOfUpdateBulkOfUnexisting = await productsdb.bulkDocs(unexistingProducts);
         //!this is the code for updating the current reducer;
@@ -807,7 +867,7 @@ const updateTimeStampAndDbForInventory = async (res, dispatch, extraArgs) => {
 
         // })
     }).catch((err) => {
-        
+
     })
 
 }
