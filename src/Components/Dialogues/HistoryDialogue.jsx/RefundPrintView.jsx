@@ -20,9 +20,7 @@ class RefundPrintView extends React.Component {
     }
 
     componentDidUpdate(){
-        debugger;
         if(this.props.print){
-            debugger;
             this.props.handlePrint()
         }
     }
@@ -30,7 +28,7 @@ class RefundPrintView extends React.Component {
 
     render() {
         const { store, data } = this.props;
-
+        console.log(data, 'jgyfxyfsyfs')
         let address = _get(store, 'store.address', '')
         let selectedOrder = _get(this.props, "selectedOrder", []);
         let storeAddress = _get(address, 'addressLine1', '') + ', ' +

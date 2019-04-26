@@ -249,7 +249,6 @@ class RefundDialogue extends React.Component {
     }
 
     handleProceed = () => {
-        debugger
         let nextStep = this.state.step + 1
         if (nextStep == 2) {
             this.props.dispatch(commonActionCreater({ amount: this.state.totalRefundAmount }, 'RESET_REFUND_REDUCER'));
@@ -266,7 +265,7 @@ class RefundDialogue extends React.Component {
                     }, 6000);
                     return;
                 }
-                debugger
+                
                 let length = _get(data, 'sale.returns', []).length;
                 let returnObj = _get(data, `sale.returns[${length - 1}]`, {})
                 console.log(returnObj, 'mayuk')
@@ -615,7 +614,6 @@ class RefundDialogue extends React.Component {
 
     render() {
         if (this.state.print)
-            debugger;
         return (
             <div>
                 <Dialog
