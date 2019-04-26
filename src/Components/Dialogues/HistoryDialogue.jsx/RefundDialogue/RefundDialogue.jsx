@@ -640,7 +640,7 @@ class RefundDialogue extends React.Component {
                                                     <th>Product</th>
                                                     <th style={{ textAlign: 'center' }}>Returnable Qty</th>
                                                     <th style={{ textAlign: 'center' }}>Return Qty</th>
-                                                    <th style={{ textAlign: 'center' }}>Increase Inventory</th>
+                                                    <th style={{ textAlign: 'center' }}>Return to Stock</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -756,7 +756,7 @@ class RefundDialogue extends React.Component {
                             this.state.step == 1 || this.state.step == 2 ?
                                 <div className='refund-action-section flex-row'>
                                     <div className='action-btn flex-row justify-center align-center' onClick={this.props.handleRefundClose}>Cancel</div>
-                                    <div className='action-btn flex-row justify-center align-center' onClick={this.handleProceed}>Proceed</div>
+                                    <div className='action-btn flex-row justify-center align-center' onClick={this.handleProceed}>Complete</div>
                                 </div> : null
                         }
 

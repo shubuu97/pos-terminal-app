@@ -45,7 +45,7 @@ class ProductsSection extends React.Component {
         if (searchText.length > 2) {
             this.productsdb.search({
                 query: searchText,
-                fields: ['product.name', 'product.description', 'product.sku', 'product.keywords', 'product.upcCode'],
+                fields: ['product.name', 'product.description', 'product.sku', 'product.keywords'],
                 include_docs: true,
                 limit: 39,
                 skip: 0
@@ -54,7 +54,7 @@ class ProductsSection extends React.Component {
                 result.pagination = {}
                 result.pagination.method = "search"
                 result.pagination.query = searchText
-                result.pagination.fields = ['product.name', 'product.description', 'product.sku']
+                result.pagination.fields = ['product.name', 'product.description', 'product.sku', 'product.keywords']
                 result.pagination.firstItemId = result.rows[0].id
                 result.pagination.lastItemId = result.rows[result.rows.length - 1].id
                 result.pagination.pageNo = 1

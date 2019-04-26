@@ -64,7 +64,7 @@ class RefundHistory extends React.Component {
       <ExpansionPanel expanded={expanded === 'panel1'} onChange={this.handleChange('panel1')}>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
           <Typography className={classes.secondaryHeading}>Refund Date:</Typography>
-          <Typography className={classes.heading}>{moment.utc(_get(data, 'timestamp.seconds', 0) * 1000).format('DD/MM/YYYY hh:mm:ss')}</Typography>
+          <Typography className={classes.heading}>{moment.utc(_get(data, 'timestamp.seconds', 0) * 1000).format('MM/DD/YYYY hh:mm:ss')}</Typography>
           <Typography className={classes.secondaryHeading}>   Refund Amount:</Typography>
           <Typography className={classes.heading}>{_get(data, 'refundTotal.amount', 0).toFixed(2)}</Typography>
         </ExpansionPanelSummary>
