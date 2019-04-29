@@ -281,7 +281,14 @@ class SessionDetail extends React.Component {
 
     }
     calDiffrence = () => {
-        let difference = _get(this.state, 'session.currentBalance.amount', 0) - this.state.realClosingBalance
+        let difference
+        if (_get(this.state, 'session.status', '') == "closed") {
+            difference = (_get(this.state, 'session.currentBalance.amount', 0) - parseFloat(_get(this, 'state.session.closingBalance.amount', 0)))
+        }
+        else {
+            difference = _get(this.state, 'session.currentBalance.amount', 0) - this.state.realClosingBalance
+
+        }
         return parseFloat(difference).toFixed(2);
     }
     specifyReason = (closeReason) => {
@@ -313,7 +320,7 @@ class SessionDetail extends React.Component {
         let person = _get(manager, 'person');
         let staffName = `${_get(person, 'firstName', '')} ${_get(person, 'lastName', '')}`;
         let openingTime = moment(_get(session, 'openingTimeStamp.seconds') * 1000).format('dddd DD MMM,YYYY hh:mm A')
-        let terminal = _get(session, 'terminalId');
+        let terminal = _get(session, 'terminalName');
 
         let closingTime = _get(session, 'closingTimeStamp.seconds') * 1000;
         if (closingTime) {
@@ -362,7 +369,7 @@ class SessionDetail extends React.Component {
                         <div className='mui-col-md-3'>${parseFloat(openingBalance || 0).toFixed(2)}</div>
                         <div className="mui-col-md-6 real-closing-bal">
                             <div className='mui-col-md-6 secondary-color'>Real Closing Balance</div>
-                            <div className='mui-col-md-6'>${parseFloat(_get(this, 'state.realClosingBalance', 0)).toFixed(2)}</div>
+                            <div className='mui-col-md-6'>${_get(this.state, 'session.status', '') == "closed" ? parseFloat(_get(this, 'state.session.closingBalance.amount', 0)).toFixed(2) : parseFloat(_get(this, 'state.realClosingBalance', 0)).toFixed(2)}</div>
                         </div>
                     </div>
                     <div className='mui-row trans-row-1'>
