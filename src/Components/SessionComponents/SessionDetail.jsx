@@ -322,7 +322,9 @@ class SessionDetail extends React.Component {
         let openingBalance = _get(session, 'openingBalance.amount', '');
 
         if (this.state.isLoading) {
-            return <CircularProgress size={300} />
+            return <div style={{ marginLeft: '350px', marginTop: '230px' }}>
+                <CircularProgress size={100} />
+            </div>
         }
         return (
             <div className="mui-container tertiary-color">
