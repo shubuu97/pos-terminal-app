@@ -32,7 +32,7 @@ class Login extends React.Component {
             identifier: 'POST_LOGIN_DATA',
             successCb: this.afterLoginSuccess,
             errorCb: this.handleLoginError,
-            successText:'Logged in succesfully'
+            successText:'Login Successful'
         })
     }
 
