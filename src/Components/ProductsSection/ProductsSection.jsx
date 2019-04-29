@@ -86,6 +86,7 @@ class ProductsSection extends React.Component {
                 console.log(err)
             });
         }
+
         if ((/^[0-9-]{4,}[0-9]$/).test(searchText)) {
             let noSearchText = Number(searchText)
             this.productsdb.find({
@@ -93,6 +94,9 @@ class ProductsSection extends React.Component {
             }).then((result) => {
                 if (!_isEmpty(result.docs)) {
                     this.setState({ clearInput: true })
+                    let data = { rows: [] }
+                    data.rows[0] = { doc: result.docs[0] }
+                    this.props.dispatch(commonActionCreater(data, 'GET_PRODUCT_DATA_SUCCESS'));
                     let cartItems = _get(this, 'props.cart.cartItems', [])
                     let productDataDoc = { doc: result.docs[0] };
                     let productId = productDataDoc.doc._id;
@@ -120,8 +124,8 @@ class ProductsSection extends React.Component {
                     this.props.dispatch(commonActionCreater(cartDiscountObj, 'ADD_DISCOUNT_TO_CART'));
                     this.props.dispatch(commonActionCreater(cartObj, 'CART_ITEM_LIST'));
                 } else {
-                    this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS')) ;
-                    this.setState({ clearInput: true})
+                    this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+                    // this.setState({ clearInput: true })
                 }
             })
         }
