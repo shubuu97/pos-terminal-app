@@ -68,13 +68,21 @@ class DiscountDialogue extends React.Component {
         else {
             discount = ''
         }
-        let cartDiscountPercent = 0;
-        let maxDiscount = 80;
-        if (this.state.type === '$') {
-            maxDiscount = _get(this.props, 'cartTotal', 0) * 80 / 100;
+
+        let maxDiscount = 0 
+        if(this.props.identifier == 'Discount'){
+            if(this.state.type == '%'){
+                maxDiscount = this.props.cart.allowedCartDiscount
+            }
+            else{
+                maxDiscount = (Math.floor(this.props.cart.allowedCartDiscount*this.props.cart.discountableCartTotal*100)/10000)
+            }
         }
-        if (parseFloat(discount) > maxDiscount) {
-            discount = maxDiscount.toFixed(2);
+        else{
+            maxDiscount = this.props.cart.cartItems[this.props.itemIndex].allowedDiscountPercent
+        }
+        if (parseFloat(discount) > parseFloat(maxDiscount)) {
+            discount = parseFloat(maxDiscount).toFixed(2);
         }
 
         this.setState({
@@ -85,36 +93,36 @@ class DiscountDialogue extends React.Component {
     handleDiscount = () => {
         let type = this.state.type
         let discount = 0
-        if(this.props.identifier != 'Discount'){
+        if (this.props.identifier != 'Discount') {
             type = '%'
             let item = this.props.cart.cartItems[this.props.itemIndex]
             let allowedDiscountPercent = item.allowedDiscountPercent
-            if(this.state.discount <= allowedDiscountPercent){
+            if (this.state.discount <= allowedDiscountPercent) {
                 discount = this.state.discount
                 this.handleSuccessDiscountAdd(discount, this.props.identifier, this.props.itemIndex, type)
             }
-            else{
+            else {
                 alert('Discount exceeds the limit')
             }
         }
-        else{
+        else {
             let allowedCartDiscount = _get(this.props, 'cart.allowedCartDiscount', 0)
-            if(this.state.type == '%'){
-                if(this.state.discount <= allowedCartDiscount){
+            if (this.state.type == '%') {
+                if (this.state.discount <= allowedCartDiscount) {
                     discount = this.state.discount
                     this.handleSuccessDiscountAdd(discount, this.props.identifier, this.props.itemIndex, type)
                 }
-                else{
+                else {
                     alert('Discount exceeds the limit')
                 }
             }
-            else{
+            else {
                 let discountableAmount = _get(this.props, 'cart.discountableCartTotal', 0)
-                if(this.state.discount <= (allowedCartDiscount*(discountableAmount/100))){
+                if (this.state.discount <= parseFloat((Math.floor(allowedCartDiscount*discountableAmount*100)/10000).toFixed(2))) {
                     discount = this.state.discount
                     this.handleSuccessDiscountAdd(discount, this.props.identifier, this.props.itemIndex, type)
                 }
-                else{
+                else {
                     alert('Discount exceeds the limit')
                 }
             }
@@ -155,7 +163,7 @@ class DiscountDialogue extends React.Component {
                             {/* <span>Warning! This action will require manager's approval.</span> */}
                         </DialogContentText>
                         <div className='mui-col-md-12'>
-                            <div className=" d-flex align-items-center mt-20">
+                            <div className=" d-flex mt-20">
                                 <div className="mui-col-md-8">
                                     <TextField
                                         id="discount"
@@ -166,6 +174,18 @@ class DiscountDialogue extends React.Component {
                                         fullWidth
                                         type='text'
                                         variant="outlined"
+                                        helperText={
+                                            this.props.open ?
+                                                this.props.identifier == 'Discount' ?
+                                                    this.state.type == '%' ?
+                                                        `Allowed Discount: ${(this.props.cart.allowedCartDiscount).toFixed(2)}`
+                                                        :
+                                                        `Allowed Discount: $ ${(this.props.cart.allowedCartDiscount * this.props.cart.discountableCartTotal / 100).toFixed(2)}`
+                                                    :
+                                                    `Allowed Discount: ${(this.props.cart.cartItems[this.props.itemIndex].allowedDiscountPercent).toFixed(2)}`
+                                                :
+                                                null
+                                        }
                                     />
                                 </div>
                                 <div className="mui-col-md-4">

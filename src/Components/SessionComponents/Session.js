@@ -36,10 +36,10 @@ class Session extends React.PureComponent {
         let { session } = this.props;
         let returnElement
         if (session.status == 'open') {
-            returnElement = <span>${_get(session,'currentBalance.amount')}</span>
+            returnElement = <span>${_get(session,'currentBalance.amount',0).toFixed(2)}</span>
         }
         else {
-            returnElement = <span>${_get(session,'closingBalance.amount')}</span>
+            returnElement = <span>${_get(session,'closingBalance.amount',0).toFixed(2)}</span>
         }
         return returnElement
     }

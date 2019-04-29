@@ -343,9 +343,9 @@ class ProductsSection extends React.Component {
                             getProductData={this.props.getProductData}
                         />
                         <SearchBar
-                            isOpenProduct={this.props.isOpenProduct}
-                            isOpenHistoryDialogue={this.props.isOpenHistoryDialogue}
-                            isCustomerTabOpen={this.props.isCustomerTabOpen.lookUpData}
+                            isOpenProduct={_get(this.props,'isOpenProduct',false)}
+                            isOpenHistoryDialogue={_get(this.props,'isOpenHistoryDialogue',false)}
+                            isCustomerTabOpen={_get(this.props,'isCustomerTabOpen.lookUpData',false)}
                             handleChange={this.handleChange}
                             handleInput={this.state.clearInput}
                         />

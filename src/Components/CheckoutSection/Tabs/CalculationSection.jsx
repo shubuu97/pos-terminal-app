@@ -42,7 +42,7 @@ class CalculationSection extends React.Component {
                     <div className="cart-details">
                         <div className='cart-each-details'>
                             <span className='cart-title bold'>Regular Total</span>
-                            <span className='cart-amount bold'>${_get(cart, 'regularTotal', 0)}</span>
+                            <span className='cart-amount bold'>${_get(cart, 'regularTotal')}</span>
                         </div>
                         {
                             _get(cart, 'cartDiscountAmount.amount', 0) > 0 ?
@@ -53,14 +53,14 @@ class CalculationSection extends React.Component {
                                         />
                                         Cart Discount
                                     </span>
-                                    <span className='cart-amount'>- {_get(cart, 'cartDiscountAmount.currencyCode')}{_get(cart, 'cartDiscountAmount.amount')}</span>
+                                    <span className='cart-amount'>- {_get(cart, 'cartDiscountAmount.currencyCode')}{_get(cart, 'cartDiscountAmount.amount',0).toFixed(2)}</span>
                                 </div> : null
                         }
                         {
                             _get(cart, 'employeeDiscountAmount.amount', 0) > 0 ?
                                 <div className='cart-each-details'>
                                     <span className='cart-title'>Emp. Discount </span>
-                                    <span className='cart-amount'>- {_get(cart, 'cartDiscountAmount.currencyCode')}{_get(cart, 'employeeDiscountAmount.amount')}</span>
+                                    <span className='cart-amount'>- {_get(cart, 'cartDiscountAmount.currencyCode')}{_get(cart, 'employeeDiscountAmount.amount',0).toFixed(2)}</span>
                                 </div> : null
                         }
                         {
@@ -70,7 +70,7 @@ class CalculationSection extends React.Component {
                                         {/* <RemoveCircleIcons style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }} /> */}
                                         Item Discounts
                                 </span>
-                                    <span className='cart-amount'>- {_get(cart, 'itemDiscountAmount.currencyCode')}{_get(cart, 'itemDiscountAmount.amount')}</span>
+                                    <span className='cart-amount'>- {_get(cart, 'itemDiscountAmount.currencyCode')}{_get(cart, 'itemDiscountAmount.amount',0).toFixed(2)}</span>
                                 </div> : null
                         }
                         {
@@ -95,7 +95,7 @@ class CalculationSection extends React.Component {
                     </div>
                     <div className="cart-total">
                         <span className='total-text'>Total </span>
-                        <span className='total-amount'>{_get(cart, 'totalAmount.currencyCode')}{_get(cart, 'totalAmount.amount')}</span>
+                        <span className='total-amount'>{_get(cart, 'totalAmount.currencyCode')}{_get(cart, 'totalAmount.amount',0).toFixed(2)}</span>
                     </div>
                 </div>
             </div>

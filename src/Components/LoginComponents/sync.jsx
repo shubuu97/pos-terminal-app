@@ -59,7 +59,6 @@ class SyncContainer extends Component {
         let invetoryUpdateTime = await updationrecorderdb.get("invetoryUpdateTime").then(data => data.invetoryUpdateTime).catch(err => undefined);
         let customerUpdateTime = await updationrecorderdb.get("customerUpdateTime").then(data => data.customerUpdateTime).catch(err => undefined);
 
-        debugger;
         if (invetoryUpdateTime) {
             this.getInventoryUpdate(invetoryUpdateTime);
             this.getCustomerUpdate(customerUpdateTime);
@@ -119,11 +118,9 @@ class SyncContainer extends Component {
             return productObj
         });
         Promise.all(promiseArray).then(async ([...updatedInventoryWith_Rev]) => {
-            debugger;
             let resOfUpdateBulk = await productsdb.bulkDocs(updatedInventoryWith_Rev);
             this.setState({ taskCompletedCount: 1, taskCount: 1 })
         }).catch((err) => {
-            debugger;
         })
 
     }
@@ -159,7 +156,6 @@ class SyncContainer extends Component {
                 customerUpdateTime: tempCustomerTime,
             });
         }).catch(err => {
-            debugger;
             if (err.status == 404) {
                 updationrecorderdb.put({
                     _id: 'customerUpdateTime',
@@ -185,7 +181,6 @@ class SyncContainer extends Component {
         Promise.all(promiseArray).then(async ([...updatedCustomerWith_Rev]) => {
             let resOfUpdateBulk = await customerdb.bulkDocs(updatedCustomerWith_Rev);
         }).catch((err) => {
-            debugger;
         })
 
     }
@@ -310,15 +305,12 @@ class SyncContainer extends Component {
                 this.pollProduct();
             }
             else {
-                debugger;
-                console.log(this.state, "hhhhhhhhhhhhhhhhhhhhh")
                 this.state.taskCompletedCount++;
                 let percentageComplete = this.state.percentageComplete + 100 / this.state.taskCount;
                 this.setState({ percentageComplete });
             }
         })
             .catch((err) => {
-                debugger;
             })
     }
 
@@ -442,7 +434,6 @@ class SyncContainer extends Component {
         if (reason === 'clickaway') {
             return;
         }
-        debugger;
         this.setState({
             taskCount: 5,
             percentageComplete: 0,

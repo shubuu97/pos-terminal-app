@@ -679,11 +679,11 @@ class RefundDialogue extends React.Component {
                                         <div className='flex-row fwidth mt-10'>
                                             <div className='flex-column pl-5 halfwidth'>
                                                 <span className='info-title'>Total Refund Amount</span>
-                                                <span className='info-value'>{this.state.totalRefundAmount}</span>
+                                                <span className='info-value'>{_get(this.state,'totalRefundAmount',0).toFixed(2)}</span>
                                             </div>
                                             <div className='flex-column pl-5 halfwidth'>
                                                 <span className='info-title'>Remaining Refund Amount</span>
-                                                <span className='info-value'>{this.props.remainingAmount}</span>
+                                                <span className='info-value'>{_get(this.props,'remainingAmount',0).toFixed(2)}</span>
                                             </div>
                                         </div>
 
