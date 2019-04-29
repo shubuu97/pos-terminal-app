@@ -148,6 +148,7 @@ class SyncContainer extends Component {
         })
     }
     updateTimeStampAndDbForCustomer = async (res) => {
+        addGuestToCart(this.props.dispatch);
         let tempCustomerTime = localStorage.getItem('tempCustomerTime');
         localStorage.setItem('CustomerTime', tempCustomerTime)
         let updationrecorderdb = new PouchDb(`updationrecorderdb${localStorage.getItem('store')}`);
@@ -261,8 +262,7 @@ class SyncContainer extends Component {
                 'product.name',
                 'product.description',
                 'product.sku',
-                'product.keywords',
-            ],
+                'product.keywords',            ],
             build: true
         })
         console.log("############### making index of Category ###############")
