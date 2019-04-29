@@ -59,6 +59,8 @@ class MiscProductModal extends React.Component {
         name: '',
         upcCode: '',
         isTaxable: true,
+        isError: true,
+        errorMsg: ''
     }
 
     rand() {
@@ -94,18 +96,23 @@ class MiscProductModal extends React.Component {
     }
 
     addMiscProduct = (e, index) => {
-        let data = { ...this.state };
-        let salePrice = {
-            price: Number(this.state.price),
-            currencyCode: "$",
+        if(this.state.name == '') {
+            this.setState({ isError: true, errorMsg: 'Please enter product name.'})
+        } else {
+            this.setState({ isError: false, errorMsg: ''})
+            let data = { ...this.state };
+            let salePrice = {
+                price: Number(this.state.price),
+                currencyCode: "$",
+            }
+            data.salePrice = salePrice;
+            data.upcCode = Number(data.upcCode);
+            data.retailerId = localStorage.getItem('retailerId');
+            data.discountable = true
+            delete data.price;
+            let url = 'MiscProduct/Create';
+            this.saveMiscProduct(url, data, this.handleSaveMiscProductSuccess, this.handleSaveMiscProductError);
         }
-        data.salePrice = salePrice;
-        data.upcCode = Number(data.upcCode);
-        data.retailerId = localStorage.getItem('retailerId');
-        data.discountable = true
-        delete data.price;
-        let url = 'MiscProduct/Create';
-        this.saveMiscProduct(url, data, this.handleSaveMiscProductSuccess, this.handleSaveMiscProductError);
     }
 
     handleAddToCart = (miscProduct) => {
@@ -133,6 +140,11 @@ class MiscProductModal extends React.Component {
     }
 
     handleChange = (e, name) => {
+        if(this.state.name == '') {
+            this.setState({ isError: true, errorMsg: 'Please enter product name.'})
+        } else {
+            this.setState({ isError: false, errorMsg: ''})
+        }
         let val = name == 'isTaxable' ? e : _get(e, 'target.value', '');
         this.setState({
             [name]: val,
@@ -170,6 +182,7 @@ class MiscProductModal extends React.Component {
                                     className='mt-10'
                                 />
                             </div>
+                            <div style={{color: "red"}}>{this.state.errorMsg}</div>
                             <div className="">
                                 <TextField
                                     id="upcCode"
@@ -212,10 +225,11 @@ class MiscProductModal extends React.Component {
                     <DialogActions>
                         <Button onClick={() => this.props.handleClose()} className='btnmodalsecondary' variant="outlined">
                             Cancel
-                    </Button>
-                        <Button onClick={() => this.addMiscProduct()} className='btnmodalprimary' variant="outlined">
+                        </Button>
+
+                        <Button onClick={() => this.addMiscProduct()} className='btnmodalprimary' variant="outlined" disabled={this.state.isError}>
                             Add To Cart
-                    </Button>
+                        </Button>
                     </DialogActions>
                 </Dialog>
             </div>
