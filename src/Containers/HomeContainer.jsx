@@ -850,16 +850,13 @@ const updateTimeStampAndDbForInventory = async (res, dispatch, extraArgs) => {
     let tempInvetoryUpdateTime = localStorage.getItem('tempInvetoryUpdateTime');
     localStorage.setItem('invetoryUpdateTime', tempInvetoryUpdateTime);
     let updationrecorderdb = new PouchDb(`updationrecorderdb${localStorage.getItem('storeId')}`);
-    debugger;
     await updationrecorderdb.get('invetoryUpdateTime').then(data => {
-        debugger;
         updationrecorderdb.put({
             _id: 'invetoryUpdateTime',
             _rev: data._rev,
             invetoryUpdateTime: tempInvetoryUpdateTime,
         })
     }).catch(err => {
-        debugger;
         if (err.status == 404) {
             updationrecorderdb.put({
                 _id: 'invetoryUpdateTime',
@@ -884,7 +881,6 @@ const updateTimeStampAndDbForInventory = async (res, dispatch, extraArgs) => {
     Promise.all(promiseArray).then(async ([...updatedInventoryWith_Rev]) => {
         let resOfUpdateBulk = await productsdb.bulkDocs(updatedInventoryWith_Rev);
     }).catch((err) => {
-        debugger;
     })
 
 }
@@ -910,7 +906,6 @@ const getInventoryUpdate = async (propsOfComp, dispatch) => {
     })
 }
 const updateTimeStampAndDbForCustomer = async (res) => {
-    debugger;
     let tempCustomerTime = localStorage.getItem('tempCustomerTime');
     localStorage.setItem('CustomerTime', tempCustomerTime)
     let updationrecorderdb = new PouchDb(`updationrecorderdb${localStorage.getItem('storeId')}`);
@@ -921,7 +916,6 @@ const updateTimeStampAndDbForCustomer = async (res) => {
             customerUpdateTime: tempCustomerTime,
         });
     }).catch(err => {
-        debugger;
         if (err.status == 404) {
             updationrecorderdb.put({
                 _id: 'customerUpdateTime',
@@ -947,7 +941,6 @@ const updateTimeStampAndDbForCustomer = async (res) => {
     Promise.all(promiseArray).then(async ([...updatedCustomerWith_Rev]) => {
         let resOfUpdateBulk = await customerdb.bulkDocs(updatedCustomerWith_Rev);
     }).catch((err) => {
-        debugger;
     })
 
 }
