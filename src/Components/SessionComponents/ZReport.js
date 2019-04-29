@@ -47,19 +47,29 @@ function MapStateToProps(state){
     data.pos = _get(sessionData,'terminal.name');
     data.staff = `${_get(sessionData,'manager.person.firstName')} ${_get(sessionData,'manager.person.lastName')}`;
     data.openFrom =  moment(_get(sessionData,'session.openingTimeStamp.seconds') * 1000).format('dddd DD MMM,YYYY hh:mm A');
-    data.closedAt =  moment(_get(sessionData,'session.closingTimeStamp.seconds') * 1000).format('dddd DD MMM,YYYY hh:mm A')||'';
+    data.closedAt =  _get(sessionData,'session.closingTimeStamp.seconds',0)?moment(_get(sessionData,'session.closingTimeStamp.seconds') * 1000).format('dddd DD MMM,YYYY hh:mm A'):null;
     data.openingAmount = _get(sessionData,'session.openingBalance.amount');
     data.cashSalesAmount = _get(sessionData,'session.cashSalesAmount');
     data.cardSalesAmount = _get(sessionData,'session.cardSalesAmount');
-    data.employeeDeductSalesAmount = _get(sessionData,'session.employeeDeductSalesAmount',0);
+    data.employeeDeductSalesAmount = _get(sessionData,"session.employeeDeductSalesAmount",0);
+    data.costCenterChargeSalesAmount = _get(sessionData,'session.costCenterChargeSalesAmount',0);
+    data.loyaltySalesAmount = _get(sessionData,"session.loyaltySalesAmount",0);
+    data.decliningBalanceSalesAmount = _get(sessionData,"session.decliningBalanceSalesAmount",0);
+    data.giftCardSalesAmount = _get(sessionData,"session.giftCardSalesAmount",0)
     data.cashAdded = _get(sessionData,'session.cashAdded');
     data.cashRemoved = _get(sessionData,'session.cashRemoved');
     data.theoreticalClosingBalance = _get(sessionData,'session.currentBalance.amount',0);
-    data.realClosingBalance = _get(sessionData,'session.closingBalance.amount');
+    data.realClosingBalance = _get(sessionData,'session.closingBalance.amount',0);
+    data.cashRefundAmount= _get(sessionData,"session.cashRefundAmount",0);
+    data.cardRefundAmount= _get(sessionData,"session.cardRefundAmount",0);
+    data.giftCardRefundAmount = _get(sessionData,"session.giftCardRefundAmount",0);
     data.diffrence = parseFloat(data.realClosingBalance) -parseFloat(data.theoreticalClosingBalance);
+    console.log(data.diffrence,sessionData,data.realClosingBalance,data.theoreticalClosingBalance,"data.theoreticalClosingBalance");
     data.preTaxSalesAmount = _get(sessionData,'session.preTaxSalesAmount');
     data.taxAmount = _get(sessionData,'session.taxAmount');
     data.totalSalesAmount = _get(sessionData,'session.totalSalesAmount');
+    data.totalDiscountAmount = _get(sessionData,'session.totalDiscountAmount');
+
     return {data}
 }
 
