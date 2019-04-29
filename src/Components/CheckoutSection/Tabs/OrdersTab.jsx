@@ -24,7 +24,6 @@ import addGuestToCart from '../../../Global/PosFunctions/addGuestToCart';
 /* Asset Import  */
 import EmptyCartImg from '../../../assets/images/pos/empty_cart.png'
 
-
 class OrdersTab extends React.Component {
 
     constructor() {
@@ -33,7 +32,6 @@ class OrdersTab extends React.Component {
             totalCartItems: 0,
             orderTotal: 0,
             expanded: null,
-            cartListHeight: 0,
             open: false,
             identifier: '',
             itemIndex: '',
@@ -47,20 +45,13 @@ class OrdersTab extends React.Component {
     }
 
     componentWillReceiveProps(props) {
-        let cartItemHeight = 0
-        let cartListHeight = this.props.checkoutcartArea - cartItemHeight - 30;
-        this.setState({
-            cartListHeight
-        })
         if (this.state.cartItemQty != _get(props, 'cart.cartQty', 0)) {
             this.props.dispatch(commonActionCreater(1, 'SWITCH_TAB_NUMBER'))
             this.setState({
                 cartItemQty: _get(props, 'cart.cartQty', 0)
             })
         }
-
     }
-
 
     // * Minor Functions for Opening closing Modals 
     handleChange = panel => (event, expanded) => {
@@ -279,6 +270,7 @@ class OrdersTab extends React.Component {
 
     render() {
         let { checkoutcalcArea, checkoutactionArea, checkoutcartArea, checkoutMainPart } = this.props;
+        let cartListHeight = checkoutcartArea - 30
         return (
             <div className="orders-section" >
                 <DiscountDialogue
@@ -292,11 +284,7 @@ class OrdersTab extends React.Component {
                     cart={this.props.cart}
                 />
                 <div style={{ height: checkoutcartArea }}>
-                    {/* <div className='cart-items' id='cartItemHeading'>
-                        <span>Cart Items</span>
-                        <Button variant="outlined" onClick={this.handleClickOpenDiscount}>Add Discount</Button>
-                    </div> */}
-                    <div className="items-section flex-column" style={{ height: this.state.cartListHeight }} >
+                    <div className="items-section flex-column" style={{ height: cartListHeight }} >
                         {
                             _get(this, 'props.cartItems', []).length ?
                                 this.populateCartItems() :
