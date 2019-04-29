@@ -406,16 +406,17 @@ class HomeContainer extends React.Component {
 
     handleLogout = () => {
         //logic to destory the dbs
-        let p1 = new PouchDb(`customersdb${localStorage.getItem('storeId')}`).destroy();
-        let p2 = new PouchDb(`productsdb${localStorage.getItem('storeId')}`).destroy();
-        let p3 = new PouchDb(`categoryDb${localStorage.getItem('storeId')}`).destroy();
+        // let p1 = new PouchDb(`customersdb${localStorage.getItem('storeId')}`).destroy();
+        // let p2 = new PouchDb(`productsdb${localStorage.getItem('storeId')}`).destroy();
+        // let p3 = new PouchDb(`categoryDb${localStorage.getItem('storeId')}`).destroy();
         this.setState({ isLoading: true })
-        Promise.all([p1, p2, p3]).then((data) => {
-            localStorage.clear();
-            this.setState({ isLoading: false });
-            window.location.reload();
-            this.props.history.push('/login')
-        });
+        // Promise.all([p1, p2, p3]).then((data) => {
+        //     debugger;
+        localStorage.clear();
+        this.setState({ isLoading: false });
+        window.location.reload();
+        this.props.history.push('/login')
+        // });
     }
 
     showNetworkIndicator = ({ online }) => {
@@ -818,7 +819,7 @@ const deleteDocFromDb = async (row) => {
 
 const OfflineTransactionPusher = async (propsOfComp, dispatch) => {
     console.log("###OfflineTransaction###");
-   let transactiondb = new PouchDb(`transactiondb${localStorage.getItem('storeId')}`)
+    let transactiondb = new PouchDb(`transactiondb${localStorage.getItem('storeId')}`)
     let resp = await transactiondb.allDocs({
         include_docs: true,
         attachments: true,
@@ -847,30 +848,43 @@ const OfflineTransactionPusher = async (propsOfComp, dispatch) => {
 const updateTimeStampAndDbForInventory = async (res, dispatch, extraArgs) => {
 
     let tempInvetoryUpdateTime = localStorage.getItem('tempInvetoryUpdateTime');
-    localStorage.setItem('invetoryUpdateTime', tempInvetoryUpdateTime)
+    localStorage.setItem('invetoryUpdateTime', tempInvetoryUpdateTime);
+    let updationrecorderdb = new PouchDb(`updationrecorderdb${localStorage.getItem('storeId')}`);
+    debugger;
+    await updationrecorderdb.get('invetoryUpdateTime').then(data => {
+        debugger;
+        updationrecorderdb.put({
+            _id: 'invetoryUpdateTime',
+            _rev: data._rev,
+            invetoryUpdateTime: tempInvetoryUpdateTime,
+        })
+    }).catch(err => {
+        debugger;
+        if (err.status == 404) {
+            updationrecorderdb.put({
+                _id: 'invetoryUpdateTime',
+                invetoryUpdateTime: tempInvetoryUpdateTime,
+            })
+        }
+    })
+
 
     let productsdb = new PouchDb(`productsdb${localStorage.getItem('storeId')}`);
     let updatedInventory = _get(res, 'data', []) || [];
     let promiseArray = updatedInventory.map(async (product, index) => {
-        let productObj = await productsdb.get(product._id).then(data => data).catch(err => updatedInventory[index]);
-        _set(productObj, 'inventory.quantity', _get(product, 'inventory.quantity', 0));
+        let productObj = await productsdb.get(product._id).then(
+            data => {
+                let updateObject = updatedInventory[index];
+                updateObject._rev = data._rev;
+                return updateObject
+            }).catch(err => updatedInventory[index]);
+        // _set(productObj, 'inventory.quantity', _get(product, 'inventory.quantity', 0));
         return productObj
     });
     Promise.all(promiseArray).then(async ([...updatedInventoryWith_Rev]) => {
         let resOfUpdateBulk = await productsdb.bulkDocs(updatedInventoryWith_Rev);
-        // let resOfUpdateBulkOfUnexisting = await productsdb.bulkDocs(unexistingProducts);
-        //!this is the code for updating the current reducer;
-        // console.log(updatedInventoryWith_Rev, extraArgs, "this is the code for updating the current reducer 1");
-        // let productList = _get(extraArgs, 'productList', []) || [];
-        // updatedInventoryWith_Rev.map((updatedInventory, index) => {
-        //     console.log(updatedInventory, productList, "this is the code for updating the current reducer 2");
-        //     let res = _find(productList, {id:updatedInventory._id});
-
-        //     console.log(updatedInventoryWith_Rev, extraArgs, res, "this is the code for updating the current reducer 3");
-
-        // })
     }).catch((err) => {
-
+        debugger;
     })
 
 }
@@ -896,17 +910,45 @@ const getInventoryUpdate = async (propsOfComp, dispatch) => {
     })
 }
 const updateTimeStampAndDbForCustomer = async (res) => {
+    debugger;
     let tempCustomerTime = localStorage.getItem('tempCustomerTime');
     localStorage.setItem('CustomerTime', tempCustomerTime)
-
+    let updationrecorderdb = new PouchDb(`updationrecorderdb${localStorage.getItem('storeId')}`);
+    updationrecorderdb.get('customerUpdateTime').then(data => {
+        updationrecorderdb.put({
+            _id: 'customerUpdateTime',
+            _rev: data._rev,
+            customerUpdateTime: tempCustomerTime,
+        });
+    }).catch(err => {
+        debugger;
+        if (err.status == 404) {
+            updationrecorderdb.put({
+                _id: 'customerUpdateTime',
+                customerUpdateTime: tempCustomerTime,
+            })
+        }
+    });
     let customerdb = new PouchDb(`customersdb${localStorage.getItem('storeId')}`);
     let updatedCustomer = _get(res, 'data', []) || [];
     updatedCustomer.forEach((item, index) => {
         item._id = item.id
     });
-    console.log(updatedCustomer, '*********resCustomer*********');
-    let resOfUpdateBulk = await customerdb.bulkDocs(updatedCustomer);
-    console.log(resOfUpdateBulk, "*********resOfUpdateBulk**********");
+    let promiseArray = updatedCustomer.map(async (customer, index) => {
+        let customerObj = await customerdb.get(customer._id).then(
+            data => {
+                let updateObject = updatedCustomer[index];
+                updateObject._rev = data._rev;
+                return updateObject
+            }).catch(err => updatedCustomer[index]);
+        // _set(customerObj, 'inventory.quantity', _get(customer, 'inventory.quantity', 0));
+        return customerObj
+    });
+    Promise.all(promiseArray).then(async ([...updatedCustomerWith_Rev]) => {
+        let resOfUpdateBulk = await customerdb.bulkDocs(updatedCustomerWith_Rev);
+    }).catch((err) => {
+        debugger;
+    })
 
 }
 const getCustomerUpdate = async (propsOfComp, dispatch) => {

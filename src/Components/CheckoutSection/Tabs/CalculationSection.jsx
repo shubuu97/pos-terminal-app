@@ -68,7 +68,7 @@ class CalculationSection extends React.Component {
                                 <div className='cart-each-details'>
                                     <span className='cart-title flex-row align-center'>
                                         {/* <RemoveCircleIcons style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }} /> */}
-                                        Items Discount
+                                        Item Discounts
                                 </span>
                                     <span className='cart-amount'>- {_get(cart, 'itemDiscountAmount.currencyCode')}{_get(cart, 'itemDiscountAmount.amount')}</span>
                                 </div> : null
