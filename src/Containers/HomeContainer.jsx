@@ -477,7 +477,7 @@ class HomeContainer extends React.Component {
                                 <label className="c-name">{_get(transactions, 'customer.customer.firstName', '') + ' ' + _get(transactions, 'customer.customer.lastName', '')}</label>
                             </div>
                             <div className="mui-col-md-6 text-right">
-                                <label className="c-name">{`Amount: ${_get(transactions, 'sale.totalAmount.currencyCode', '$')} ${_get(transactions, 'sale.totalAmount.amount', 0)}`}</label>
+                                <label className="c-name">{`Amount: ${_get(transactions, 'sale.totalAmount.currencyCode', '$')} ${_get(transactions, 'sale.totalAmount.amount', 0).toFixed(2)}`}</label>
                             </div>
                         </div>
                     </div>

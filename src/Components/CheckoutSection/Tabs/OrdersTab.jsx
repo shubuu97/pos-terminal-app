@@ -196,8 +196,8 @@ class OrdersTab extends React.Component {
 
                             {/* Item Price and Regular Price */}
                             <div className='flex-column'>
-                                <div className='each-product-price'>{_get(item, 'itemSubTotal.currencyCode')} {_get(item, 'itemSubTotal.amount')}</div>
-                                <div className='each-product-reg-price'>Reg Price - {_get(item, 'itemRegularTotal.currencyCode')} {_get(item, 'itemRegularTotal.amount')}</div>
+                                <div className='each-product-price'>{_get(item, 'itemSubTotal.currencyCode')} {_get(item, 'itemSubTotal.amount',0).toFixed(2)}</div>
+                                <div className='each-product-reg-price'>Reg Price - {_get(item, 'itemRegularTotal.currencyCode')} {_get(item, 'itemRegularTotal.amount',0).toFixed(2)}</div>
                             </div>
                         </div>
                     </ExpansionPanelSummary>

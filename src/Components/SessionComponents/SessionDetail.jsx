@@ -367,15 +367,15 @@ class SessionDetail extends React.Component {
                     </div>
                     <div className='mui-row trans-row-1'>
                         <div className='mui-col-md-3 primary-color' onClick={this.showPlusTransactionDialog}>+ Transactions</div>
-                        <div className='mui-col-md-3'>{this.calcPlusTxnVal()}</div>
+                        <div className='mui-col-md-3'>${this.calcPlusTxnVal()}</div>
                         <div className="mui-col-md-6 difference">
-                            <div className='mui-col-md-6 secondary-color'>Diffrence</div>
-                            <div className='mui-col-md-6'>{this.calDiffrence()}</div>
+                            <div className='mui-col-md-6 secondary-color'>Difference</div>
+                            <div className='mui-col-md-6'>${this.calDiffrence()}</div>
                         </div>
                     </div>
                     <div className='mui-row trans-row-2'>
                         <div className='mui-col-md-3 primary-color' onClick={this.showNegativeTransactionDialog}>- Transactions</div>
-                        <div className='mui-col-md-3'>{this.calcNegTxnVal()}</div>
+                        <div className='mui-col-md-3'>${this.calcNegTxnVal()}</div>
                         <div className='mui-col-md-6'>
                             {status == 'open' ? <div class="mui-col-md-6 text-right">
                                 <Button
@@ -393,7 +393,7 @@ class SessionDetail extends React.Component {
                         </div>
                     </div>
                     <div className='mui-row closing-bal'>
-                        <div className='mui-col-md-3 secondary-color'>Theoratical Closing Balance</div>
+                        <div className='mui-col-md-3 secondary-color'>Theoretical Closing Balance</div>
                         <div className='mui-col-md-3'>${parseFloat(_get(this.state, 'session.currentBalance.amount')).toFixed(2)}</div>
                         {status == 'open' ? <div className='mui-col-md-6 text-center'>
                             <Button

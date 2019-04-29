@@ -25,11 +25,15 @@ class PutMoneyInOut extends React.Component {
     constructor() {
         super();
         this.state = {
+            amount: 0
         }
     }
     handleChange = name => event => {
-        this.setState({ [name]: event.target.value });
+        if(event.target.value >= 0 || event.target.value == '') {
+            this.setState({ [name]: event.target.value });
+        }
     };
+
     render() {
         const { store } = this.props;
         return (
@@ -56,7 +60,6 @@ class PutMoneyInOut extends React.Component {
                                 onChange={this.handleChange('amount')}
                                 margin="normal"
                             />
-
                             <TextField
                                 id="standard-multiline-flexible"
                                 label="reason"
