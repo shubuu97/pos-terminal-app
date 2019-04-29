@@ -218,7 +218,7 @@ class OrderHistoryDialog extends React.Component {
                                 <label className="c-name">{_get(custData, 'customer.customer.firstName','') + ' ' + _get(custData, 'customer.customer.lastName','')}</label>
                             </div>
                             <div className="mui-col-md-6 text-right">
-                                <label  className="c-name">{`Amount: ${_get(custData, 'sale.totalAmount.currencyCode', '$')} ${_get(custData, 'sale.totalAmount.amount', 0)}`}</label>
+                                <label  className="c-name">Amount: {_get(custData, 'sale.totalAmount.currencyCode', '$')} {_get(custData, 'sale.totalAmount.amount', 0).toFixed(2)}</label>
                             </div>
                         </div>
                         {/* <div className="mui-row no-gutters">                               
@@ -246,7 +246,7 @@ class OrderHistoryDialog extends React.Component {
                 <td>
                     <input name={`returnQty-${index}`} value={_get(item, 'saleItem.returnQty', 0)} onChange={(e) => this.handleChange(e, index)} />
                 </td>
-                <td>{(_get(item, 'saleItem.itemRefundAmount.amount', 0))}</td>
+                <td>{(_get(item, 'saleItem.itemRefundAmount.amount', 0).toFixed(2))}</td>
                 <td>{(_get(item, 'saleItem.returnReason', ''))}</td>
                 {/* <td>{((_get(item, 'saleItem.itemRegularTotal.amount', 0) / _get(item, 'saleItem.qty', 0)) * _get(item, 'saleItem.returnQty', 0)).toFixed(2) + _get(item, 'product.tax', 0)}</td> */}
 
@@ -278,15 +278,15 @@ class OrderHistoryDialog extends React.Component {
         let listItems = _get(orderData,'saleParts',[]).map((item) => (
             <tr>
                 <td>{_isEmpty(item.giftCard) ? _get(item, 'product.name', '') : 'Gift Card'}</td>
-                <td>{_isEmpty(item.giftCard) ? _get(item, 'product.salePrice.price', 0): _get(item, 'giftCard.value.amount',0)}</td>
+                <td>{_isEmpty(item.giftCard) ? _get(item, 'product.salePrice.price', 0).toFixed(2): _get(item, 'giftCard.value.amount',0).toFixed(2)}</td>
                 <td>{_get(item, 'saleItem.qty', 0)}</td>
                 <td>{_get(item, 'saleItem.returnQty', 0)}</td>
-                <td>{_get(item, 'saleItem.itemTotalDiscountAmount.amount', 0)}</td>
-                <td>{(_get(item, 'saleItem.itemSubTotal.amount', ''))}</td>
+                <td>{_get(item, 'saleItem.itemTotalDiscountAmount.amount', 0).toFixed(2)}</td>
+                <td>{(_get(item, 'saleItem.itemSubTotal.amount', 0).toFixed(2))}</td>
                 {/* //need to check  */}
                 <td>{_get(item, 'saleItem.itemTaxAmount.amount', 0).toFixed(2)}</td>
-                <td>{(_get(item, 'saleItem.itemEffectiveTotal.amount', 0))}</td>
-                <td>{(_get(item, 'saleItem.itemRefundAmount.amount', ''))}</td>
+                <td>{(_get(item, 'saleItem.itemEffectiveTotal.amount', 0).toFixed(2))}</td>
+                <td>{(_get(item, 'saleItem.itemRefundAmount.amount', 0).toFixed(2))}</td>
             </tr>
         ))
 

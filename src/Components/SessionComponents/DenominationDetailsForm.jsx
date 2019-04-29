@@ -67,7 +67,11 @@ class DenominationDetailsForm extends React.Component {
         } 
     };
     calculateTotalValue = (type) => {
-        return type.value * (parseFloat(this.state[type.stateName]) || 0)
+        let subTotal = type.value * (parseFloat(this.state[type.stateName]) || 0)
+        return (
+            subTotal.toFixed(2)
+        )
+       
     }
     mapTablerows = () => {
         return currencyTypes.map((type) => {
@@ -173,7 +177,7 @@ class DenominationDetailsForm extends React.Component {
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td>   <span className="bold">{this.state.amount}</span></td>
+                                <td>   <span className="bold">{_get(this.state,'amount',0).toFixed(2)}</span></td>
                             </tr>
                         </table>
                         {/* <div className="flex flex-row justify-space-between">

@@ -129,7 +129,7 @@ class Customer extends React.Component {
                                                 <span className='each-card-code'>{_get(this.props.productDetails, 'sku', '')}</span>
                                             </div>
                                             <div className="each-card-price flex-row">
-                                                {_get(this.props.productDetails, 'salePrice.currencyCode', '')} {_get(this.props.productDetails, 'salePrice.price', 'NaN')}
+                                                {_get(this.props.productDetails, 'salePrice.currencyCode', '')} {_get(this.props.productDetails, 'salePrice.price', 0).toFixed(2)}
                                                 <div className='indicator'></div>
                                             </div>
                                             {_get(this.props.inventoryDetails, 'quantity', 0) <= 0 ?

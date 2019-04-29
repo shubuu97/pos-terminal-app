@@ -86,7 +86,7 @@ class HistoryDetailArea extends React.Component {
         const paymentMethodsView = _get(this.props.selectedSaleTransaction, 'sale.payments', []).map((payment) => (
             <div className='flex-row justify-space-between mb-5'>
                 <span className='summary-key'>{this.paymentMethods(_get(payment, 'paymentMethod', 0))}</span>
-                <span className='summary-value'>{`${_get(payment, 'paymentAmount.currencyCode', '$')} ${_get(payment, 'paymentAmount.amount', 0)}`}</span>
+                <span className='summary-value'>{`${_get(payment, 'paymentAmount.currencyCode', '$')} ${_get(payment, 'paymentAmount.amount', 0).toFixed(2)}`}</span>
             </div>
         ))
         return (
@@ -102,7 +102,7 @@ class HistoryDetailArea extends React.Component {
             <div className="mui-col-md-12 flex-column mt-10" >
                 <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Created Date: `}</span>
-                    <span className='summary-value'>{moment(_get(selectedOrder, 'sale.saleCommitTimeStamp.seconds', 0) * 1000).format('MM/DD/YYYY')}</span>
+                    <span className='summary-value'>{moment(_get(selectedOrder, 'sale.saleCommitTimeStamp.seconds', 0) * 1000).format('MM/DD/YYYY hh:mm:ss')}</span>
                 </div>
                 <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Served By: `}</span>
@@ -117,11 +117,11 @@ class HistoryDetailArea extends React.Component {
                 }
                 <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Tax: `}</span>
-                    <span className='summary-value'>{_get(selectedOrder, 'sale.totalTaxAmount.currencyCode', '$') + _get(selectedOrder, 'sale.totalTaxAmount.amount', 0)}</span>
+                    <span className='summary-value'>{_get(selectedOrder, 'sale.totalTaxAmount.currencyCode', '$') + _get(selectedOrder, 'sale.totalTaxAmount.amount', 0).toFixed(2)}</span>
                 </div>
                 <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Grand Total: `}</span>
-                    <span className='summary-value'>{`${_get(selectedOrder, 'sale.totalAmount.currencyCode', '$')}${_get(selectedOrder, 'sale.totalAmount.amount', 0)}`}</span>
+                    <span className='summary-value'>{`${_get(selectedOrder, 'sale.totalAmount.currencyCode', '$')}${_get(selectedOrder, 'sale.totalAmount.amount', 0).toFixed(2)}`}</span>
                 </div>
                 <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Returned Amount: `}</span>
@@ -129,7 +129,7 @@ class HistoryDetailArea extends React.Component {
                 </div>
                 <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Total Paid: `}</span>
-                    <span className='summary-value'>{`${_get(selectedOrder, 'sale.totalAmountPaid.currencyCode', '$')}${_get(selectedOrder, 'sale.totalAmountPaid.amount', '0')}`}</span>
+                    <span className='summary-value'>{`${_get(selectedOrder, 'sale.totalAmountPaid.currencyCode', '$')}${_get(selectedOrder, 'sale.totalAmountPaid.amount', '0').toFixed(2)}`}</span>
                 </div>
                 <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Change: `}</span>
@@ -177,7 +177,7 @@ class HistoryDetailArea extends React.Component {
         let TotalRefundAmount = returns.reduce((acc, returnObj) => {
             return (acc + returnObj.refundTotal.amount)
         }, 0);
-        return TotalRefundAmount;
+        return TotalRefundAmount.toFixed(2);
 
     }
 
