@@ -48,17 +48,145 @@ class SyncContainer extends Component {
             taskCompletedCount: 0
         };
     }
-    componentDidMount() {
+    async componentDidMount() {
         let storeId = localStorage.getItem('storeId');
         let retailerId = localStorage.getItem('retailerId');
         globalClearCart(this.props.dispatch);
         this.setState({ progressMsg: "Fetching Data from server..." });
         this.timeStarted = Date.now();
-        console.log(Date.now(), "###########starting time##########")
-        this.pollProduct();
-        this.pollCustomer();
-        this.pollCategory();
-        this.fetchFreedomPayDetails();
+        console.log(Date.now(), "###########starting time##########");
+        let updationrecorderdb = new PouchDb(`updationrecorderdb${localStorage.getItem('storeId')}`);
+        let invetoryUpdateTime = await updationrecorderdb.get("invetoryUpdateTime").then(data => data.invetoryUpdateTime).catch(err => undefined);
+        let customerUpdateTime = await updationrecorderdb.get("customerUpdateTime").then(data => data.customerUpdateTime).catch(err => undefined);
+
+        debugger;
+        if (invetoryUpdateTime) {
+            this.getInventoryUpdate(invetoryUpdateTime);
+            this.getCustomerUpdate(customerUpdateTime);
+        }
+        else {
+            this.pollProduct();
+            this.pollCustomer();
+            this.pollCategory();
+            this.fetchFreedomPayDetails();
+        }
+
+    }
+    getInventoryUpdate = async (invetoryUpdateTime) => {
+        let reqObj = {
+            id: localStorage.getItem('storeId'),
+            timestamp: {
+                seconds: parseInt(invetoryUpdateTime)
+            }
+        };
+        let tempInvetoryUpdateTime = Date.now();
+        tempInvetoryUpdateTime = parseInt(tempInvetoryUpdateTime / 1000);
+        localStorage.setItem('tempInvetoryUpdateTime', tempInvetoryUpdateTime);
+        axiosFetcher({
+            method: 'POST',
+            reqObj,
+            url: 'Inventory/Increment',
+            successCb: this.updateTimeStampAndDbForInventory,
+            errorCb: (err) => {
+                console.log(err, "err is here")
+            }
+        })
+    }
+    updateTimeStampAndDbForInventory = async (res, dispatch, extraArgs) => {
+
+        let tempInvetoryUpdateTime = localStorage.getItem('tempInvetoryUpdateTime');
+        localStorage.setItem('invetoryUpdateTime', tempInvetoryUpdateTime);
+        let updationrecorderdb = new PouchDb(`updationrecorderdb${localStorage.getItem('storeId')}`);
+        updationrecorderdb.get('invetoryUpdateTime').then(data => {
+            updationrecorderdb.put({
+                _id: 'invetoryUpdateTime',
+                _rev: data._rev,
+                invetoryUpdateTime: tempInvetoryUpdateTime,
+            }).catch(err => { debugger; });
+        });
+
+
+        let productsdb = new PouchDb(`productsdb${localStorage.getItem('storeId')}`);
+        let updatedInventory = _get(res, 'data', []) || [];
+        let promiseArray = updatedInventory.map(async (product, index) => {
+            let productObj = await productsdb.get(product._id).then(
+                data => {
+                    let updateObject = updatedInventory[index];
+                    updateObject._rev = data._rev;
+                    return updateObject
+                }).catch(err => updatedInventory[index]);
+            // _set(productObj, 'inventory.quantity', _get(product, 'inventory.quantity', 0));
+            return productObj
+        });
+        Promise.all(promiseArray).then(async ([...updatedInventoryWith_Rev]) => {
+            debugger;
+            let resOfUpdateBulk = await productsdb.bulkDocs(updatedInventoryWith_Rev);
+            this.setState({ taskCompletedCount: 1, taskCount: 1 })
+        }).catch((err) => {
+            debugger;
+        })
+
+    }
+    getCustomerUpdate = async (customeerUpdateTime) => {
+        let reqObj = {
+            id: localStorage.getItem('retailerId'),
+            timestamp: {
+                seconds: parseInt(customeerUpdateTime)
+            }
+        };
+        let tempCustomerTime = Date.now();
+        tempCustomerTime = parseInt(tempCustomerTime / 1000);
+        localStorage.setItem('tempCustomerTime', tempCustomerTime);
+        axiosFetcher({
+            method: 'POST',
+            reqObj,
+            url: 'Customer/Increment',
+            successCb: this.updateTimeStampAndDbForCustomer,
+            errorCb: (err) => {
+                console.log(err, "err is here")
+            }
+        })
+    }
+    updateTimeStampAndDbForCustomer = async (res) => {
+        let tempCustomerTime = localStorage.getItem('tempCustomerTime');
+        localStorage.setItem('CustomerTime', tempCustomerTime)
+        let updationrecorderdb = new PouchDb(`updationrecorderdb${localStorage.getItem('store')}`);
+        updationrecorderdb.get('customerUpdateTime').then(data => {
+            updationrecorderdb.put({
+                _id: 'customerUpdateTime',
+                _rev: data._rev,
+                customerUpdateTime: tempCustomerTime,
+            });
+        }).catch(err => {
+            debugger;
+            if (err.status == 404) {
+                updationrecorderdb.put({
+                    _id: 'customerUpdateTime',
+                    customerUpdateTime: tempCustomerTime,
+                })
+            }
+        });
+        let customerdb = new PouchDb(`customersdb${localStorage.getItem('storeId')}`);
+        let updatedCustomer = _get(res, 'data', []) || [];
+        updatedCustomer.forEach((item, index) => {
+            item._id = item.id
+        });
+        let promiseArray = updatedCustomer.map(async (customer, index) => {
+            let customerObj = await customerdb.get(customer._id).then(
+                data => {
+                    let updateObject = updatedCustomer[index];
+                    updateObject._rev = data._rev;
+                    return updateObject
+                }).catch(err => updatedCustomer[index]);
+            // _set(customerObj, 'inventory.quantity', _get(customer, 'inventory.quantity', 0));
+            return customerObj
+        });
+        Promise.all(promiseArray).then(async ([...updatedCustomerWith_Rev]) => {
+            let resOfUpdateBulk = await customerdb.bulkDocs(updatedCustomerWith_Rev);
+        }).catch((err) => {
+            debugger;
+        })
+
     }
     fetchFreedomPayDetails = () => {
         axiosFetcher({
@@ -164,29 +292,29 @@ class SyncContainer extends Component {
             let xTask = Math.ceil(count / this.state.sizePerPage);
             let taskCount = xTask + 4;
             if (this.state.taskCompletedCount != 0) {
-                console.log(this.state.percentageComplete,this.state.taskCompletedCount,this.state.taskCompletedCount)
-                let percentageComplete = this.state.percentageComplete + (100 /taskCount)*this.state.taskCompletedCount;
-                this.setState({ taskCount: taskCount, percentageComplete,progressMsg: 'Getting Product Shelf and optimizing...' });
+                console.log(this.state.percentageComplete, this.state.taskCompletedCount, this.state.taskCompletedCount)
+                let percentageComplete = this.state.percentageComplete + (100 / taskCount) * this.state.taskCompletedCount;
+                this.setState({ taskCount: taskCount, percentageComplete, progressMsg: 'Getting Product Shelf and optimizing...' });
             }
             else {
                 this.setState({ taskCount, percentageComplete: 0 })
             }
         }
         this.insertingProductToDb(_get(productData, 'data.productWithInventory', [])).then((data) => {
-           
+
             if (count >= this.state.productPage * this.state.sizePerPage) {
                 let percentageComplete = this.state.percentageComplete + 100 / this.state.taskCount;
                 this.state.taskCompletedCount++
-                this.setState({ percentageComplete,progressMsg: 'Getting Product Shelf and optimizing...'});
+                this.setState({ percentageComplete, progressMsg: 'Getting Product Shelf and optimizing...' });
                 this.state.productPage++;
                 this.pollProduct();
             }
             else {
                 debugger;
-                console.log(this.state,"hhhhhhhhhhhhhhhhhhhhh")
+                console.log(this.state, "hhhhhhhhhhhhhhhhhhhhh")
                 this.state.taskCompletedCount++;
                 let percentageComplete = this.state.percentageComplete + 100 / this.state.taskCount;
-                this.setState({ percentageComplete});
+                this.setState({ percentageComplete });
             }
         })
             .catch((err) => {
@@ -222,7 +350,7 @@ class SyncContainer extends Component {
         this.handleCustomerFetchSuccess(customerData).then((data) => {
             if (this.state.taskCount != undefined) {
                 let percentageComplete = this.state.percentageComplete + 100 / this.state.taskCount;
-                this.state.taskCompletedCount++;this.state.taskCompletedCount++;
+                this.state.taskCompletedCount++; this.state.taskCompletedCount++;
                 this.setState({ percentageComplete, progressMsg: 'Customer Data indexed' });
             }
             else {
@@ -333,9 +461,9 @@ class SyncContainer extends Component {
     }
 
     render() {
-        console.log(this.state.taskCompletedCount,this.state.taskCount,this.state.percentageComplete,"######log######")
+        console.log(this.state.taskCompletedCount, this.state.taskCount, this.state.percentageComplete, "######log######")
         const { classes } = this.props;
-        if (this.state.taskCompletedCount ==this.state.taskCount) {
+        if (this.state.taskCompletedCount == this.state.taskCount) {
             console.log(Date.now() - this.timeStarted, "###########time diffrence##########")
 
             //this.props.handleStepChange(4);
