@@ -14,7 +14,7 @@ const calcPaymentAmount = (a, b, c, d, e, f) => {
 };
 
 const calcRemainingAmount = (totalAmt, paymentAmt) => {
-    let remAmt = ((parseFloat(totalAmt) - parseFloat(paymentAmt)) || 0).toFixed(2);
+    let remAmt = (parseFloat(totalAmt) - parseFloat(paymentAmt)) || 0.00;
     return remAmt;
 
 }
@@ -24,7 +24,7 @@ const roundUpAmount = (amount) => {
         amount = roundUp(amount, 2);
         return parseFloat(amount);
     }
-    return (parseFloat(amount) || 0);
+    return amount;
 }
 
 
@@ -46,6 +46,7 @@ const refundReducer = (state = {
     let costCenterDepartment = '';
     switch (action.type) {
         case 'CASH_REFUND_INPUT_HANDLER':
+        debugger;
             cashAmount = action.data.cashAmount;
             paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount)
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
