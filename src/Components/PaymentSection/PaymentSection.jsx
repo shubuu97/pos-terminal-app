@@ -396,15 +396,16 @@ class PaymentSection extends React.Component {
             })
         }
         let LoyaltyValue = 0
-        if ((parseFloat(this.props.loyaltyRedeem) || 0)) {
+        debugger
+        if ((parseFloat(this.props.loyaltyRedeemPoints) || 0)) {
             let url = 'Sale/RedeemRewardPoints';
             let data = {
                 customerId: _get(this.props, 'customer.id', ''),
-                pointsToRedeem: parseInt(this.props.loyaltyRedeem),
+                pointsToRedeem: parseInt(this.props.loyaltyRedeemPoints),
                 sessionId: localStorage.getItem('sessionId'),
                 retailerId: localStorage.getItem('retailerId'),
             }
-            LoyaltyValue = this.props.loyaltyRedeem * _get(this.props, 'redemptionRules.lookUpData.redemptionRule.redemptionMultiplier')
+            LoyaltyValue = parseFloat((this.props.loyaltyRedeem).toFixed(2))
             let apiResponse = await this.props.dispatch(postData(`${APPLICATION_BFF_URL}${url}`, data, 'GET_REF_FROM_LOYALTY_REDEEM', {
                 init: 'GET_REF_FROM_LOYALTY_REDEEM_INIT',
                 success: 'GET_REF_FROM_LOYALTY_REDEEM_SUCCESS',
@@ -787,7 +788,8 @@ function mapStateToProps(state) {
     let giftCard = _get(state, 'giftCardData.lookUpData', {});
     let giftCardPayment = _get(state, 'giftCardPaymentData.lookUpData', {});
     let cashAmount = _get(state, 'PaymentDetails.cashAmount');
-    let loyaltyRedeem = _get(state, 'PaymentDetails.loyaltyRedeem');
+    let loyaltyRedeem = _get(state, 'PaymentDetails.loyaltyRedeem', '');
+    let loyaltyRedeemPoints = _get(state, 'loyaltyRedeem.lookUpData.points', '');
     let loyaltyRedeemData = _get(state, 'loyaltyRedeem.lookUpData', {});
     let cardAmount = _get(state, 'PaymentDetails.cardAmount');
     let giftCardAmount = _get(state, 'PaymentDetails.giftCardAmount');
@@ -808,6 +810,7 @@ function mapStateToProps(state) {
         cartItems,
         cashAmount,
         loyaltyRedeem,
+        loyaltyRedeemPoints,
         loyaltyRedeemData,
         cardAmount,
         employeePay,
