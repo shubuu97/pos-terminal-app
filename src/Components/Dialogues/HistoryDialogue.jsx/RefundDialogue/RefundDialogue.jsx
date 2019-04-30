@@ -69,7 +69,6 @@ class RefundDialogue extends React.Component {
         this.setState({ paidThroughCard, giftPayEnabled, saleCommitedToday, paymentReferenceNumber });
         this.props.dispatch(commonActionCreater({}, 'RESET_REFUND_REDUCER'));
 
-
     };
 
     handleClose = () => {
@@ -377,13 +376,25 @@ class RefundDialogue extends React.Component {
 
     onRemoveRefundMethod = (refundMethod) => {
         this.setState({ [refundMethod]: false });
+        if(this.state.currentFocus==refundMethod){
+            this.setState({currentFocus:''});
+        }
         if (refundMethod == "cashRefund") {
+            if(this.state.currentFocus=="cashAmount"){
+                this.setState({currentFocus:''});
+            }
             this.props.dispatch(commonActionCreater({ cashAmount: '', amount: this.state.totalRefundAmount }, 'CASH_REFUND_INPUT_HANDLER'));
         }
         else if (refundMethod == "cardRefund") {
+            if(this.state.currentFocus=="cardAmount"){
+                this.setState({currentFocus:''});
+            }
             this.props.dispatch(commonActionCreater({ cardAmount: '', amount: this.state.totalRefundAmount, paidThroughCard: this.state.paidThroughCard }, 'CARD_REFUND_INPUT_HANDLER'));
         }
         else if (refundMethod == "giftRefund") {
+            if(this.state.currentFocus=="giftCardAmount"){
+                this.setState({currentFocus:''});
+            }
             this.props.dispatch(commonActionCreater({ giftCardAmount: '', amount: this.state.totalRefundAmount, }, 'GIFTCARD_REFUND_INPUT_HANDLER'));
         }
     }
@@ -683,7 +694,7 @@ class RefundDialogue extends React.Component {
                                             </div>
                                             <div className='flex-column pl-5 halfwidth'>
                                                 <span className='info-title'>Remaining Refund Amount</span>
-                                                <span className='info-value'>{_get(this.props,'remainingAmount',0).toFixed(2)}</span>
+                                                <span className='info-value'>{parseFloat(_get(this.props,'remainingAmount',0)).toFixed(2)}</span>
                                             </div>
                                         </div>
 
@@ -753,7 +764,7 @@ class RefundDialogue extends React.Component {
                             this.state.step == 1 || this.state.step == 2 ?
                                 <div className='refund-action-section flex-row'>
                                     <div className='action-btn flex-row justify-center align-center' onClick={this.props.handleRefundClose}>Cancel</div>
-                                    <div className='action-btn flex-row justify-center align-center' onClick={this.handleProceed}>Complete</div>
+                                    <div className='action-btn flex-row justify-center align-center' style={this.state.returnItems.every(val=>val.qty==0)? { opacity: '0.3', pointerEvents: 'none' } : null} onClick={this.handleProceed}>Complete</div>
                                 </div> : null
                         }
 
