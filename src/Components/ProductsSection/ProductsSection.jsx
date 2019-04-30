@@ -24,6 +24,7 @@ import Products from './Products';
 import SearchBar from './SearchBar';
 import PouchDb from 'pouchdb';
 import Categories from './Categories/Categories';
+import addToCart from '../../Global/PosFunctions/addToCart';
 
 PouchDb.plugin(PAM);
 PouchDb.plugin(Find);
@@ -104,28 +105,11 @@ class ProductsSection extends React.Component {
                         let productDataDoc = { doc: result.docs[0] };
                         let productId = productDataDoc.doc._id;
                         let foundProduct = _find(cartItems, { id: productId });
+                        console.log(foundProduct, 'uiugudgcudf')
                         let cartObj;
-                        if (_isEmpty(foundProduct)) {
-                            let newCartItem = {
-                                ...productDataDoc,
-                                qty: 1,
-                                saleType: 0,
-                                id: productId
-                            }
-                            cartObj = [...cartItems, newCartItem];
-                        } else {
-                            let qty = foundProduct.qty + 1
-                            let index = _findIndex(cartItems, ['id', productId]);
-                            cartObj = [...cartItems]
-                            cartObj[index].qty = qty;
-                        }
-    
-                        let cartDiscountObj = {}
-                        cartDiscountObj.type = ''
-                        cartDiscountObj.cartDiscount = 0
-                        cartDiscountObj.cartItems = cartObj
-                        this.props.dispatch(commonActionCreater(cartDiscountObj, 'ADD_DISCOUNT_TO_CART'));
-                        this.props.dispatch(commonActionCreater(cartObj, 'CART_ITEM_LIST'));
+                        let product = {doc: result.docs[0]}
+                        addToCart(product, cartItems, 1, this.props.dispatch)
+                        
                     } else {
                         this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
                     }

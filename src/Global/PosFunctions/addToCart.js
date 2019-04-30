@@ -20,7 +20,7 @@ const addToCart = (product, cartItems, quantity, dispatch ) => {
         ];
     } else {
         let qty = (_find(cartItems, product)).qty + (quantity)
-        let index = _findIndex(cartItems, ['id', product.id]);
+        let index = _findIndex(cartItems, ['doc._id', product.doc._id]);
         reqObj = [
             ...cartItems
         ]
