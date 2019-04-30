@@ -764,7 +764,7 @@ class RefundDialogue extends React.Component {
                             this.state.step == 1 || this.state.step == 2 ?
                                 <div className='refund-action-section flex-row'>
                                     <div className='action-btn flex-row justify-center align-center' onClick={this.props.handleRefundClose}>Cancel</div>
-                                    <div className='action-btn flex-row justify-center align-center' style={this.state.returnItems.every(val=>val.qty==0)? { opacity: '0.3', pointerEvents: 'none' } : null} onClick={this.handleProceed}>Complete</div>
+                                    <div className='action-btn flex-row justify-center align-center' style={this.state.returnItems.every(val=>val.qty==0)|| (this.state.step == 2&&this.props.remainingAmount>0)? { opacity: '0.3', pointerEvents: 'none' } : null} onClick={this.handleProceed}>Complete</div>
                                 </div> : null
                         }
 
