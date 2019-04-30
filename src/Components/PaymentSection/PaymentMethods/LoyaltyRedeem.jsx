@@ -70,9 +70,9 @@ class CashPay extends React.Component {
     };
 
     checkValue = (value) => {
-        let points = value;
+        let points = parseInt(value);
         let availableRewardPoints = _get(this, 'state.availableRewardPoints', 0);
-        let possiblePoints = this.props.totalAmount.amount / _get(this.props, 'RedemptionRules.redemptionMultiplier', 0);
+        let possiblePoints = Math.floor(this.props.totalAmount.amount / _get(this.props, 'RedemptionRules.redemptionMultiplier', 0));
         if (points > possiblePoints) {
             points = possiblePoints
         }
