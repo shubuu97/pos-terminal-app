@@ -257,7 +257,9 @@ class SyncContainer extends Component {
                 'product.name',
                 'product.description',
                 'product.sku',
-                'product.keywords',            ],
+                'product.keywords',
+                'product.upcCode'
+            ],
             build: true
         })
         console.log("############### making index of Category ###############")
