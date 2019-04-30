@@ -159,7 +159,7 @@ const HandlePrint = (props) => {
                 {
                     _get(props, 'itemsDiscount') == 0 ? '' :
                         <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>
-                            ITEMS DISCOUNT: <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + itemDiscount.toFixed(2)}</span>
+                            ITEM DISCOUNTS: <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + itemDiscount.toFixed(2)}</span>
                         </div>
                 }
 

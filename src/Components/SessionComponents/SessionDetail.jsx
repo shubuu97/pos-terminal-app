@@ -83,6 +83,7 @@ class SessionDetail extends React.Component {
         this.setState({
             manager: _get(data, 'manager'),
             session: _get(data, 'session'),
+            terminal:_get(data,'terminal'),
             transactions: _get(data, 'transactions')
 
         })
@@ -283,10 +284,10 @@ class SessionDetail extends React.Component {
     calDiffrence = () => {
         let difference
         if (_get(this.state, 'session.status', '') == "closed") {
-            difference = (_get(this.state, 'session.currentBalance.amount', 0) - parseFloat(_get(this, 'state.session.closingBalance.amount', 0)))
+            difference = parseFloat(_get(this, 'state.session.closingBalance.amount', 0))-_get(this.state, 'session.currentBalance.amount', 0) 
         }
         else {
-            difference = _get(this.state, 'session.currentBalance.amount', 0) - this.state.realClosingBalance
+            difference = this.state.realClosingBalance-_get(this.state, 'session.currentBalance.amount', 0)
 
         }
         return parseFloat(difference).toFixed(2);
@@ -320,7 +321,7 @@ class SessionDetail extends React.Component {
         let person = _get(manager, 'person');
         let staffName = `${_get(person, 'firstName', '')} ${_get(person, 'lastName', '')}`;
         let openingTime = moment(_get(session, 'openingTimeStamp.seconds') * 1000).format('dddd DD MMM,YYYY hh:mm A')
-        let terminal = _get(session, 'terminalName');
+        let terminal = _get(this.state, 'terminal.name');
 
         let closingTime = _get(session, 'closingTimeStamp.seconds') * 1000;
         if (closingTime) {

@@ -102,7 +102,7 @@ class HistoryDetailArea extends React.Component {
             <div className="mui-col-md-12 flex-column mt-10" >
                 <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Created Date: `}</span>
-                    <span className='summary-value'>{moment(_get(selectedOrder, 'sale.saleCommitTimeStamp.seconds', 0) * 1000).format('MM/DD/YYYY hh:mm:ss')}</span>
+                    <span className='summary-value'>{moment(_get(selectedOrder, 'sale.saleCommitTimeStamp.seconds', 0) * 1000).format('MM/DD/YYYY h:mm a')}</span>
                 </div>
                 <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Served By: `}</span>
@@ -112,7 +112,7 @@ class HistoryDetailArea extends React.Component {
                     (_get(selectedOrder, 'sale.cartDiscountAmount.amount', 0) + _get(selectedOrder, 'sale.employeeDiscountAmount.amount', 0) + _get(selectedOrder, 'sale.itemDiscountAmount.amount', 0)) > 0 ?
                         <div className='flex-row justify-space-between mb-5'>
                             <span className='summary-key'>{`Discounts: `}</span>
-                            <span className='summary-value'>{_get(selectedOrder, 'sale.cartDiscountAmount.currencyCode', '$') + (_get(selectedOrder, 'sale.cartDiscountAmount.amount', 0) + _get(selectedOrder, 'sale.employeeDiscountAmount.amount', 0) + _get(selectedOrder, 'sale.itemDiscountAmount.amount', 0))}</span>
+                            <span className='summary-value'>{(_get(selectedOrder, 'sale.cartDiscountAmount.currencyCode', '$') + (_get(selectedOrder, 'sale.cartDiscountAmount.amount', 0) + _get(selectedOrder, 'sale.employeeDiscountAmount.amount', 0) + _get(selectedOrder, 'sale.itemDiscountAmount.amount', 0)).toFixed(2))}</span>
                         </div> : null
                 }
                 <div className='flex-row justify-space-between mb-5'>
@@ -214,7 +214,7 @@ class HistoryDetailArea extends React.Component {
                                     <tr>
                                         <th>Product</th>
                                         <th>Qty</th>
-                                        <th>Return Qty</th>
+                                        <th>Returned Qty</th>
                                     </tr>
                                 </thead>
                                 <tbody>
