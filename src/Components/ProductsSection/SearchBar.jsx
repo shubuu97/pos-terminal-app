@@ -50,19 +50,14 @@ class CustomizedInputBase extends React.Component {
         {/* <IconButton className={classes.iconButton} aria-label="Menu">
           <MenuIcon />
         </IconButton> */}
-        {this.props.handleInput ?
-          <InputBase
-            inputRef={(val) => {this.focusInput = val}}
-            value=''
-            className={classes.input}
-            placeholder="Search For Item"
-            onChange={(event) => this.props.handleChange(event.target.value)} /> :
-          <InputBase
-            inputRef={(val) => {this.focusInput = val}}
-            className={classes.input}
-            placeholder="Search For Item"
-            onChange={(event) => this.props.handleChange(event.target.value)} />
-        }
+        <InputBase
+          id="searchBox"
+          inputRef={(val) => {this.focusInput = val}}
+          value={this.props.value}
+          className={classes.input}
+          onKeyPress={this.props.onKeyPress}
+          placeholder="Search For Item"
+          onChange={(event) => this.props.handleChange(event.target.value)} />
         <IconButton className={classes.iconButton} aria-label="Search">
           <SearchIcon />
         </IconButton>

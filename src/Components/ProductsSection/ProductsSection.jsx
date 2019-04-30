@@ -35,26 +35,25 @@ class ProductsSection extends React.Component {
         super();
         this.productsdb = new PouchDb(`productsdb${localStorage.getItem("storeId")}`);
         this.state = {
-            clearInput: false,
-            productLoading: false
+            productLoading: false,
+            searchText: ''
         }
     }
 
     handleChange = (searchText) => {
-        this.setState({ clearInput: false })
+        this.setState({ searchText })
         if (searchText.length > 2) {
             this.productsdb.search({
                 query: searchText,
-                fields: ['product.name', 'product.description', 'product.sku', 'product.keywords'],
+                fields: ['product.name', 'product.description', 'product.sku', 'product.keywords', 'product.upcCode'],
                 include_docs: true,
                 limit: 39,
                 skip: 0
             }).then((result) => {
-                this.setState({ clearInput: false })
                 result.pagination = {}
                 result.pagination.method = "search"
                 result.pagination.query = searchText
-                result.pagination.fields = ['product.name', 'product.description', 'product.sku', 'product.keywords']
+                result.pagination.fields = ['product.name', 'product.description', 'product.sku', 'product.keywords','product.upcCode']
                 result.pagination.firstItemId = result.rows[0].id
                 result.pagination.lastItemId = result.rows[result.rows.length - 1].id
                 result.pagination.pageNo = 1
@@ -66,14 +65,12 @@ class ProductsSection extends React.Component {
                     console.log(err);
                 })
         } else if (searchText == '') {
-            this.setState({ clearInput: false })
             this.productsdb.allDocs({
                 include_docs: true,
                 attachments: true,
                 limit: 39,
                 skip: 0
             }).then((result) => {
-                this.setState({ clearInput: false })
                 result.pagination = {}
                 result.pagination.method = "allDocs"
                 result.pagination.firstItemId = result.rows[0].id
@@ -86,48 +83,52 @@ class ProductsSection extends React.Component {
                 console.log(err)
             });
         }
+    }
 
-        if ((/^[0-9-]{4,}[0-9]$/).test(searchText)) {
-            let noSearchText = Number(searchText)
-            this.productsdb.find({
-                selector: { "product.upcCode": noSearchText }
-            }).then((result) => {
-                if (!_isEmpty(result.docs)) {
-                    this.setState({ clearInput: true })
-                    let data = { rows: [] }
-                    data.rows[0] = { doc: result.docs[0] }
-                    this.props.dispatch(commonActionCreater(data, 'GET_PRODUCT_DATA_SUCCESS'));
-                    let cartItems = _get(this, 'props.cart.cartItems', [])
-                    let productDataDoc = { doc: result.docs[0] };
-                    let productId = productDataDoc.doc._id;
-                    let foundProduct = _find(cartItems, { id: productId });
-                    let cartObj;
-                    if (_isEmpty(foundProduct)) {
-                        let newCartItem = {
-                            ...productDataDoc,
-                            qty: 1,
-                            saleType: 0,
-                            id: productId
+    onKeyPress = (key) => {
+        if(key.charCode == 13) {
+            if ((/^[0-9-]{4,}[0-9]$/).test(_get(this.state,'searchText',''))) {
+                let upcCode = Number(_get(this.state,'searchText',0))
+                this.productsdb.find({
+                    selector: { "product.upcCode": upcCode }
+                }).then((result) => {
+                    let searchBox = document.getElementById('searchBox')
+                    searchBox.select();
+                    if (!_isEmpty(result.docs)) {
+                        let productData = { rows: [] }
+                        productData.rows[0] = { doc: result.docs[0] }
+                        this.props.dispatch(commonActionCreater(productData, 'GET_PRODUCT_DATA_SUCCESS'));
+                        let cartItems = _get(this, 'props.cart.cartItems', [])
+                        let productDataDoc = { doc: result.docs[0] };
+                        let productId = productDataDoc.doc._id;
+                        let foundProduct = _find(cartItems, { id: productId });
+                        let cartObj;
+                        if (_isEmpty(foundProduct)) {
+                            let newCartItem = {
+                                ...productDataDoc,
+                                qty: 1,
+                                saleType: 0,
+                                id: productId
+                            }
+                            cartObj = [...cartItems, newCartItem];
+                        } else {
+                            let qty = foundProduct.qty + 1
+                            let index = _findIndex(cartItems, ['id', productId]);
+                            cartObj = [...cartItems]
+                            cartObj[index].qty = qty;
                         }
-                        cartObj = [...cartItems, newCartItem];
+    
+                        let cartDiscountObj = {}
+                        cartDiscountObj.type = ''
+                        cartDiscountObj.cartDiscount = 0
+                        cartDiscountObj.cartItems = cartObj
+                        this.props.dispatch(commonActionCreater(cartDiscountObj, 'ADD_DISCOUNT_TO_CART'));
+                        this.props.dispatch(commonActionCreater(cartObj, 'CART_ITEM_LIST'));
                     } else {
-                        let qty = foundProduct.qty + 1
-                        let index = _findIndex(cartItems, ['id', productId]);
-                        cartObj = [...cartItems]
-                        cartObj[index].qty = qty;
+                        this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
                     }
-
-                    let cartDiscountObj = {}
-                    cartDiscountObj.type = ''
-                    cartDiscountObj.cartDiscount = 0
-                    cartDiscountObj.cartItems = cartObj
-                    this.props.dispatch(commonActionCreater(cartDiscountObj, 'ADD_DISCOUNT_TO_CART'));
-                    this.props.dispatch(commonActionCreater(cartObj, 'CART_ITEM_LIST'));
-                } else {
-                    this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
-                    // this.setState({ clearInput: true })
-                }
-            })
+                })
+            }
         }
     }
 
@@ -309,7 +310,7 @@ class ProductsSection extends React.Component {
                 console.log(err)
             });
         }
-    }
+    }  
 
     handleHideWhenOffline = (online, onlineContent, offlineContent) => {
         if (online) {
@@ -318,11 +319,15 @@ class ProductsSection extends React.Component {
         else
             return offlineContent
     }
+
     componentDidUpdate() {
         if (this.props.resetProduct == true) {
-            this.setState({ clearInput: true });
             this.props.dispatch(commonActionCreater(false, 'RESET_PRODUCT'));
         }
+    }
+
+    homeButtonClicked = () => {
+        this.setState({ searchText: ''})
     }
 
     render() {
@@ -351,7 +356,8 @@ class ProductsSection extends React.Component {
                             isOpenHistoryDialogue={_get(this.props,'isOpenHistoryDialogue',false)}
                             isCustomerTabOpen={_get(this.props,'isCustomerTabOpen.lookUpData',false)}
                             handleChange={this.handleChange}
-                            handleInput={this.state.clearInput}
+                            onKeyPress={this.onKeyPress}
+                            value={this.state.searchText}
                         />
                         <div className="header-right-sec">
                             <ul>
@@ -384,6 +390,7 @@ class ProductsSection extends React.Component {
                 {/* Product Categories Component */}
                 <Categories
                     categoriesHeight={categoriesHeight}
+                    getHomeClicked={this.homeButtonClicked}
                     {...this.props}
                 />
 
