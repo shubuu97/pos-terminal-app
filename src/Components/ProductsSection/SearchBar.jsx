@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+/* Material Imports */
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
@@ -47,9 +48,6 @@ class CustomizedInputBase extends React.Component {
     const { classes } = this.props;
     return (
       <Paper className={classes.root} elevation={1} >
-        {/* <IconButton className={classes.iconButton} aria-label="Menu">
-          <MenuIcon />
-        </IconButton> */}
         <InputBase
           id="searchBox"
           inputRef={(val) => {this.focusInput = val}}
@@ -61,10 +59,6 @@ class CustomizedInputBase extends React.Component {
         <IconButton className={classes.iconButton} aria-label="Search">
           <SearchIcon />
         </IconButton>
-        {/* <Divider className={classes.divider} />
-        <IconButton color="primary" className={classes.iconButton} aria-label="Directions">
-          <DirectionsIcon />
-        </IconButton> */}
       </Paper>
     ); 
   }

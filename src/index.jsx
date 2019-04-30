@@ -3,6 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import JssProvider from 'react-jss/lib/JssProvider';
+import { SnackbarProvider } from 'notistack';
 /* Redux Imports*/
 import { createStore, applyMiddleware, compose } from 'redux';
 import axiosMiddleWare from './Redux/axiosMiddleware';
@@ -52,7 +53,7 @@ const persistConfig = {
   key: 'SMEInvestorRoot',
   storage,
   stateReconciler: hardSet,
-  blacklist: ['form', 'ShowToast', 'PaymentDetails','RefundPaymentDetails','resetProduct','resetCategory']
+  blacklist: ['form', 'ShowToast', 'PaymentDetails', 'RefundPaymentDetails', 'resetProduct', 'resetCategory']
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -79,23 +80,25 @@ ReactDOM.render(
 
   <JssProvider generateClassName={generateClassName}>
     <MuiThemeProvider theme={theme}>
-      <Provider store={store}>
-        {/* <PersistGate loading={null} persistor={persistor}> */}
-        <Router>
-          <Switch>
-            <RouteWithLayout Layout={EmptyLayout} exact path="/" Component={HomeContainer} />
-            <RouteWithLayout Layout={EmptyLayout} exact path="/boilerplate/pos" Component={pos} />
-            <RouteWithLayout Layout={EmptyLayout} exact path="/login" Component={LoginContainer} />
-            <RouteWithLayout Layout={EmptyLayout} exact path="/store" Component={StoreContainer} />
-            <RouteWithLayout Layout={EmptyLayout} exact path="/session" Component={SessionContainer} />
-            <RouteWithLayout Layout={EmptyLayout} exact path="/DenominationDetailsForm" Component={DenominationDetailsForm} />
-            <RouteWithLayout Layout={EmptyLayout} exact path="/OfflineTransactions" Component={OfflineTransactions} />
-            <RouteWithLayout Layout={EmptyLayout} exact path="/QuickBookContainer" Component={QuickBookContainer} />
-            <RouteWithLayout Layout={EmptyLayout} exact path="/QuickBook" Component={ThankYou} />
-          </Switch>
-        </Router>
-        {/* </PersistGate> */}
-      </Provider>
+      <SnackbarProvider maxSnack={3}>
+        <Provider store={store}>
+          {/* <PersistGate loading={null} persistor={persistor}> */}
+          <Router>
+            <Switch>
+              <RouteWithLayout Layout={EmptyLayout} exact path="/" Component={HomeContainer} />
+              <RouteWithLayout Layout={EmptyLayout} exact path="/boilerplate/pos" Component={pos} />
+              <RouteWithLayout Layout={EmptyLayout} exact path="/login" Component={LoginContainer} />
+              <RouteWithLayout Layout={EmptyLayout} exact path="/store" Component={StoreContainer} />
+              <RouteWithLayout Layout={EmptyLayout} exact path="/session" Component={SessionContainer} />
+              <RouteWithLayout Layout={EmptyLayout} exact path="/DenominationDetailsForm" Component={DenominationDetailsForm} />
+              <RouteWithLayout Layout={EmptyLayout} exact path="/OfflineTransactions" Component={OfflineTransactions} />
+              <RouteWithLayout Layout={EmptyLayout} exact path="/QuickBookContainer" Component={QuickBookContainer} />
+              <RouteWithLayout Layout={EmptyLayout} exact path="/QuickBook" Component={ThankYou} />
+            </Switch>
+          </Router>
+          {/* </PersistGate> */}
+        </Provider>
+      </SnackbarProvider>
     </MuiThemeProvider>
   </JssProvider>,
   //   </div>,

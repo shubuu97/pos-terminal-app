@@ -1,4 +1,5 @@
 import React from 'react';
+import { withSnackbar } from 'notistack';
 /* Lodash Imports */
 import _get from 'lodash/get';
 import _isEmpty from 'lodash/isEmpty';
@@ -95,6 +96,7 @@ class ProductsSection extends React.Component {
                     let searchBox = document.getElementById('searchBox')
                     searchBox.select();
                     if (!_isEmpty(result.docs)) {
+                        
                         let productData = { rows: [] }
                         productData.rows[0] = { doc: result.docs[0] }
                         this.props.dispatch(commonActionCreater(productData, 'GET_PRODUCT_DATA_SUCCESS'));
@@ -441,4 +443,4 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps)(ProductsSection);
+export default withSnackbar(connect(mapStateToProps)(ProductsSection));
