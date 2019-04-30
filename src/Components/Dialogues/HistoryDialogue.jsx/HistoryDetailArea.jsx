@@ -214,7 +214,7 @@ class HistoryDetailArea extends React.Component {
                                     <tr>
                                         <th>Product</th>
                                         <th>Qty</th>
-                                        <th>Return Qty</th>
+                                        <th>Returned Qty</th>
                                     </tr>
                                 </thead>
                                 <tbody>
