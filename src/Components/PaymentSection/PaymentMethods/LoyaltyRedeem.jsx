@@ -39,12 +39,14 @@ class CashPay extends React.Component {
     }
 
     handleCustomerDataSuccess = (data) => {
+        debugger
         this.setState({
             availableRewardPoints: _get(data, 'rewardPoints', 0)
         })
     }
 
     handleChange = name => event => {
+        debugger
         let points = event.target.value;
         let availableRewardPoints = _get(this, 'state.availableRewardPoints', 0);
         let possiblePoints = this.props.totalAmount.amount / _get(this.props, 'RedemptionRules.redemptionMultiplier', 0);
@@ -69,7 +71,8 @@ class CashPay extends React.Component {
         }
     };
 
-    checkValue = (value) => {
+    checkValue = () => {
+        let value = _get(this.props, 'loyaltyRedeemData.points', 0);
         let points = parseInt(value);
         let availableRewardPoints = _get(this, 'state.availableRewardPoints', 0);
         let possiblePoints = Math.floor(this.props.totalAmount.amount / _get(this.props, 'RedemptionRules.redemptionMultiplier', 0));
@@ -81,12 +84,14 @@ class CashPay extends React.Component {
         }
         let loyaltyRedeemAmount = points * _get(this.props, 'RedemptionRules.redemptionMultiplier', 0);
         if (points != value){
+            debugger
             this.props.dispatch(commonActionCreater({ loyaltyRedeem: loyaltyRedeemAmount, totalAmount: this.props.totalAmount, points: points }, 'LOYALTY_INPUT_HANDLER'));
         }
         return points
     }
 
     componentWillUnmount() {
+        debugger
         //setting to the 0 again on unmouning
         this.props.dispatch(commonActionCreater({ loyaltyRedeem: '', totalAmount: this.props.totalAmount }, 'LOYALTY_INPUT_HANDLER'));
 
@@ -109,7 +114,7 @@ class CashPay extends React.Component {
                             type='text'
                             variant="outlined"
                             className='mt-10'
-                            value={this.checkValue(_get(this.props, 'loyaltyRedeemData.points', ''))}
+                            value={this.checkValue()}
                             onChange={this.handleChange('rewardPay')}
                         />
                         <div className='flex-row justify-space-between'>

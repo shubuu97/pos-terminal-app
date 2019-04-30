@@ -369,19 +369,17 @@ class PaymentSection extends React.Component {
         if ((parseFloat(this.props.giftCardAmount) || 0)) {
             let url = 'Sale/RedeemValueFromGiftCard';
             let value = {};
-            let paymentTimeStamp = {
-                seconds: parseInt(new Date().getTime() / 1000),
-            }
             _set(value, 'amount', parseFloat(this.props.giftCardAmount));
             _set(value, 'currencyCode', '$');
             let data = {
-                giftCardId: _get(this.props, 'giftCardData.id', ''),
-                value: value,
+                retailerId: localStorage.getItem('retailerId'),
+                terminalId: localStorage.getItem('terminalId'),
                 customerId: _get(this.props, 'customer.id', ''),
                 sessionId: localStorage.getItem('sessionId'),
-                retailerId: localStorage.getItem('retailerId'),
-                paymentTimeStamp: paymentTimeStamp,
-
+                operatorId: localStorage.getItem('userId'),
+                storeId: localStorage.getItem('storeId'),
+                giftCardId: _get(this.props, 'giftCardData.id', ''),
+                value: value
             }
 
             let apiResponse = await this.props.dispatch(postData(`${APPLICATION_BFF_URL}${url}`, data, 'GET_GIFT_CARD_PAYMENT_DATA', {
@@ -400,10 +398,13 @@ class PaymentSection extends React.Component {
         if ((parseFloat(this.props.loyaltyRedeemPoints) || 0)) {
             let url = 'Sale/RedeemRewardPoints';
             let data = {
-                customerId: _get(this.props, 'customer.id', ''),
-                pointsToRedeem: parseInt(this.props.loyaltyRedeemPoints),
-                sessionId: localStorage.getItem('sessionId'),
                 retailerId: localStorage.getItem('retailerId'),
+                terminalId: localStorage.getItem('terminalId'),
+                customerId: _get(this.props, 'customer.id', ''),
+                sessionId: localStorage.getItem('sessionId'),
+                operatorId: localStorage.getItem('userId'),
+                storeId: localStorage.getItem('storeId'),
+                pointsToRedeem: parseInt(this.props.loyaltyRedeemPoints),
             }
             LoyaltyValue = parseFloat((this.props.loyaltyRedeem).toFixed(2))
             let apiResponse = await this.props.dispatch(postData(`${APPLICATION_BFF_URL}${url}`, data, 'GET_REF_FROM_LOYALTY_REDEEM', {
@@ -445,9 +446,12 @@ class PaymentSection extends React.Component {
         if ((parseFloat(this.props.employeePay) || 0)) {
             let url = 'Payment/EmployeePayrollDeduct/Save';
             let data = {
-                sessionId: localStorage.getItem('sessionId'),
                 retailerId: localStorage.getItem('retailerId'),
-                employeeId: _get(this.props, 'customer.id', ''),
+                terminalId: localStorage.getItem('terminalId'),
+                customerId: _get(this.props, 'customer.id', ''),
+                sessionId: localStorage.getItem('sessionId'),
+                operatorId: localStorage.getItem('userId'),
+                storeId: localStorage.getItem('storeId'),
                 value: {
                     currencyCode: '$',
                     amount: ((parseFloat(this.props.employeePay) || 0))
