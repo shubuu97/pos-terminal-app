@@ -13,9 +13,8 @@ import InfoOutlined from '@material-ui/icons/InfoOutlined'
 import { commonActionCreater } from '../../Redux/commonAction';
 import DefaultImage from '../../assets/images/notfound.png'
 import { connect } from "react-redux";
-
-import img1 from '../../assets/images/flowers/flower1.jpg'
-//import mapStateToProps from 'react-redux/lib/connect/mapStateToProps';
+/* Global Function Imports */
+import addToCart from '../../Global/PosFunctions/addToCart'
 
 class Product extends React.PureComponent {
     constructor(props) {
@@ -23,46 +22,11 @@ class Product extends React.PureComponent {
         this.state = {
             openModal: false,
             counter: 0,
-            qty: 0
+            qty: 0,
+            iconSelected: false
         };
         this.ProductDetails = [];
     }
-
-
-    addToCart = (index, quantity) => {
-        if (!this.state.iconSelected) {
-            let cartItems = _get(this, 'props.cart.cartItems', [])
-            let data = _get(this, `props.data`, {});
-            let reqObj = []
-            if (_isEmpty(_find(cartItems, data))) {
-                reqObj = [
-                    ...cartItems,
-                    {
-                        ...data,
-                        qty: quantity ? quantity : 1,
-                        saleType: 0
-                    }
-                ];
-                // this.setState({ qty: quantity ? quantity : 1 })
-            } else {
-                let qty = (_find(cartItems, data)).qty + (quantity ? quantity : 1)
-                let index = _findIndex(cartItems, ['id', data.id]);
-                reqObj = [
-                    ...cartItems
-                ]
-                reqObj[index].qty = qty;
-                this.setState({ qty })
-            }
-
-            let cartDiscountObj = {}
-            cartDiscountObj.type = ''
-            cartDiscountObj.cartDiscount = 0
-            cartDiscountObj.cartItems = reqObj
-            this.props.dispatch(commonActionCreater(cartDiscountObj, 'ADD_DISCOUNT_TO_CART'));
-            this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
-        }
-    }
-
 
     viewProductDetails = (index) => {
         this.setState({ openModal: true })
@@ -72,6 +36,15 @@ class Product extends React.PureComponent {
         this.setState({ openModal: false })
     }
 
+    addToCart = (product, cartItems, quantity, dispatch) => {
+        if (!this.state.iconSelected) {
+            addToCart(product, cartItems, quantity, dispatch)
+            this.setState({
+                qty: this.state.qty + quantity
+            })
+        }
+    }
+
     render() {
         let index = this.props.index;
         let cartItems = _get(this.props, 'cart.cartItems', [])
@@ -79,11 +52,11 @@ class Product extends React.PureComponent {
         let id = data.id;
         let regex = /_design.*/g;
         let isddoc = regex.test(id);
-        console.log(isddoc, "isddoc");
+        let dispatch = this.props.dispatch
         return (
             <React.Fragment>
                 {!isddoc ?
-                    <div className='each-tile white-background flex-row relative' id='productCard' onClick={() => this.addToCart(index)} index={this.props.index} key={this.props.key}>
+                    <div className='each-tile white-background flex-row relative' id='productCard' onClick={() => this.addToCart(data, cartItems, 1, dispatch)} index={this.props.index} key={this.props.key}>
                         <div className='absolute added-item-position'>
                             {(_find(cartItems, { id: data.id })) ? <div className='added-item-count'>{(_find(cartItems, { id: data.id })).qty}</div> : null}
                         </div>
@@ -123,7 +96,10 @@ class Product extends React.PureComponent {
                             productDetails={_get(this.props, 'data.doc.product', {})}
                             inventoryDetails={_get(this.props, 'data.doc.inventory', {})}
                             index={index}
-                            addToCart={(index, qty) => this.addToCart(index, qty)}
+                            cartItems={cartItems}
+                            product={data}
+                            dispatch={dispatch}
+                            addToCart={(product, cartItems, qty, dispatch) => this.addToCart(product, cartItems, qty, dispatch)}
                         /> : ''
                 }
             </React.Fragment>)
