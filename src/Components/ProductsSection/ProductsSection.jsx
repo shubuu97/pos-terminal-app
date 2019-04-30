@@ -30,7 +30,6 @@ PouchDb.plugin(PAM);
 PouchDb.plugin(Find);
 PouchDb.plugin(require('pouchdb-quick-search'));
 
-
 class ProductsSection extends React.Component {
 
     constructor() {
@@ -55,7 +54,7 @@ class ProductsSection extends React.Component {
                 result.pagination = {}
                 result.pagination.method = "search"
                 result.pagination.query = searchText
-                result.pagination.fields = ['product.name', 'product.description', 'product.sku', 'product.keywords','product.upcCode']
+                result.pagination.fields = ['product.name', 'product.description', 'product.sku', 'product.keywords', 'product.upcCode']
                 result.pagination.firstItemId = result.rows[0].id
                 result.pagination.lastItemId = result.rows[result.rows.length - 1].id
                 result.pagination.pageNo = 1
@@ -88,16 +87,16 @@ class ProductsSection extends React.Component {
     }
 
     onKeyPress = (key) => {
-        if(key.charCode == 13) {
-            if ((/^[0-9-]{4,}[0-9]$/).test(_get(this.state,'searchText',''))) {
-                let upcCode = Number(_get(this.state,'searchText',0))
+        if (key.charCode == 13) {
+            if ((/^[0-9-]{4,}[0-9]$/).test(_get(this.state, 'searchText', ''))) {
+                let upcCode = Number(_get(this.state, 'searchText', 0))
                 this.productsdb.find({
                     selector: { "product.upcCode": upcCode }
                 }).then((result) => {
                     let searchBox = document.getElementById('searchBox')
                     searchBox.select();
                     if (!_isEmpty(result.docs)) {
-                        
+
                         let productData = { rows: [] }
                         productData.rows[0] = { doc: result.docs[0] }
                         this.props.dispatch(commonActionCreater(productData, 'GET_PRODUCT_DATA_SUCCESS'));
@@ -105,11 +104,26 @@ class ProductsSection extends React.Component {
                         let productDataDoc = { doc: result.docs[0] };
                         let productId = productDataDoc.doc._id;
                         let foundProduct = _find(cartItems, { id: productId });
-                        console.log(foundProduct, 'uiugudgcudf')
                         let cartObj;
-                        let product = {doc: result.docs[0]}
+                        let product = { doc: result.docs[0] }
                         addToCart(product, cartItems, 1, this.props.dispatch)
-                        
+                        this.props.enqueueSnackbar(
+                            <div className='flex-row justify-space-between cart-snackbar'>
+                                <div className='flex-row'>
+                                    <div className='product-img'>
+                                        <img src={_get(product, 'doc.product.image')} alt='' />
+                                    </div>
+                                    <div className='product-name ml-20'>
+                                        {_get(product, 'doc.product.name')}
+                                    </div>
+
+                                </div>
+                                <div className='product-price flex-row justify-flex-end'>
+                                    {_get(product, 'doc.product.salePrice.currencyCode')} {_get(product, 'doc.product.salePrice.price')}
+                                </div>
+                            </div>
+                        );
+
                     } else {
                         this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
                     }
@@ -296,7 +310,7 @@ class ProductsSection extends React.Component {
                 console.log(err)
             });
         }
-    }  
+    }
 
     handleHideWhenOffline = (online, onlineContent, offlineContent) => {
         if (online) {
@@ -313,7 +327,7 @@ class ProductsSection extends React.Component {
     }
 
     homeButtonClicked = () => {
-        this.setState({ searchText: ''})
+        this.setState({ searchText: '' })
     }
 
     render() {
@@ -338,9 +352,9 @@ class ProductsSection extends React.Component {
                             getProductData={this.props.getProductData}
                         />
                         <SearchBar
-                            isOpenProduct={_get(this.props,'isOpenProduct',false)}
-                            isOpenHistoryDialogue={_get(this.props,'isOpenHistoryDialogue',false)}
-                            isCustomerTabOpen={_get(this.props,'isCustomerTabOpen.lookUpData',false)}
+                            isOpenProduct={_get(this.props, 'isOpenProduct', false)}
+                            isOpenHistoryDialogue={_get(this.props, 'isOpenHistoryDialogue', false)}
+                            isCustomerTabOpen={_get(this.props, 'isCustomerTabOpen.lookUpData', false)}
                             handleChange={this.handleChange}
                             onKeyPress={this.onKeyPress}
                             value={this.state.searchText}
