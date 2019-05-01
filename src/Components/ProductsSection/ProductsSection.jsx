@@ -42,9 +42,9 @@ class ProductsSection extends React.Component {
     }
 
     handleChange = (searchText, e) => {
-         this.setState({ searchText })
-        if(this.previousTimeStamp){
-            if((e.timeStamp - this.previousTimeStamp) <= 20){
+        this.setState({ searchText })
+        if (this.previousTimeStamp) {
+            if ((e.timeStamp - this.previousTimeStamp) <= 20) {
                 this.previousTimeStamp = e.timeStamp
                 return
             }
@@ -109,7 +109,7 @@ class ProductsSection extends React.Component {
                         let cartItems = _get(this, 'props.cart.cartItems', [])
                         let product = { doc: result.docs[0] }
                         addToCart(product, cartItems, 1, this.props.dispatch)
-                        
+
                         // View for Snackbar
                         this.props.enqueueSnackbar(
                             <div className='flex-row justify-space-between cart-snackbar'>
@@ -129,7 +129,13 @@ class ProductsSection extends React.Component {
                         );
 
                     } else {
-                        this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+                        this.props.enqueueSnackbar(
+                            <div className='flex-row justify-space-between cart-snackbar'>
+                                <div className='flex-row'>
+                                    No Product Found
+                                </div>
+                            </div>
+                        );
                     }
                 })
             }
