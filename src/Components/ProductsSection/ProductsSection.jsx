@@ -41,8 +41,15 @@ class ProductsSection extends React.Component {
         }
     }
 
-    handleChange = (searchText) => {
-        this.setState({ searchText })
+    handleChange = (searchText, e) => {
+         this.setState({ searchText })
+        if(this.previousTimeStamp){
+            if((e.timeStamp - this.previousTimeStamp) <= 20){
+                this.previousTimeStamp = e.timeStamp
+                return
+            }
+        }
+        this.previousTimeStamp = e.timeStamp
         if (searchText.length > 2) {
             this.productsdb.search({
                 query: searchText,
@@ -89,24 +96,21 @@ class ProductsSection extends React.Component {
     onKeyPress = (key) => {
         if (key.charCode == 13) {
             if ((/^[0-9-]{4,}[0-9]$/).test(_get(this.state, 'searchText', ''))) {
+                let searchBox = document.getElementById('searchBox')
+                searchBox.select();
                 let upcCode = Number(_get(this.state, 'searchText', 0))
                 this.productsdb.find({
                     selector: { "product.upcCode": upcCode }
                 }).then((result) => {
-                    let searchBox = document.getElementById('searchBox')
-                    searchBox.select();
                     if (!_isEmpty(result.docs)) {
-
                         let productData = { rows: [] }
                         productData.rows[0] = { doc: result.docs[0] }
-                        this.props.dispatch(commonActionCreater(productData, 'GET_PRODUCT_DATA_SUCCESS'));
+                        // this.props.dispatch(commonActionCreater(productData, 'GET_PRODUCT_DATA_SUCCESS'));
                         let cartItems = _get(this, 'props.cart.cartItems', [])
-                        let productDataDoc = { doc: result.docs[0] };
-                        let productId = productDataDoc.doc._id;
-                        let foundProduct = _find(cartItems, { id: productId });
-                        let cartObj;
                         let product = { doc: result.docs[0] }
                         addToCart(product, cartItems, 1, this.props.dispatch)
+                        
+                        // View for Snackbar
                         this.props.enqueueSnackbar(
                             <div className='flex-row justify-space-between cart-snackbar'>
                                 <div className='flex-row'>

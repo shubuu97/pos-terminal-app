@@ -55,7 +55,7 @@ class CustomizedInputBase extends React.Component {
           className={classes.input}
           onKeyPress={this.props.onKeyPress}
           placeholder="Search For Item"
-          onChange={(event) => this.props.handleChange(event.target.value)} />
+          onChange={(event) => this.props.handleChange(event.target.value, event)} />
         <IconButton className={classes.iconButton} aria-label="Search">
           <SearchIcon />
         </IconButton>
