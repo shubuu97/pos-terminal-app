@@ -46,7 +46,6 @@ const refundReducer = (state = {
     let costCenterDepartment = '';
     switch (action.type) {
         case 'CASH_REFUND_INPUT_HANDLER':
-        debugger;
             cashAmount = action.data.cashAmount;
             cashAmount = twoDecimalsTrunk(cashAmount);
             paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount)

@@ -7,7 +7,6 @@ import _find from 'lodash/find'
 import { commonActionCreater } from '../../Redux/commonAction';
 
 const addToCart = (product, cartItems, quantity, dispatch ) => {
-    debugger
     let reqObj = []
     if (_isEmpty(_find(cartItems, product))) {
         reqObj = [

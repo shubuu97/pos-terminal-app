@@ -37,7 +37,6 @@ class Product extends React.PureComponent {
     }
 
     addToCart = (product, cartItems, quantity, dispatch) => {
-        debugger
         let products = {
             doc: product.doc
         }
@@ -57,7 +56,6 @@ class Product extends React.PureComponent {
         let regex = /_design.*/g;
         let isddoc = regex.test(id);
         let dispatch = this.props.dispatch
-        debugger
         return (
             <React.Fragment>
                 {!isddoc ?
