@@ -57,12 +57,13 @@ class Product extends React.PureComponent {
         let regex = /_design.*/g;
         let isddoc = regex.test(id);
         let dispatch = this.props.dispatch
+        debugger
         return (
             <React.Fragment>
                 {!isddoc ?
                     <div className='each-tile white-background flex-row relative' id='productCard' onClick={() => this.addToCart(data, cartItems, 1, dispatch)} index={this.props.index} key={this.props.key}>
                         <div className='absolute added-item-position'>
-                            {(_find(cartItems, { id: data.id })) ? <div className='added-item-count'>{(_find(cartItems, { id: data.id })).qty}</div> : null}
+                            {(_find(cartItems, cartItem => cartItem.doc._id == data.id )) ? <div className='added-item-count'>{(_find(cartItems, cartItem => cartItem.doc._id == data.id)).qty}</div> : null}
                         </div>
                         <div className='product-image'>
                             <img src={_get(data, 'doc.product.image') || DefaultImage} alt="" />
