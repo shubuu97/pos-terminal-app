@@ -2,13 +2,14 @@ import _get from 'lodash/get';
 import roundUp from '../Global/PosFunctions/roundUp';
 import decimalPlaces from '../Global/PosFunctions/decimalPlaces';
 
-const calcPaymentAmount = (a, b, c, d, e, f) => {
+const calcPaymentAmount = (a, b, c, d, e, f,g) => {
     let paymentAmount = (parseFloat(a) || 0) +
         (parseFloat(b) || 0) +
         (parseFloat(c) || 0) +
         (parseFloat(d) || 0) +
         (parseFloat(e) || 0) +
-        (parseFloat(f) || 0)
+        (parseFloat(f) || 0) +
+        (parseFloat(g) || 0)
 
     return paymentAmount;
 };
@@ -48,18 +49,19 @@ const paymentReducer = (state = {
     let loyaltyRedeem = state.loyaltyRedeem;
     let costCenterAmount = state.costCenterAmount;
     let costCenterType = '';
+    let decliningBalance = ''
     let costCenterDepartment = '';
     switch (action.type) {
         case 'CASH_INPUT_HANDLER':
             cashAmount = action.data.cashAmount;
-            paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount)
+            paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount,decliningBalance)
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
             cashAmount = roundUpAmount(cashAmount);
             return (Object.assign({}, state, { cashAmount, remainingAmount }));
             break;
         case 'LOYALTY_INPUT_HANDLER':
             loyaltyRedeem = action.data.loyaltyRedeem;
-            paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount)
+            paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount,decliningBalance)
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
             loyaltyRedeem = roundUpAmount(loyaltyRedeem);
             if (paymentAmount > parseFloat(totalAmount)) {
@@ -71,7 +73,7 @@ const paymentReducer = (state = {
             break;
         case 'CARD_INPUT_HANDLER':
             cardAmount = action.data.cardAmount;
-            paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount)
+            paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount,decliningBalance)
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
             cardAmount = roundUpAmount(cardAmount);
             let cardRefrenceId = action.data.cardRefrenceId
@@ -86,7 +88,7 @@ const paymentReducer = (state = {
             costCenterType = action.data.costCenterType;
             costCenterDepartment = action.data.costCenterDepartment;
             costCenterAmount = action.data.costCenterAmount;
-            paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount);
+            paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount,decliningBalance);
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
             if (paymentAmount > parseFloat(totalAmount)) {
                 let amountExceeded = paymentAmount - parseFloat(totalAmount);
@@ -95,10 +97,21 @@ const paymentReducer = (state = {
             }
             return (Object.assign({}, state, { costCenterType, costCenterDepartment, costCenterAmount, remainingAmount }));
             break;
+        case 'DECLINING_BALANCE':
+            decliningBalance = action.data.decliningBalance;
+            paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount,decliningBalance);
+            remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
+            if (paymentAmount > parseFloat(totalAmount)) {
+                let amountExceeded = paymentAmount - parseFloat(totalAmount);
+                decliningBalance = roundUpAmount(parseFloat(decliningBalance) - parseFloat(amountExceeded));
+                remainingAmount = 0;
+            }
+            return (Object.assign({}, state, { decliningBalance,remainingAmount }));
+            break;
         case 'EMPLOYEE_PAYROLL':
             amountAvailToRedeem = _get(state, 'employeeAvailableAmount.limit.amount');
             employeePay = action.data.employeePay;
-            paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount)
+            paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount,decliningBalance)
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
             employeePay = roundUpAmount(employeePay);
             if (parseFloat(amountAvailToRedeem) >= (parseFloat(employeePay) || 0) && remainingAmount >= 0) {
@@ -135,7 +148,7 @@ const paymentReducer = (state = {
             break;
 
         case 'GIFT_USE_MAX':
-            paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount);
+            paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount,decliningBalance);
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount)
             amountAvailToRedeem = _get(state, 'giftCardData.value.amount');
             if (parseFloat(amountAvailToRedeem) >= remainingAmount) {
@@ -155,7 +168,7 @@ const paymentReducer = (state = {
             return (Object.assign({}, state, { giftPayNumber: action.data.giftPayNumber }))
 
         case 'GET_REMAINING_AMOUNT':
-            paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount);
+            paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount,decliningBalance);
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount)
             return (Object.assign({}, state, { remainingAmount }));
         case 'CHECK_GIFT_CARD_DATA_SUCCESS':

@@ -61,6 +61,9 @@ const HandlePrint = (props) => {
             case 5:
                 method = 'Loyalty'
                 break;
+                case 6:
+                method = 'Decline Balance'
+                break;
         }
 
         return method

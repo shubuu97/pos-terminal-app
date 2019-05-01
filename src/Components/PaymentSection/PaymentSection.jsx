@@ -30,6 +30,7 @@ import GiftPay from './PaymentMethods/GiftPay';
 import LoyaltyRedeem from './PaymentMethods/LoyaltyRedeem';
 import PaymentReceipt from './paymentReceipt';
 import CostCenter from './CostCenter';
+import DecliningBalance from './PaymentMethods/DecliningBalance';
 
 
 /* style */
@@ -106,6 +107,13 @@ class PaymentSection extends React.Component {
                         _get(this.props, 'totalAmount.amount') > _get(this.props, 'redemptionRules.lookUpData.redemptionRule.minimumSaleAmount') && !(_get(this.props, 'customer.guest', false)) ?
                             <li style={disable || disableOffline} onClick={this.handleLoyaltyRedeem} className="giftcard-section">Redeem Points</li> : null
                     )
+                    break;
+                    case 6:
+                    options.push(
+                        <li style={disable} onClick={this.handleDeclineBalance} variant="outlined" className="card-method" >Declining Balance</li>
+                    )
+                    break;
+                    
 
 
                     {/* <li  className="freedompay">Freedom <br/> Pay</li>      */ }
@@ -134,6 +142,10 @@ class PaymentSection extends React.Component {
     }
     handleCostCenter = () => {
         this.setState({ showCostCenter: true })
+    }
+    handleDeclineBalance=()=>{
+        this.setState({ showDeclineBalance: true })
+
     }
 
     handleKeyBoardValue = (field, value) => {
@@ -321,6 +333,15 @@ class PaymentSection extends React.Component {
             this.props.dispatch(commonActionCreater({ giftPayNumber: '', totalAmount: this.props.totalAmount }, 'GIFT_CARD_NUMBER'));
             this.props.dispatch(commonActionCreater({ giftCardAmount: '', totalAmount: this.props.totalAmount }, 'GIFT_AMOUNT_TO_REDEEM'));
         }
+        if (fieldValue == 'showDeclineBalance') {
+            if (this.state.currentFocus == 'showDeclineBalance' || this.state.currentFocus == 'showDeclineBalance') {
+                this.setState({ [fieldValue]: false, currentFocus: '' });
+            }
+            else {
+                this.setState({ [fieldValue]: false });
+            }
+            this.props.dispatch(commonActionCreater({ decliningBalance: '', totalAmount: this.props.totalAmount }, 'DECLINING_BALANCE'));
+        }
     }
 
     makReqObj = async (offline) => {
@@ -391,6 +412,32 @@ class PaymentSection extends React.Component {
                 paymentMethod: 2,
                 paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.giftCardAmount) || 0) },
                 paymentReference: apiResponse,
+            })
+        }
+        if ((parseFloat(this.props.decliningBalance) || 0)) {
+            let url = 'Payment/DecliningBalance/Save';
+            let value = {};
+            _set(value, 'amount', parseFloat(this.props.decliningBalance));
+            _set(value, 'currencyCode', '$');
+            let data = {
+                retailerId: localStorage.getItem('retailerId'),
+                terminalId: localStorage.getItem('terminalId'),
+                customerId: _get(this.props, 'customer.id', ''),
+                sessionId: localStorage.getItem('sessionId'),
+                operatorId: localStorage.getItem('userId'),
+                storeId: localStorage.getItem('storeId'),
+                value: value
+            }
+
+            let apiResponse = await this.props.dispatch(postData(`${APPLICATION_BFF_URL}${url}`, data, 'SAVE_DECLINE_BALANCE_DATA', {
+                init: 'SAVE_DECLINE_BALANCE_DATA_INIT',
+                success: 'SAVE_DECLINE_BALANCE_DATA_SUCCESS',
+                error: 'SAVE_DECLINE_BALANCE_DATA_ERROR'
+            }))
+            payments.push({
+                paymentMethod: 6,
+                paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.decliningBalance) || 0) },
+                paymentReference: apiResponse.referenceId,
             })
         }
         let LoyaltyValue = 0
@@ -720,6 +767,15 @@ class PaymentSection extends React.Component {
                             {
                                 this.state.showCostCenter ?
                                     <CostCenter
+                                    currentFocus={this.currentFocus}
+
+                                        onRemovePaymentMethod={this.onRemovePaymentMethod}
+                                    /> : null
+                            }
+                             {
+                                this.state.showDeclineBalance ?
+                                    <DecliningBalance
+                                        currentFocus={this.currentFocus}
                                         onRemovePaymentMethod={this.onRemovePaymentMethod}
                                     /> : null
                             }
@@ -807,6 +863,8 @@ function mapStateToProps(state) {
     let costCenterAmount = _get(state, 'PaymentDetails.costCenterAmount');
     let costCenterType = _get(state, 'PaymentDetails.costCenterType');
     let costCenterDepartment = _get(state, 'PaymentDetails.costCenterDepartment');
+    let decliningBalance = _get(state, 'PaymentDetails.decliningBalance');
+
     let paymentMethods = _get(state, 'storeData.lookUpData.store.paymentMethods')
     return {
         RedemptionRules,
@@ -833,7 +891,8 @@ function mapStateToProps(state) {
         costCenterAmount,
         costCenterType,
         costCenterDepartment,
-        paymentMethods
+        paymentMethods,
+        decliningBalance
 
     }
 }
