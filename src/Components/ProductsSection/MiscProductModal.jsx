@@ -140,7 +140,7 @@ class MiscProductModal extends React.Component {
     }
 
     handleChange = (e, name) => {
-        if(this.state.name == '') {
+        if(e.target.value == '') {
             this.setState({ isError: true, errorMsg: 'Please enter product name.'})
         } else {
             this.setState({ isError: false, errorMsg: ''})

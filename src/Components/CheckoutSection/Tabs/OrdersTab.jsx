@@ -98,19 +98,19 @@ class OrdersTab extends React.Component {
     // * Functions to Update Cart Reducers 
     handleDelete = (item) => {
         let cartItems = [...this.props.cartItems];
-        let index = _findIndex(cartItems, ['id', item.id]);
+        let index = _findIndex(cartItems, cartItem=>cartItem.doc._id == item.doc._id);
         cartItems.splice(index, 1);
         this.handleCartDiscountRemove(cartItems)
     };
     handleIncreaseQuantity = (item) => {
         let cartItems = [...this.props.cartItems];
-        let index = _findIndex(cartItems, ['id', item.id]);
+        let index = _findIndex(cartItems, cartItem=>cartItem.doc._id == item.doc._id);
         cartItems[index].qty = cartItems[index].qty + 1;
         this.handleCartDiscountRemove(cartItems)
     };
     handleDecreseQuantity = (item) => {
         let cartItems = [...this.props.cartItems];
-        let index = _findIndex(cartItems, ['id', item.id]);
+        let index = _findIndex(cartItems, cartItem=>cartItem.doc._id == item.doc._id);
         cartItems[index].qty = cartItems[index].qty - 1;
         if (cartItems[index].qty == 0) {
             cartItems.splice(index, 1);
