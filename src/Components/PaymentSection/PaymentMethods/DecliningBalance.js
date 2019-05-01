@@ -42,7 +42,7 @@ class DecliningBalance extends React.Component {
     render() {
         return (
             <div className="default-card-pay">
-                <span className='payment-title'>Decline Balance</span>
+                <span className='payment-title'>Declining Balance</span>
                 <div className="flex-row align-center justify-space-between">
                     <div style={{ width: '80%' }}>
                         <TextField

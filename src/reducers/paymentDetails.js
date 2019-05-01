@@ -88,6 +88,7 @@ const paymentReducer = (state = {
             costCenterType = action.data.costCenterType;
             costCenterDepartment = action.data.costCenterDepartment;
             costCenterAmount = action.data.costCenterAmount;
+            costCenterAmount = roundUpAmount(costCenterAmount);
             paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount,decliningBalance);
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
             if (paymentAmount > parseFloat(totalAmount)) {
