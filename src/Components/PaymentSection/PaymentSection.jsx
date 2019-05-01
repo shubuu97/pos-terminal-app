@@ -235,6 +235,7 @@ class PaymentSection extends React.Component {
     }
 
     handleInputChange = num => event => {
+        debugger
         if (this.state.currentFocus !== '') {
             let currentFocus = this.state.currentFocus;
             let focusItemValue
@@ -248,7 +249,7 @@ class PaymentSection extends React.Component {
                 focusItemValue = (focusItemValue || '') + num;
             }
             else {
-                focusItemValue = '';
+                focusItemValue = 0;
             }
             if (currentFocus == 'loyaltyRedeem') {
                 let loyaltyRedeemAmount = focusItemValue * _get(this.props, 'RedemptionRules.redemptionMultiplier', 0);
