@@ -37,7 +37,6 @@ class Product extends React.PureComponent {
     }
 
     addToCart = (product, cartItems, quantity, dispatch) => {
-        debugger
         let products = {
             doc: product.doc
         }

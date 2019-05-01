@@ -396,7 +396,6 @@ class PaymentSection extends React.Component {
             })
         }
         let LoyaltyValue = 0
-        debugger
         if ((parseFloat(this.props.loyaltyRedeemPoints) || 0)) {
             let url = 'Sale/RedeemRewardPoints';
             let data = {
