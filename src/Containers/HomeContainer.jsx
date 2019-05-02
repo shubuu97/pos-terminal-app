@@ -615,6 +615,7 @@ class HomeContainer extends React.Component {
                         handleMiscProduct={() => this.handleMiscProduct(true)}
                         isOpenProduct={isOpenProduct}
                         isOpenHistoryDialogue={this.state.openHistoryDialogue}
+                        isGiftCardModelOpen={this.state.openGiftCard}
                     />
                 </Products>
                 <CheckoutSection
@@ -746,6 +747,7 @@ class HomeContainer extends React.Component {
                         offline={this.state.offline}
                         open={this.state.openGiftCard}
                         handleClose={() => this.handleGiftCard(false)}
+                        isGiftCardModal
                     />
                 }
                 {
