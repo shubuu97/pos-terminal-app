@@ -129,13 +129,9 @@ class ProductsSection extends React.Component {
                         );
 
                     } else {
-                        this.props.enqueueSnackbar(
-                            <div className='flex-row justify-space-between cart-snackbar'>
-                                <div className='flex-row'>
-                                    No Product Found
-                                </div>
-                            </div>
-                        );
+                        this.props.enqueueSnackbar('No Product Found',{
+                            variant: 'error'
+                        });
                     }
                 })
             }
