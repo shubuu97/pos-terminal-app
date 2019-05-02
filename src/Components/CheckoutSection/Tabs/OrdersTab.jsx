@@ -87,9 +87,16 @@ class OrdersTab extends React.Component {
     };
 
     handleCartDiscountRemove = (cartItems) => {
+        let cart = this.props.cart
         let cartDiscountObj = {}
-        cartDiscountObj.type = ''
-        cartDiscountObj.cartDiscount = 0
+        if (cart.cartAbsoluteValue) {
+            cartDiscountObj.type = '$'
+            cartDiscountObj.cartDiscount = _get(cart, 'cartDiscountAmount.amount', 0)
+        }
+        else {
+            cartDiscountObj.type = '%'
+            cartDiscountObj.cartDiscount = _get(cart, 'cartDiscountPercent', 0)
+        }
         cartDiscountObj.cartItems = cartItems
         this.props.dispatch(commonActionCreater(cartDiscountObj, 'ADD_DISCOUNT_TO_CART'));
         this.props.dispatch(commonActionCreater(cartItems, 'CART_ITEM_LIST'));
@@ -98,19 +105,19 @@ class OrdersTab extends React.Component {
     // * Functions to Update Cart Reducers 
     handleDelete = (item) => {
         let cartItems = [...this.props.cartItems];
-        let index = _findIndex(cartItems, ['id', item.id]);
+        let index = _findIndex(cartItems, cartItem=>cartItem.doc._id == item.doc._id);
         cartItems.splice(index, 1);
         this.handleCartDiscountRemove(cartItems)
     };
     handleIncreaseQuantity = (item) => {
         let cartItems = [...this.props.cartItems];
-        let index = _findIndex(cartItems, ['id', item.id]);
+        let index = _findIndex(cartItems, cartItem=>cartItem.doc._id == item.doc._id);
         cartItems[index].qty = cartItems[index].qty + 1;
         this.handleCartDiscountRemove(cartItems)
     };
     handleDecreseQuantity = (item) => {
         let cartItems = [...this.props.cartItems];
-        let index = _findIndex(cartItems, ['id', item.id]);
+        let index = _findIndex(cartItems, cartItem=>cartItem.doc._id == item.doc._id);
         cartItems[index].qty = cartItems[index].qty - 1;
         if (cartItems[index].qty == 0) {
             cartItems.splice(index, 1);
@@ -118,6 +125,7 @@ class OrdersTab extends React.Component {
         this.handleCartDiscountRemove(cartItems)
     };
     handleDiscount = (data, identifier, index, type) => {
+        debugger
         let cartItems = _get(this, 'props.cart.cartItems', []);
 
         // * Making object for CartDiscount
@@ -187,8 +195,8 @@ class OrdersTab extends React.Component {
 
                             {/* Item Price and Regular Price */}
                             <div className='flex-column'>
-                                <div className='each-product-price'>{_get(item, 'itemSubTotal.currencyCode')} {_get(item, 'itemSubTotal.amount',0).toFixed(2)}</div>
-                                <div className='each-product-reg-price'>Reg Price - {_get(item, 'itemRegularTotal.currencyCode')} {_get(item, 'itemRegularTotal.amount',0).toFixed(2)}</div>
+                                <div className='each-product-price'>{_get(item, 'itemSubTotal.currencyCode')} {_get(item, 'itemSubTotal.amount', 0).toFixed(2)}</div>
+                                <div className='each-product-reg-price'>Reg Price - {_get(item, 'itemRegularTotal.currencyCode')} {_get(item, 'itemRegularTotal.amount', 0).toFixed(2)}</div>
                             </div>
                         </div>
                     </ExpansionPanelSummary>

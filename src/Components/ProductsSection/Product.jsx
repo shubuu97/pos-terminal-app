@@ -36,12 +36,12 @@ class Product extends React.PureComponent {
         this.setState({ openModal: false })
     }
 
-    addToCart = (product, cartItems, quantity, dispatch) => {
+    addToCart = (product, cartItems, cart, quantity, dispatch) => {
         let products = {
             doc: product.doc
         }
         if (!this.state.iconSelected) {
-            addToCart(products, cartItems, quantity, dispatch)
+            addToCart(products, cartItems, cart, quantity, dispatch)
             this.setState({
                 qty: this.state.qty + quantity
             })
@@ -51,6 +51,7 @@ class Product extends React.PureComponent {
     render() {
         let index = this.props.index;
         let cartItems = _get(this.props, 'cart.cartItems', [])
+        let cart = _get(this.props, 'cart', {})
         let data = _get(this.props, `data`, {});
         let id = data.id;
         let regex = /_design.*/g;
@@ -59,7 +60,7 @@ class Product extends React.PureComponent {
         return (
             <React.Fragment>
                 {!isddoc ?
-                    <div className='each-tile white-background flex-row relative' id='productCard' onClick={() => this.addToCart(data, cartItems, 1, dispatch)} index={this.props.index} key={this.props.key}>
+                    <div className='each-tile white-background flex-row relative' id='productCard' onClick={() => this.addToCart(data, cartItems, cart, 1, dispatch)} index={this.props.index} key={this.props.key}>
                         <div className='absolute added-item-position'>
                             {(_find(cartItems, cartItem => cartItem.doc._id == data.id )) ? <div className='added-item-count'>{(_find(cartItems, cartItem => cartItem.doc._id == data.id)).qty}</div> : null}
                         </div>
@@ -99,10 +100,11 @@ class Product extends React.PureComponent {
                             productDetails={_get(this.props, 'data.doc.product', {})}
                             inventoryDetails={_get(this.props, 'data.doc.inventory', {})}
                             index={index}
+                            cart={this.props.cart}
                             cartItems={cartItems}
                             product={data}
                             dispatch={dispatch}
-                            addToCart={(product, cartItems, qty, dispatch) => this.addToCart(product, cartItems, qty, dispatch)}
+                            addToCart={(product, cartItems, cart, qty, dispatch) => this.addToCart(product, cart, qty, dispatch)}
                         /> : ''
                 }
             </React.Fragment>)

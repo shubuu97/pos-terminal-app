@@ -94,7 +94,7 @@ class Customer extends React.Component {
     }
 
     addToCart = (index, qty) => {
-        this.props.addToCart(this.props.product, this.props.cartItems, qty, this.props.dispatch);
+        this.props.addToCart(this.props.product, this.props.cartItems, this.props.cart, qty, this.props.dispatch);
         this.setState({ qty: 0, fromInfoView: true })
     }
 
