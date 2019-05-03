@@ -58,22 +58,33 @@ class CardPay extends React.Component {
     }
 
     makePOSReqObj = () => {
+        let invoiceNo = this.randomString(12);
         let xmlBodyStr = `<POSRequest>\
         <RequestType>Sale</RequestType>\
-        <TokenType>2</TokenType>\
         <ChargeAmount>${this.props.cardAmount}</ChargeAmount>\
         <TaxAmount>0</TaxAmount>\
         <TipAmount>0</TipAmount>\
         <ClientEnvironment>${localStorage.getItem('freedomPayClientEnvironment')}</ClientEnvironment>\
         <StoreId>${localStorage.getItem('freedomPayStoreId')}</StoreId>\
         <TerminalId>${localStorage.getItem('freedomPayTerminalId')}</TerminalId>\
-        <MerchantReferenceCode>${localStorage.getItem('merchantReferenceCode')}</MerchantReferenceCode>\
-        <InvoiceNumber>174211</InvoiceNumber>\
+        <MerchantReferenceCode>WEBPOS${invoiceNo}</MerchantReferenceCode>\
+        <InvoiceNumber>${invoiceNo}</InvoiceNumber>\
         <WorkstationId>${localStorage.getItem('freedomPayWorkstationId')}</WorkstationId>\
-        <Recurring p2:nil="true" xmlns:p2="http://www.w3.org/2001/XMLSchema-instance" />\
       </POSRequest>`;
         return xmlBodyStr;
     }
+
+    randomString = (len) => {
+        var maxlen = 8,
+            min = Math.pow(16,Math.min(len,maxlen)-1), 
+            max = Math.pow(16,Math.min(len,maxlen)) - 1,
+            n   = Math.floor( Math.random() * (max-min+1) ) + min,
+            r   = n.toString(16);
+        while ( r.length < len ) {
+            r = r + this.randomString( len - maxlen );
+        }
+        return r;
+    };
 
     reqPaymentByCard = () => {
         this.handleOpen();

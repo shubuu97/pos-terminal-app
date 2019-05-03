@@ -87,9 +87,16 @@ class OrdersTab extends React.Component {
     };
 
     handleCartDiscountRemove = (cartItems) => {
+        let cart = this.props.cart
         let cartDiscountObj = {}
-        cartDiscountObj.type = ''
-        cartDiscountObj.cartDiscount = 0
+        if (cart.cartAbsoluteValue) {
+            cartDiscountObj.type = '$'
+            cartDiscountObj.cartDiscount = _get(cart, 'cartDiscountAmount.amount', 0)
+        }
+        else {
+            cartDiscountObj.type = '%'
+            cartDiscountObj.cartDiscount = _get(cart, 'cartDiscountPercent', 0)
+        }
         cartDiscountObj.cartItems = cartItems
         this.props.dispatch(commonActionCreater(cartDiscountObj, 'ADD_DISCOUNT_TO_CART'));
         this.props.dispatch(commonActionCreater(cartItems, 'CART_ITEM_LIST'));
@@ -118,6 +125,7 @@ class OrdersTab extends React.Component {
         this.handleCartDiscountRemove(cartItems)
     };
     handleDiscount = (data, identifier, index, type) => {
+        debugger
         let cartItems = _get(this, 'props.cart.cartItems', []);
 
         // * Making object for CartDiscount
@@ -187,8 +195,8 @@ class OrdersTab extends React.Component {
 
                             {/* Item Price and Regular Price */}
                             <div className='flex-column'>
-                                <div className='each-product-price'>{_get(item, 'itemSubTotal.currencyCode')} {_get(item, 'itemSubTotal.amount',0).toFixed(2)}</div>
-                                <div className='each-product-reg-price'>Reg Price - {_get(item, 'itemRegularTotal.currencyCode')} {_get(item, 'itemRegularTotal.amount',0).toFixed(2)}</div>
+                                <div className='each-product-price'>{_get(item, 'itemSubTotal.currencyCode')} {_get(item, 'itemSubTotal.amount', 0).toFixed(2)}</div>
+                                <div className='each-product-reg-price'>Reg Price - {_get(item, 'itemRegularTotal.currencyCode')} {_get(item, 'itemRegularTotal.amount', 0).toFixed(2)}</div>
                             </div>
                         </div>
                     </ExpansionPanelSummary>

@@ -110,8 +110,9 @@ class ProductsSection extends React.Component {
                         productData.rows[0] = { doc: result.docs[0] }
                         // this.props.dispatch(commonActionCreater(productData, 'GET_PRODUCT_DATA_SUCCESS'));
                         let cartItems = _get(this, 'props.cart.cartItems', [])
+                        let cart = _get(this, 'props.cart', {})
                         let product = { doc: result.docs[0] }
-                        addToCart(product, cartItems, 1, this.props.dispatch)
+                        addToCart(product, cartItems, cart, 1, this.props.dispatch)
 
                         // View for Snackbar
                         this.props.enqueueSnackbar(
@@ -132,13 +133,9 @@ class ProductsSection extends React.Component {
                         );
 
                     } else {
-                        this.props.enqueueSnackbar(
-                            <div className='flex-row justify-space-between cart-snackbar'>
-                                <div className='flex-row'>
-                                    No Product Found
-                                </div>
-                            </div>
-                        );
+                        this.props.enqueueSnackbar('No Product Found',{
+                            variant: 'error'
+                        });
                     }
                 })
             }
