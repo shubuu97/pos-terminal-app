@@ -6,7 +6,7 @@ import _find from 'lodash/find'
 /* Redux Imports */
 import { commonActionCreater } from '../../Redux/commonAction';
 
-const addToCart = (product, cartItems, quantity, dispatch ) => {
+const addToCart = (product, cartItems, cart, quantity, dispatch ) => {
     let reqObj = []
     if (_isEmpty(_find(cartItems, product))) {
         reqObj = [
@@ -27,8 +27,14 @@ const addToCart = (product, cartItems, quantity, dispatch ) => {
         // this.setState({ qty })
     }
     let cartDiscountObj = {}
-    cartDiscountObj.type = ''
-    cartDiscountObj.cartDiscount = 0
+    if(cart.cartAbsoluteValue){
+        cartDiscountObj.type = '$'
+        cartDiscountObj.cartDiscount = _get(cart, 'cartDiscountAmount.amount', 0)
+    }
+    else{
+        cartDiscountObj.type = '%'
+        cartDiscountObj.cartDiscount = _get(cart, 'cartDiscountPercent', 0)
+    }
     cartDiscountObj.cartItems = reqObj
     dispatch(commonActionCreater(cartDiscountObj, 'ADD_DISCOUNT_TO_CART'));
     dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
