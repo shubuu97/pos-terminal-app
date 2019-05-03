@@ -244,9 +244,11 @@ class GiftCardModal extends React.Component {
         } else {
             this.setState({ isGiftValueError: false, giftValueMsg: ''})
         }
-        let giftCard = _get(this.state, 'giftCard', {});
-        _set(giftCard, 'value.amount', !isNaN(val) ? Number(val) : val);
-        this.setState({giftCard})
+        if(e.target.value >= 0 || e.target.value == '') {        
+            let giftCard = _get(this.state, 'giftCard', {});
+            _set(giftCard, 'value.amount', !isNaN(val) ? Number(val) : val);
+            this.setState({giftCard})
+        }
     }
 
     render() {
