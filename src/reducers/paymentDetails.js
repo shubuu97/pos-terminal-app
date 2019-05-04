@@ -1,6 +1,4 @@
 import _get from 'lodash/get';
-import roundUp from '../Global/PosFunctions/roundUp';
-import decimalPlaces from '../Global/PosFunctions/decimalPlaces';
 import Dinero from 'dinero.js'
 
 let dineroObj = (amount, currency) => {
@@ -9,12 +7,12 @@ let dineroObj = (amount, currency) => {
 
 const calcPaymentAmount = (a, b, c, d, e, f,g) => {
     let paymentAmount = dineroObj(0, 'USD')
-    paymentAmount.add(a).add(b).add(c).add(d).add(e).add(f).add(g)
+    paymentAmount = paymentAmount.add(a).add(b).add(c).add(d).add(e).add(f).add(g)
     return paymentAmount;
 };
 
 const calcRemainingAmount = (totalAmt, paymentAmt) => {
-    let remAmt = (dineroObj(totalAmt, 'USD').subtract(dineroObj(paymentAmt, 'USD'))) || dineroObj(0, 'USD') 
+    let remAmt = totalAmt.subtract(paymentAmt) || dineroObj(0, 'USD') 
     return remAmt;
 }
 
