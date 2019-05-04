@@ -42,7 +42,6 @@ const cartItem = (state = {
             });
             break;
         case 'CART_ITEM_LIST':
-            debugger
             let maxAllowedDiscountMoney = DineroFunc(0)
             const employeeDiscountPercent = _get(state, 'empDiscount', 0);
 
@@ -135,7 +134,6 @@ const cartItem = (state = {
                 if (_get(item, 'doc.product.discountable', false)) {
                     item.itemDiscountableMoney = DineroFunc(0)
                     let key = _findIndex(discountableItemsIndex, discountableItemsIndex => discountableItemsIndex == index)
-                    debugger
                     if (key >= 0) {
                         item.itemDiscountableMoney = DineroFunc(discountableItems[key])
                         item.cartDiscountMoney = cartDiscountAllocation[key]

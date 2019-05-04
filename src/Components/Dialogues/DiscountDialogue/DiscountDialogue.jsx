@@ -178,11 +178,11 @@ class DiscountDialogue extends React.Component {
                                             this.props.open ?
                                                 this.props.identifier == 'Discount' ?
                                                     this.state.type == '%' ?
-                                                        `Allowed Discount: ${(this.props.cart.allowedCartDiscount).toFixed(2)}`
+                                                        `Allowed Discount: ${(this.props.cart.allowedCartDiscount)}`
                                                         :
-                                                        `Allowed Discount: $ ${(this.props.cart.allowedCartDiscount * this.props.cart.discountableCartTotal / 100).toFixed(2)}`
+                                                        `Allowed Discount: $ ${(this.props.cart.allowedCartDiscount * this.props.cart.discountableCartTotal / 100)}`
                                                     :
-                                                    `Allowed Discount: ${(this.props.cart.cartItems[this.props.itemIndex].allowedDiscountPercent).toFixed(2)}`
+                                                    `Allowed Discount: ${(this.props.cart.cartItems[this.props.itemIndex].allowedDiscountPercent)}`
                                                 :
                                                 null
                                         }
