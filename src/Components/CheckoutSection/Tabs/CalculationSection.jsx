@@ -1,6 +1,8 @@
 import React from 'react';
 /* Lodash Imports */
 import _get from 'lodash/get';
+/* Dinero Import */
+import Dinero from "dinero.js";
 /* Material import */
 import Button from '@material-ui/core/Button';
 /* Material Icons */
@@ -13,6 +15,7 @@ import { commonActionCreater } from '../../../Redux/commonAction';
 /* Component Imports */
 
 
+
 class CalculationSection extends React.Component {
 
     constructor() {
@@ -21,6 +24,9 @@ class CalculationSection extends React.Component {
 
         }
     }
+
+
+
     handleCartDiscountRemove = () => {
         let cartDiscountObj = {}
         cartDiscountObj.type = ''
@@ -28,20 +34,26 @@ class CalculationSection extends React.Component {
         cartDiscountObj.cartItems = this.props.cartItems
         this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
     }
-    
+
     handleClickOpenDiscount = () => {
 
     }
 
     render() {
         let { checkoutcalcArea, cartItems, cart } = this.props
+        let cartRegularTotal = Dinero(_get(cart, 'regularTotalMoney', {amount: 0, currency: 'USD'}))
+
+
+
+
+
         return (
             <div className='calculation-section flex-row' style={{ height: checkoutcalcArea }}>
                 <div className="calc-first-part">
                     <div className="cart-details">
                         <div className='cart-each-details'>
                             <span className='cart-title bold'>Regular Total</span>
-                            <span className='cart-amount bold'>${_get(cart, 'regularTotal')}</span>
+                            <span className='cart-amount bold'>{cartRegularTotal.toFormat('$0,0.00')}</span>
                         </div>
                         {
                             _get(cart, 'cartDiscountAmount.amount', 0) > 0 ?
@@ -52,14 +64,14 @@ class CalculationSection extends React.Component {
                                         />
                                         Cart Discount
                                     </span>
-                                    <span className='cart-amount'>- {_get(cart, 'cartDiscountAmount.currencyCode')}{_get(cart, 'cartDiscountAmount.amount',0).toFixed(2)}</span>
+                                    <span className='cart-amount'>- {_get(cart, 'cartDiscountAmount.currencyCode')}{_get(cart, 'cartDiscountAmount.amount', 0).toFixed(2)}</span>
                                 </div> : null
                         }
                         {
                             _get(cart, 'employeeDiscountAmount.amount', 0) > 0 ?
                                 <div className='cart-each-details'>
                                     <span className='cart-title'>Emp. Discount </span>
-                                    <span className='cart-amount'>- {_get(cart, 'cartDiscountAmount.currencyCode')}{_get(cart, 'employeeDiscountAmount.amount',0).toFixed(2)}</span>
+                                    <span className='cart-amount'>- {_get(cart, 'cartDiscountAmount.currencyCode')}{_get(cart, 'employeeDiscountAmount.amount', 0).toFixed(2)}</span>
                                 </div> : null
                         }
                         {
@@ -69,7 +81,7 @@ class CalculationSection extends React.Component {
                                         {/* <RemoveCircleIcons style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }} /> */}
                                         Item Discounts
                                 </span>
-                                    <span className='cart-amount'>- {_get(cart, 'itemDiscountAmount.currencyCode')}{_get(cart, 'itemDiscountAmount.amount',0).toFixed(2)}</span>
+                                    <span className='cart-amount'>- {_get(cart, 'itemDiscountAmount.currencyCode')}{_get(cart, 'itemDiscountAmount.amount', 0).toFixed(2)}</span>
                                 </div> : null
                         }
                         {
@@ -89,12 +101,12 @@ class CalculationSection extends React.Component {
                         </div>
                         <div className='cart-each-details'>
                             <span className='cart-title'>Tax</span>
-                            <span className='cart-amount'>{_get(cart, 'totalTaxAmount.currencyCode')}{_get(cart, 'totalTaxAmount.amount',0).toFixed(2)}</span>
+                            <span className='cart-amount'>{_get(cart, 'totalTaxAmount.currencyCode')}{_get(cart, 'totalTaxAmount.amount', 0).toFixed(2)}</span>
                         </div>
                     </div>
                     <div className="cart-total">
                         <span className='total-text'>Total </span>
-                        <span className='total-amount'>{_get(cart, 'totalAmount.currencyCode')}{_get(cart, 'totalAmount.amount',0).toFixed(2)}</span>
+                        <span className='total-amount'>{_get(cart, 'totalAmount.currencyCode')}{_get(cart, 'totalAmount.amount', 0).toFixed(2)}</span>
                     </div>
                 </div>
             </div>
