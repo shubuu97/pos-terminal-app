@@ -1,47 +1,35 @@
 import _get from 'lodash/get';
-import roundUp from '../Global/PosFunctions/roundUp';
-import decimalPlaces from '../Global/PosFunctions/decimalPlaces';
+import Dinero from 'dinero.js'
+
+let dineroObj = (amount, currency) => {
+    return Dinero({ amount: parseInt(amount), currency });
+}
 
 const calcPaymentAmount = (a, b, c, d, e, f,g) => {
-    let paymentAmount = (parseFloat(a) || 0) +
-        (parseFloat(b) || 0) +
-        (parseFloat(c) || 0) +
-        (parseFloat(d) || 0) +
-        (parseFloat(e) || 0) +
-        (parseFloat(f) || 0) +
-        (parseFloat(g) || 0)
-
+    let paymentAmount = dineroObj(0, 'USD')
+    paymentAmount = paymentAmount.add(a).add(b).add(c).add(d).add(e).add(f).add(g)
     return paymentAmount;
 };
 
 const calcRemainingAmount = (totalAmt, paymentAmt) => {
-    let remAmt = (parseFloat(totalAmt) - parseFloat(paymentAmt)) || 0;
+    let remAmt = totalAmt.subtract(paymentAmt) || dineroObj(0, 'USD') 
     return remAmt;
-
 }
-const roundUpAmount = (amount) => {
-    let decimalCount = decimalPlaces(amount);
-    if (decimalCount > 2) {
-        amount = roundUp(amount, 2);
-        return amount
-    }
-    return amount;
-}
-
 
 const paymentReducer = (state = {
-    cashAmount: '',
-    cardAmount: '',
-    giftCardAmount: '',
-    employeePay: '',
-    loyaltyRedeem: '',
-    costCenterType: '',
-    costCenterDepartment: '',
-    costCenterAmount: ''
+    cashAmount: dineroObj(0, 'USD'),
+    cardAmount: dineroObj(0, 'USD'),
+    giftCardAmount: dineroObj(0, 'USD'),
+    employeePay: dineroObj(0, 'USD'),
+    loyaltyRedeem: dineroObj(0, 'USD'),
+    costCenterType: dineroObj(0, 'USD'),
+    costCenterDepartment: dineroObj(0, 'USD'),
+    costCenterAmount: dineroObj(0, 'USD')
 }, action) => {
-    let paymentAmount = 0;
-    let totalAmount = _get(action, 'data.totalAmount.amount', 0);
-    let remainingAmount = 0;
+
+    let paymentAmount = dineroObj(0, 'USD');
+    let totalAmount = dineroObj(_get(action, 'data.totalAmount.amount', 0), 'USD');
+    let remainingAmount = dineroObj(0, 'USD');
     let cashAmount = state.cashAmount;
     let cardAmount = state.cardAmount;
     let employeePay = state.employeePay;
@@ -53,80 +41,76 @@ const paymentReducer = (state = {
     let costCenterDepartment = '';
     switch (action.type) {
         case 'CASH_INPUT_HANDLER':
-            cashAmount = action.data.cashAmount;
+            cashAmount = dineroObj(_get(action,'data.cashAmount',0), 'USD');
             paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount,decliningBalance)
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
-            cashAmount = roundUpAmount(cashAmount);
             return (Object.assign({}, state, { cashAmount, remainingAmount }));
             break;
         case 'LOYALTY_INPUT_HANDLER':
-            loyaltyRedeem = action.data.loyaltyRedeem;
+            loyaltyRedeem = dineroObj(_get(action,'data.loyaltyRedeem',0), 'USD');
             paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount,decliningBalance)
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
-            loyaltyRedeem = roundUpAmount(loyaltyRedeem);
-            if (paymentAmount > parseFloat(totalAmount)) {
-                let amountExceeded = paymentAmount - parseFloat(totalAmount);
-                loyaltyRedeem = roundUpAmount(parseFloat(loyaltyRedeem) - parseFloat(amountExceeded));
-                remainingAmount = 0;
+            if (paymentAmount.greaterThan(totalAmount)) {
+                let amountExceeded = paymentAmount.subtract(totalAmount);
+                loyaltyRedeem = loyaltyRedeem.subtract(amountExceeded)
+                remainingAmount = dineroObj(0, 'USD');
             }
             return (Object.assign({}, state, { loyaltyRedeem, remainingAmount }));
             break;
         case 'CARD_INPUT_HANDLER':
-            cardAmount = action.data.cardAmount;
+            cardAmount = dineroObj(_get(action,'data.cardAmount',0), 'USD');
             paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount,decliningBalance)
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
-            cardAmount = roundUpAmount(cardAmount);
             let cardRefrenceId = action.data.cardRefrenceId
-            if (paymentAmount > parseFloat(totalAmount)) {
-                let amountExceeded = paymentAmount - parseFloat(totalAmount);
-                cardAmount = roundUpAmount(parseFloat(cardAmount) - parseFloat(amountExceeded));
+            if (paymentAmount.greaterThan(totalAmount)) {
+                let amountExceeded = paymentAmount.subtract(totalAmount);
+                cardAmount = cardAmount.subtract(amountExceeded);
                 remainingAmount = 0;
             }
             return (Object.assign({}, state, { cardAmount, remainingAmount, cardRefrenceId }));
             break;
         case 'COST_CENTER_CHARGE':
-            costCenterType = action.data.costCenterType;
+            costCenterType = action.data.costCenterType
             costCenterDepartment = action.data.costCenterDepartment;
-            costCenterAmount = action.data.costCenterAmount;
+            costCenterAmount = dineroObj(_get(action,'data.costCenterAmount',0), 'USD');
             paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount,decliningBalance);
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
-            if (paymentAmount > parseFloat(totalAmount)) {
-                let amountExceeded = paymentAmount - parseFloat(totalAmount);
-                costCenterAmount = roundUpAmount(parseFloat(costCenterAmount) - parseFloat(amountExceeded));
+            if (paymentAmount.greaterThan(totalAmount)) {
+                let amountExceeded = paymentAmount.subtract(totalAmount);
+                costCenterAmount = costCenterAmount.subtract(amountExceeded);
                 remainingAmount = 0;
             }
             return (Object.assign({}, state, { costCenterType, costCenterDepartment, costCenterAmount, remainingAmount }));
             break;
         case 'DECLINING_BALANCE':
-            decliningBalance = action.data.decliningBalance;
+            decliningBalance = dineroObj(_get(action,'data.decliningBalance',0), 'USD');
             paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount,decliningBalance);
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
-            if (paymentAmount > parseFloat(totalAmount)) {
-                let amountExceeded = paymentAmount - parseFloat(totalAmount);
-                decliningBalance = roundUpAmount(parseFloat(decliningBalance) - parseFloat(amountExceeded));
-                remainingAmount = 0;
+            if (paymentAmount.greaterThan(totalAmount)) {
+                let amountExceeded = paymentAmount.subtract(totalAmount);
+                decliningBalance = decliningBalance.subtract(amountExceeded);
+                remainingAmount = dineroObj(0, 'USD');
             }
             return (Object.assign({}, state, { decliningBalance,remainingAmount }));
             break;
         case 'EMPLOYEE_PAYROLL':
-            amountAvailToRedeem = _get(state, 'employeeAvailableAmount.limit.amount');
-            employeePay = action.data.employeePay;
+            amountAvailToRedeem = dineroObj(_get(state, 'employeeAvailableAmount.limit.amount',0), 'USD');
+            employeePay = dineroObj(_get(action,'data.employeePay',0), 'USD');
             paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount,decliningBalance)
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
-            employeePay = roundUpAmount(employeePay);
-            if (parseFloat(amountAvailToRedeem) >= (parseFloat(employeePay) || 0) && remainingAmount >= 0) {
+            if(amountAvailToRedeem.greaterThanOrEqual(employeePay) && remainingAmount.greaterThanOrEqual(dineroObj(0, 'USD'))) {
                 paymentAmount = paymentAmount;
                 remainingAmount = remainingAmount;
-                giftCardAmount = roundUpAmount(employeePay);
+                giftCardAmount = employeePay;
                 return (Object.assign({}, state, { employeePay, remainingAmount }));
                 break;
             }
             else {
-                let amountExceeded = paymentAmount - parseFloat(totalAmount);
-                employeePay = roundUpAmount(parseFloat(employeePay) - parseFloat(amountExceeded));
-                remainingAmount = 0;
-                if (parseFloat(employeePay) > amountAvailToRedeem) {
-                    remainingAmount = parseFloat(employeePay) - amountAvailToRedeem;
+                let amountExceeded = paymentAmount.subtract(totalAmount);
+                employeePay = employeePay.subtract(amountExceeded);
+                remainingAmount = dineroObj(0, 'USD');
+                if (employeePay.greaterThan(amountAvailToRedeem)) {
+                    remainingAmount = employeePay.subtract(amountAvailToRedeem);
                     employeePay = amountAvailToRedeem;
                 }
                 return (Object.assign({}, state, { employeePay, remainingAmount }));
@@ -134,14 +118,14 @@ const paymentReducer = (state = {
             }
             break;
         case 'GIFT_AMOUNT_TO_REDEEM':
-            let amountAvailToRedeem = _get(state, 'giftCardData.value.amount');
-            let enteredAmount = action.data.giftCardAmount;
+            let amountAvailToRedeem = dineroObj(_get(state, 'giftCardData.value.amount',0), 'USD');
+            let enteredAmount = dineroObj(_get(action,'data.giftCardAmount',0),'USD');
             let expPaymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, enteredAmount, loyaltyRedeem, costCenterAmount);
             let expRemainingAmount = calcRemainingAmount(totalAmount, expPaymentAmount);
-            if (parseFloat(amountAvailToRedeem) >= (parseFloat(enteredAmount) || 0) && expRemainingAmount >= 0) {
+            if(amountAvailToRedeem.greaterThanOrEqual(enteredAmount) && expRemainingAmount.greaterThanOrEqual(dineroObj(0, 'USD'))) {
                 paymentAmount = expPaymentAmount;
                 remainingAmount = expRemainingAmount;
-                giftCardAmount = roundUpAmount(enteredAmount);
+                giftCardAmount = enteredAmount;
                 return (Object.assign({}, state, { giftCardAmount, remainingAmount }));
                 break;
             }
@@ -150,16 +134,15 @@ const paymentReducer = (state = {
         case 'GIFT_USE_MAX':
             paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount,decliningBalance);
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount)
-            amountAvailToRedeem = _get(state, 'giftCardData.value.amount');
-            if (parseFloat(amountAvailToRedeem) >= remainingAmount) {
-                giftCardAmount = roundUpAmount(remainingAmount);
+            amountAvailToRedeem = dineroObj(_get(state, 'giftCardData.value.amount',0), 'USD');
+            if (amountAvailToRedeem.greaterThanOrEqual(remainingAmount)) {
+                giftCardAmount = remainingAmount;
                 remainingAmount = 0;
                 return (Object.assign({}, state, { giftCardAmount, remainingAmount }));
             }
             else {
-                giftCardAmount = roundUpAmount(amountAvailToRedeem);
-                remainingAmount = remainingAmount - parseFloat(amountAvailToRedeem);
-                remainingAmount = roundUpAmount(remainingAmount);
+                giftCardAmount = amountAvailToRedeem;
+                remainingAmount = remainingAmount.subtract(amountAvailToRedeem);
                 return (Object.assign({}, state, { giftCardAmount, remainingAmount }));
             }
             break;
