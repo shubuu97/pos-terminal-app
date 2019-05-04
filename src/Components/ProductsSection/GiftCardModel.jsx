@@ -68,7 +68,7 @@ class GiftCardModal extends React.Component {
             isGiftValueError: true,
             giftCodeMsg: '',
             giftValueMsg: ''
-        }    
+        }
     }
 
     getExistingGiftCard = (url, data, successMethod, errorMethod) => {
@@ -84,7 +84,7 @@ class GiftCardModal extends React.Component {
             identifier: 'GET_GIFT_CARD__DATA',
             successCb: successMethod,
             errorCb: errorMethod,
-            dontShowMessage:true
+            dontShowMessage: true
         })
     }
 
@@ -99,7 +99,7 @@ class GiftCardModal extends React.Component {
                     giftCard,
                     giftCodeMsg: 'This giftcode already exist.',
                     isGiftCodeError: true
-                })    
+                })
             } else {
                 _set(giftCard, 'value.amount', '');
                 _set(giftCard, 'value.currencyCode', '$');
@@ -113,18 +113,18 @@ class GiftCardModal extends React.Component {
     }
 
     handleGetGiftCardDataError = () => {
-        this.setState({isGiftCodeError: false})
+        this.setState({ isGiftCodeError: false })
     }
 
     handleSaveGiftDataSuccess = () => {
         let { giftCard } = this.props;
         if (giftCard) {
-            this.setState({ isLoading: false})
+            this.setState({ isLoading: false })
             this.handleAddToCart();
         }
     }
     handleSaveGiftDataError = (err) => {
-        this.setState({ giftCodeMsg: 'Something went wrong', giftValueMsg: 'Something went wrong', isLoading: false});
+        this.setState({ giftCodeMsg: 'Something went wrong', giftValueMsg: 'Something went wrong', isLoading: false });
     }
 
     getModalStyle() {
@@ -139,7 +139,7 @@ class GiftCardModal extends React.Component {
     }
 
     addGiftCard = (e, index) => {
-        let val = _get(this.state.giftCard,'giftCode','');
+        let val = _get(this.state.giftCard, 'giftCode', '');
         let url1 = 'GiftCard/GetByCodeAndStore';
         let reqBody = {
             storeId: localStorage.getItem('storeId'),
@@ -147,7 +147,7 @@ class GiftCardModal extends React.Component {
         }
         this.getExistingGiftCard(url1, reqBody, this.handleGetGiftcardDataSuccess, this.handleGetGiftCardDataError);
 
-        this.setState({isLoading: true})
+        this.setState({ isLoading: true })
         let data = { ...this.state.giftCard };
         if (!data.id) {
             data.retailerId = localStorage.getItem('retailerId');
@@ -159,14 +159,14 @@ class GiftCardModal extends React.Component {
     }
 
     handleAddToCart = () => {
-        if(this.state.isGiftCodeError) {
-            
+        if (this.state.isGiftCodeError) {
+
         } else {
             let cartItems = _get(this, 'props.cart.cartItems', []);
             let doc = {};
             let isExist = false
             let check = cartItems.map(item => {
-                if(item.id == this.props.giftCard.id) {
+                if (item.id == this.props.giftCard.id) {
                     isExist = true
                 }
             })
@@ -181,8 +181,8 @@ class GiftCardModal extends React.Component {
                 doc: doc,
             }
             let reqObj
-            if(isExist) {
-                let index = _findIndex(cartItems, ['id', this.props.giftCard.id]);        
+            if (isExist) {
+                let index = _findIndex(cartItems, ['id', this.props.giftCard.id]);
                 reqObj = [
                     ...cartItems
                 ]
@@ -197,14 +197,18 @@ class GiftCardModal extends React.Component {
                     }
                 ];
             }
-            this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
+            let cartDiscountObj = {}
+            cartDiscountObj.type = '$'
+            cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountMoney.amount', 0)
+            cartDiscountObj.cartItems = reqObj
+            this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
             this.props.handleClose();
         }
     }
 
     handleBlur = (e) => {
-        if(this.state.giftCard.value.amount== '') {
-            this.setState({ isGiftValueError: true, giftValueMsg: 'Please enter gift value.'})
+        if (this.state.giftCard.value.amount == '') {
+            this.setState({ isGiftValueError: true, giftValueMsg: 'Please enter gift value.' })
         }
         let val = _get(e, 'target.value', '');
         let url = 'GiftCard/GetByCodeAndStore';
@@ -218,32 +222,32 @@ class GiftCardModal extends React.Component {
     handleGiftCodeChange = (e, name) => {
         let val = _get(e, 'target.value', '');
         this.props.cart.cartItems.map(item => {
-            if(item.doc.product.name == Number(val)) {
-                this.setState({isGiftCodeError: true, giftCodeMsg: 'Gift Code already added in cart.'})
+            if (item.doc.product.name == Number(val)) {
+                this.setState({ isGiftCodeError: true, giftCodeMsg: 'Gift Code already added in cart.' })
             } else {
-                this.setState({isGiftCodeError: false, giftCodeMsg: ''})
+                this.setState({ isGiftCodeError: false, giftCodeMsg: '' })
             }
         })
-        if(val == '') {
+        if (val == '') {
             this.setState({ isGiftCodeError: true })
         } else {
-            this.setState({ isGiftCodeError: false})
+            this.setState({ isGiftCodeError: false })
         }
         let giftCard = _get(this.state, 'giftCard', {});
         _set(giftCard, 'giftCode', val);
-        this.setState({giftCard})
+        this.setState({ giftCard })
     }
 
     handleGiftValueChange = (e) => {
         let val = _get(e, 'target.value', '');
-        if(Number(val) < 5 || Number(val) > 100 || val == '') {
-            this.setState({ isGiftValueError: true, giftValueMsg: 'Value must be between 5 and 100'})
+        if (Number(val) < 5 || Number(val) > 100 || val == '') {
+            this.setState({ isGiftValueError: true, giftValueMsg: 'Value must be between 5 and 100' })
         } else {
-            this.setState({ isGiftValueError: false, giftValueMsg: ''})
+            this.setState({ isGiftValueError: false, giftValueMsg: '' })
         }
         let giftCard = _get(this.state, 'giftCard', {});
         _set(giftCard, 'value.amount', !isNaN(val) ? Number(val) : val);
-        this.setState({giftCard})
+        this.setState({ giftCard })
     }
 
     render() {
@@ -278,7 +282,7 @@ class GiftCardModal extends React.Component {
                                     className='mt-10'
                                 />
                             </div>
-                            <div style={{color: 'red'}}>
+                            <div style={{ color: 'red' }}>
                                 {this.state.giftCodeMsg}
                             </div>
                             <div className="">
@@ -295,7 +299,7 @@ class GiftCardModal extends React.Component {
                                     className='mt-10'
                                 />
                             </div>
-                            <div style={{color: 'red'}}>
+                            <div style={{ color: 'red' }}>
                                 {this.state.giftValueMsg}
                             </div>
                         </div>
@@ -305,12 +309,12 @@ class GiftCardModal extends React.Component {
                             <Button onClick={() => this.props.handleClose()} className='btnmodalsecondary' variant="outlined">Cancel</Button>
                         </div>
                         <div>
-                            {this.state.isLoading ? 
-                                <CircularProgress color="secondary" /> : 
-                                <Button disabled={this.state.isGiftCodeError ||this.state.isGiftValueError} onClick={() => this.addGiftCard()} className='btnmodalprimary' variant="outlined">Add To Cart
+                            {this.state.isLoading ?
+                                <CircularProgress color="secondary" /> :
+                                <Button disabled={this.state.isGiftCodeError || this.state.isGiftValueError} onClick={() => this.addGiftCard()} className='btnmodalprimary' variant="outlined">Add To Cart
                                 </Button>
                             }
-                        </div>       
+                        </div>
                     </DialogActions>
                 </Dialog>
             </div>

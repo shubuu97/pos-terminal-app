@@ -26,8 +26,7 @@ class CalculationSection extends React.Component {
         cartDiscountObj.type = ''
         cartDiscountObj.cartDiscount = 0
         cartDiscountObj.cartItems = this.props.cartItems
-        this.props.dispatch(commonActionCreater(cartDiscountObj, 'ADD_DISCOUNT_TO_CART'));
-        this.props.dispatch(commonActionCreater(this.props.cartItems, 'CART_ITEM_LIST'));
+        this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
     }
     
     handleClickOpenDiscount = () => {

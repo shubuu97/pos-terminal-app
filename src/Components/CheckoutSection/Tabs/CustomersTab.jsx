@@ -96,7 +96,13 @@ class CustomerTab extends React.Component {
         else{
             this.props.dispatch(commonActionCreater(0, 'ADD_EMPLOYEE_DISCOUNT'));
         }
-        this.props.dispatch(commonActionCreater(_get(this.props, 'cart.cartItems', []), 'CART_ITEM_LIST'));
+
+        let cartDiscountObj = {}
+        cartDiscountObj.type = '$'
+        cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountMoney.amount', 0)
+        cartDiscountObj.cartItems = _get(this.props, 'cart.cartItems', [])
+
+        this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
         this.props.dispatch(commonActionCreater(doc.value, 'ADD_CUSTOMER_TO_CART'));
 
         //mapped data to state 

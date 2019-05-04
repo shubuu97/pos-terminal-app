@@ -80,7 +80,7 @@ class MiscProductModal extends React.Component {
             identifier: 'SAVE_MISC_PRODUCT_DATA',
             successCb: successMethod,
             errorCb: errorMethod,
-            dontShowMessage:true
+            dontShowMessage: true
         })
     }
 
@@ -96,10 +96,10 @@ class MiscProductModal extends React.Component {
     }
 
     addMiscProduct = (e, index) => {
-        if(this.state.name == '') {
-            this.setState({ isError: true, errorMsg: 'Please enter product name.'})
+        if (this.state.name == '') {
+            this.setState({ isError: true, errorMsg: 'Please enter product name.' })
         } else {
-            this.setState({ isError: false, errorMsg: ''})
+            this.setState({ isError: false, errorMsg: '' })
             let data = { ...this.state };
             let salePrice = {
                 price: Number(this.state.price),
@@ -135,15 +135,19 @@ class MiscProductModal extends React.Component {
                 saleType: 0,
             }
         ];
+        let cartDiscountObj = {}
+        cartDiscountObj.type = '$'
+        cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountMoney.amount', 0)
+        cartDiscountObj.cartItems = reqObj
         this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
         this.props.handleClose();
     }
 
     handleChange = (e, name) => {
-        if(this.state.name == '') {
-            this.setState({ isError: true, errorMsg: 'Please enter product name.'})
+        if (this.state.name == '') {
+            this.setState({ isError: true, errorMsg: 'Please enter product name.' })
         } else {
-            this.setState({ isError: false, errorMsg: ''})
+            this.setState({ isError: false, errorMsg: '' })
         }
         let val = name == 'isTaxable' ? e : _get(e, 'target.value', '');
         this.setState({
@@ -182,7 +186,7 @@ class MiscProductModal extends React.Component {
                                     className='mt-10'
                                 />
                             </div>
-                            <div style={{color: "red"}}>{this.state.errorMsg}</div>
+                            <div style={{ color: "red" }}>{this.state.errorMsg}</div>
                             <div className="">
                                 <TextField
                                     id="upcCode"

@@ -3,6 +3,8 @@ import React from 'react';
 import _get from 'lodash/get';
 import _findIndex from 'lodash/findIndex';
 import _isArray from 'lodash/isArray';
+/* Dinero Import */
+import Dinero from "dinero.js";
 /* Material import */
 import Button from '@material-ui/core/Button';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
@@ -86,20 +88,12 @@ class OrdersTab extends React.Component {
         this.setState({ open: false });
     };
 
-    handleCartDiscountRemove = (cartItems) => {
-        let cart = this.props.cart
+    handleCartDiscountCalculate = (cartItems) => {
         let cartDiscountObj = {}
-        if (cart.cartAbsoluteValue) {
-            cartDiscountObj.type = '$'
-            cartDiscountObj.cartDiscount = _get(cart, 'cartDiscountAmount.amount', 0)
-        }
-        else {
-            cartDiscountObj.type = '%'
-            cartDiscountObj.cartDiscount = _get(cart, 'cartDiscountPercent', 0)
-        }
+        cartDiscountObj.type = '$'
+        cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountMoney.amount', 0)
         cartDiscountObj.cartItems = cartItems
-        this.props.dispatch(commonActionCreater(cartDiscountObj, 'ADD_DISCOUNT_TO_CART'));
-        this.props.dispatch(commonActionCreater(cartItems, 'CART_ITEM_LIST'));
+        this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
     }
 
     // * Functions to Update Cart Reducers 
@@ -107,13 +101,13 @@ class OrdersTab extends React.Component {
         let cartItems = [...this.props.cartItems];
         let index = _findIndex(cartItems, cartItem=>cartItem.doc._id == item.doc._id);
         cartItems.splice(index, 1);
-        this.handleCartDiscountRemove(cartItems)
+        this.handleCartDiscountCalculate(cartItems)
     };
     handleIncreaseQuantity = (item) => {
         let cartItems = [...this.props.cartItems];
         let index = _findIndex(cartItems, cartItem=>cartItem.doc._id == item.doc._id);
         cartItems[index].qty = cartItems[index].qty + 1;
-        this.handleCartDiscountRemove(cartItems)
+        this.handleCartDiscountCalculate(cartItems)
     };
     handleDecreseQuantity = (item) => {
         let cartItems = [...this.props.cartItems];
@@ -122,7 +116,7 @@ class OrdersTab extends React.Component {
         if (cartItems[index].qty == 0) {
             cartItems.splice(index, 1);
         }
-        this.handleCartDiscountRemove(cartItems)
+        this.handleCartDiscountCalculate(cartItems)
     };
     handleDiscount = (data, identifier, index, type) => {
         debugger
@@ -131,7 +125,11 @@ class OrdersTab extends React.Component {
         // * Making object for CartDiscount
         let cartDiscountObj = {}
         cartDiscountObj.type = type
-        cartDiscountObj.cartDiscount = parseFloat(data)
+        if(type != '%'){
+            cartDiscountObj.cartDiscount = parseInt(parseFloat(data)*100)
+        } else {
+            cartDiscountObj.cartDiscount = parseFloat(data)
+        }        
 
         // * Making object for Cart reducer
         let reqObj = [
@@ -139,12 +137,16 @@ class OrdersTab extends React.Component {
         ]
         cartDiscountObj.cartItems = reqObj
         if (identifier == 'Discount') {
-            this.props.dispatch(commonActionCreater(cartDiscountObj, 'ADD_DISCOUNT_TO_CART'));
-            this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
+            this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
         }
         else if (identifier == 'ItemDiscount') {
-            reqObj[index].itemDiscountPercent = parseFloat(data);
-            this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
+            let regularTotal = Dinero({
+                amount: reqObj[index].itemRegularTotalMoney,
+                currency: 'USD'
+            }) 
+            reqObj[index].itemDiscountMoney = regularTotal.percentage(parseFloat(data));
+            cartDiscountObj.cartItems = reqObj
+            this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
         }
     };
     handleClearCart = () => {
@@ -266,12 +268,12 @@ class OrdersTab extends React.Component {
     }
 
     handleItemDiscountRemove = (index) => {
-        let cartItems = _get(this, 'props.cart.cartItems', []);
-        let reqObj = [
-            ...cartItems
-        ]
-        reqObj[index].itemDiscountPercent = 0;
-        this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
+        let cartDiscountObj = {}
+        cartDiscountObj.type = '$'
+        cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountMoney.amount', 0)
+        cartDiscountObj.cartItems = _get(this.props, 'cart.cartItems', [])
+        cartDiscountObj.cartItems[index].itemDiscountPercent = 0;
+        this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
     }
 
 
