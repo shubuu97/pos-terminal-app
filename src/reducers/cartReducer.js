@@ -87,6 +87,7 @@ const cartItem = (state = {
             if (discountableItems.length > 0) {
                 cartDiscountAllocation = cartDiscountMoney.allocate(discountableItems)
             }
+            console.log(cartDiscountAllocation, 'cartDiscountAllocation')
 
 
             // ************ Employee Discount ************
@@ -137,8 +138,8 @@ const cartItem = (state = {
                     debugger
                     if (key >= 0) {
                         item.itemDiscountableMoney = DineroFunc(discountableItems[key])
-                        item.cartDiscountMoney = DineroFunc(cartDiscountAllocation[key].getAmount());
-                        item.empDiscountMoney = DineroFunc(employeeDiscountAllocation[key].getAmount());
+                        item.cartDiscountMoney = cartDiscountAllocation[key]
+                        item.empDiscountMoney = employeeDiscountAllocation[key]
                         item.allowedItemDiscountMoney = item.itemDiscountableMoney.subtract(item.empDiscountMoney).subtract(item.cartDiscountMoney)
                     } else {
                         item.cartDiscountMoney = DineroFunc(0);
