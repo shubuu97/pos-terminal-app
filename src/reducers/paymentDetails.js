@@ -70,7 +70,7 @@ const paymentReducer = (state = {
             return (Object.assign({}, state, { cardAmount, remainingAmount, cardRefrenceId }));
             break;
         case 'COST_CENTER_CHARGE':
-            costCenterType = dineroObj(_get(action,'data.costCenterType',0), 'USD');
+            costCenterType = action.data.costCenterType
             costCenterDepartment = action.data.costCenterDepartment;
             costCenterAmount = dineroObj(_get(action,'data.costCenterAmount',0), 'USD');
             paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount,decliningBalance);
@@ -83,19 +83,19 @@ const paymentReducer = (state = {
             return (Object.assign({}, state, { costCenterType, costCenterDepartment, costCenterAmount, remainingAmount }));
             break;
         case 'DECLINING_BALANCE':
-            decliningBalance = _get(action,'data.decliningBalance',0);
+            decliningBalance = dineroObj(_get(action,'data.decliningBalance',0), 'USD');
             paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount,decliningBalance);
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
             if (paymentAmount.greaterThan(totalAmount)) {
                 let amountExceeded = paymentAmount.subtract(totalAmount);
                 decliningBalance = decliningBalance.subtract(amountExceeded);
-                remainingAmount = 0;
+                remainingAmount = dineroObj(0, 'USD');
             }
             return (Object.assign({}, state, { decliningBalance,remainingAmount }));
             break;
         case 'EMPLOYEE_PAYROLL':
             amountAvailToRedeem = dineroObj(_get(state, 'employeeAvailableAmount.limit.amount',0), 'USD');
-            employeePay = _get(action,'data.employeePay',0);
+            employeePay = dineroObj(_get(action,'data.employeePay',0), 'USD');
             paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount,decliningBalance)
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
             if(amountAvailToRedeem.greaterThanOrEqual(employeePay) && remainingAmount.greaterThanOrEqual(dineroObj(0, 'USD'))) {
