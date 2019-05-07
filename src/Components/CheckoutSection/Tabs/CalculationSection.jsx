@@ -41,12 +41,10 @@ class CalculationSection extends React.Component {
 
     render() {
         let { checkoutcalcArea, cartItems, cart } = this.props
-        let cartRegularTotal = Dinero(_get(cart, 'regularTotalMoney', {amount: 0, currency: 'USD'}))
-
-
-
-
-
+        let cartRegularTotal = _get(cart, 'regularTotalMoney', Dinero({ amount: 0, currency: 'USD'}))
+        let cartNetTotal = _get(cart, 'netTotalMoney', Dinero({ amount: 0, currency: 'USD'}))
+        let taxMoney = _get(cart, 'taxMoney', Dinero({ amount: 0, currency: 'USD'}))
+        let totalMoney = _get(cart, 'totalMoney', Dinero({ amount: 0, currency: 'USD'}))
         return (
             <div className='calculation-section flex-row' style={{ height: checkoutcalcArea }}>
                 <div className="calc-first-part">
@@ -97,16 +95,16 @@ class CalculationSection extends React.Component {
                     <div className="cart-details">
                         <div className='cart-each-details'>
                             <span className='cart-title bold'>Net Total</span>
-                            <span className='cart-amount bold'>${_get(cart, 'netTotal')}</span>
+                            <span className='cart-amount bold'>{cartNetTotal.toFormat('$0,0.00')}</span>
                         </div>
                         <div className='cart-each-details'>
                             <span className='cart-title'>Tax</span>
-                            <span className='cart-amount'>{_get(cart, 'totalTaxAmount.currencyCode')}{_get(cart, 'totalTaxAmount.amount', 0).toFixed(2)}</span>
+                            <span className='cart-amount'>{taxMoney.toFormat('$0,0.00')}</span>
                         </div>
                     </div>
                     <div className="cart-total">
                         <span className='total-text'>Total </span>
-                        <span className='total-amount'>{_get(cart, 'totalAmount.currencyCode')}{_get(cart, 'totalAmount.amount', 0).toFixed(2)}</span>
+                        <span className='total-amount'>{_get(cart, 'totalAmount.currencyCode')}{totalMoney.toFormat('$0,0.00')}</span>
                     </div>
                 </div>
             </div>

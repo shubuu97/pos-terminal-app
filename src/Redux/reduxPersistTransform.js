@@ -23,6 +23,7 @@ const SetTransform = createTransform(
     cartItems[i].itemDiscountableMoney = Dinero(cartItems[i].itemDiscountableMoney);
     cartItems[i].itemEffectiveTotal = Dinero(cartItems[i].itemEffectiveTotal);
     cartItems[i].itemRegularTotalMoney = Dinero(cartItems[i].itemRegularTotalMoney);
+    cartItems[i].itemSalesPriceMoney = Dinero(cartItems[i].itemSalesPriceMoney);
     cartItems[i].itemTaxAmount = Dinero(cartItems[i].itemTaxAmount);
     cartItems[i].subTotal = Dinero(cartItems[i].subTotal);
 }
