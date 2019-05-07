@@ -124,6 +124,8 @@ const cartItem = (state = {
                 }
             }
 
+            allowedCartDiscountMoney = discountableMoney
+
             // ************ Item Discount ************
             action.data.cartItems.forEach((item, index) => {
                 let salePrice = DineroFunc((_get(item, 'doc.product.salePrice.price', 0) * 100))
@@ -135,7 +137,7 @@ const cartItem = (state = {
                     item.itemDiscountableMoney = DineroFunc(0)
                     let key = _findIndex(discountableItemsIndex, discountableItemsIndex => discountableItemsIndex == index)
                     if (key >= 0) {
-                        item.itemDiscountableMoney = DineroFunc(discountableItems[key])
+                        item.itemDiscountableMoney = DineroFunc(discountableItems[key]).percentage(80)
                         item.cartDiscountMoney = cartDiscountAllocation[key]
                         item.empDiscountMoney = employeeDiscountAllocation[key]
                         item.allowedItemDiscountMoney = item.itemDiscountableMoney.subtract(item.empDiscountMoney).subtract(item.cartDiscountMoney)
@@ -150,10 +152,9 @@ const cartItem = (state = {
                     item.allowedItemDiscountMoney = DineroFunc(0);
                 }
 
-                item.itemDiscountMoney = Dinero(_get(item, 'itemDiscountMoney', { amount: 0, currency: 'USD' }))
+                item.itemDiscountMoney = Dinero(parseInt(_get(item, 'itemDiscountMoney', 0)*100))
 
                 // * Checking if Item Discount Exceeds or not
-                console.log(item.cartDiscountMoney, item.empDiscountMoney, item.itemDiscountMoney, 'mayuk')
                 let totalItemDiscount = item.cartDiscountMoney.add(item.empDiscountMoney).add(item.itemDiscountMoney)
                 if (item.itemDiscountableMoney.lessThan(totalItemDiscount)) {
                     item.itemDiscountMoney = DineroFunc(0);
@@ -171,9 +172,8 @@ const cartItem = (state = {
                 }
 
                 // * Calculating Allowed Cart Discount
-                if (allowedCartDiscountMoney.greaterThan(totalItemDiscount.subtract(item.cartDiscountMoney))) {
-                    allowedCartDiscountMoney = totalItemDiscount.subtract(item.cartDiscountMoney)
-                }
+                
+                allowedCartDiscountMoney = allowedCartDiscountMoney.subtract(item.itemDiscountMoney).subtract(item.empDiscountMoney)
 
                 // * Calculating SubTotal = Total + Discounts
                 item.subTotal = item.itemRegularTotalMoney.subtract(item.cartDiscountMoney).subtract(item.empDiscountMoney).subtract(item.itemDiscountMoney)
@@ -207,7 +207,7 @@ const cartItem = (state = {
             if (!(_get(state, 'customer.guest', false)) && netTotalMoney.getAmount() > earningLoyaltyRules.minimumSaleAmount) {
                 let loyaltyEarned = Math.round(netTotalMoney.getAmount() * earningLoyaltyRules.earningMultiplier);
             }
-
+           
             return Object.assign({}, state, {
                 cartItems: action.data.cartItems,
                 allowedCartDiscountMoney,
