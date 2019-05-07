@@ -1,6 +1,8 @@
 import React from 'react';
 /* Lodash Imports */
 import _get from 'lodash/get';
+/* Dinero Import */
+import Dinero from 'dinero.js';
 /* Material Imports */
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -144,6 +146,9 @@ class DiscountDialogue extends React.Component {
     }
 
     render() {
+
+        let allowedCartDiscountPercent = _get(this.props, 'cart.allowedCartDiscount', 0);
+        let allowedCartDiscountMoney = _get(this.props, 'cart.allowedCartDiscountMoney', Dinero({amount: 0, currency: 'USD'}))
         return (
             <div>
                 <Dialog
@@ -178,9 +183,9 @@ class DiscountDialogue extends React.Component {
                                             this.props.open ?
                                                 this.props.identifier == 'Discount' ?
                                                     this.state.type == '%' ?
-                                                        `Allowed Discount: ${(this.props.cart.allowedCartDiscount)}`
+                                                        `Allowed Discount: ${allowedCartDiscountPercent}`
                                                         :
-                                                        `Allowed Discount: $ ${(this.props.cart.allowedCartDiscount * this.props.cart.discountableCartTotal / 100)}`
+                                                        `Allowed Discount: ${allowedCartDiscountMoney.toFormat('$0,0.00')}`
                                                     :
                                                     `Allowed Discount: ${(this.props.cart.cartItems[this.props.itemIndex].allowedDiscountPercent)}`
                                                 :

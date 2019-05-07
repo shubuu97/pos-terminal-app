@@ -42,6 +42,7 @@ const cartItem = (state = {
             });
             break;
         case 'CART_ITEM_LIST':
+        debugger
             let maxAllowedDiscountMoney = DineroFunc(0)
             const employeeDiscountPercent = _get(state, 'empDiscount', 0);
 
@@ -50,7 +51,7 @@ const cartItem = (state = {
             // Discounts 
             let discountableMoney = DineroFunc(0)
             let employeeDiscountMoney = DineroFunc(0)
-            let cartDiscountMoney = DineroFunc(0)
+            let cartDiscountMoney = _get(state, 'cartDiscount.cartDiscountMoney', DineroFunc(0))
             let allowedCartDiscountMoney = maxAllowedDiscountMoney
             let totalItemDiscountMoney = DineroFunc(0)
             let loyaltyDiscountMoney = DineroFunc(0)
@@ -81,18 +82,8 @@ const cartItem = (state = {
                     discountableItems.push(subTotal.getAmount())
                 }
             })
+            // * calculating max discount
             maxAllowedDiscountMoney = discountableMoney.percentage(80);
-            let cartDiscountAllocation = []
-            if (discountableItems.length > 0) {
-                cartDiscountAllocation = cartDiscountMoney.allocate(discountableItems)
-            }
-
-            // ************ Employee Discount ************
-            employeeDiscountMoney = discountableMoney.percentage(employeeDiscountPercent);
-            let employeeDiscountAllocation = []
-            if (discountableItems.length > 0) {
-                employeeDiscountAllocation = employeeDiscountMoney.allocate(discountableItems)
-            }
 
 
             // ************ Cart Discount ************
@@ -116,13 +107,33 @@ const cartItem = (state = {
                 }
             }
             else {
+                debugger
                 cartDiscount = {
                     cartDiscountPercent: 0,
                     cartDiscountMoney: DineroFunc(0)
                 }
+                cartDiscountAllocation = []
             }
 
-            allowedCartDiscountMoney = discountableMoney
+            allowedCartDiscountMoney = discountableMoney.percentage(80)
+
+            let discountableMoneyAllocation = []
+
+            if (discountableItems.length > 0) {
+                discountableMoneyAllocation = allowedCartDiscountMoney.allocate(discountableItems)
+            }
+
+            let cartDiscountAllocation = []
+            if (discountableItems.length > 0) {
+                cartDiscountAllocation = cartDiscountMoney.allocate(discountableItems)
+            }
+
+            // ************ Employee Discount ************
+            employeeDiscountMoney = discountableMoney.percentage(employeeDiscountPercent);
+            let employeeDiscountAllocation = []
+            if (discountableItems.length > 0) {
+                employeeDiscountAllocation = employeeDiscountMoney.allocate(discountableItems)
+            }
 
             // ************ Item Discount ************
             action.data.cartItems.forEach((item, index) => {
@@ -135,9 +146,10 @@ const cartItem = (state = {
                     item.itemDiscountableMoney = DineroFunc(0)
                     let key = _findIndex(discountableItemsIndex, discountableItemsIndex => discountableItemsIndex == index)
                     if (key >= 0) {
-                        item.itemDiscountableMoney = DineroFunc(discountableItems[key]).percentage(80)
+                        item.itemDiscountableMoney = discountableMoneyAllocation[key]
                         item.cartDiscountMoney = cartDiscountAllocation[key]
                         item.empDiscountMoney = employeeDiscountAllocation[key]
+                        debugger
                         item.allowedItemDiscountMoney = item.itemDiscountableMoney.subtract(item.empDiscountMoney).subtract(item.cartDiscountMoney)
                     } else {
                         item.cartDiscountMoney = DineroFunc(0);
@@ -162,10 +174,13 @@ const cartItem = (state = {
 
                 // * Checking if Cart Discount Exceeds or not
                 if (item.itemDiscountableMoney.lessThan(totalItemDiscount)) {
+                    debugger
                     cartDiscount = {
                         cartDiscountPercent: 0,
                         cartDiscountMoney: DineroFunc(0)
                     }
+                    item.cartDiscountMoney = DineroFunc(0)
+                    cartDiscountAllocation = []
                     totalItemDiscount = item.cartDiscountMoney.add(item.empDiscountMoney).add(item.itemDiscountMoney)
                 }
 
@@ -173,7 +188,7 @@ const cartItem = (state = {
                 
                 allowedCartDiscountMoney = allowedCartDiscountMoney.subtract(item.itemDiscountMoney).subtract(item.empDiscountMoney)
 
-                // * Calculating SubTotal = Total + Discounts
+                // * Calculating SubTotal = Total - Discounts
                 item.subTotal = item.itemRegularTotalMoney.subtract(item.cartDiscountMoney).subtract(item.empDiscountMoney).subtract(item.itemDiscountMoney)
 
                 totalItemDiscountMoney = totalItemDiscountMoney.add(item.itemDiscountMoney)
@@ -205,9 +220,12 @@ const cartItem = (state = {
             if (!(_get(state, 'customer.guest', false)) && netTotalMoney.getAmount() > earningLoyaltyRules.minimumSaleAmount) {
                 let loyaltyEarned = Math.round(netTotalMoney.getAmount() * earningLoyaltyRules.earningMultiplier);
             }
+
+            let allowedCartDiscount = Math.round((allowedCartDiscountMoney.getAmount()/discountableMoney.getAmount())*100)
            
             return Object.assign({}, state, {
                 cartItems: action.data.cartItems,
+                allowedCartDiscount,
                 allowedCartDiscountMoney,
                 discountableMoney,
                 cartDiscount,
