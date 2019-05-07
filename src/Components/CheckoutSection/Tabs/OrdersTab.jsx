@@ -4,7 +4,6 @@ import _get from 'lodash/get';
 import _findIndex from 'lodash/findIndex';
 import _isArray from 'lodash/isArray';
 /* Dinero Import */
-import Dinero from "dinero.js";
 /* Material import */
 import Button from '@material-ui/core/Button';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
@@ -25,6 +24,14 @@ import globalClearCart from '../../../Global/PosFunctions/clearCart';
 import addGuestToCart from '../../../Global/PosFunctions/addGuestToCart';
 /* Asset Import  */
 import EmptyCartImg from '../../../assets/images/pos/empty_cart.png'
+import Dinero from 'dinero.js';
+
+const DineroInit = () => {
+    return Dinero({
+            amount: 0,
+            currency: 'USD'
+    })
+} 
 
 class OrdersTab extends React.Component {
 
@@ -119,7 +126,6 @@ class OrdersTab extends React.Component {
         this.handleCartDiscountCalculate(cartItems)
     };
     handleDiscount = (data, identifier, index, type) => {
-        debugger
         let cartItems = _get(this, 'props.cart.cartItems', []);
 
         // * Making object for CartDiscount
@@ -160,6 +166,8 @@ class OrdersTab extends React.Component {
         let totalCartItems = 0;
         let orderTotal = 0
         let cartItems = this.props.cartItems.map((item, index) => {
+            let subTotal = _get(item, 'subTotal', DineroInit())
+            let regularTotal = _get(item, 'itemSalesPriceMoney', DineroInit())
             totalCartItems += item.cartQuantity;
             orderTotal += item.subTotal;
             this.state.orderTotal = this.state.orderTotal + item.subTotal;
@@ -197,8 +205,8 @@ class OrdersTab extends React.Component {
 
                             {/* Item Price and Regular Price */}
                             <div className='flex-column'>
-                                <div className='each-product-price'>{_get(item, 'itemSubTotal.currencyCode')} {_get(item, 'itemSubTotal.amount', 0).toFixed(2)}</div>
-                                <div className='each-product-reg-price'>Reg Price - {_get(item, 'itemRegularTotal.currencyCode')} {_get(item, 'itemRegularTotal.amount', 0).toFixed(2)}</div>
+                                <div className='each-product-price'>{subTotal.toFormat('$0,0.00')}</div>
+                                <div className='each-product-reg-price'>Reg Price - {regularTotal.toFormat('$0,0.00')}</div>
                             </div>
                         </div>
                     </ExpansionPanelSummary>

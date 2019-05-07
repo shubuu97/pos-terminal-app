@@ -86,8 +86,6 @@ const cartItem = (state = {
             if (discountableItems.length > 0) {
                 cartDiscountAllocation = cartDiscountMoney.allocate(discountableItems)
             }
-            console.log(cartDiscountAllocation, 'cartDiscountAllocation')
-
 
             // ************ Employee Discount ************
             employeeDiscountMoney = discountableMoney.percentage(employeeDiscountPercent);
@@ -126,8 +124,8 @@ const cartItem = (state = {
 
             // ************ Item Discount ************
             action.data.cartItems.forEach((item, index) => {
-                let salePrice = DineroFunc((_get(item, 'doc.product.salePrice.price', 0) * 100))
-                item.itemRegularTotalMoney = salePrice.multiply(_get(item, 'qty', 0))
+                item.itemSalesPriceMoney = DineroFunc((_get(item, 'doc.product.salePrice.price', 0) * 100))
+                item.itemRegularTotalMoney = item.itemSalesPriceMoney.multiply(_get(item, 'qty', 0))
 
                 // ****** Item Discounts calculations ****** //
                 // * Checking if item is discountable
