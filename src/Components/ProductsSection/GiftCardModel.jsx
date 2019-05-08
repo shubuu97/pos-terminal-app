@@ -121,9 +121,7 @@ class GiftCardModal extends React.Component {
     }
 
     handleSaveGiftDataSuccess = (data) => {
-        debugger
         let { giftCard } = this.props;
-        debugger
         if (giftCard) {
             this.setState({ isLoading: false })
             this.handleAddToCart();
