@@ -17,7 +17,7 @@ var convert = require('xml-js');
 
 const request = require('superagent');
 
-let regex = /^\d*[\.\d]+$/;
+let regex = /^\d*[\.\d]{1,3}$/;
 
 class CardPay extends React.Component {
 
@@ -33,7 +33,7 @@ class CardPay extends React.Component {
 
     componentDidMount() {
         //setting to the remaining amount
-        this.props.dispatch(commonActionCreater({ cardAmount: this.props.remainingAmount, totalAmount: this.props.totalAmount }, 'CARD_INPUT_HANDLER'));
+        this.props.dispatch(commonActionCreater({ cardAmount: this.props.remainingAmount.toUnit(), totalAmount: this.props.totalAmount }, 'CARD_INPUT_HANDLER'));
     }
 
     componentWillUnmount() {
@@ -239,7 +239,7 @@ class CardPay extends React.Component {
 }
 
 function mapStateMapToProps(state) {
-    let totalAmount = _get(state, 'cart.totalAmount');
+    let totalAmount = _get(state, 'cart.totalMoney');
     let cardAmount = _get(state, 'PaymentDetails.cardAmount');
     let remainingAmount = _get(state, 'PaymentDetails.remainingAmount')
     let cardRefrenceId = _get(state, 'PaymentDetails.cardRefrenceId');

@@ -1,4 +1,6 @@
 import React from 'react';
+/* Dinero Import */
+import Dinero from "dinero.js";
 /* Lodash Imports */
 import _get from 'lodash/get';
 import _isEmpty from 'lodash/isEmpty';
@@ -57,6 +59,13 @@ class Product extends React.PureComponent {
         let regex = /_design.*/g;
         let isddoc = regex.test(id);
         let dispatch = this.props.dispatch
+        // ! MAYUK - To be changed When Marine gives us the right format
+        let Money = Dinero(
+            {
+                amount: parseInt(_get(data, 'doc.product.salePrice.amount', 0)),
+                currency: 'USD',
+            }
+        )
         return (
             <React.Fragment>
                 {!isddoc ?
@@ -77,8 +86,7 @@ class Product extends React.PureComponent {
                                     <span className='each-card-code'>{_get(data, 'doc.inventory.quantity', 0)}</span>
                                 </div>
                                 <div className="each-card-price flex-row">
-                                    {_get(data, 'doc.product.salePrice.currencyCode', '')} {_get(data, 'doc.product.salePrice.price', 0).toFixed(2)}
-                                    {/* <div className='indicator'></div> */}
+                                { Money.toFormat('$0,0.00') }
                                 </div>
                                 <span
                                     onMouseLeave={() => this.setState({ iconSelected: false })}

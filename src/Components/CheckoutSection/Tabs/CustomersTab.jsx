@@ -4,6 +4,8 @@ import React from 'react';
 import _get from 'lodash/get';
 import _findIndex from 'lodash/findIndex';
 import _isArray from 'lodash/isArray';
+/* Dinero Import */
+import Dinero from 'dinero.js'
 /* Material import */
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles'
@@ -96,7 +98,13 @@ class CustomerTab extends React.Component {
         else{
             this.props.dispatch(commonActionCreater(0, 'ADD_EMPLOYEE_DISCOUNT'));
         }
-        this.props.dispatch(commonActionCreater(_get(this.props, 'cart.cartItems', []), 'CART_ITEM_LIST'));
+
+        let cartDiscountObj = {}
+        cartDiscountObj.type = '$'
+        cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountMoney', 0).toUnit()
+        cartDiscountObj.cartItems = _get(this.props, 'cart.cartItems', [])
+
+        this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
         this.props.dispatch(commonActionCreater(doc.value, 'ADD_CUSTOMER_TO_CART'));
 
         //mapped data to state 

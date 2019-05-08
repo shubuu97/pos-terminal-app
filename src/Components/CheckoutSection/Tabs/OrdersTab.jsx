@@ -3,6 +3,8 @@ import React from 'react';
 import _get from 'lodash/get';
 import _findIndex from 'lodash/findIndex';
 import _isArray from 'lodash/isArray';
+/* Dinero Import */
+import Dinero from 'dinero.js'
 /* Material import */
 import Button from '@material-ui/core/Button';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
@@ -23,6 +25,19 @@ import globalClearCart from '../../../Global/PosFunctions/clearCart';
 import addGuestToCart from '../../../Global/PosFunctions/addGuestToCart';
 /* Asset Import  */
 import EmptyCartImg from '../../../assets/images/pos/empty_cart.png'
+const DineroInit = () => {
+    return Dinero({
+        amount: 0,
+        currency: 'USD'
+    })
+}
+
+let DineroFunc = (amount) => {
+    return Dinero({
+        amount: parseInt(amount),
+        currency: 'USD'
+    })
+}
 
 class OrdersTab extends React.Component {
 
@@ -86,65 +101,84 @@ class OrdersTab extends React.Component {
         this.setState({ open: false });
     };
 
-    handleCartDiscountRemove = (cartItems) => {
-        let cart = this.props.cart
+    handleCartDiscountCalculate = (cartItems) => {
         let cartDiscountObj = {}
-        if (cart.cartAbsoluteValue) {
-            cartDiscountObj.type = '$'
-            cartDiscountObj.cartDiscount = _get(cart, 'cartDiscountAmount.amount', 0)
-        }
-        else {
-            cartDiscountObj.type = '%'
-            cartDiscountObj.cartDiscount = _get(cart, 'cartDiscountPercent', 0)
-        }
+        cartDiscountObj.type = '$'
+        cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountMoney.amount', 0)
         cartDiscountObj.cartItems = cartItems
-        this.props.dispatch(commonActionCreater(cartDiscountObj, 'ADD_DISCOUNT_TO_CART'));
-        this.props.dispatch(commonActionCreater(cartItems, 'CART_ITEM_LIST'));
+        this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
     }
 
     // * Functions to Update Cart Reducers 
     handleDelete = (item) => {
         let cartItems = [...this.props.cartItems];
-        let index = _findIndex(cartItems, cartItem=>cartItem.doc._id == item.doc._id);
+        let index = _findIndex(cartItems, cartItem => cartItem.doc._id == item.doc._id);
         cartItems.splice(index, 1);
-        this.handleCartDiscountRemove(cartItems)
+        this.handleCartDiscountCalculate(cartItems)
     };
     handleIncreaseQuantity = (item) => {
         let cartItems = [...this.props.cartItems];
-        let index = _findIndex(cartItems, cartItem=>cartItem.doc._id == item.doc._id);
+        let index = _findIndex(cartItems, cartItem => cartItem.doc._id == item.doc._id);
         cartItems[index].qty = cartItems[index].qty + 1;
-        this.handleCartDiscountRemove(cartItems)
+        this.handleCartDiscountCalculate(cartItems)
     };
     handleDecreseQuantity = (item) => {
         let cartItems = [...this.props.cartItems];
-        let index = _findIndex(cartItems, cartItem=>cartItem.doc._id == item.doc._id);
+        let index = _findIndex(cartItems, cartItem => cartItem.doc._id == item.doc._id);
         cartItems[index].qty = cartItems[index].qty - 1;
         if (cartItems[index].qty == 0) {
             cartItems.splice(index, 1);
         }
-        this.handleCartDiscountRemove(cartItems)
+        this.handleCartDiscountCalculate(cartItems)
     };
     handleDiscount = (data, identifier, index, type) => {
-        debugger
         let cartItems = _get(this, 'props.cart.cartItems', []);
 
         // * Making object for CartDiscount
         let cartDiscountObj = {}
-        cartDiscountObj.type = type
-        cartDiscountObj.cartDiscount = parseFloat(data)
-
+        if (_get(this.props, 'cart.cartDiscount.isPercentage', false)) {
+            cartDiscountObj.type = '%'
+            cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountPercent', 0)
+        }
+        else {
+            cartDiscountObj.type = '$'
+            cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountMoney', 0).getAmount()
+        }
         // * Making object for Cart reducer
         let reqObj = [
             ...cartItems
         ]
         cartDiscountObj.cartItems = reqObj
+
+
         if (identifier == 'Discount') {
-            this.props.dispatch(commonActionCreater(cartDiscountObj, 'ADD_DISCOUNT_TO_CART'));
-            this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
+            // * Changing Cart Discounts
+            cartDiscountObj.type = type
+            if (type != '%') {
+                cartDiscountObj.cartDiscount = parseInt(parseFloat(data) * 100)
+            } else {
+                cartDiscountObj.cartDiscount = parseFloat(data)
+            }
+            this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
         }
         else if (identifier == 'ItemDiscount') {
-            reqObj[index].itemDiscountPercent = parseFloat(data);
-            this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
+            // * Changing Item Discount
+            if (type != '%') {
+                reqObj[index].itemDiscountMoney = Dinero({ amount: parseInt(data * 100), currency: 'USD' })
+                reqObj[index].itemDiscountPercent = (data / ((reqObj[index].itemRegularTotalMoney).toUnit())) * 100
+                reqObj[index].isPercent = false
+            } else {
+                if (data > reqObj[index].allowedCartDiscountPercent) {
+                    reqObj[index].itemDiscountMoney = reqObj[index].allowedItemDiscountMoney
+                }
+                else {
+                    reqObj[index].itemDiscountMoney = reqObj[index].itemRegularTotalMoney.percentage(data)
+                }
+                reqObj[index].itemDiscountPercent = data
+                reqObj[index].isPercent = true
+            }
+            cartDiscountObj.cartItems = reqObj
+            this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
         }
     };
     handleClearCart = () => {
@@ -158,13 +192,16 @@ class OrdersTab extends React.Component {
         let totalCartItems = 0;
         let orderTotal = 0
         let cartItems = this.props.cartItems.map((item, index) => {
+            let subTotal = _get(item, 'subTotal', DineroInit())
+            let regularTotal = _get(item, 'itemSalesPriceMoney', DineroInit())
             totalCartItems += item.cartQuantity;
             orderTotal += item.subTotal;
             this.state.orderTotal = this.state.orderTotal + item.subTotal;
+        
             return (
                 <ExpansionPanel
                     className='each-checkout-item'
-                    expanded={this.state.expanded === `Panel${_get(item, 'doc.product.sku', _get(item, 'id'))}`}
+                    expanded={_get(item,'doc.product.isGiftCard', false) ? false : this.state.expanded === `Panel${_get(item, 'doc.product.sku', _get(item, 'id'))}`}
                     onChange={this.handleChange(`Panel${_get(item, 'doc.product.sku', _get(item, 'id'))}`)}>
                     <ExpansionPanelSummary>
                         <div className='each-product-des fwidth flex-row justify-space-between'>
@@ -180,7 +217,7 @@ class OrdersTab extends React.Component {
 
                             {/* Item Discount */}
                             {
-                                _get(item, 'itemDiscountPercent', false) ?
+                                _get(item, 'itemDiscountMoney', DineroFunc(0)).getAmount() > 0 ?
                                     <div className='each-item-discount absolute'></div> : null
                             }
 
@@ -195,8 +232,8 @@ class OrdersTab extends React.Component {
 
                             {/* Item Price and Regular Price */}
                             <div className='flex-column'>
-                                <div className='each-product-price'>{_get(item, 'itemSubTotal.currencyCode')} {_get(item, 'itemSubTotal.amount', 0).toFixed(2)}</div>
-                                <div className='each-product-reg-price'>Reg Price - {_get(item, 'itemRegularTotal.currencyCode')} {_get(item, 'itemRegularTotal.amount', 0).toFixed(2)}</div>
+                                <div className='each-product-price'>{subTotal.toFormat('$0,0.00')}</div>
+                                <div className='each-product-reg-price'>Reg Price - {regularTotal.toFormat('$0,0.00')}</div>
                             </div>
                         </div>
                     </ExpansionPanelSummary>
@@ -215,31 +252,31 @@ class OrdersTab extends React.Component {
                             }
                             {
                                 _get(item, 'doc.product.discountable', false) ?
-                                    _get(item, 'cartDiscountPercent', false) ?
+                                    _get(item, 'cartDiscountMoney', DineroFunc(0)).getAmount() > 0 ?
                                         <div className='expanded-options'>
                                             <span className='option-title'>Cart Discount</span>
                                             <div className='flex-row justify-center align-center'>
-                                                {(item.cartDiscountPercent * item.itemRegularTotal.amount / 100).toFixed(2)}
+                                                {item.cartDiscountMoney.toFormat('$0,0.00')}
                                             </div>
                                         </div> : null : null
                             }
                             {
                                 _get(item, 'doc.product.discountable', false) ?
-                                    _get(item, 'employeeDiscountPercent', false) ?
+                                    _get(item, 'empDiscountMoney', DineroFunc(0)).getAmount() > 0 ?
                                         <div className='expanded-options'>
                                             <span className='option-title'>Employee Discount</span>
                                             <div className='flex-row justify-center align-center'>
-                                                {(item.employeeDiscountPercent * item.itemRegularTotal.amount / 100).toFixed(2)}
+                                                {item.empDiscountMoney.toFormat('$0,0.00')}
                                             </div>
                                         </div> : null : null
                             }
                             {
                                 _get(item, 'doc.product.discountable', false) ?
-                                    _get(item, 'itemDiscountPercent', false) ?
+                                    _get(item, 'itemDiscountMoney', DineroFunc(0)).getAmount() > 0 ?
                                         <div className='expanded-options'>
                                             <span className='option-title'>Item Discount</span>
                                             <div className='flex-row justify-center align-center' onClick={() => this.handleItemDiscountRemove(index)}>
-                                                {(item.itemDiscountPercent * item.itemRegularTotal.amount / 100).toFixed(2)}
+                                                {item.itemDiscountMoney.toFormat('$0,0.00')}
                                                 <RemoveCircleIcons
                                                     style={{ fontSize: '1.2em', color: '#ff000096', paddingLeft: 5 }}
                                                 />
@@ -266,12 +303,14 @@ class OrdersTab extends React.Component {
     }
 
     handleItemDiscountRemove = (index) => {
-        let cartItems = _get(this, 'props.cart.cartItems', []);
-        let reqObj = [
-            ...cartItems
-        ]
-        reqObj[index].itemDiscountPercent = 0;
-        this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
+        let cartDiscountObj = {}
+        cartDiscountObj.type = '$'
+        cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountMoney', DineroFunc(0)).toUnit()
+        cartDiscountObj.cartItems = _get(this.props, 'cart.cartItems', [])
+        cartDiscountObj.cartItems[index].itemDiscountMoney = DineroFunc(0)
+        cartDiscountObj.cartItems[index].itemDiscountPercent = 0;
+        cartDiscountObj.cartItems[index].isPercent = false;
+        this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
     }
 
 

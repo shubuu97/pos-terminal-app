@@ -22,6 +22,8 @@ import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import hardSet from 'redux-persist/lib/stateReconciler/hardSet';
 import { PersistGate } from 'redux-persist/integration/react';
+import SetTransform  from './Redux/reduxPersistTransform';
+
 /*Layout imports*/
 import EmptyLayout from './Layout/EmptyLayout.jsx';
 import RouteWithLayout from './Global/layout/RouteWithLayout';
@@ -53,6 +55,7 @@ const persistConfig = {
   key: 'SMEInvestorRoot',
   storage,
   stateReconciler: hardSet,
+  transforms: [SetTransform],
   blacklist: ['form', 'ShowToast', 'PaymentDetails', 'RefundPaymentDetails', 'resetProduct', 'resetCategory']
 };
 

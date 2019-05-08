@@ -11,7 +11,7 @@ import commonReducer from './commonReducer';
 import commonStaticReducer from './commonStaticReducer';
 
 /* SPECIFIC Reducers */
-import cart from '../reducers/cartItem';
+import cart from '../reducers/cartReducer';
 import cartHoldData from '../reducers/holdCartItem';
 import ShowToast from './toastReducer';
 import PaymentDetails from '../reducers/paymentDetails';
@@ -48,7 +48,7 @@ let loyaltyRedeem = commonStaticReducer('LOYALTY_INPUT_HANDLER');
 let employeePayroll = commonStaticReducer('EMPLOYEE_PAYROLL')
 let isCustomerTabOpen = commonStaticReducer('IS_CUSTOMER_DIALOGUE_OPEN')
 
-// let cartItems = cartItemFun('CART_ITEM_LIST');
+
 // let cartOrderDetails = cartOrderDetailsFun('ORDER_DETAILS');
 
 

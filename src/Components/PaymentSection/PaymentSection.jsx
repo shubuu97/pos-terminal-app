@@ -31,9 +31,11 @@ import LoyaltyRedeem from './PaymentMethods/LoyaltyRedeem';
 import PaymentReceipt from './paymentReceipt';
 import CostCenter from './CostCenter';
 import DecliningBalance from './PaymentMethods/DecliningBalance';
+import Dinero from 'dinero.js';
 
-
-/* style */
+let dineroObj = (amount, currency) => {
+    return Dinero({ amount: parseInt(amount), currency });
+}
 
 class PaymentSection extends React.Component {
 
@@ -73,7 +75,7 @@ class PaymentSection extends React.Component {
         let allowedOptions = this.props.paymentMethods;
         let options = []
 
-        let disable = this.props.remainingAmount <= 0 ? { opacity: '0.3', pointerEvents: 'none' } : null
+        let disable = this.props.remainingAmount.getAmount() <= 0 ? { opacity: '0.3', pointerEvents: 'none' } : null
         let disableOffline = this.props.offline ? { opacity: '0.3', pointerEvents: 'none' } : null;
         for (let i = 0; i < _get(allowedOptions, 'length', 0); i++) {
             switch (allowedOptions[i]) {
@@ -543,7 +545,7 @@ class PaymentSection extends React.Component {
             offline,
             saleComment: _get(this.state, 'comment', ''),
             saleTimeStamp: { seconds: parseInt((new Date().getTime() / 1000)) },
-            changeDue: { currencyCode: '$', amount: parseFloat(Math.abs(this.props.remainingAmount.toFixed(2))) }
+            changeDue: { currencyCode: '$', amount: this.props.remainingAmount.getAmount() }
 
         };
         if (offline) {
@@ -636,7 +638,7 @@ class PaymentSection extends React.Component {
         this.props.history.push('/?tab==1');
     }
     disableDecider = () => {
-        if (this.props.remainingAmount > 0) {
+        if (this.props.remainingAmount.getAmount() > 0) {
             return true
         }
         if (this.state.showCardPay) {
@@ -680,7 +682,7 @@ class PaymentSection extends React.Component {
         });
     };
     giftCardRender = () => {
-        let disable = this.props.remainingAmount <= 0 ? { opacity: '0.3', pointerEvents: 'none' } : null
+        let disable = this.props.remainingAmount.getAmount() <= 0 ? { opacity: '0.3', pointerEvents: 'none' } : null
         if (!this.props.offline)
             return (
                 <React.Fragment>
@@ -718,8 +720,8 @@ class PaymentSection extends React.Component {
                         <div className='card transaction-card' style={{ height: paymentMainPart }}>
                             <span className='card-title soft-text'>Transactions</span>
                             <div className="Card">
-                                <span>{this.props.remainingAmount > 0 ? 'Remaining Amount ' : 'Change Due '}</span>
-                                <span>{Math.abs(this.props.remainingAmount).toFixed(2)}</span>
+                                <span>{this.props.remainingAmount.getAmount() > 0 ? 'Remaining Amount ' : 'Change Due '}</span>
+                                <span>{this.props.remainingAmount.isNegative() ? this.props.remainingAmount.multiply(-1).toFormat('$0,0.00') : this.props.remainingAmount.toFormat('$0,0.00')}</span>
                             </div>
                             {this.state.showCashPay ?
                                 <CashPay
@@ -841,7 +843,7 @@ function mapStateToProps(state) {
     let RedemptionRules = _get(state, 'RedemptionRules.lookUpData.redemptionRule', {})
     let cartItems = _get(state, 'cart.cartItems');
     let customer = _get(state, 'cart.customer');
-    let totalAmount = _get(state, 'cart.totalAmount');
+    let totalAmount = _get(state, 'cart.totalMoney');
     let sessionId = _get(state, 'terminalData.lookUpData.sessionId');
     let saleComment = _get(state, 'cart.saleComment');
     let giftCard = _get(state, 'giftCardData.lookUpData', {});
@@ -855,6 +857,7 @@ function mapStateToProps(state) {
     let giftPayNumber = _get(state, 'PaymentDetails.giftPayNumber');
     let employeePay = _get(state, 'PaymentDetails.employeePay');
     let remainingAmount = _get(state, 'PaymentDetails.remainingAmount');
+    remainingAmount = remainingAmount || Dinero({ amount: 0, currency: 'USD'})
     let giftCardData = _get(state, 'PaymentDetails.giftCardData');
     let cart = _get(state, 'cart');
     let redemptionRules = _get(state, 'RedemptionRules');

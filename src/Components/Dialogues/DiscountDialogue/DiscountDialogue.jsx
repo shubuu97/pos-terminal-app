@@ -1,6 +1,8 @@
 import React from 'react';
 /* Lodash Imports */
 import _get from 'lodash/get';
+/* Dinero Import */
+import Dinero from 'dinero.js';
 /* Material Imports */
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -69,45 +71,77 @@ class DiscountDialogue extends React.Component {
             discount = ''
         }
 
-        let maxDiscount = 0 
-        if(this.props.identifier == 'Discount'){
-            if(this.state.type == '%'){
+        let maxDiscount = 0
+        // * Handling Cart Discount Input
+        if (this.props.identifier == 'Discount') {
+            if (this.state.type == '%') {
                 maxDiscount = this.props.cart.allowedCartDiscount
             }
-            else{
-                maxDiscount = (Math.floor(this.props.cart.allowedCartDiscount*this.props.cart.discountableCartTotal*100)/10000)
+            else {
+                maxDiscount = _get(this.props, 'cart.allowedCartDiscountMoney', Dinero({ amount: 0, currency: 'USD' })).toUnit()
             }
         }
-        else{
-            maxDiscount = this.props.cart.cartItems[this.props.itemIndex].allowedDiscountPercent
+        // * Handling Item Discount Input
+        else {
+            if (this.state.type == '%') {
+                maxDiscount = Math.round(_get(this.props, `cart.cartItems[${this.props.itemIndex}].allowedCartDiscountPercent`, 0))
+            }
+            else {
+                maxDiscount = _get(this.props, `cart.cartItems[${this.props.itemIndex}].allowedItemDiscountMoney`, Dinero({ amount: 0, currency: 'USD' })).toUnit()
+            }
         }
-        if (parseFloat(discount) > parseFloat(maxDiscount)) {
-            discount = parseFloat(maxDiscount).toFixed(2);
+        if (parseFloat(discount) > maxDiscount) {
+            discount = maxDiscount;
         }
 
-        this.setState({
-            discount: discount,
-        })
+        if (this.state.type == '%') {
+            this.setState({
+                discount: discount,
+            })
+        }
+        else {
+            discount = parseInt(discount * 100)
+            let discountMoney = Dinero({ amount: discount, currency: 'USD' })
+            this.setState({
+                discount: discountMoney.toUnit(),
+            })
+        }
     }
 
     handleDiscount = () => {
         let type = this.state.type
         let discount = 0
+
         if (this.props.identifier != 'Discount') {
-            type = '%'
+            // * Item Discount checks and calculations
             let item = this.props.cart.cartItems[this.props.itemIndex]
-            let allowedDiscountPercent = item.allowedDiscountPercent
-            if (this.state.discount <= allowedDiscountPercent) {
-                discount = this.state.discount
-                this.handleSuccessDiscountAdd(discount, this.props.identifier, this.props.itemIndex, type)
+            if (this.state.type == '%') {
+                let allowedCartDiscountPercent = item.allowedCartDiscountPercent
+                if (this.state.discount <= allowedCartDiscountPercent) {
+                    discount = this.state.discount
+                    this.handleSuccessDiscountAdd(discount, this.props.identifier, this.props.itemIndex, this.state.type)
+                }
+                else {
+                    alert('Discount exceeds the limit')
+                }
             }
             else {
-                alert('Discount exceeds the limit')
+                let allowedItemDiscountMoney = item.allowedItemDiscountMoney.toUnit()
+                if (this.state.discount <= allowedItemDiscountMoney) {
+                    discount = this.state.discount
+                    this.handleSuccessDiscountAdd(discount, this.props.identifier, this.props.itemIndex, this.state.type)
+                }
+                else {
+                    this.handleSuccessDiscountAdd(allowedItemDiscountMoney, this.props.identifier, this.props.itemIndex, this.state.type)
+                }
             }
+
         }
         else {
-            let allowedCartDiscount = _get(this.props, 'cart.allowedCartDiscount', 0)
+            debugger
+            // * Cart Discount checks and calculations
             if (this.state.type == '%') {
+                let allowedCartDiscount = _get(this.props, 'cart.allowedCartDiscount', 0)
                 if (this.state.discount <= allowedCartDiscount) {
                     discount = this.state.discount
                     this.handleSuccessDiscountAdd(discount, this.props.identifier, this.props.itemIndex, type)
@@ -117,8 +151,9 @@ class DiscountDialogue extends React.Component {
                 }
             }
             else {
-                let discountableAmount = _get(this.props, 'cart.discountableCartTotal', 0)
-                if (this.state.discount <= parseFloat((Math.floor(allowedCartDiscount*discountableAmount*100)/10000).toFixed(2))) {
+                let allowedCartDiscount = _get(this.props, 'cart.allowedCartDiscountMoney', Dinero({amount:0, currency: 'USD'}))
+                console.log(_get(this.props, 'cart.allowedCartDiscountMoney',false), 'mayuk')
+                if (this.state.discount <= allowedCartDiscount.toUnit()) {
                     discount = this.state.discount
                     this.handleSuccessDiscountAdd(discount, this.props.identifier, this.props.itemIndex, type)
                 }
@@ -144,6 +179,9 @@ class DiscountDialogue extends React.Component {
     }
 
     render() {
+
+        let allowedCartDiscountPercent = _get(this.props, 'cart.allowedCartDiscount', 0);
+        let allowedCartDiscountMoney = _get(this.props, 'cart.allowedCartDiscountMoney', Dinero({ amount: 0, currency: 'USD' }))
         return (
             <div>
                 <Dialog
@@ -178,24 +216,24 @@ class DiscountDialogue extends React.Component {
                                             this.props.open ?
                                                 this.props.identifier == 'Discount' ?
                                                     this.state.type == '%' ?
-                                                        `Allowed Discount: ${(this.props.cart.allowedCartDiscount).toFixed(2)}`
+                                                        `Allowed Discount: ${allowedCartDiscountPercent}`
                                                         :
-                                                        `Allowed Discount: $ ${(this.props.cart.allowedCartDiscount * this.props.cart.discountableCartTotal / 100).toFixed(2)}`
+                                                        `Allowed Discount: ${allowedCartDiscountMoney.toFormat('$0,0.00')}`
                                                     :
-                                                    `Allowed Discount: ${(this.props.cart.cartItems[this.props.itemIndex].allowedDiscountPercent).toFixed(2)}`
-                                                :
-                                                null
+                                                    this.state.type == '%' ?
+                                                        `Allowed Discount: ${Math.round(this.props.cart.cartItems[this.props.itemIndex].allowedCartDiscountPercent)}`
+                                                        :
+                                                        `Allowed Discount: ${(this.props.cart.cartItems[this.props.itemIndex].allowedItemDiscountMoney).toFormat('$0,0.00')}`
+                                                : null
                                         }
                                     />
                                 </div>
                                 <div className="mui-col-md-4">
                                     <div className='d-flex justify-content-end'>
-                                        <div className={this.state.type === '%' || this.props.identifier != 'Discount' ? 'discount-keys-top  active' : 'discount-keys-top '} onClick={() => this.handleDiscountType('%')}>%</div>
-                                        {
-                                            this.props.identifier == 'Discount' ?
-                                                <div className={this.state.type === '$' ? 'discount-keys-top ml-10  active' : 'discount-keys-top ml-10 '} onClick={() => this.handleDiscountType('$')}>$</div> :
-                                                null
-                                        }
+
+                                        <div className={this.state.type === '%' ? 'discount-keys-top  active' : 'discount-keys-top '} onClick={() => this.handleDiscountType('%')}>%</div>
+
+                                        <div className={this.state.type === '$' ? 'discount-keys-top ml-10  active' : 'discount-keys-top ml-10 '} onClick={() => this.handleDiscountType('$')}>$</div>
                                     </div>
                                 </div>
                             </div>

@@ -374,7 +374,6 @@ class ProductsSection extends React.Component {
                             onKeyPress={this.onKeyPress}
                             value={this.state.searchText}
                             isGiftCardModelOpen={this.props.isGiftCardModelOpen}
-                            onClear={this.clearSearchText}
                         />
                         <div className="header-right-sec">
                             <ul>

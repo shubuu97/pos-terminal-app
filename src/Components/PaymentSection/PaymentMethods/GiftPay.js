@@ -15,8 +15,9 @@ import { connect } from 'react-redux';
 /* Global Imports */
 import genericPostData from '../../../Global/dataFetch/genericPostData';
 import roundUp from '../../../Global/PosFunctions/roundUp';
+import showErrorAlert from '../../../Global/PosFunctions/showErrorAlert';
 
-let regex = /^\d*[\.\d]+$/;
+let regex = /^\d*[\.\d]{1,3}$/;
 
 class GiftPay extends React.Component {
 
@@ -72,7 +73,14 @@ class GiftPay extends React.Component {
                 error: 'CHECK_GIFT_CARD_DATA_ERROR'
             },
             identifier: 'CHECK_GIFT_CARD_DATA',
-            successCb: (data) => this.setState({ isLoadingCheckValue: false }),
+            successCb: (data) => {
+            this.setState({ isLoadingCheckValue: false });
+            if(data==null){
+                showErrorAlert({ dispatch: this.props.dispatch, error:"Gift Card Not Found" })
+
+            }
+        
+        },
             errorCb: (error) => this.setState({ isLoadingCheckValue: false }),
             dontShowMessage: true
         })
@@ -210,7 +218,7 @@ class GiftPay extends React.Component {
 }
 
 function mapStateMapToProps(state) {
-    let totalAmount = _get(state, 'cart.totalAmount');
+    let totalAmount = _get(state, 'cart.totalMoney');
     let giftPayNumber = _get(state, 'PaymentDetails.giftPayNumber');
     let remainingAmount = _get(state, 'PaymentDetails.remainingAmount')
     let giftCardAmount = _get(state, 'PaymentDetails.giftCardAmount');

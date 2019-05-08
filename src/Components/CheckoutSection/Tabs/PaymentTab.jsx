@@ -12,7 +12,14 @@ import PermIdentityOutlined from '@material-ui/icons/PermIdentityOutlined'
 /* Component Imports */
 import { connect } from 'react-redux'
 import { commonActionCreater } from '../../../Redux/commonAction';
+import Dinero from 'dinero.js';
 
+const DineroObj = () => {
+    return Dinero({
+        amount: 0,
+        currency: 'USD'
+    })
+}
 
 class PaymentTab extends React.Component {
 
@@ -33,6 +40,10 @@ class PaymentTab extends React.Component {
 
     render() {
         let { checkoutactionArea, checkoutMainPart, checkoutCustomerArea, checkoutcalcArea, checkoutcartArea, cart } = this.props
+        let regularTotal = _get(cart,'regularTotalMoney') || DineroObj()
+        let totalDiscountMoney = _get(cart, 'totalDiscountMoney') || DineroObj()
+        let taxMoney = _get(cart, 'taxMoney') || DineroObj()
+        let totalMoney = _get(cart, 'totalMoney') || DineroObj()
         return (
             <div className="payment-section" style={{ height: checkoutMainPart }}>
                 <div className='customer-summary fwidth flex-column'>
@@ -87,20 +98,20 @@ class PaymentTab extends React.Component {
                                 </div>
                                 <div className='each-detail flex-column align-center'>
                                     <span className='summary-title'>Cart Total</span>
-                                    <span className='summary-money'>${parseFloat(_get(cart, 'regularTotal', 0)).toFixed(2)}</span>
+                                    <span className='summary-money'>{regularTotal.toFormat('$0,0.00')}</span>
                                 </div>
                                 <div className='each-detail flex-column align-center'>
                                     <span className='summary-title'>Total Discount</span>
-                                    <span className='summary-money'>{_get(cart, 'totalDiscount.currencyCode')}{parseFloat(_get(cart, 'totalDiscount.amount', 0)).toFixed(2)}</span>
+                                    <span className='summary-money'>{totalDiscountMoney.toFormat('$0,0.00')}</span>
                                 </div>
                                 <div className='each-detail flex-column align-center'>
                                     <span className='summary-title'>Taxes</span>
-                                    <span className='summary-money'>{_get(cart, 'totalTaxAmount.currencyCode')}{parseFloat(_get(cart, 'totalTaxAmount.amount', 0)).toFixed(2)}</span>
+                                    <span className='summary-money'>{taxMoney.toFormat('$0,0.00')}</span>
                                 </div>
                             </div>
                             <div className='total-area flex-column '>
                                 <span className='summary-title'>Total</span>
-                                <span className='payment-total'>{_get(cart, 'totalAmount.currencyCode')}{parseFloat(_get(cart, 'totalAmount.amount', 0)).toFixed(2)}</span>
+                                <span className='payment-total'>{totalMoney.toFormat('$0,0.00')}</span>
                             </div>
                         </div>
                     </div>

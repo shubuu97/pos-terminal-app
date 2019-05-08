@@ -8,7 +8,7 @@ import CloseIcon from '@material-ui/icons/Close'
 import { commonActionCreater } from '../../../Redux/commonAction';
 import { connect } from 'react-redux';
 
-let regex = /^\d*[\.\d]+$/;
+let regex = /^\d*[\.\d]{1,3}$/;
 
 class DecliningBalance extends React.Component {
 
@@ -71,7 +71,7 @@ class DecliningBalance extends React.Component {
 }
 
 function mapStateMapToProps(state) {
-    let totalAmount = _get(state, 'cart.totalAmount');
+    let totalAmount = _get(state, 'cart.totalMoney');
     let decliningBalance = _get(state, 'PaymentDetails.decliningBalance');
     let remainingAmount = _get(state, 'PaymentDetails.remainingAmount')
 
