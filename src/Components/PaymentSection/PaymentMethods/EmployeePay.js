@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /* Global Imports */
 import genericPostData from '../../../Global/dataFetch/genericPostData'
 
-let regex = /^\d*[\.\d]+$/;
+let regex = /^\d*[\.\d]{1,3}$/;
 
 class EmployeePay extends React.Component {
 
@@ -129,7 +129,7 @@ class EmployeePay extends React.Component {
 }
 
 function mapStateMapToProps(state) {
-    let totalAmount = _get(state, 'cart.totalAmount', 0);
+    let totalAmount = _get(state, 'cart.totalMoney', 0);
     let employeePay = _get(state, 'PaymentDetails.employeePay');
     let remainingAmount = _get(state, 'PaymentDetails.remainingAmount')
     let employeePayroll = _get(state, 'employeePayroll.lookUpData', {});
