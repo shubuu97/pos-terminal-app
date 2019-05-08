@@ -22,6 +22,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { withStyles } from '@material-ui/core/styles';
 import _findIndex from 'lodash/findIndex';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import addToCart from '../../Global/PosFunctions/addToCart'
 
 function Transition(props) {
     return <Slide direction="down" {...props} />;
@@ -163,9 +164,10 @@ class GiftCardModal extends React.Component {
 
         } else {
             let cartItems = _get(this, 'props.cart.cartItems', []);
+            let cart = _get(this, 'props.cart', {});
             let doc = {};
             let isExist = false
-            let check = cartItems.map(item => {
+            cartItems.map(item => {
                 if (item.id == this.props.giftCard.id) {
                     isExist = true
                 }
@@ -174,12 +176,13 @@ class GiftCardModal extends React.Component {
             _set(doc, 'product.isGiftCard', true);
             _set(doc, 'product.name', _get(this.state, 'giftCard.giftCode', ''));
             _set(doc, 'product.salePrice.currencyCode', _get(this.state, 'giftCard.value.currencyCode', ''));
-            _set(doc, 'product.salePrice.price', _get(this.state, 'giftCard.value.amount', 0));
+            _set(doc, 'product.salePrice.price', _get(this.state, 'giftCard.value.amount', 0) * 100);
             let data = {
                 id: _get(this.props, 'giftCard.id', ''),
                 value: _get(this.state, 'giftCard.value', {}),
                 doc: doc,
             }
+            addToCart(data, cartItems, cart, 1, this.props.dispatch)
             let reqObj
             if (isExist) {
                 let index = _findIndex(cartItems, ['id', this.props.giftCard.id]);
@@ -197,11 +200,6 @@ class GiftCardModal extends React.Component {
                     }
                 ];
             }
-            let cartDiscountObj = {}
-            cartDiscountObj.type = '$'
-            cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountMoney.amount', 0)
-            cartDiscountObj.cartItems = reqObj
-            this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
             this.props.handleClose();
         }
     }

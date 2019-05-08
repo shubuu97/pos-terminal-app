@@ -10,9 +10,9 @@ import { connect } from 'react-redux';
 /* Global Imports */
 import genericPostData from '../../../Global/dataFetch/genericPostData'
 
-let regex = /^\d*[\.\d]+$/;
+let regex = /^\d*[\.\d]{1,3}$/;
 
-class CashPay extends React.Component {
+class LoyaltyRedeem extends React.Component {
 
     constructor() {
         super();
@@ -141,7 +141,7 @@ class CashPay extends React.Component {
 function mapStateMapToProps(state) {
     let RedemptionRules = _get(state, 'RedemptionRules.lookUpData.redemptionRule', {})
     let customerId = _get(state, 'cart.customer.id', "")
-    let totalAmount = _get(state, 'cart.totalAmount', 0);
+    let totalAmount = _get(state, 'cart.totalMoney', 0);
     let loyaltyRedeem = _get(state, 'PaymentDetails.loyaltyRedeem', {});
     let loyaltyRedeemData = _get(state, 'loyaltyRedeem.lookUpData', {});
     let remainingAmount = _get(state, 'PaymentDetails.remainingAmount');
@@ -156,4 +156,4 @@ function mapStateMapToProps(state) {
     };
 }
 
-export default connect(mapStateMapToProps)(CashPay);
+export default connect(mapStateMapToProps)(LoyaltyRedeem);

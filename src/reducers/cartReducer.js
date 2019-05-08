@@ -42,7 +42,6 @@ const cartItem = (state = {
             });
             break;
         case 'CART_ITEM_LIST':
-        debugger
             let maxAllowedDiscountMoney = DineroFunc(0)
             const employeeDiscountPercent = _get(state, 'empDiscount', 0);
 
@@ -74,7 +73,7 @@ const cartItem = (state = {
             let discountableItems = []
             action.data.cartItems.forEach((item, index) => {
                 if (_get(item, 'doc.product.discountable', false)) {
-                    let totalItemPrice = DineroFunc(_get(item, 'doc.product.salePrice.amount', 0))
+                    let totalItemPrice = DineroFunc(_get(item, 'doc.product.salePrice.price', 0))
                     let subTotal = totalItemPrice.multiply(_get(item, 'qty', 0))
                     discountableMoney = discountableMoney.add(subTotal)
                     discountableItemsIndex.push(index)
@@ -87,7 +86,6 @@ const cartItem = (state = {
 
             // ************ Cart Discount ************
             // * Deciding if discount in "Absolute" or "Percent"
-            debugger
             let isPercentage = false
             let cartDiscountPercent
             if (action.data.type === '%') {
@@ -111,7 +109,6 @@ const cartItem = (state = {
                 }
             }
             else {
-                debugger
                 cartDiscount = {
                     cartDiscountPercent: 0,
                     cartDiscountMoney: DineroFunc(0)
@@ -141,7 +138,7 @@ const cartItem = (state = {
 
             // ************ Item Discount ************
             action.data.cartItems.forEach((item, index) => {
-                item.itemSalesPriceMoney = DineroFunc((_get(item, 'doc.product.salePrice.amount', 0)))
+                item.itemSalesPriceMoney = DineroFunc((_get(item, 'doc.product.salePrice.price', 0)))
                 item.itemRegularTotalMoney = item.itemSalesPriceMoney.multiply(_get(item, 'qty', 0))
 
                 // ****** Item Discounts calculations ****** //
@@ -176,7 +173,6 @@ const cartItem = (state = {
 
                 // * Checking if Item Discount Exceeds or not
                 let totalItemDiscount = item.cartDiscountMoney.add(item.empDiscountMoney).add(item.itemDiscountMoney)
-                debugger
                 if (item.itemDiscountableMoney.lessThan(totalItemDiscount)) {
                     item.itemDiscountMoney = DineroFunc(0);
                     totalItemDiscount = item.cartDiscountMoney.add(item.empDiscountMoney).add(item.itemDiscountMoney)
