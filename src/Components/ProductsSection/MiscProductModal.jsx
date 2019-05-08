@@ -102,8 +102,8 @@ class MiscProductModal extends React.Component {
             this.setState({ isError: false, errorMsg: '' })
             let data = { ...this.state };
             let salePrice = {
-                price: Number(this.state.price),
-                currencyCode: "$",
+                amount: Number(this.state.price),
+                currency:"USD",
             }
             data.salePrice = salePrice;
             data.upcCode = Number(data.upcCode);
@@ -121,7 +121,7 @@ class MiscProductModal extends React.Component {
         _set(doc, 'product', _get(this.props, 'miscProduct', {}));
         // _set(doc, 'product.name', _get(this.state, 'name', ''));
         // _set(doc, 'product.salePrice.currencyCode', _get(this.state, 'giftCard.value.currencyCode', ''));
-        // _set(doc, 'product.salePrice.price', _get(this.state, 'giftCard.value.amount', 0));
+        // _set(doc, 'product.salePrice.amount', _get(this.state, 'giftCard.value.amount', 0));
         let data = {
             id: _get(this.props, 'miscProduct.id', ''),
             // value: _get(this.state, 'giftCard.value', {}),

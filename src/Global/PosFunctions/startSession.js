@@ -8,7 +8,7 @@ const startSession = ({dispatch,handleSuccess,handleError,stateObj,amount})=>{
     session.operatorId = localStorage.getItem('userId');
     session.openingCashDetails = getDenominationDetails(stateObj);
     session.status = 'open';
-    session.openingBalance = {currencyCode:'$',amount};
+    session.openingBalance = {currency:'USD',amount:amount*100};
     session.terminalId = localStorage.getItem('terminalId');
     genericPostData({
         dispatch:dispatch,

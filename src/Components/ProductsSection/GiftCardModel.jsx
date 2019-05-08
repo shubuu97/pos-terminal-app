@@ -174,7 +174,7 @@ class GiftCardModal extends React.Component {
             _set(doc, 'product.isGiftCard', true);
             _set(doc, 'product.name', _get(this.state, 'giftCard.giftCode', ''));
             _set(doc, 'product.salePrice.currencyCode', _get(this.state, 'giftCard.value.currencyCode', ''));
-            _set(doc, 'product.salePrice.price', _get(this.state, 'giftCard.value.amount', 0));
+            _set(doc, 'product.salePrice.amount', _get(this.state, 'giftCard.value.amount', 0));
             let data = {
                 id: _get(this.props, 'giftCard.id', ''),
                 value: _get(this.state, 'giftCard.value', {}),
@@ -186,7 +186,7 @@ class GiftCardModal extends React.Component {
                 reqObj = [
                     ...cartItems
                 ]
-                reqObj[index].doc.product.salePrice.price = this.state.giftCard.value.amount;
+                reqObj[index].doc.product.salePrice.amount = this.state.giftCard.value.amount;
             } else {
                 reqObj = [
                     ...cartItems,

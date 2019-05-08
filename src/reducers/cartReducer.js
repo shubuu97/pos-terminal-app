@@ -73,7 +73,7 @@ const cartItem = (state = {
             let discountableItems = []
             action.data.cartItems.forEach((item, index) => {
                 if (_get(item, 'doc.product.discountable', false)) {
-                    let totalItemPrice = DineroFunc(_get(item, 'doc.product.salePrice.price', 0)*100)
+                    let totalItemPrice = DineroFunc(_get(item, 'doc.product.salePrice.amount', 0))
                     let subTotal = totalItemPrice.multiply(_get(item, 'qty', 0))
                     discountableMoney = discountableMoney.add(subTotal)
                     discountableItemsIndex.push(index)
@@ -138,7 +138,7 @@ const cartItem = (state = {
 
             // ************ Item Discount ************
             action.data.cartItems.forEach((item, index) => {
-                item.itemSalesPriceMoney = DineroFunc((_get(item, 'doc.product.salePrice.price', 0)*100))
+                item.itemSalesPriceMoney = DineroFunc((_get(item, 'doc.product.salePrice.amount', 0)))
                 item.itemRegularTotalMoney = item.itemSalesPriceMoney.multiply(_get(item, 'qty', 0))
 
                 // ****** Item Discounts calculations ****** //
