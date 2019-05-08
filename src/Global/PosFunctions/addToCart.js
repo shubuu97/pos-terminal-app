@@ -2,6 +2,7 @@
 import _get from 'lodash/get';
 import _isEmpty from 'lodash/isEmpty';
 import _findIndex from 'lodash/findIndex';
+import Dinero from 'dinero.js';
 import _find from 'lodash/find'
 /* Redux Imports */
 import { commonActionCreater } from '../../Redux/commonAction';
@@ -27,9 +28,16 @@ const addToCart = (product, cartItems, cart, quantity, dispatch) => {
         // this.setState({ qty })
     }
     let cartDiscountObj = {}
-    cartDiscountObj.type = '$'
-    cartDiscountObj.cartDiscount = _get(cart, 'cartDiscount.cartDiscountMoney.amount', 0)
+    if (_get(cart, 'cartDiscount.isPercentage', false)) {
+        cartDiscountObj.type = '%'
+        cartDiscountObj.cartDiscount = _get(cart, 'cartDiscount.cartDiscountPercent', 0)
+    }
+    else {
+        cartDiscountObj.type = '$'
+        cartDiscountObj.cartDiscount = _get(cart, 'cartDiscount.cartDiscountMoney', 0).getAmount();
+    }
     cartDiscountObj.cartItems = reqObj
+    debugger
     dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
 }
 
