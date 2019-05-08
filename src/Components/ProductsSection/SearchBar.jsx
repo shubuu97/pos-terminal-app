@@ -44,7 +44,6 @@ class CustomizedInputBase extends React.Component {
   }
 
   render() {
-    console.log(this.props.isCustomerTabOpen, 'isCustomerTabOpen')
     const { classes } = this.props;
     return (
       <Paper className={classes.root} elevation={1} >
@@ -56,6 +55,10 @@ class CustomizedInputBase extends React.Component {
           onKeyPress={this.props.onKeyPress}
           placeholder="Search For Item"
           onChange={(event) => this.props.handleChange(event.target.value, event)} />
+        {
+          this.props.value == '' ? '' : 
+          <i onClick={this.props.onClear} class="material-icons">clear</i>
+        }
         <IconButton className={classes.iconButton} aria-label="Search">
           <SearchIcon />
         </IconButton>

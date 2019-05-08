@@ -747,6 +747,7 @@ class HomeContainer extends React.Component {
                         offline={this.state.offline}
                         open={this.state.openGiftCard}
                         handleClose={() => this.handleGiftCard(false)}
+                        isGiftCardModal
                     />
                 }
                 {
