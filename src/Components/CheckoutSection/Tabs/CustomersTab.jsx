@@ -4,6 +4,8 @@ import React from 'react';
 import _get from 'lodash/get';
 import _findIndex from 'lodash/findIndex';
 import _isArray from 'lodash/isArray';
+/* Dinero Import */
+import Dinero from 'dinero.js'
 /* Material import */
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles'
@@ -99,7 +101,7 @@ class CustomerTab extends React.Component {
 
         let cartDiscountObj = {}
         cartDiscountObj.type = '$'
-        cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountMoney.amount', 0)
+        cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountMoney', 0).toUnit()
         cartDiscountObj.cartItems = _get(this.props, 'cart.cartItems', [])
 
         this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));

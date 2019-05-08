@@ -58,7 +58,7 @@ class CardPay extends React.Component {
     }
 
     makePOSReqObj = () => {
-        let invoiceNo = this.randomString(12);
+        let invoiceNo = this.randomString(11);
         let xmlBodyStr = `<POSRequest>\
         <RequestType>Sale</RequestType>\
         <ChargeAmount>${this.props.cardAmount}</ChargeAmount>\
@@ -67,7 +67,7 @@ class CardPay extends React.Component {
         <ClientEnvironment>${localStorage.getItem('freedomPayClientEnvironment')}</ClientEnvironment>\
         <StoreId>${localStorage.getItem('freedomPayStoreId')}</StoreId>\
         <TerminalId>${localStorage.getItem('freedomPayTerminalId')}</TerminalId>\
-        <MerchantReferenceCode>WEBPOS${invoiceNo}</MerchantReferenceCode>\
+        <MerchantReferenceCode>WEBPOS5c${invoiceNo}</MerchantReferenceCode>\
         <InvoiceNumber>${invoiceNo}</InvoiceNumber>\
         <WorkstationId>${localStorage.getItem('freedomPayWorkstationId')}</WorkstationId>\
       </POSRequest>`;

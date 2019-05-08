@@ -37,14 +37,15 @@ class CalculationSection extends React.Component {
 
     render() {
         let { checkoutcalcArea, cartItems, cart } = this.props
-        let cartRegularTotal = _get(cart, 'regularTotalMoney', Dinero({ amount: 0, currency: 'USD'}))
-        let cartNetTotal = _get(cart, 'netTotalMoney', Dinero({ amount: 0, currency: 'USD'}))
-        let taxMoney = _get(cart, 'taxMoney', Dinero({ amount: 0, currency: 'USD'}))
-        let totalMoney = _get(cart, 'totalMoney', Dinero({ amount: 0, currency: 'USD'}))
-        
+        let cartRegularTotal = _get(cart, 'regularTotalMoney', Dinero({ amount: 0, currency: 'USD' }))
+        let cartNetTotal = _get(cart, 'netTotalMoney', Dinero({ amount: 0, currency: 'USD' }))
+        let taxMoney = _get(cart, 'taxMoney', Dinero({ amount: 0, currency: 'USD' }))
+        let totalMoney = _get(cart, 'totalMoney', Dinero({ amount: 0, currency: 'USD' }))
+
         // Discounts
-        let cartDiscount = _get(cart, 'cartDiscount.cartDiscountMoney', Dinero({ amount: 0, currency: 'USD'}))
-        let employeeDiscount = _get(cart, 'employeeDiscountMoney', Dinero({ amount: 0, currency: 'USD'}))
+        let cartDiscount = _get(cart, 'cartDiscount.cartDiscountMoney', Dinero({ amount: 0, currency: 'USD' }))
+        let employeeDiscount = _get(cart, 'employeeDiscountMoney', Dinero({ amount: 0, currency: 'USD' }))
+        let totalItemDiscount = _get(cart, 'totalItemDiscountMoney', Dinero({ amount: 0, currency: 'USD' }))
         return (
             <div className='calculation-section flex-row' style={{ height: checkoutcalcArea }}>
                 <div className="calc-first-part">
@@ -73,17 +74,16 @@ class CalculationSection extends React.Component {
                                 </div> : null
                         }
                         {
-                            _get(cart, 'itemDiscountAmount.amount', 0) > 0 ?
+                            totalItemDiscount.getAmount() > 0 ?
                                 <div className='cart-each-details'>
                                     <span className='cart-title flex-row align-center'>
-                                        {/* <RemoveCircleIcons style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }} /> */}
                                         Item Discounts
-                                </span>
-                                    <span className='cart-amount'>- {_get(cart, 'itemDiscountAmount.amount', 0).toFixed(2)}</span>
+                                    </span>
+                                    <span className='cart-amount'>- {totalItemDiscount.toFormat('$0,0.00')}</span>
                                 </div> : null
                         }
                         {
-                            _get(this, 'props.handleClickOpenDiscount', false) && !_get(cart, 'cartDiscountAmount.amount', 0) && _get(this, 'props.cartItems', []).length ?
+                            _get(this, 'props.handleClickOpenDiscount', false) && cartDiscount.getAmount() <= 0 && _get(this, 'props.cartItems', []).length ?
                                 <div className='cart-each-details cart-discount-btn'>
                                     <Button variant="outlined" onClick={this.props.handleClickOpenDiscount}><AddCircleOutline /> Cart Discount</Button>
                                 </div>
