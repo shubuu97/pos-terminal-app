@@ -88,22 +88,27 @@ const cartItem = (state = {
 
             // ************ Cart Discount ************
             // * Deciding if discount in "Absolute" or "Percent"
+            debugger
+            let isPercentage = false
             let cartDiscountPercent
             if (action.data.type === '%') {
                 cartDiscountPercent = _get(action, 'data.cartDiscount', 0);
                 cartDiscountMoney = discountableMoney.percentage(cartDiscountPercent);
+                isPercentage = true
             }
             else {
                 // * Converting "Absolute" to "Percentage" and saving both to reducer
                 // ! Static Currency
                 cartDiscountMoney = DineroFunc((_get(action, 'data.cartDiscount', 0)))
                 cartDiscountPercent = (cartDiscountMoney.getAmount() / discountableMoney.getAmount()) * 100
+                isPercentage = false
             }
 
             if (cartDiscountMoney.getAmount() + employeeDiscountMoney.getAmount() <= maxAllowedDiscountMoney.getAmount()) {
                 cartDiscount = {
                     cartDiscountPercent,
-                    cartDiscountMoney
+                    cartDiscountMoney,
+                    isPercentage
                 }
             }
             else {
@@ -149,20 +154,24 @@ const cartItem = (state = {
                         item.itemDiscountableMoney = discountableMoneyAllocation[key]
                         item.cartDiscountMoney = cartDiscountAllocation[key]
                         item.empDiscountMoney = employeeDiscountAllocation[key]
-                        debugger
                         item.allowedItemDiscountMoney = item.itemDiscountableMoney.subtract(item.empDiscountMoney).subtract(item.cartDiscountMoney)
+                        item.allowedCartDiscountPercent = ((item.allowedItemDiscountMoney).getAmount()/(item.itemRegularTotalMoney).getAmount())*100
                     } else {
                         item.cartDiscountMoney = DineroFunc(0);
                         item.empDiscountMoney = DineroFunc(0);
                         item.allowedItemDiscountMoney = DineroFunc(0);
+                        item.allowedCartDiscountPercent = 0
                     }
                 } else {
                     item.cartDiscountMoney = DineroFunc(0);
                     item.empDiscountMoney = DineroFunc(0);
                     item.allowedItemDiscountMoney = DineroFunc(0);
+                    item.allowedCartDiscountPercent = 0
                 }
 
-                item.itemDiscountMoney = Dinero(parseInt(_get(item, 'itemDiscountMoney', 0)*100))
+                item.itemDiscountMoney = _get(item, 'itemDiscountMoney', DineroFunc(0))
+                item.itemDiscountPercent = _get(item, 'itemDiscountPercent', 0)
+                item.isPercent = _get(item, 'isPercent', false)
 
                 // * Checking if Item Discount Exceeds or not
                 let totalItemDiscount = item.cartDiscountMoney.add(item.empDiscountMoney).add(item.itemDiscountMoney)
@@ -174,7 +183,6 @@ const cartItem = (state = {
 
                 // * Checking if Cart Discount Exceeds or not
                 if (item.itemDiscountableMoney.lessThan(totalItemDiscount)) {
-                    debugger
                     cartDiscount = {
                         cartDiscountPercent: 0,
                         cartDiscountMoney: DineroFunc(0)
