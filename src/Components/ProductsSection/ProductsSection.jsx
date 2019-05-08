@@ -365,6 +365,7 @@ class ProductsSection extends React.Component {
                             handleChange={this.handleChange}
                             onKeyPress={this.onKeyPress}
                             value={this.state.searchText}
+                            isGiftCardModelOpen={this.props.isGiftCardModelOpen}
                         />
                         <div className="header-right-sec">
                             <ul>

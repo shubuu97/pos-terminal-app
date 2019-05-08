@@ -22,6 +22,7 @@ import Typography from '@material-ui/core/Typography';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import addToCart from '../../Global/PosFunctions/addToCart';
 
 function Transition(props) {
     return <Slide direction="down" {...props} />;
@@ -117,30 +118,28 @@ class MiscProductModal extends React.Component {
 
     handleAddToCart = (miscProduct) => {
         let cartItems = _get(this, 'props.cart.cartItems', []);
+        let cart = _get(this, 'props.cart', {})
         let doc = {};
         _set(doc, 'product', _get(this.props, 'miscProduct', {}));
-        // _set(doc, 'product.name', _get(this.state, 'name', ''));
-        // _set(doc, 'product.salePrice.currencyCode', _get(this.state, 'giftCard.value.currencyCode', ''));
-        // _set(doc, 'product.salePrice.price', _get(this.state, 'giftCard.value.amount', 0));
         let data = {
             id: _get(this.props, 'miscProduct.id', ''),
-            // value: _get(this.state, 'giftCard.value', {}),
             doc: doc,
         }
-        let reqObj = [
-            ...cartItems,
-            {
-                ...data,
-                qty: 1,
-                saleType: 0,
-            }
-        ];
-        let cartDiscountObj = {}
-        cartDiscountObj.type = '$'
-        cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountMoney.amount', 0)
-        cartDiscountObj.cartItems = reqObj
-        this.props.dispatch(commonActionCreater(reqObj, 'CART_ITEM_LIST'));
+        addToCart(data, cartItems, cart, 1, this.props.dispatch)
         this.props.handleClose();
+
+        // let reqObj = [
+        //     ...cartItems,
+        //     {
+        //         ...data,
+        //         qty: 1,
+        //         saleType: 0,
+        //     }
+        // ];
+        // let cartDiscountObj = {}
+        // cartDiscountObj.type = '$'
+        // cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountMoney.amount', 0)
+        // cartDiscountObj.cartItems = reqObj
     }
 
     handleChange = (e, name) => {
