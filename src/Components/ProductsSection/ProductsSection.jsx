@@ -43,13 +43,16 @@ class ProductsSection extends React.Component {
 
     handleChange = (searchText, e) => {
         this.setState({ searchText })
-        if (this.previousTimeStamp) {
-            if ((e.timeStamp - this.previousTimeStamp) <= 20) {
-                this.previousTimeStamp = e.timeStamp
-                return
+        if(e) {
+            if (this.previousTimeStamp) {
+                if ((e.timeStamp - this.previousTimeStamp) <= 20) {
+                    this.previousTimeStamp = e.timeStamp
+                    return
+                }
             }
+            this.previousTimeStamp = e.timeStamp
         }
-        this.previousTimeStamp = e.timeStamp
+        
         if (searchText.length > 2) {
             this.productsdb.search({
                 query: searchText,
@@ -137,6 +140,15 @@ class ProductsSection extends React.Component {
                 })
             }
         }
+    }
+
+    homeButtonClicked = () => {
+        this.setState({ searchText: '' })
+    }
+
+    clearSearchText = () => {
+        this.setState({ searchText: '' })
+        this.handleChange('')
     }
 
     scroll = () => {
@@ -333,10 +345,6 @@ class ProductsSection extends React.Component {
         }
     }
 
-    homeButtonClicked = () => {
-        this.setState({ searchText: '' })
-    }
-
     render() {
         let { windowHeight, headerHeight, categoriesHeight } = this.props
         return (
@@ -365,6 +373,8 @@ class ProductsSection extends React.Component {
                             handleChange={this.handleChange}
                             onKeyPress={this.onKeyPress}
                             value={this.state.searchText}
+                            isGiftCardModelOpen={this.props.isGiftCardModelOpen}
+                            onClear={this.clearSearchText}
                         />
                         <div className="header-right-sec">
                             <ul>

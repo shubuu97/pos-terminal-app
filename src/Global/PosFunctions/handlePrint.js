@@ -62,7 +62,7 @@ const HandlePrint = (props) => {
                 method = 'Loyalty'
                 break;
                 case 6:
-                method = 'Decline Balance'
+                method = 'Declining Balance'
                 break;
         }
 

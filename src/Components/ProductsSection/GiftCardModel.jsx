@@ -60,7 +60,7 @@ class GiftCardModal extends React.Component {
             giftCard: {
                 giftCode: '',
                 value: {
-                    amount: '',
+                    amount: 0,
                     currencyCode: '$'
                 }
             },
@@ -90,23 +90,26 @@ class GiftCardModal extends React.Component {
 
     handleGetGiftcardDataSuccess = () => {
         let { giftCard } = this.props;
+        debugger
         if (giftCard) {
+            debugger
             let status = _get(giftCard, 'status', 0);
             if (giftCard.giftCode && status !== 0) {
                 giftCard.giftCode = '';
-                _set(giftCard, 'value.amount', '');
+                _set(giftCard, 'value.amount', 0);
                 this.setState({
                     giftCard,
                     giftCodeMsg: 'This giftcode already exist.',
                     isGiftCodeError: true
                 })    
-            } else {
-                _set(giftCard, 'value.amount', '');
-                _set(giftCard, 'value.currencyCode', '$');
-                this.setState({
-                    giftCard
-                })
             }
+            //  else {
+            //     _set(giftCard, 'value.amount', 0);
+            //     _set(giftCard, 'value.currencyCode', '$');
+            //     this.setState({
+            //         giftCard
+            //     })
+            // }
         } else if (giftCard == null) {
             this.setState({ isGiftCodeError: false, giftCodeMsg: '' })
         }
@@ -116,8 +119,10 @@ class GiftCardModal extends React.Component {
         this.setState({isGiftCodeError: false})
     }
 
-    handleSaveGiftDataSuccess = () => {
+    handleSaveGiftDataSuccess = (data) => {
+        debugger
         let { giftCard } = this.props;
+        debugger
         if (giftCard) {
             this.setState({ isLoading: false})
             this.handleAddToCart();
@@ -143,7 +148,7 @@ class GiftCardModal extends React.Component {
         let url1 = 'GiftCard/GetByCodeAndStore';
         let reqBody = {
             storeId: localStorage.getItem('storeId'),
-            code: val,
+            code: val
         }
         this.getExistingGiftCard(url1, reqBody, this.handleGetGiftcardDataSuccess, this.handleGetGiftCardDataError);
 
@@ -203,9 +208,14 @@ class GiftCardModal extends React.Component {
     }
 
     handleBlur = (e) => {
-        if(this.state.giftCard.value.amount== '') {
-            this.setState({ isGiftValueError: true, giftValueMsg: 'Please enter gift value.'})
-        }
+        this.props.cart.cartItems.map(item => {
+            if(item.doc.product.name == Number(this.state.giftCard.giftCode)) {
+                this.setState({isGiftCodeError: true, giftCodeMsg: 'Gift Code already added in cart.'})
+            } else {
+                this.setState({isGiftCodeError: false, giftCodeMsg: ''})
+            }
+        })
+        
         let val = _get(e, 'target.value', '');
         let url = 'GiftCard/GetByCodeAndStore';
         let data = {
@@ -217,17 +227,10 @@ class GiftCardModal extends React.Component {
 
     handleGiftCodeChange = (e, name) => {
         let val = _get(e, 'target.value', '');
-        this.props.cart.cartItems.map(item => {
-            if(item.doc.product.name == Number(val)) {
-                this.setState({isGiftCodeError: true, giftCodeMsg: 'Gift Code already added in cart.'})
-            } else {
-                this.setState({isGiftCodeError: false, giftCodeMsg: ''})
-            }
-        })
-        if(val == '') {
-            this.setState({ isGiftCodeError: true })
+        if(val !== '') {
+            this.setState({ isGiftCodeError: false })
         } else {
-            this.setState({ isGiftCodeError: false})
+            this.setState({ isGiftCodeError: true })
         }
         let giftCard = _get(this.state, 'giftCard', {});
         _set(giftCard, 'giftCode', val);
@@ -241,13 +244,14 @@ class GiftCardModal extends React.Component {
         } else {
             this.setState({ isGiftValueError: false, giftValueMsg: ''})
         }
-        let giftCard = _get(this.state, 'giftCard', {});
-        _set(giftCard, 'value.amount', !isNaN(val) ? Number(val) : val);
-        this.setState({giftCard})
+        if(e.target.value >= 0 || e.target.value == '') {        
+            let giftCard = _get(this.state, 'giftCard', {});
+            _set(giftCard, 'value.amount', !isNaN(val) ? Number(val) : val);
+            this.setState({giftCard})
+        }
     }
 
     render() {
-        console.log(this.state.isError, 'cheking error')
         return (
             <div>
                 <Dialog

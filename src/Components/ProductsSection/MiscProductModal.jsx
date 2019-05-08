@@ -140,14 +140,19 @@ class MiscProductModal extends React.Component {
     }
 
     handleChange = (e, name) => {
-        if(this.state.name == '') {
+        if(e.target.value == '') {
             this.setState({ isError: true, errorMsg: 'Please enter product name.'})
         } else {
             this.setState({ isError: false, errorMsg: ''})
         }
-        let val = name == 'isTaxable' ? e : _get(e, 'target.value', '');
         this.setState({
-            [name]: val,
+            [name]: e.target.value
+        })
+    }
+
+    handleCheckBoxChange = (val, name) => {
+        this.setState({
+            [name]: val
         })
     }
 
@@ -214,7 +219,7 @@ class MiscProductModal extends React.Component {
                                 </div>
                                 <div className="mui-col-md-6 mt-10">
                                     <FormControlLabel
-                                        control={<Checkbox onChange={(event, value) => this.handleChange(value, 'isTaxable')} value="isTaxable" color="primary" checked={this.state.isTaxable} />}
+                                        control={<Checkbox onChange={(event, value) => this.handleCheckBoxChange(value, 'isTaxable')} value="isTaxable" color="primary" checked={this.state.isTaxable} />}
                                         label="Taxable"
                                     />
                                 </div>

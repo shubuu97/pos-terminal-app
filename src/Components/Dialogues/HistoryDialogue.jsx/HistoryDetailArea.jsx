@@ -78,6 +78,9 @@ class HistoryDetailArea extends React.Component {
             case 5:
                 method = 'Loyalty'
                 break;
+                case 6:
+                method = 'Declining Balance'
+                break;
         }
 
         return method
