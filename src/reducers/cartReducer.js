@@ -74,8 +74,7 @@ const cartItem = (state = {
             let discountableItems = []
             action.data.cartItems.forEach((item, index) => {
                 if (_get(item, 'doc.product.discountable', false)) {
-                    // ! MAYUK - To be changed When Marine gives us the right format
-                    let totalItemPrice = DineroFunc((_get(item, 'doc.product.salePrice.price', 0) * 100))
+                    let totalItemPrice = DineroFunc(_get(item, 'doc.product.salePrice.amount', 0))
                     let subTotal = totalItemPrice.multiply(_get(item, 'qty', 0))
                     discountableMoney = discountableMoney.add(subTotal)
                     discountableItemsIndex.push(index)
@@ -142,7 +141,7 @@ const cartItem = (state = {
 
             // ************ Item Discount ************
             action.data.cartItems.forEach((item, index) => {
-                item.itemSalesPriceMoney = DineroFunc((_get(item, 'doc.product.salePrice.price', 0) * 100))
+                item.itemSalesPriceMoney = DineroFunc((_get(item, 'doc.product.salePrice.amount', 0)))
                 item.itemRegularTotalMoney = item.itemSalesPriceMoney.multiply(_get(item, 'qty', 0))
 
                 // ****** Item Discounts calculations ****** //
@@ -157,12 +156,14 @@ const cartItem = (state = {
                         item.allowedItemDiscountMoney = item.itemDiscountableMoney.subtract(item.empDiscountMoney).subtract(item.cartDiscountMoney)
                         item.allowedCartDiscountPercent = ((item.allowedItemDiscountMoney).getAmount()/(item.itemRegularTotalMoney).getAmount())*100
                     } else {
+                        item.itemDiscountableMoney = DineroFunc(0)
                         item.cartDiscountMoney = DineroFunc(0);
                         item.empDiscountMoney = DineroFunc(0);
                         item.allowedItemDiscountMoney = DineroFunc(0);
                         item.allowedCartDiscountPercent = 0
                     }
                 } else {
+                    item.itemDiscountableMoney = DineroFunc(0)
                     item.cartDiscountMoney = DineroFunc(0);
                     item.empDiscountMoney = DineroFunc(0);
                     item.allowedItemDiscountMoney = DineroFunc(0);
@@ -175,6 +176,7 @@ const cartItem = (state = {
 
                 // * Checking if Item Discount Exceeds or not
                 let totalItemDiscount = item.cartDiscountMoney.add(item.empDiscountMoney).add(item.itemDiscountMoney)
+                debugger
                 if (item.itemDiscountableMoney.lessThan(totalItemDiscount)) {
                     item.itemDiscountMoney = DineroFunc(0);
                     totalItemDiscount = item.cartDiscountMoney.add(item.empDiscountMoney).add(item.itemDiscountMoney)
