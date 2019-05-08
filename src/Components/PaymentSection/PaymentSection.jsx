@@ -523,7 +523,8 @@ class PaymentSection extends React.Component {
             (parseFloat(this.props.cashAmount || 0)) +
             (parseFloat(this.props.giftCardAmount) || 0) +
             (parseFloat(LoyaltyValue || 0)) +
-            (parseFloat(this.props.costCenterAmount || 0))
+            (parseFloat(this.props.costCenterAmount || 0))+
+            (parseFloat(this.props.decliningBalance || 0))
 
         let reqObj = {
             customerId: customer.id,
@@ -769,8 +770,7 @@ class PaymentSection extends React.Component {
                                 this.state.showCostCenter ?
                                     <CostCenter
                                     currentFocus={this.currentFocus}
-
-                                        onRemovePaymentMethod={this.onRemovePaymentMethod}
+                                    onRemovePaymentMethod={this.onRemovePaymentMethod}
                                     /> : null
                             }
                              {

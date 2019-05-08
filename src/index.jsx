@@ -83,7 +83,7 @@ ReactDOM.render(
 
   <JssProvider generateClassName={generateClassName}>
     <MuiThemeProvider theme={theme}>
-      <SnackbarProvider maxSnack={8} autoHideDuration={800} style={{width: '100%'}}>
+      <SnackbarProvider maxSnack={8} autoHideDuration={4000} style={{width: '100%'}}>
         <Provider store={store}>
           {/* <PersistGate loading={null} persistor={persistor}> */}
           <Router>

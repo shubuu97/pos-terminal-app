@@ -45,8 +45,8 @@ const paymentReducer = (state = {
     let giftCardAmount = state.giftCardAmount;
     let loyaltyRedeem = state.loyaltyRedeem;
     let costCenterAmount = state.costCenterAmount;
-    let decliningBalance = '';
     let costCenterType = '';
+    let decliningBalance = state.decliningBalance
     let costCenterDepartment = '';
     switch (action.type) {
         case 'CASH_INPUT_HANDLER':
@@ -150,9 +150,9 @@ const paymentReducer = (state = {
             }
             break;
         case 'GIFT_AMOUNT_TO_REDEEM':
-            let amountAvailToRedeem = _get(state, 'giftCardData.value.amount') || dineroObj(0, 'USD');
-            let enteredAmount = dineroObj(_get(action, 'data.giftCardAmount', 0), 'USD');
-            let expPaymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, enteredAmount, loyaltyRedeem, costCenterAmount);
+            let amountAvailToRedeem = _get(state, 'giftCardData.value.amount');
+            let enteredAmount = action.data.giftCardAmount;
+            let expPaymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, enteredAmount, loyaltyRedeem, costCenterAmount,decliningBalance);
             let expRemainingAmount = calcRemainingAmount(totalAmount, expPaymentAmount);
             if (amountAvailToRedeem.greaterThanOrEqual(enteredAmount) && expRemainingAmount.greaterThanOrEqual(dineroObj(0, 'USD'))) {
                 paymentAmount = expPaymentAmount;

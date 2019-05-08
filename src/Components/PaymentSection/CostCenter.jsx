@@ -210,11 +210,11 @@ class CostCenter extends React.Component {
                             <FormControl className={classes.formControl2}>
                                 <TextField
                                     InputLabelProps={{ shrink: true }}
-                                    // onFocus={() => this.props.currentFocus({ fieldValue: 'giftPayNumber', handler: 'GIFT_CARD_NUMBER' })}
+                                    onFocus={() => this.props.currentFocus({ fieldValue: 'costCenterAmount', handler: 'COST_CENTER_CHARGE' })}
                                     id="Amount To Be Used"
                                     label="Amount To Be Used"
                                     type="text"
-                                    value={this.props.costCenterAmount}
+                                    value={_get(this.props,'costCenterAmount',0)}
                                     onChange={this.amountToBeUsed}
                                     margin="normal"
                                     fullWidth
