@@ -62,7 +62,7 @@ class Product extends React.PureComponent {
         // ! MAYUK - To be changed When Marine gives us the right format
         let Money = Dinero(
             {
-                amount: parseInt(_get(data, 'doc.product.salePrice.price', 0)*100),
+                amount: parseInt(_get(data, 'doc.product.salePrice.amount', 0)),
                 currency: 'USD',
             }
         )
