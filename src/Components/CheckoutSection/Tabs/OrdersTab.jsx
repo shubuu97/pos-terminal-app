@@ -197,10 +197,11 @@ class OrdersTab extends React.Component {
             totalCartItems += item.cartQuantity;
             orderTotal += item.subTotal;
             this.state.orderTotal = this.state.orderTotal + item.subTotal;
+        
             return (
                 <ExpansionPanel
                     className='each-checkout-item'
-                    expanded={this.state.expanded === `Panel${_get(item, 'doc.product.sku', _get(item, 'id'))}`}
+                    expanded={_get(item,'doc.product.isGiftCard', false) ? false : this.state.expanded === `Panel${_get(item, 'doc.product.sku', _get(item, 'id'))}`}
                     onChange={this.handleChange(`Panel${_get(item, 'doc.product.sku', _get(item, 'id'))}`)}>
                     <ExpansionPanelSummary>
                         <div className='each-product-des fwidth flex-row justify-space-between'>
