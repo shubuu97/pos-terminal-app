@@ -138,9 +138,10 @@ class DiscountDialogue extends React.Component {
 
         }
         else {
+            debugger
             // * Cart Discount checks and calculations
-            let allowedCartDiscount = _get(this.props, 'cart.allowedCartDiscount', 0)
             if (this.state.type == '%') {
+                let allowedCartDiscount = _get(this.props, 'cart.allowedCartDiscount', 0)
                 if (this.state.discount <= allowedCartDiscount) {
                     discount = this.state.discount
                     this.handleSuccessDiscountAdd(discount, this.props.identifier, this.props.itemIndex, type)
@@ -150,8 +151,9 @@ class DiscountDialogue extends React.Component {
                 }
             }
             else {
-                let discountableAmount = _get(this.props, 'cart.discountableCartTotal', 0)
-                if (this.state.discount <= parseFloat((Math.floor(allowedCartDiscount * discountableAmount * 100) / 10000).toFixed(2))) {
+                let allowedCartDiscount = _get(this.props, 'cart.allowedCartDiscountMoney', Dinero({amount:0, currency: 'USD'}))
+                console.log(_get(this.props, 'cart.allowedCartDiscountMoney',false), 'mayuk')
+                if (this.state.discount <= allowedCartDiscount.toUnit()) {
                     discount = this.state.discount
                     this.handleSuccessDiscountAdd(discount, this.props.identifier, this.props.itemIndex, type)
                 }
