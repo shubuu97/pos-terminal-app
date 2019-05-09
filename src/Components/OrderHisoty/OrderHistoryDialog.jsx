@@ -278,7 +278,7 @@ class OrderHistoryDialog extends React.Component {
         let listItems = _get(orderData,'saleParts',[]).map((item) => (
             <tr>
                 <td>{_isEmpty(item.giftCard) ? _get(item, 'product.name', '') : 'Gift Card'}</td>
-                <td>{_isEmpty(item.giftCard) ? _get(item, 'product.salePrice.price', 0).toFixed(2): _get(item, 'giftCard.value.amount',0).toFixed(2)}</td>
+                <td>{_isEmpty(item.giftCard) ? _get(item, 'product.salePrice.amount', 0).toFixed(2): _get(item, 'giftCard.value.amount',0).toFixed(2)}</td>
                 <td>{_get(item, 'saleItem.qty', 0)}</td>
                 <td>{_get(item, 'saleItem.returnQty', 0)}</td>
                 <td>{_get(item, 'saleItem.itemTotalDiscountAmount.amount', 0).toFixed(2)}</td>

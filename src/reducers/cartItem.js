@@ -13,7 +13,7 @@ const cartItem = (state = {
             let discountableCartTotal = 0
             action.data.cartItems.forEach(item => {
                 if (_get(item, 'doc.product.discountable', false)) {
-                    discountableCartTotal += parseFloat((parseFloat(_get(item, 'doc.product.salePrice.price', 0)) * _get(item, 'qty', 0)).toFixed(2))
+                    discountableCartTotal += parseFloat((parseFloat(_get(item, 'doc.product.salePrice.amount', 0)) * _get(item, 'qty', 0)).toFixed(2))
                 }
             })
             // * Deciding if discount in "Absolute" or "Percent"
@@ -112,7 +112,7 @@ const cartItem = (state = {
                 // * Calculating : RegularTotal = SalePrice * Qty
                 item.itemRegularTotal = {
                     currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
-                    amount: parseFloat((parseFloat(_get(item, 'doc.product.salePrice.price', 0)) * _get(item, 'qty', 0)).toFixed(2))
+                    amount: parseFloat((parseFloat(_get(item, 'doc.product.salePrice.amount', 0)) * _get(item, 'qty', 0)).toFixed(2))
                 }
 
 
@@ -122,7 +122,7 @@ const cartItem = (state = {
                 if (discountable) {
                     item.cartDiscountPercent = parseFloat(_get(state, 'cartDiscountPercent', 0))
                     item.employeeDiscountPercent = employeeDiscountPercent
-                    discountableAmount += parseFloat((parseFloat(_get(item, 'doc.product.salePrice.price', 0)) * _get(item, 'qty', 0)).toFixed(2))
+                    discountableAmount += parseFloat((parseFloat(_get(item, 'doc.product.salePrice.amount', 0)) * _get(item, 'qty', 0)).toFixed(2))
                 } else {
                     item.cartDiscountPercent = 0
                     item.employeeDiscountPercent = 0
@@ -187,7 +187,7 @@ const cartItem = (state = {
                     currencyCode: _get(item, 'doc.product.salePrice.currencyCode', '$'),
                     amount: parseFloat((parseFloat(_get(item, 'itemSubTotal.amount', 0)) + parseFloat(taxAmount)).toFixed(2))
                 }
-                regularTotal += (parseFloat(_get(item, 'doc.product.salePrice.price')) * _get(item, 'qty', 0));
+                regularTotal += (parseFloat(_get(item, 'doc.product.salePrice.amount')) * _get(item, 'qty', 0));
                 cartQty += _get(item, 'qty', 0);
                 netTotal += parseFloat(_get(item, 'itemSubTotal.amount', 0))
                 totalAmount = {

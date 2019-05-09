@@ -127,7 +127,7 @@ class ProductsSection extends React.Component {
 
                                 </div>
                                 <div className='product-price flex-row justify-flex-end'>
-                                    {_get(product, 'doc.product.salePrice.currencyCode')} {_get(product, 'doc.product.salePrice.price')}
+                                    {_get(product, 'doc.product.salePrice.currencyCode')} {_get(product, 'doc.product.salePrice.amount')}
                                 </div>
                             </div>
                         );

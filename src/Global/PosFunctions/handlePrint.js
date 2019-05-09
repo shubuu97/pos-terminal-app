@@ -23,13 +23,13 @@ const HandlePrint = (props) => {
         } else {
             itemDis = (_get(item, 'itemRegularTotal.amount', 0) * _get(item, 'itemDiscountPercent')) / 100
         }
-        itemSubTotal = ((_get(item, 'doc.product.salePrice.price', 0) * _get(item, 'qty', 1)) - (empDis + itemDis))
+        itemSubTotal = ((_get(item, 'doc.product.salePrice.amount', 0) * _get(item, 'qty', 1)) - (empDis + itemDis))
         stSubTotal += itemSubTotal
         return (
             <div style={{ display: 'flex', flex: '1', paddingTop: "10px", paddingBottom: "10px", borderBottom: 'dotted 1px #9e9e9e' }}>
                 <div style={{ width: "35%" }}>{_get(item, 'doc.product.isGiftCard', false) ? 'Gift Card' : _get(item, 'doc.product.name', ' ')}</div>
                 <div style={{ width: "10%", textAlign: "center" }}>{_get(item, 'qty', '')}</div>
-                <div style={{ width: "30%", textAlign: "right" }}>{_get(item, 'doc.product.salePrice.price', 0).toFixed(2)}<br />
+                <div style={{ width: "30%", textAlign: "right" }}>{_get(item, 'doc.product.salePrice.amount', 0).toFixed(2)}<br />
                     <div style={{ fontSize: "9px" }}>
                         {itemDis == 0 ? '' : <span>(Item Disc.: {itemDis.toFixed(2)})</span>}<br />
                         {empDis == 0 ? '' : <span>(Emp Disc.: {empDis.toFixed(2)})</span>}
@@ -73,7 +73,7 @@ const HandlePrint = (props) => {
         console.log(item, 'checking item')
         let itemSubTotal = 0
         let empDis
-        let salePrice = _get(item, 'product.salePrice.price', 0)
+        let salePrice = _get(item, 'product.salePrice.amount', 0)
         let isEmpDisExist = ('employeeDiscountPercent' in _get(item, 'saleItem', {}))
         if (!isEmpDisExist) {
             empDis = 0
@@ -87,7 +87,7 @@ const HandlePrint = (props) => {
         } else {
             itemDis = (_get(item, 'saleItem.itemRegularTotal.amount', 0) * _get(item, 'saleItem.itemDiscountPercent', 0)) / 100
         }
-        itemSubTotal = (_get(item, 'product.salePrice.price', 0) * _get(item, 'saleItem.qty', 1)) - (empDis + itemDis)
+        itemSubTotal = (_get(item, 'product.salePrice.amount', 0) * _get(item, 'saleItem.qty', 1)) - (empDis + itemDis)
         if (_isEmpty(item.giftCard)) {
             ohSubTotal += itemSubTotal
         } else {

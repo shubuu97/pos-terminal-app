@@ -103,8 +103,8 @@ class MiscProductModal extends React.Component {
             this.setState({ isError: false, errorMsg: '' })
             let data = { ...this.state };
             let salePrice = {
-                amount: Number(this.state.price) * 100,
-                currency: "$",
+                amount: Number(this.state.price),
+                currency:"USD",
             }
             data.salePrice = salePrice;
             data.upcCode = Number(data.upcCode);

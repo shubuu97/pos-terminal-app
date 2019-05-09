@@ -11,6 +11,10 @@ import { connect } from 'react-redux';
 /* Global Imports */
 import genericPostData from '../../../Global/dataFetch/genericPostData'
 
+//Dinero import
+import Dinero from 'dinero.js'
+import dineroObj from '../../../Global/PosFunctions/dineroObj';
+
 let regex = /^\d*[\.\d]{1,3}$/;
 
 class EmployeePay extends React.Component {
@@ -49,14 +53,12 @@ class EmployeePay extends React.Component {
 
     handleEmployeeDataSuccess = (data) => {
         this.setState({
-            availableValue: _get(data, 'limit.amount', 0)
+            availableValue: dineroObj(_get(data, 'limit.amount', 0))
         })
     }
 
     handleChange = name => event => {
         let value = event.target.value;
-        let availableValue = _get(this, 'state.availableValue', 0).toFixed(2);
-        let totalValue = _get(this.props, 'totalAmount.amount', 0)
         if (regex.test(value)) {
             this.props.dispatch(commonActionCreater({ employeePay: value, totalAmount: this.props.totalAmount }, 'EMPLOYEE_PAYROLL'));
         }
@@ -67,22 +69,6 @@ class EmployeePay extends React.Component {
             this.props.dispatch(commonActionCreater({ employeePay: '', totalAmount: this.props.totalAmount }, 'EMPLOYEE_PAYROLL'));
         }
     };
-
-    checkValue = (value) => {
-        let currentValue = value;
-        let availableValue = _get(this, 'state.availableValue', 0).toFixed(2);
-        let totalValue = _get(this.props, 'totalAmount.amount', 0)
-        if (value > totalValue) {
-            currentValue = totalValue
-        }
-        if (currentValue > availableValue) {
-            currentValue = availableValue
-        }
-        if (currentValue != value) {
-            this.props.dispatch(commonActionCreater({ employeePay: currentValue, totalAmount: this.props.totalAmount }, 'EMPLOYEE_PAYROLL'));
-        }
-        return currentValue
-    }
 
     render() {
         return (
@@ -107,7 +93,7 @@ class EmployeePay extends React.Component {
                             {
                                 this.state.availableValue ?
                                     <div className='mt-10'>
-                                        Available Amount : {this.state.availableValue.toFixed(2)}
+                                        Available Amount : {this.state.availableValue.toFormat('$0,0.00')}
                                     </div> : null
                             }
                             {
