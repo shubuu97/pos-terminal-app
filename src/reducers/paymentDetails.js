@@ -69,6 +69,7 @@ const paymentReducer = (state = {
                 amountExceeded = paymentAmount.subtract(totalAmount);
                 cardAmount = (Dinero({ amount: cardAmount * 100, currency: 'USD', precision: 2 }).subtract(amountExceeded));
                 cardAmount = cardAmount.isNegative() ? '' : cardAmount.toUnit(2).toFixed(2);
+                paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount, decliningBalance)
                 remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
             }
             return (Object.assign({}, state, {
