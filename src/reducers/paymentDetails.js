@@ -36,7 +36,7 @@ const paymentReducer = (state = {
     costCenterDepartment: '',
     costCenterAmount: ''
 }, action) => {
-    let totalAmount = _get(action, 'data.totalAmount') || dineroObj(0, 'USD')
+    let totalAmount = _get(action, 'data.totalAmount') || dineroObj(0, 'USD') //it is already dinero object from cart reducer
     let paymentAmount = dineroObj(0, 'USD');
     let remainingAmount = dineroObj(0, 'USD');
     let cashAmount = state.cashAmount;
@@ -48,6 +48,8 @@ const paymentReducer = (state = {
     let costCenterType = '';
     let decliningBalance = state.decliningBalance
     let costCenterDepartment = '';
+    let amountExceeded = dineroObj(0, 'USD');
+    let amountAvailToRedeem = dineroObj(0, 'USD');
     switch (action.type) {
         case 'CASH_INPUT_HANDLER':
             cashAmount = _get(action, 'data.cashAmount', '')
@@ -64,9 +66,10 @@ const paymentReducer = (state = {
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
             let cardRefrenceId = action.data.cardRefrenceId;
             if (paymentAmount.greaterThan(totalAmount)) {
-                let amountExceeded = paymentAmount.subtract(totalAmount);
-                cardAmount = (Dinero({ amount: cardAmount * 100, currency: 'USD', precision: 2 }).subtract(amountExceeded)).toUnit(2);
-                remainingAmount = dineroObj(0, 'USD');
+                amountExceeded = paymentAmount.subtract(totalAmount);
+                cardAmount = (Dinero({ amount: cardAmount * 100, currency: 'USD', precision: 2 }).subtract(amountExceeded));
+                cardAmount = cardAmount.isNegative() ? '' : cardAmount.toUnit(2).toFixed(2);
+                remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
             }
             return (Object.assign({}, state, {
                 cardAmount,
@@ -79,7 +82,7 @@ const paymentReducer = (state = {
             paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount, decliningBalance)
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
             if (paymentAmount.greaterThan(totalAmount)) {
-                let amountExceeded = paymentAmount.subtract(totalAmount);
+                amountExceeded = paymentAmount.subtract(totalAmount);
                 loyaltyRedeem = loyaltyRedeem.subtract(amountExceeded)
                 remainingAmount = dineroObj(0, 'USD');
             }
@@ -95,7 +98,7 @@ const paymentReducer = (state = {
             paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount, decliningBalance);
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
             if (paymentAmount.greaterThan(totalAmount)) {
-                let amountExceeded = paymentAmount.subtract(totalAmount);
+                amountExceeded = paymentAmount.subtract(totalAmount);
                 costCenterAmount = costCenterAmount.subtract(amountExceeded);
                 remainingAmount = 0;
             }
@@ -111,7 +114,7 @@ const paymentReducer = (state = {
             paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount, decliningBalance);
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
             if (paymentAmount.greaterThan(totalAmount)) {
-                let amountExceeded = paymentAmount.subtract(totalAmount);
+                amountExceeded = paymentAmount.subtract(totalAmount);
                 decliningBalance = (Dinero({ amount: decliningBalance * 100, currency: 'USD', precision: 2 }).subtract(amountExceeded)).toUnit(2);
                 remainingAmount = dineroObj(0, 'USD');
             }
@@ -121,18 +124,26 @@ const paymentReducer = (state = {
             }));
             break;
         case 'EMPLOYEE_PAYROLL':
+            debugger;
             amountAvailToRedeem = dineroObj(_get(state, 'employeeAvailableAmount.limit.amount'));
             employeePay = _get(action, 'data.employeePay', 0)
             paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount, decliningBalance)
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
+            let emaployeePayMoney = dineroObj(employeePay * 100)
 
-
-            if (amountAvailToRedeem.greaterThanOrEqual(remainingAmount)) {
+            if (amountAvailToRedeem.greaterThanOrEqual(emaployeePayMoney)) {
                 if (paymentAmount.greaterThan(totalAmount)) {
-                    let amountExceeded = paymentAmount.subtract(totalAmount);
-                    employeePay = (Dinero({ amount: employeePay * 100, currency: 'USD', precision: 2 }).subtract(amountExceeded)).toUnit(2);
-                    remainingAmount = dineroObj(0, 'USD');
+                    amountExceeded = paymentAmount.subtract(totalAmount)
+                    employeePay = emaployeePayMoney.subtract(amountExceeded);
+                    employeePay = employeePay.isNegative() ? '' : employeePay.toUnit(2).toFixed(2);
+                    paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount, decliningBalance)
+                    remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
+                    return (Object.assign({}, state, {
+                        employeePay,
+                        remainingAmount
+                    }));
                 }
+
                 return (Object.assign({}, state, {
                     employeePay,
                     remainingAmount
@@ -140,67 +151,105 @@ const paymentReducer = (state = {
                 break;
             }
             else {
-                employeePay = amountAvailToRedeem.toUnit()
+                employeePay = amountAvailToRedeem.toUnit(2);
+                emaployeePayMoney = dineroObj(employeePay * 100)
                 paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount, decliningBalance)
                 remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
+                if (paymentAmount.greaterThan(totalAmount)) {
+                    amountExceeded = paymentAmount.subtract(totalAmount)
+                    employeePay = emaployeePayMoney.subtract(amountExceeded);
+                    employeePay = employeePay.isNegative() ? '' : employeePay.toUnit(2).toFixed(2);
+                    paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount, decliningBalance)
+                    remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
+                    return (Object.assign({}, state, {
+                        employeePay,
+                        remainingAmount
+                    }));
+                }
+
                 return (Object.assign({}, state, {
                     employeePay,
                     remainingAmount
                 }));
+                break;
 
             }
-            // else {
-            //     let amountExceeded = paymentAmount.subtract(totalAmount);
-            //     employeePay = employeePay.subtract(amountExceeded);
-            //     remainingAmount = dineroObj(0, 'USD');
-            //     if (employeePay.greaterThan(amountAvailToRedeem)) {
-            //         remainingAmount = employeePay.subtract(amountAvailToRedeem);
-            //         employeePay = amountAavilToRedeem;
-            //     }
-            //     return (Object.assign({}, state, {
-            //         employeePay,
-            //         remainingAmount
-            //     }));
-            //     break;
-            // }
-            break;
         case 'GIFT_AMOUNT_TO_REDEEM':
-            let amountAvailToRedeem = _get(state, 'giftCardData.value.amount');
-            let enteredAmount = action.data.giftCardAmount;
-            let expPaymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, enteredAmount, loyaltyRedeem, costCenterAmount,decliningBalance);
-            let expRemainingAmount = calcRemainingAmount(totalAmount, expPaymentAmount);
-            if (amountAvailToRedeem.greaterThanOrEqual(enteredAmount) && expRemainingAmount.greaterThanOrEqual(dineroObj(0, 'USD'))) {
-                paymentAmount = expPaymentAmount;
-                remainingAmount = expRemainingAmount;
-                giftCardAmount = enteredAmount;
+
+            amountAvailToRedeem = dineroObj(_get(state, 'giftCardData.value.amount'));
+            giftCardAmount = _get(action, 'data.giftCardAmount', 0)
+            paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount, decliningBalance)
+            remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
+            let giftCardAmountMoney = dineroObj(giftCardAmount * 100)
+
+            if (amountAvailToRedeem.greaterThanOrEqual(giftCardAmountMoney)) {
+                if (paymentAmount.greaterThan(totalAmount)) {
+                    amountExceeded = paymentAmount.subtract(totalAmount)
+                    giftCardAmount = giftCardAmountMoney.subtract(amountExceeded);
+                    giftCardAmount = giftCardAmount.isNegative() ? '' : giftCardAmount.toUnit(2).toFixed(2);
+                    paymentAmount = calcPaymentAmount(cashAmount, cardAmount, giftCardAmount, giftCardAmount, loyaltyRedeem, costCenterAmount, decliningBalance)
+                    remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
+                    return (Object.assign({}, state, {
+                        giftCardAmount,
+                        remainingAmount
+                    }));
+                }
+
                 return (Object.assign({}, state, {
                     giftCardAmount,
                     remainingAmount
                 }));
                 break;
             }
-            break;
+            else {
+                giftCardAmount = amountAvailToRedeem.toUnit(2);
+                giftCardAmountMoney = dineroObj(giftCardAmount * 100)
+                paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount, decliningBalance)
+                remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
+                if (paymentAmount.greaterThan(totalAmount)) {
+                    amountExceeded = paymentAmount.subtract(totalAmount)
+                    giftCardAmount = giftCardAmountMoney.subtract(amountExceeded);
+                    giftCardAmount = giftCardAmount.isNegative() ? '' : giftCardAmount.toUnit(2).toFixed(2);
+                    paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount, decliningBalance)
+                    remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
+                    return (Object.assign({}, state, {
+                        giftCardAmount,
+                        remainingAmount
+                    }));
+                }
 
-        case 'GIFT_USE_MAX':
-            paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount, decliningBalance);
-            remainingAmount = calcRemainingAmount(totalAmount, paymentAmount)
-            amountAvailToRedeem = dineroObj(_get(state, 'giftCardData.value.amount', 0), 'USD');
-            if (amountAvailToRedeem.greaterThanOrEqual(remainingAmount)) {
-                giftCardAmount = remainingAmount;
-                remainingAmount = 0;
                 return (Object.assign({}, state, {
                     giftCardAmount,
                     remainingAmount
                 }));
-            } else {
-                giftCardAmount = amountAvailToRedeem;
-                remainingAmount = remainingAmount.subtract(amountAvailToRedeem);
+                break;
+
+            }
+
+        case 'GIFT_USE_MAX':
+            amountAvailToRedeem = dineroObj(_get(state, 'giftCardData.value.amount'));
+            giftCardAmount = amountAvailToRedeem.toUnit(2);
+            giftCardAmountMoney = dineroObj(giftCardAmount * 100)
+            paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount, decliningBalance)
+            remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
+            if (paymentAmount.greaterThan(totalAmount)) {
+                amountExceeded = paymentAmount.subtract(totalAmount)
+                giftCardAmount = giftCardAmountMoney.subtract(amountExceeded);
+                giftCardAmount = giftCardAmount.isNegative() ? '' : giftCardAmount.toUnit(2).toFixed(2);
+                paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount, decliningBalance)
+                remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
                 return (Object.assign({}, state, {
                     giftCardAmount,
                     remainingAmount
                 }));
             }
+
+            return (Object.assign({}, state, {
+                giftCardAmount,
+                remainingAmount
+            }));
             break;
+
 
         case 'GIFT_CARD_NUMBER':
             return (Object.assign({}, state, {
