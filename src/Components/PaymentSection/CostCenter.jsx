@@ -90,7 +90,7 @@ class CostCenter extends React.Component {
         this.props.dispatch(commonActionCreater({
             costCenterType: event.target.value,
             costCenterDepartment: this.props.costCenterDepartment,
-            costCenterAmount: this.props.remainingAmount,
+            costCenterAmount: this.props.remainingAmount.toUnit(2).toFixed(2),
             totalAmount: this.props.totalAmount
 
         }, 'COST_CENTER_CHARGE'));
@@ -248,7 +248,7 @@ function mapStateToProps(state) {
     let costCenterAmount = state.PaymentDetails.costCenterAmount;
     let remainingAmount = state.PaymentDetails.remainingAmount;
     let costCenterDepartment = state.PaymentDetails.costCenterDepartment;
-    let totalAmount = _get(state, 'cart.totalAmount');
+    let totalAmount = _get(state, 'cart.totalMoney');
     return { costCenterType, costCenterAmount, remainingAmount, costCenterDepartment, totalAmount };
 
 }
