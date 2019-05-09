@@ -33,8 +33,12 @@ import CostCenter from './CostCenter';
 import DecliningBalance from './PaymentMethods/DecliningBalance';
 import Dinero from 'dinero.js';
 
+
 let dineroObj = (amount, currency) => {
-    return Dinero({ amount: parseInt(amount), currency });
+    return Dinero({
+        amount: parseInt(amount) || 0,
+        currency: currency || 'USD'
+    });
 }
 
 class PaymentSection extends React.Component {
@@ -110,12 +114,12 @@ class PaymentSection extends React.Component {
                             <li style={disable || disableOffline} onClick={this.handleLoyaltyRedeem} className="giftcard-section">Redeem Points</li> : null
                     )
                     break;
-                    case 6:
+                case 6:
                     options.push(
                         <li style={disable} onClick={this.handleDeclineBalance} variant="outlined" className="card-method" >Declining Balance</li>
                     )
                     break;
-                    
+
 
 
                     {/* <li  className="freedompay">Freedom <br/> Pay</li>      */ }
@@ -145,7 +149,7 @@ class PaymentSection extends React.Component {
     handleCostCenter = () => {
         this.setState({ showCostCenter: true })
     }
-    handleDeclineBalance=()=>{
+    handleDeclineBalance = () => {
         this.setState({ showDeclineBalance: true })
 
     }
@@ -169,8 +173,8 @@ class PaymentSection extends React.Component {
         let paymentTimeStamp = {
             seconds: parseInt(new Date().getTime() / 1000),
         }
-        _set(value, 'amount', parseFloat(this.props.giftCardAmount));
-        _set(value, 'currencyCode', '$');
+        _set(value, 'amount', dineroObj(this.props.giftCardAmount*100).getAmount())
+        _set(value, 'currency', 'USD');
         let data = {
             giftCardId: _get(this.state, 'giftCard.id', ''),
             value: value,
@@ -345,6 +349,25 @@ class PaymentSection extends React.Component {
             this.props.dispatch(commonActionCreater({ decliningBalance: '', totalAmount: this.props.totalAmount }, 'DECLINING_BALANCE'));
         }
     }
+    dineroObj = (amount, currency) => {
+        return Dinero({
+            amount: parseInt(amount) || 0,
+            currency: currency || 'USD'
+        });
+    }
+
+    calcPaymentAmount = (a, b, c, d, e, f, g) => {
+        let paymentAmount = dineroObj(0);
+        a = dineroObj(a * 100);
+        b = dineroObj(b * 100);
+        c = dineroObj(c * 100);
+        d = dineroObj(d * 100);
+        e = dineroObj(e * 100);
+        f = dineroObj(f * 100);
+        g = dineroObj(g * 100);
+        paymentAmount = paymentAmount.add(a).add(b).add(c).add(d).add(e).add(f).add(g)
+        return paymentAmount;
+    };
 
     makReqObj = async (offline) => {
         let { customer, cartItems, totalAmount, sessionId } = this.props;
@@ -354,13 +377,11 @@ class PaymentSection extends React.Component {
             obj.productId = item.doc.product.id;
             obj.qty = item.qty;
             obj.itemEffectiveTotal = item.itemEffectiveTotal;
-            obj.itemRegularTotal = item.itemRegularTotal;
-            obj.cartDiscountPercent = item.cartDiscountPercent;
-            obj.itemDiscountPercent = item.itemDiscountPercent;
-            obj.employeeDiscountPercent = item.employeeDiscountPercent;
-            obj.itemTotalDiscountAmount = item.itemTotalDiscountAmount;
-            obj.itemSubTotal = item.itemSubTotal;
-            obj.itemTaxPercent = item.itemTaxPercent;
+            obj.itemRegularTotal = item.itemRegularTotalMoney;
+            obj.cartDiscountAmount = item.cartDiscountMoney;
+            obj.itemDiscountAmount = item.itemDiscountMoney
+            obj.employeeDiscountAmount = item.employeeDiscountMoney
+            obj.itemSubTotal = item.subTotal
             obj.itemTaxAmount = item.itemTaxAmount
             obj.saleType = item.saleType;
             obj.product = item.doc.product;
@@ -371,29 +392,29 @@ class PaymentSection extends React.Component {
         if ((parseFloat(this.props.cashAmount) || 0)) {
             payments.push({
                 paymentMethod: 0,
-                paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.cashAmount) || 0) },
+                paymentAmount: { currency: 'USD', amount: (dineroObj(this.props.cashAmount*100).getAmount()) },
                 paymentReference: ""
             })
         }
         // if ((parseFloat(this.props.employeePay) || 0)) {
         //     payments.push({
         //         paymentMethod: 'EMPLOYEE_PAYROLL_DEDUCT',
-        //         paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.employeePay) || 0) },
+        //         paymentAmount: { currency: 'USD', amount: (parseFloat(this.props.employeePay) || 0) },
         //         paymentReference: ""
         //     })
         // }
         if ((parseFloat(this.props.cardAmount) || 0)) {
             payments.push({
                 paymentMethod: 1,
-                paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.cardAmount) || 0) },
+                paymentAmount: { currency: 'USD', amount:(dineroObj(this.props.cardAmount*100).getAmount())},
                 paymentReference: this.props.cardRefrenceId
             })
         }
         if ((parseFloat(this.props.giftCardAmount) || 0)) {
             let url = 'Sale/RedeemValueFromGiftCard';
             let value = {};
-            _set(value, 'amount', parseFloat(this.props.giftCardAmount));
-            _set(value, 'currencyCode', '$');
+            _set(value, 'amount',dineroObj(this.props.giftCardAmount*100).getAmount());
+            _set(value, 'currency', 'USD');
             let data = {
                 retailerId: localStorage.getItem('retailerId'),
                 terminalId: localStorage.getItem('terminalId'),
@@ -412,15 +433,15 @@ class PaymentSection extends React.Component {
             }))
             payments.push({
                 paymentMethod: 2,
-                paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.giftCardAmount) || 0) },
+                paymentAmount: { currency: 'USD', amount:dineroObj(this.props.giftCardAmount*100).getAmount()},
                 paymentReference: apiResponse,
             })
         }
         if ((parseFloat(this.props.decliningBalance) || 0)) {
             let url = 'Payment/DecliningBalance/Save';
             let value = {};
-            _set(value, 'amount', parseFloat(this.props.decliningBalance));
-            _set(value, 'currencyCode', '$');
+            _set(value, 'amount',dineroObj(this.props.decliningBalance*100).getAmount());
+            _set(value, 'currency', 'USD');
             let data = {
                 retailerId: localStorage.getItem('retailerId'),
                 terminalId: localStorage.getItem('terminalId'),
@@ -438,7 +459,7 @@ class PaymentSection extends React.Component {
             }))
             payments.push({
                 paymentMethod: 6,
-                paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.decliningBalance) || 0) },
+                paymentAmount: { currency: 'USD', amount: dineroObj(this.props.decliningBalance*100).getAmount() },
                 paymentReference: apiResponse.referenceId,
             })
         }
@@ -454,7 +475,7 @@ class PaymentSection extends React.Component {
                 storeId: localStorage.getItem('storeId'),
                 pointsToRedeem: parseInt(this.props.loyaltyRedeemPoints),
             }
-            LoyaltyValue = parseFloat((this.props.loyaltyRedeem).toFixed(2))
+            LoyaltyValue = dineroObj(this.props.loyaltyRedeem*100).getAmount();
             let apiResponse = await this.props.dispatch(postData(`${APPLICATION_BFF_URL}${url}`, data, 'GET_REF_FROM_LOYALTY_REDEEM', {
                 init: 'GET_REF_FROM_LOYALTY_REDEEM_INIT',
                 success: 'GET_REF_FROM_LOYALTY_REDEEM_SUCCESS',
@@ -462,7 +483,7 @@ class PaymentSection extends React.Component {
             }))
             payments.push({
                 paymentMethod: 5,
-                paymentAmount: { currencyCode: '$', amount: (parseFloat(LoyaltyValue) || 0) },
+                paymentAmount: { currency: 'USD', amount: LoyaltyValue },
                 paymentReference: apiResponse,
             })
         }
@@ -477,7 +498,7 @@ class PaymentSection extends React.Component {
                 storeId: localStorage.getItem('storeId'),
                 departmentName: this.props.costCenterDepartment,
                 chargeType: this.props.costCenterType,
-                value: { currencyCode: '$', amount: (parseFloat(this.props.costCenterAmount) || 0) },
+                value: { currency: 'USD', amount: dineroObj(this.props.costCenterAmount*100).getAmount() },
             }
             let apiResponse = await this.props.dispatch(postData(`${APPLICATION_BFF_URL}${url}`, data, 'GET_COST_CENTER_CHARGE', {
                 init: 'GET_COST_CENTER_CHARGE_INIT',
@@ -486,7 +507,7 @@ class PaymentSection extends React.Component {
             }))
             payments.push({
                 paymentMethod: 3,
-                paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.costCenterAmount) || 0) },
+                paymentAmount: { currency: 'USD', amount: (parseFloat(this.props.costCenterAmount) || 0) },
                 paymentReference: apiResponse,
             })
         }
@@ -501,8 +522,8 @@ class PaymentSection extends React.Component {
                 operatorId: localStorage.getItem('userId'),
                 storeId: localStorage.getItem('storeId'),
                 value: {
-                    currencyCode: '$',
-                    amount: ((parseFloat(this.props.employeePay) || 0))
+                    currency: 'USD',
+                    amount:dineroObj(this.props.employeePay*100).getAmount()
                 }
             }
             let apiResponse = await this.props.dispatch(postData(`${APPLICATION_BFF_URL}${url}`, data, 'GET_REF_FROM_LOYALTY_REDEEM', {
@@ -512,18 +533,14 @@ class PaymentSection extends React.Component {
             }))
             payments.push({
                 paymentMethod: 4,
-                paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.employeePay) || 0) },
+                paymentAmount: { currency: 'USD', amount:dineroObj(this.props.employeePay*100).getAmount()},
                 paymentReference: apiResponse
             })
         }
 
-        let totalAmountPaid =
-            (parseFloat(this.props.cardAmount) || 0) +
-            (parseFloat(this.props.employeePay) || 0) +
-            (parseFloat(this.props.cashAmount || 0)) +
-            (parseFloat(this.props.giftCardAmount) || 0) +
-            (parseFloat(LoyaltyValue || 0)) +
-            (parseFloat(this.props.costCenterAmount || 0))
+
+
+        let totalAmountPaid = this.calcPaymentAmount(this.props.cashAmount,this.props.cardAmount,this.props.employeePay,this.props.giftCardAmount,LoyaltyValue,this.props.costCenterAmount);
 
         let reqObj = {
             customerId: customer.id,
@@ -536,7 +553,7 @@ class PaymentSection extends React.Component {
             payments,
             miscSaleItems: [],
             totalAmount,
-            totalAmountPaid: { currencyCode: '$', amount: totalAmountPaid },
+            totalAmountPaid: { currency: 'USD', amount: totalAmountPaid.getAmount() },
             cartDiscountAmount,
             employeeDiscountAmount,
             itemDiscountAmount,
@@ -544,7 +561,7 @@ class PaymentSection extends React.Component {
             offline,
             saleComment: _get(this.state, 'comment', ''),
             saleTimeStamp: { seconds: parseInt((new Date().getTime() / 1000)) },
-            changeDue: { currencyCode: '$', amount: this.props.remainingAmount.getAmount() }
+            changeDue: { currency: 'USD', amount: this.props.remainingAmount.isNegative() ? this.props.remainingAmount.multiply(-1).getAmount():this.props.remainingAmount.getAmount() }
 
         };
         if (offline) {
@@ -768,12 +785,12 @@ class PaymentSection extends React.Component {
                             {
                                 this.state.showCostCenter ?
                                     <CostCenter
-                                    currentFocus={this.currentFocus}
+                                        currentFocus={this.currentFocus}
 
                                         onRemovePaymentMethod={this.onRemovePaymentMethod}
                                     /> : null
                             }
-                             {
+                            {
                                 this.state.showDeclineBalance ?
                                     <DecliningBalance
                                         currentFocus={this.currentFocus}
@@ -857,7 +874,7 @@ function mapStateToProps(state) {
     let giftPayNumber = _get(state, 'PaymentDetails.giftPayNumber');
     let employeePay = _get(state, 'PaymentDetails.employeePay');
     let remainingAmount = _get(state, 'PaymentDetails.remainingAmount');
-    remainingAmount = remainingAmount || Dinero({ amount: 0, currency: 'USD'})
+    remainingAmount = remainingAmount || Dinero({ amount: 0, currency: 'USD' })
     let giftCardData = _get(state, 'PaymentDetails.giftCardData');
     let cart = _get(state, 'cart');
     let redemptionRules = _get(state, 'RedemptionRules');
