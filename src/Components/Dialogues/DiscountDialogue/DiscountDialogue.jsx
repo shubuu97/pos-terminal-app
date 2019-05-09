@@ -138,7 +138,6 @@ class DiscountDialogue extends React.Component {
 
         }
         else {
-            debugger
             // * Cart Discount checks and calculations
             if (this.state.type == '%') {
                 let allowedCartDiscount = _get(this.props, 'cart.allowedCartDiscount', 0)
