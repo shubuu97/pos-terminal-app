@@ -16,6 +16,7 @@ import { connect } from 'react-redux';
 import genericPostData from '../../../Global/dataFetch/genericPostData';
 import roundUp from '../../../Global/PosFunctions/roundUp';
 import showErrorAlert from '../../../Global/PosFunctions/showErrorAlert';
+import dineroObj from '../../../Global/PosFunctions/dineroObj';
 
 let regex = /^\d*[\.\d]{1,3}$/;
 
@@ -193,7 +194,7 @@ class GiftPay extends React.Component {
                             !_isEmpty(this.props.giftCardData) ? 
                             <div className='flex-row align-center justify-space-between'>
                                 <span>
-                                    Value: {roundUp(_get(this.props, 'giftCardData.value.amount', 0), 2)}
+                                    Value: {dineroObj(_get(this.props, 'giftCardData.value.amount', 0)).toFormat('$0,0.00')}
                                 </span>
                                 <FormControlLabel
                                     control={
