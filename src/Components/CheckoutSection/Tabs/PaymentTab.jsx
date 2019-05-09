@@ -42,7 +42,7 @@ class PaymentTab extends React.Component {
         let { checkoutactionArea, checkoutMainPart, checkoutCustomerArea, checkoutcalcArea, checkoutcartArea, cart } = this.props
         let regularTotal = _get(cart,'regularTotalMoney') || DineroObj()
         let totalDiscountMoney = _get(cart, 'totalDiscountMoney') || DineroObj()
-        let taxMoney = _get(cart, 'taxMoney') || DineroObj()
+        let totalTaxAmount = _get(cart, 'totalTaxAmount') || DineroObj()
         let totalMoney = _get(cart, 'totalMoney') || DineroObj()
         return (
             <div className="payment-section" style={{ height: checkoutMainPart }}>
@@ -106,7 +106,7 @@ class PaymentTab extends React.Component {
                                 </div>
                                 <div className='each-detail flex-column align-center'>
                                     <span className='summary-title'>Taxes</span>
-                                    <span className='summary-money'>{taxMoney.toFormat('$0,0.00')}</span>
+                                    <span className='summary-money'>{totalTaxAmount.toFormat('$0,0.00')}</span>
                                 </div>
                             </div>
                             <div className='total-area flex-column '>

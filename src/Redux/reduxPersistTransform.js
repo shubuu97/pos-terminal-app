@@ -31,10 +31,10 @@ const SetTransform = createTransform(
    cart.employeeDiscountMoney = Dinero(cart.employeeDiscountMoney);
    cart.netTotalMoney = Dinero(cart.netTotalMoney);
    cart.regularTotalMoney = Dinero(cart.regularTotalMoney);
-   cart.taxMoney = Dinero(cart.taxMoney);
    cart.totalDiscountMoney = Dinero(cart.totalDiscountMoney);
    cart.totalItemDiscountMoney = Dinero(cart.totalItemDiscountMoney);
    cart.totalMoney = Dinero(cart.totalMoney);
+   cart.totalTaxAmount = Dinero(cart.totalTaxAmount)
     return { ...cart};
   },
   // define which reducers this transform gets called for.
