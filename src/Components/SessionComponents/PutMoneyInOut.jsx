@@ -67,7 +67,7 @@ class PutMoneyInOut extends React.Component {
                                 variant = 'outlined'
                                 rowsMax={4}
                                 value={this.state.reason}
-                                onChange={this.handleChange('reason')}
+                                onChange={(event)=>this.setState({reason:event.target.value})}
                                 margin="normal" />
                         </DialogContentText>
                     </DialogContent>

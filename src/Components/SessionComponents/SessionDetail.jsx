@@ -15,6 +15,8 @@ import ZReport from './ZReport';
 import DialogHoc from '../../Global/Components/HOC/CommonDialogHoc';
 import Pouchdb from 'pouchdb';
 import SyncBeforeSession from './SyncBeforeSessionEnd';
+import dineroObj from '../../Global/PosFunctions/dineroObj';
+import splitDot from '../../Global/PosFunctions/splitDot';
 
 let ZReportDialog = DialogHoc(ZReport);
 
@@ -103,7 +105,9 @@ class SessionDetail extends React.Component {
     }
     handleEndSession = async () => {
         if (this.state.realClosingBalance) {
-            if (this.calDiffrence() != 0 && this.state.closeReason == '') {
+            debugger;
+            let difference = dineroObj(splitDot(this.state.realClosingBalance)).subtract(dineroObj(_get(this.state, 'session.currentBalance.amount', 0))).getAmount();
+            if (difference != 0 && this.state.closeReason == '') {
                 this.setState({ showReasonModal: true });
                 return;
             }
@@ -194,7 +198,7 @@ class SessionDetail extends React.Component {
         let reqObj = {};
         let url
         reqObj.SessionId = _get(this.state, 'session.id');
-        reqObj.amount = { currencyCode: "$", amount: parseFloat(amount) };
+        reqObj.amount = { currency: "USD", amount: parseInt(splitDot(amount)) };
         reqObj.reason = reason;
         if (this.state.txType == 'in') {
             reqObj.adjustmentType = 'CASHIN';
@@ -267,7 +271,8 @@ class SessionDetail extends React.Component {
                 total = total + _get(transaction, 'amount.amount')
             }
         })
-        return parseFloat(total).toFixed(2);
+        
+        return dineroObj(total).toFormat('$0,0.00');
 
     }
     calcNegTxnVal = () => {
@@ -278,19 +283,19 @@ class SessionDetail extends React.Component {
                 total = total + _get(transaction, 'amount.amount')
             }
         })
-        return parseFloat(total).toFixed(2);
+        return dineroObj(total).toFormat('$0,0.00');
 
     }
     calDiffrence = () => {
         let difference
         if (_get(this.state, 'session.status', '') == "closed") {
-            difference = parseFloat(_get(this, 'state.session.closingBalance.amount', 0))-_get(this.state, 'session.currentBalance.amount', 0) 
+            difference = dineroObj(_get(this, 'state.session.closingBalance.amount', 0)).subtract(dineroObj(_get(this.state, 'session.currentBalance.amount', 0))).toFormat('$0,0.00'); 
         }
         else {
-            difference = this.state.realClosingBalance-_get(this.state, 'session.currentBalance.amount', 0)
+            difference = dineroObj(splitDot(this.state.realClosingBalance)).subtract(dineroObj(_get(this.state, 'session.currentBalance.amount', 0))).toFormat('$0,0.00');
 
         }
-        return parseFloat(difference).toFixed(2);
+        return difference
     }
     specifyReason = (closeReason) => {
         this.setState({ closeReason, showReasonModal: false });
@@ -367,23 +372,23 @@ class SessionDetail extends React.Component {
                 <div>
                     <div className='mui-row opening-bal-row'>
                         <div className='mui-col-md-3 secondary-color'>Opening Balance</div>
-                        <div className='mui-col-md-3'>${parseFloat(openingBalance || 0).toFixed(2)}</div>
+                        <div className='mui-col-md-3'>{dineroObj(openingBalance).toFormat('$0,0.00')}</div>
                         <div className="mui-col-md-6 real-closing-bal">
                             <div className='mui-col-md-6 secondary-color'>Real Closing Balance</div>
-                            <div className='mui-col-md-6'>${_get(this.state, 'session.status', '') == "closed" ? parseFloat(_get(this, 'state.session.closingBalance.amount', 0)).toFixed(2) : parseFloat(_get(this, 'state.realClosingBalance', 0)).toFixed(2)}</div>
+                            <div className='mui-col-md-6'>{_get(this.state, 'session.status', '') == "closed" ? dineroObj(_get(this, 'state.session.closingBalance.amount', 0)).toFormat('$0,0.00') : dineroObj(splitDot(_get(this, 'state.realClosingBalance', 0))).toFormat('$0,0.00')}</div>
                         </div>
                     </div>
                     <div className='mui-row trans-row-1'>
                         <div className='mui-col-md-3 primary-color' onClick={this.showPlusTransactionDialog}>+ Transactions</div>
-                        <div className='mui-col-md-3'>${this.calcPlusTxnVal()}</div>
+                        <div className='mui-col-md-3'>{this.calcPlusTxnVal()}</div>
                         <div className="mui-col-md-6 difference">
                             <div className='mui-col-md-6 secondary-color'>Difference</div>
-                            <div className='mui-col-md-6'>${this.calDiffrence()}</div>
+                            <div className='mui-col-md-6'>{this.calDiffrence()}</div>
                         </div>
                     </div>
                     <div className='mui-row trans-row-2'>
                         <div className='mui-col-md-3 primary-color' onClick={this.showNegativeTransactionDialog}>- Transactions</div>
-                        <div className='mui-col-md-3'>${this.calcNegTxnVal()}</div>
+                        <div className='mui-col-md-3'>{this.calcNegTxnVal()}</div>
                         <div className='mui-col-md-6'>
                             {status == 'open' ? <div class="mui-col-md-6 text-right">
                                 <Button
@@ -402,7 +407,7 @@ class SessionDetail extends React.Component {
                     </div>
                     <div className='mui-row closing-bal'>
                         <div className='mui-col-md-3 secondary-color'>Theoretical Closing Balance</div>
-                        <div className='mui-col-md-3'>${parseFloat(_get(this.state, 'session.currentBalance.amount')).toFixed(2)}</div>
+                        <div className='mui-col-md-3'>{dineroObj(_get(this.state, 'session.currentBalance.amount')).toFormat('$0,0.00')}</div>
                         {status == 'open' ? <div className='mui-col-md-6 text-center'>
                             <Button
                                 variant='contained'

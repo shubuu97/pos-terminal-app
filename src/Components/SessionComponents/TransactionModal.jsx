@@ -13,6 +13,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 /* Redux Imports */
 import moment from "moment";
+import dineroObj from '../../Global/PosFunctions/dineroObj';
 /* Component Imports */
 
 function Transition(props) {
@@ -36,7 +37,7 @@ class TransactionModal extends React.Component {
                 return (
                     <div className="flex flex-row justify-space-between mt-20">
                         <div className="flex flex-column justify-center">
-                            <div className="bold pt-10 pl-10 pr-10 pb-10"> ${_get(transaction, 'amount.amount',0).toFixed(2)}</div>
+                            <div className="bold pt-10 pl-10 pr-10 pb-10"> {dineroObj(_get(transaction, 'amount.amount',0)).toFormat('$0,0.00')}</div>
                         </div>
                         <div className="flex flex-column pt-10 pl-10 pr-10 pb-10">
                             <div className="bold">{localStorage.getItem('terminalName')}</div>
@@ -45,7 +46,7 @@ class TransactionModal extends React.Component {
                         </div>
                         <div className="flex flex-column pt-10 pl-10 pr-10 pb-10">
                             <div>Balance</div>
-                            <div className="bold">${total.toFixed(2)}</div>
+                            <div className="bold">{dineroObj(total).toFormat('$0,0.00')}</div>
                         </div>
                     </div>
                 )
@@ -64,7 +65,7 @@ class TransactionModal extends React.Component {
                 return (
                     <div className="flex flex-row justify-space-between mt-20">
                         <div className="flex flex-column justify-center">
-                            <div className="bold pt-10 pl-10 pr-10 pb-10"> ${_get(transaction, 'amount.amount')}</div>
+                        <div className="bold pt-10 pl-10 pr-10 pb-10"> {dineroObj(_get(transaction, 'amount.amount',0)).toFormat('$0,0.00')}</div>
                         </div>
                         <div className="flex flex-column pt-10 pl-10 pr-10 pb-10">
                             <div className="bold">{localStorage.getItem('terminalName')}</div>
@@ -73,7 +74,7 @@ class TransactionModal extends React.Component {
                         </div>
                         <div className="flex flex-column pt-10 pl-10 pr-10 pb-10">
                             <div>Balance</div>
-                            <div className="bold">${total}</div>
+                            <div className="bold">{dineroObj(total).toFormat('$0,0.00')}</div>
                         </div>
                     </div>
                 )

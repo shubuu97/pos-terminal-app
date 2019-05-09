@@ -1,4 +1,5 @@
 import genericPostData from '../dataFetch/genericPostData';
+import splitDot from './splitDot';
 
 const closeSession = ({dispatch,handleSuccess,handleError,denominationDetails,reason,amount,id})=>{
     let closeSessionBody = {};
@@ -7,7 +8,7 @@ const closeSession = ({dispatch,handleSuccess,handleError,denominationDetails,re
     closeSessionBody.operatorId = localStorage.getItem('userId');
     closeSessionBody.closingCashDetails = denominationDetails;
     closeSessionBody.status = 'closed';
-    closeSessionBody.closingBalance = {currencyCode:'$',amount};
+    closeSessionBody.closingBalance = {currency:'USD', amount:parseInt(splitDot(amount))};
     closeSessionBody.id = id
     closeSessionBody.reason = reason;
     genericPostData({
