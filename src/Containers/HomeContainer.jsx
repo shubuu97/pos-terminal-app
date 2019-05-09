@@ -39,10 +39,15 @@ import LockTerminalDialogue from '../Components/Dialogues/LockTerminalDialogue'
 import OfflineTransactionContainer from './OfflineTransactionContainer';
 import Customer from '../Components/CheckoutSection/Customer';
 import SettingContainer from './SettingContainer';
+import Dinero from 'dinero.js';
 
 let SessionDialog = withDialog(SessionContainer)
 let OfflineTransactionDialog = withDialog(OfflineTransactionContainer);
 let SettingDialog = withDialog(SettingContainer);
+
+let DineroInit = (amount, currency, precision) => (
+    Dinero({amount:  parseInt(amount) || 0, currency: currency || 'USD', precision: precision || 2})
+)
 
 
 /* Pose Animation Configs */
@@ -450,7 +455,6 @@ class HomeContainer extends React.Component {
         }
     }
     orderHistorySelect = (selectedSaleTransaction) => {
-        console.log('Class', _get(this.state, 'selectedSaleTransaction', false))
         if (_get(this.state, 'selectedSaleTransaction', false) && _get(this.state, 'selectedSaleTransaction') != selectedSaleTransaction.sale.id) {
             document.getElementById(_get(this.state, 'selectedSaleTransaction.sale.id')).className = 'fwidth card'
         }
@@ -477,7 +481,7 @@ class HomeContainer extends React.Component {
                                 <label className="c-name">{_get(transactions, 'customer.customer.firstName', '') + ' ' + _get(transactions, 'customer.customer.lastName', '')}</label>
                             </div>
                             <div className="mui-col-md-6 text-right">
-                                <label className="c-name">{`Amount: ${_get(transactions, 'sale.totalAmount.currencyCode', '$')} ${_get(transactions, 'sale.totalAmount.amount', 0).toFixed(2)}`}</label>
+                                <label className="c-name">{`Amount: ${(DineroInit(_get(transactions, 'sale.totalAmount.amount', 0), _get(transactions, 'sale.totalAmount.currency', 'USD'))).toFormat('$0,0.00')}`}</label>
                             </div>
                         </div>
                     </div>

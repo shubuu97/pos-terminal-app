@@ -10,13 +10,11 @@ import HandlePrint from '../../../Global/PosFunctions/handlePrint';
 import aobLogo from '../../../assets/images/aobLogodark.png';
 import { connect } from 'react-redux';
 import OrderPrintView from './OrderPrintView';
+import Dinero from 'dinero.js';
 
-
-/* Redux Imports */
-
-/* Component Imports */
-
-
+let DineroInit = (amount, currency, precision) => (
+    Dinero({amount:  parseInt(amount) || 0, currency: currency || 'USD', precision: precision || 2})
+)
 class HistoryDetailArea extends React.Component {
 
     constructor() {
@@ -89,7 +87,9 @@ class HistoryDetailArea extends React.Component {
         const paymentMethodsView = _get(this.props.selectedSaleTransaction, 'sale.payments', []).map((payment) => (
             <div className='flex-row justify-space-between mb-5'>
                 <span className='summary-key'>{this.paymentMethods(_get(payment, 'paymentMethod', 0))}</span>
-                <span className='summary-value'>{`${_get(payment, 'paymentAmount.currencyCode', '$')} ${_get(payment, 'paymentAmount.amount', 0).toFixed(2)}`}</span>
+                <span className='summary-value'>
+                {(DineroInit(_get(payment, 'paymentAmount.amount', 0), _get(payment, 'paymentAmount.currency', 'USD'))).toFormat('$0,0.00')}
+                </span>
             </div>
         ))
         return (
@@ -100,7 +100,7 @@ class HistoryDetailArea extends React.Component {
     }
     summaryPanel = () => {
         let selectedOrder = _get(this.props, "selectedSaleTransaction", []);
-
+console.log(selectedOrder.sale, 'igyfydyty')
         return (
             <div className="mui-col-md-12 flex-column mt-10" >
                 <div className='flex-row justify-space-between mb-5'>
@@ -120,23 +120,33 @@ class HistoryDetailArea extends React.Component {
                 }
                 <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Tax: `}</span>
-                    <span className='summary-value'>{_get(selectedOrder, 'sale.totalTaxAmount.currencyCode', '$') + _get(selectedOrder, 'sale.totalTaxAmount.amount', 0).toFixed(2)}</span>
+                    <span className='summary-value'>
+                    {(DineroInit(_get(selectedOrder, 'sale.totalTaxAmount.amount', 0), _get(selectedOrder, 'sale.totalTaxAmount.currency', 'USD'))).toFormat('$0,0.00')}
+                    </span>
                 </div>
                 <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Grand Total: `}</span>
-                    <span className='summary-value'>{`${_get(selectedOrder, 'sale.totalAmount.currencyCode', '$')}${_get(selectedOrder, 'sale.totalAmount.amount', 0).toFixed(2)}`}</span>
+                    <span className='summary-value'>
+                    {(DineroInit(_get(selectedOrder, 'sale.totalAmount.amount', 0), _get(selectedOrder, 'sale.totalAmount.currency', 'USD'))).toFormat('$0,0.00')}
+                    </span>
                 </div>
                 <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Returned Amount: `}</span>
-                    <span className='summary-value'>{_get(selectedOrder, 'sale.totalRefundAmount.currencyCode', '$') + this.calcReturnedAmountTotal()}</span>
+                    <span className='summary-value'>
+                    {(DineroInit(this.calcReturnedAmountTotal(), _get(selectedOrder, 'sale.totalRefundAmount.currency', 'USD'))).toFormat('$0,0.00')}
+                    </span>
                 </div>
                 <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Total Paid: `}</span>
-                    <span className='summary-value'>{`${_get(selectedOrder, 'sale.totalAmountPaid.currencyCode', '$')}${_get(selectedOrder, 'sale.totalAmountPaid.amount', '0').toFixed(2)}`}</span>
+                    <span className='summary-value'>
+                    {(DineroInit(_get(selectedOrder, 'sale.totalAmountPaid.amount', 0), _get(selectedOrder, 'sale.totalAmountPaid.currency', 'USD'))).toFormat('$0,0.00')}
+                    </span>
                 </div>
                 <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Change: `}</span>
-                    <span className='summary-value'>{_get(selectedOrder, 'sale.changeDue.currencyCode', 0) + _get(selectedOrder, 'sale.changeDue.amount', 0).toFixed(2)}</span>
+                    <span className='summary-value'>
+                    {(DineroInit(_get(selectedOrder, 'sale.changeDue.amount', 0), _get(selectedOrder, 'sale.changeDue.currency', 'USD'))).toFormat('$0,0.00')}
+                    </span>
                 </div>
                 <div className="flex-column">
                     <span>Payment Methods</span>
@@ -180,7 +190,7 @@ class HistoryDetailArea extends React.Component {
         let TotalRefundAmount = returns.reduce((acc, returnObj) => {
             return (acc + returnObj.refundTotal.amount)
         }, 0);
-        return TotalRefundAmount.toFixed(2);
+        return TotalRefundAmount;
 
     }
 
