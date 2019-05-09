@@ -148,8 +148,8 @@ const cartItem = (state = {
                     let key = _findIndex(discountableItemsIndex, discountableItemsIndex => discountableItemsIndex == index)
                     if (key >= 0) {
                         item.itemDiscountableMoney = discountableMoneyAllocation[key]
-                        item.cartDiscountMoney = cartDiscountAllocation[key]
-                        item.empDiscountMoney = employeeDiscountAllocation[key]
+                        item.cartDiscountMoney = cartDiscountAllocation[key] || DineroFunc(0)
+                        item.empDiscountMoney = employeeDiscountAllocation[key] || DineroFunc(0)
                         item.allowedItemDiscountMoney = item.itemDiscountableMoney.subtract(item.empDiscountMoney).subtract(item.cartDiscountMoney)
                         item.allowedCartDiscountPercent = ((item.allowedItemDiscountMoney).getAmount()/(item.itemRegularTotalMoney).getAmount())*100
                     } else {
@@ -180,7 +180,7 @@ const cartItem = (state = {
 
 
                 // * Checking if Cart Discount Exceeds or not
-                if (item.itemDiscountableMoney.lessThan(totalItemDiscount)) {
+                if (((item.itemDiscountableMoney).getAmount() + 1) < (totalItemDiscount.getAmount())) {
                     cartDiscount = {
                         cartDiscountPercent: 0,
                         cartDiscountMoney: DineroFunc(0)
