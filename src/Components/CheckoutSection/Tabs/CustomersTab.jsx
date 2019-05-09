@@ -100,10 +100,15 @@ class CustomerTab extends React.Component {
         }
 
         let cartDiscountObj = {}
-        cartDiscountObj.type = '$'
-        cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountMoney', 0).toUnit()
+        if (_get(this.props, 'cart.cartDiscount.isPercentage', false)) {
+            cartDiscountObj.type = '%'
+            cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountPercent', 0)
+        }
+        else {
+            cartDiscountObj.type = '$'
+            cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountMoney', 0).getAmount()
+        }
         cartDiscountObj.cartItems = _get(this.props, 'cart.cartItems', [])
-
         this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
         this.props.dispatch(commonActionCreater(doc.value, 'ADD_CUSTOMER_TO_CART'));
 
