@@ -78,7 +78,6 @@ const cartItem = (state = {
                     discountableMoney = discountableMoney.add(subTotal)
                     discountableItemsIndex.push(index)
                     discountableItems.push(subTotal.getAmount())
-                    debugger
                 }
             })
             // * calculating max discount
@@ -122,7 +121,6 @@ const cartItem = (state = {
             let discountableMoneyAllocation = []
 
             if (discountableItems.length > 0) {
-                debugger
                 discountableMoneyAllocation = allowedCartDiscountMoney.allocate(discountableItems)
             }
 
