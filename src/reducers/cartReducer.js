@@ -58,7 +58,7 @@ const cartItem = (state = {
             // After Discount
             let netTotalMoney = DineroFunc(0)
             // Tax
-            let taxMoney = DineroFunc(0)
+            let totalTaxAmount = DineroFunc(0)
             // After Tax
             let totalMoney = DineroFunc(0)
 
@@ -218,7 +218,7 @@ const cartItem = (state = {
                 regularTotalMoney = regularTotalMoney.add(item.itemRegularTotalMoney);
                 cartQty += _get(item, 'qty', 0);
                 netTotalMoney = netTotalMoney.add(item.subTotal);
-                taxMoney = taxMoney.add(item.itemTaxAmount);
+                totalTaxAmount = totalTaxAmount.add(item.itemTaxAmount);
                 totalMoney = totalMoney.add(item.itemEffectiveTotal);
             })
             totalDiscountMoney = employeeDiscountMoney.add(cartDiscountMoney).add(totalItemDiscountMoney);
@@ -241,7 +241,7 @@ const cartItem = (state = {
                 cartQty,
                 totalDiscountMoney,
                 netTotalMoney,
-                taxMoney,
+                totalTaxAmount,
                 totalMoney,
             });
 

@@ -39,7 +39,7 @@ class CalculationSection extends React.Component {
         let { checkoutcalcArea, cartItems, cart } = this.props
         let cartRegularTotal = _get(cart, 'regularTotalMoney', Dinero({ amount: 0, currency: 'USD' }))
         let cartNetTotal = _get(cart, 'netTotalMoney', Dinero({ amount: 0, currency: 'USD' }))
-        let taxMoney = _get(cart, 'taxMoney', Dinero({ amount: 0, currency: 'USD' }))
+        let totalTaxAmount = _get(cart, 'totalTaxAmount', Dinero({ amount: 0, currency: 'USD' }))
         let totalMoney = _get(cart, 'totalMoney', Dinero({ amount: 0, currency: 'USD' }))
 
         // Discounts
@@ -99,7 +99,7 @@ class CalculationSection extends React.Component {
                         </div>
                         <div className='cart-each-details'>
                             <span className='cart-title'>Tax</span>
-                            <span className='cart-amount'>{taxMoney.toFormat('$0,0.00')}</span>
+                            <span className='cart-amount'>{totalTaxAmount.toFormat('$0,0.00')}</span>
                         </div>
                     </div>
                     <div className="cart-total">
