@@ -62,7 +62,7 @@ class GiftCardModal extends React.Component {
                 giftCode: '',
                 value: {
                     amount: 0,
-                    currencyCode: '$'
+                    currency: 'USD'
                 }
             },
             isGiftCodeError: true,
@@ -155,6 +155,7 @@ class GiftCardModal extends React.Component {
             data.retailerId = localStorage.getItem('retailerId');
             data.storeId = localStorage.getItem('storeId');
             _set(data, 'createdOn.seconds', parseInt((new Date().getTime()) / 1000));
+            _set(data, 'value.amount', data.value.amount * 100)
         }
         let url = 'GiftCard/Create';
         this.getExistingGiftCard(url, data, this.handleSaveGiftDataSuccess, this.handleSaveGiftDataError);
@@ -170,8 +171,8 @@ class GiftCardModal extends React.Component {
             _set(doc, 'product.id', _get(this.props, 'giftCard.id', ''));
             _set(doc, 'product.isGiftCard', true);
             _set(doc, 'product.name', _get(this.state, 'giftCard.giftCode', ''));
-            _set(doc, 'product.salePrice.currency', _get(this.state, 'giftCard.value.currencyCode', ''));
-            _set(doc, 'product.salePrice.amount', _get(this.state, 'giftCard.value.amount', 0) * 100);
+            _set(doc, 'product.salePrice.currency', _get(this.state, 'giftCard.value.currency', 'USD'));
+            _set(doc, 'product.salePrice.amount', _get(this.state, 'giftCard.value.amount', 0));
             let data = {
                 id: _get(this.props, 'giftCard.id', ''),
                 value: _get(this.state, 'giftCard.value', {}),

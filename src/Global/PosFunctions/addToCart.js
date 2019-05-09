@@ -8,6 +8,8 @@ import _find from 'lodash/find'
 import { commonActionCreater } from '../../Redux/commonAction';
 
 const addToCart = (product, cartItems, cart, quantity, dispatch) => {
+    let saleType = 0
+    _get(product.doc.product,'isGiftCard') ? saleType = 1 : saleType = 0
     let reqObj = []
     if (_isEmpty(_find(cartItems, product))) {
         reqObj = [
@@ -15,7 +17,7 @@ const addToCart = (product, cartItems, cart, quantity, dispatch) => {
             {
                 ...product,
                 qty: quantity,
-                saleType: 0
+                saleType
             }
         ];
     } else {
