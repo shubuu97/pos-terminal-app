@@ -786,7 +786,6 @@ class PaymentSection extends React.Component {
                                 this.state.showCostCenter ?
                                     <CostCenter
                                         currentFocus={this.currentFocus}
-
                                         onRemovePaymentMethod={this.onRemovePaymentMethod}
                                     /> : null
                             }

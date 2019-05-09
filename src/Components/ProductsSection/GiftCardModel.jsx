@@ -22,7 +22,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { withStyles } from '@material-ui/core/styles';
 import _findIndex from 'lodash/findIndex';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import addToCart from '../../Global/PosFunctions/addToCart'
+import addToCart from '../../Global/PosFunctions/addToCart';
 
 function Transition(props) {
     return <Slide direction="down" {...props} />;
@@ -61,7 +61,7 @@ class GiftCardModal extends React.Component {
             giftCard: {
                 giftCode: '',
                 value: {
-                    amount: '',
+                    amount: 0,
                     currencyCode: '$'
                 }
             },
@@ -91,23 +91,26 @@ class GiftCardModal extends React.Component {
 
     handleGetGiftcardDataSuccess = () => {
         let { giftCard } = this.props;
+        debugger
         if (giftCard) {
+            debugger
             let status = _get(giftCard, 'status', 0);
             if (giftCard.giftCode && status !== 0) {
                 giftCard.giftCode = '';
-                _set(giftCard, 'value.amount', '');
+                _set(giftCard, 'value.amount', 0);
                 this.setState({
                     giftCard,
                     giftCodeMsg: 'This giftcode already exist.',
                     isGiftCodeError: true
-                })
-            } else {
-                _set(giftCard, 'value.amount', '');
-                _set(giftCard, 'value.currencyCode', '$');
-                this.setState({
-                    giftCard
-                })
+                })    
             }
+            //  else {
+            //     _set(giftCard, 'value.amount', 0);
+            //     _set(giftCard, 'value.currencyCode', '$');
+            //     this.setState({
+            //         giftCard
+            //     })
+            // }
         } else if (giftCard == null) {
             this.setState({ isGiftCodeError: false, giftCodeMsg: '' })
         }
@@ -117,7 +120,7 @@ class GiftCardModal extends React.Component {
         this.setState({ isGiftCodeError: false })
     }
 
-    handleSaveGiftDataSuccess = () => {
+    handleSaveGiftDataSuccess = (data) => {
         let { giftCard } = this.props;
         if (giftCard) {
             this.setState({ isLoading: false })
@@ -144,7 +147,7 @@ class GiftCardModal extends React.Component {
         let url1 = 'GiftCard/GetByCodeAndStore';
         let reqBody = {
             storeId: localStorage.getItem('storeId'),
-            code: val,
+            code: val
         }
         this.getExistingGiftCard(url1, reqBody, this.handleGetGiftcardDataSuccess, this.handleGetGiftCardDataError);
 
@@ -166,12 +169,6 @@ class GiftCardModal extends React.Component {
             let cartItems = _get(this, 'props.cart.cartItems', []);
             let cart = _get(this, 'props.cart', {});
             let doc = {};
-            let isExist = false
-            cartItems.map(item => {
-                if (item.id == this.props.giftCard.id) {
-                    isExist = true
-                }
-            })
             _set(doc, 'product.id', _get(this.props, 'giftCard.id', ''));
             _set(doc, 'product.isGiftCard', true);
             _set(doc, 'product.name', _get(this.state, 'giftCard.giftCode', ''));
@@ -183,31 +180,37 @@ class GiftCardModal extends React.Component {
                 doc: doc,
             }
             addToCart(data, cartItems, cart, 1, this.props.dispatch)
-            let reqObj
-            if (isExist) {
-                let index = _findIndex(cartItems, ['id', this.props.giftCard.id]);
-                reqObj = [
-                    ...cartItems
-                ]
-                reqObj[index].doc.product.salePrice.amount = this.state.giftCard.value.amount;
-            } else {
-                reqObj = [
-                    ...cartItems,
-                    {
-                        ...data,
-                        qty: 1,
-                        saleType: 1,
-                    }
-                ];
-            }
             this.props.handleClose();
+
+            // let reqObj
+            // if (isExist) {
+            //     let index = _findIndex(cartItems, ['id', this.props.giftCard.id]);
+            //     reqObj = [
+            //         ...cartItems
+            //     ]
+            //     reqObj[index].doc.product.salePrice.price = this.state.giftCard.value.amount;
+            // } else {
+            //     reqObj = [
+            //         ...cartItems,
+            //         {
+            //             ...data,
+            //             qty: 1,
+            //             saleType: 1,
+            //         }
+            //     ];
+            // }
         }
     }
 
     handleBlur = (e) => {
-        if (this.state.giftCard.value.amount == '') {
-            this.setState({ isGiftValueError: true, giftValueMsg: 'Please enter gift value.' })
-        }
+        this.props.cart.cartItems.map(item => {
+            if(item.doc.product.name == Number(this.state.giftCard.giftCode)) {
+                this.setState({isGiftCodeError: true, giftCodeMsg: 'Gift Code already added in cart.'})
+            } else {
+                this.setState({isGiftCodeError: false, giftCodeMsg: ''})
+            }
+        })
+        
         let val = _get(e, 'target.value', '');
         let url = 'GiftCard/GetByCodeAndStore';
         let data = {
@@ -219,17 +222,16 @@ class GiftCardModal extends React.Component {
 
     handleGiftCodeChange = (e, name) => {
         let val = _get(e, 'target.value', '');
-        this.props.cart.cartItems.map(item => {
-            if (item.doc.product.name == Number(val)) {
-                this.setState({ isGiftCodeError: true, giftCodeMsg: 'Gift Code already added in cart.' })
-            } else {
-                this.setState({ isGiftCodeError: false, giftCodeMsg: '' })
-            }
-        })
-        if (val == '') {
-            this.setState({ isGiftCodeError: true })
+        if(val !== '') {
+            this.props.cart.cartItems.map(item => {
+                if (item.doc.product.name == Number(val)) {
+                    this.setState({ isGiftCodeError: true, giftCodeMsg: 'Gift Code already added in cart.' })
+                } else {
+                    this.setState({ isGiftCodeError: false, giftCodeMsg: '' })
+                }
+            })
         } else {
-            this.setState({ isGiftCodeError: false })
+            this.setState({ isGiftCodeError: true, giftCodeMsg: 'Please enter a gift code.' })
         }
         let giftCard = _get(this.state, 'giftCard', {});
         _set(giftCard, 'giftCode', val);
@@ -249,7 +251,8 @@ class GiftCardModal extends React.Component {
     }
 
     render() {
-        console.log(this.state.isError, 'cheking error')
+        console.log(this.state.isGiftCodeError, 'ugufuyfhfyf')
+        console.log(this.state.isGiftValueError, 'ugufuyfhfyf')
         return (
             <div>
                 <Dialog
