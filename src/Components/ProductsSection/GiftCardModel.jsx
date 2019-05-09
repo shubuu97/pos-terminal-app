@@ -250,8 +250,6 @@ class GiftCardModal extends React.Component {
     }
 
     render() {
-        console.log(this.state.isGiftCodeError, 'ugufuyfhfyf')
-        console.log(this.state.isGiftValueError, 'ugufuyfhfyf')
         return (
             <div>
                 <Dialog
