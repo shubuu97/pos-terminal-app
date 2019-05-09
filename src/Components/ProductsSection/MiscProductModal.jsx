@@ -91,7 +91,7 @@ class MiscProductModal extends React.Component {
     }
 
     handleSaveMiscProductError = () => {
-        alert('something went wrong');
+        alert('Something went wrong!');
     }
 
     addMiscProduct = (e, index) => {
