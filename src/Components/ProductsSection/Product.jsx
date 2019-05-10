@@ -112,7 +112,7 @@ class Product extends React.PureComponent {
                             cartItems={cartItems}
                             product={data}
                             dispatch={dispatch}
-                            addToCart={(product, cartItems, cart, qty, dispatch) => this.addToCart(product, cart, qty, dispatch)}
+                            addToCart={(product, cartItems, cart, qty, dispatch) => this.addToCart(product, cartItems, cart, qty, dispatch)}
                         /> : ''
                 }
             </React.Fragment>)
