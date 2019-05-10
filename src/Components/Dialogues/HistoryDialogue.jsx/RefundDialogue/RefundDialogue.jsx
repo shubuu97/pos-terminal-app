@@ -29,13 +29,16 @@ import { APPLICATION_BFF_URL } from '../../../../Redux/urlConstants';
 import showMessage from '../../../../Redux/toastAction';
 import HandlePrint from '../../../../Global/PosFunctions/handlePrint';
 import RefundPrintView from '../RefundPrintView';
-import { format } from 'url';
+import dineroObj from '../../../../Global/PosFunctions/dineroObj';
+import splitDot from '../../../../Global/PosFunctions/splitDot';
+
 const request = require('superagent');
 const convert = require('xml-js');
 
 
 
-let regex = /^\d*[\.\d]+$/;
+
+let regex = /^\d*[\.\d]{1,3}$/;
 
 
 function Transition(props) {
@@ -130,14 +133,14 @@ class RefundDialogue extends React.Component {
 
             refunds.push({
                 paymentMethod: 0,
-                paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.cashAmount) || 0) },
+                paymentAmount: { currency: 'USD', amount:parseInt(splitDot(this.props.cashAmount))  },
                 paymentReference: ""
             })
         }
         if ((parseFloat(this.props.cardAmount) || 0)) {
             refunds.push({
                 paymentMethod: 1,
-                paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.cardAmount) || 0) },
+                paymentAmount: { currencyCode: 'USD', amount:parseInt(splitDot(this.props.cardAmount))},
                 paymentReference: this.props.cardRefrenceId
             })
         }
@@ -174,12 +177,12 @@ class RefundDialogue extends React.Component {
             let paymentTimeStamp = {
                 seconds: parseInt(new Date().getTime() / 1000),
             }
-            _set(value, 'amount', parseFloat(this.props.giftCardAmount));
-            _set(value, 'currencyCode', '$');
+            _set(value, 'amount', parseInt(splitDot(this.props.giftCardAmount)));
+            _set(value, 'currency', 'USD');
             let data = {}
             data.retailerId = localStorage.getItem('retailerId');
             data.storeId = localStorage.getItem('storeId');
-            data.value = { amount: this.props.giftCardAmount, currencyCode: "$" };
+            data.value = value;
             data.giftCode = this.state.giftCode;
             if (existingGiftCardId) {
                 data.id = existingGiftCardId
@@ -200,7 +203,7 @@ class RefundDialogue extends React.Component {
 
             refunds.push({
                 paymentMethod: 2,
-                paymentAmount: { currencyCode: '$', amount: (parseFloat(this.props.giftCardAmount) || 0) },
+                paymentAmount:value,
                 paymentReference: apiResponse.id,
             })
         }
@@ -690,11 +693,11 @@ class RefundDialogue extends React.Component {
                                         <div className='flex-row fwidth mt-10'>
                                             <div className='flex-column pl-5 halfwidth'>
                                                 <span className='info-title'>Total Refund Amount</span>
-                                                <span className='info-value'>{_get(this.state,'totalRefundAmount',0).toFixed(2)}</span>
+                                                <span className='info-value'>{dineroObj(_get(this.state,'totalRefundAmount',0)).toFormat('$0,0.00')}</span>
                                             </div>
                                             <div className='flex-column pl-5 halfwidth'>
                                                 <span className='info-title'>Remaining Refund Amount</span>
-                                                <span className='info-value'>{parseFloat(_get(this.props,'remainingAmount',0)).toFixed(2)}</span>
+                                                <span className='info-value'>{_get(this.props,'remainingAmount',0).toFormat('$0,0.00')}</span>
                                             </div>
                                         </div>
 
@@ -764,7 +767,7 @@ class RefundDialogue extends React.Component {
                             this.state.step == 1 || this.state.step == 2 ?
                                 <div className='refund-action-section flex-row'>
                                     <div className='action-btn flex-row justify-center align-center' onClick={this.props.handleRefundClose}>Cancel</div>
-                                    <div className='action-btn flex-row justify-center align-center' style={this.state.returnItems.every(val=>val.qty==0)|| (this.state.step == 2&&this.props.remainingAmount>0)? { opacity: '0.3', pointerEvents: 'none' } : null} onClick={this.handleProceed}>Complete</div>
+                                    <div className='action-btn flex-row justify-center align-center' style={this.state.returnItems.every(val=>val.qty==0)|| (this.state.step == 2&&this.props.remainingAmount.toUnit()>0)? { opacity: '0.3', pointerEvents: 'none' } : null} onClick={this.handleProceed}>Complete</div>
                                 </div> : null
                         }
 

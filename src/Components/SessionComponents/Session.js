@@ -6,7 +6,8 @@ import {connect} from 'react-redux';
 import { commonActionCreater } from '../../Redux/commonAction';
 /* Material import */
 /* Redux Impimport { commonActionCreater } from '../../Redux/commonAction';
-orts */
+orts */import dineroObj from '../../Global/PosFunctions/dineroObj';
+
 
 /* Component Imports */
 
@@ -36,10 +37,10 @@ class Session extends React.PureComponent {
         let { session } = this.props;
         let returnElement
         if (session.status == 'open') {
-            returnElement = <span>${_get(session,'currentBalance.amount',0).toFixed(2)}</span>
+            returnElement = <span>{dineroObj(_get(session,'currentBalance.amount',0)).toFormat('$0,0.00')}</span>
         }
         else {
-            returnElement = <span>${_get(session,'closingBalance.amount',0).toFixed(2)}</span>
+            returnElement = <span>{dineroObj(_get(session,'closingBalance.amount',0)).toFormat('$0,0.00')}</span>
         }
         return returnElement
     }
