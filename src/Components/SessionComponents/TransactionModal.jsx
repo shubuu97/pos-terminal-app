@@ -60,7 +60,7 @@ class TransactionModal extends React.Component {
         let mappedTransactions = this.props.transactions.map((transaction) => {
 
             let adjustmentTime = moment(_get(transaction, 'adjustmentTimeStamp.seconds') * 1000).format('dddd DD MMM,YYYY hh:mm A')
-            if (transaction.adjustmentType == 'CASHOUT') {
+            if (transaction.adjustmentType == 'CASHOUT' || transaction.adjustmentType == 'REFUND') {
                 total = total + _get(transaction, 'amount.amount')
                 return (
                     <div className="flex flex-row justify-space-between mt-20">
