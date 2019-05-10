@@ -455,7 +455,10 @@ class HomeContainer extends React.Component {
     }
     orderHistorySelect = (selectedSaleTransaction) => {
         if (_get(this.state, 'selectedSaleTransaction', false) && _get(this.state, 'selectedSaleTransaction') != selectedSaleTransaction.sale.id) {
-            document.getElementById(_get(this.state, 'selectedSaleTransaction.sale.id')).className = 'fwidth card'
+            let element = document.getElementById(_get(this.state, 'selectedSaleTransaction.sale.id'))
+            if(element){
+                element.className = 'fwidth card'
+            }
         }
         document.getElementById(selectedSaleTransaction.sale.id).className = 'fwidth card card-active'
         this.setState({ selectedSaleTransaction })
