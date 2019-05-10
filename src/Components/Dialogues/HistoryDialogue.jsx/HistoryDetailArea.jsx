@@ -115,7 +115,7 @@ console.log(selectedOrder.sale, 'igyfydyty')
                     (_get(selectedOrder, 'sale.cartDiscountAmount.amount', 0) + _get(selectedOrder, 'sale.employeeDiscountAmount.amount', 0) + _get(selectedOrder, 'sale.itemDiscountAmount.amount', 0)) > 0 ?
                         <div className='flex-row justify-space-between mb-5'>
                             <span className='summary-key'>{`Discounts: `}</span>
-                            <span className='summary-value'>{(_get(selectedOrder, 'sale.cartDiscountAmount.currencyCode', '$') + (_get(selectedOrder, 'sale.cartDiscountAmount.amount', 0) + _get(selectedOrder, 'sale.employeeDiscountAmount.amount', 0) + _get(selectedOrder, 'sale.itemDiscountAmount.amount', 0)).toFixed(2))}</span>
+                            <span className='summary-value'>{(_get(selectedOrder, 'sale.cartDiscountAmount.currencyCode', '$') + (_get(selectedOrder, 'sale.cartDiscountAmount.amount', 0)/100 + _get(selectedOrder, 'sale.employeeDiscountAmount.amount', 0)/100 + _get(selectedOrder, 'sale.itemDiscountAmount.amount', 0)/100).toFixed(2))}</span>
                         </div> : null
                 }
                 <div className='flex-row justify-space-between mb-5'>
