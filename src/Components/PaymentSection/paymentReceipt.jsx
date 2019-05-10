@@ -173,16 +173,16 @@ class PaymentReceipt extends React.Component {
                             customerName={customerName}
                             terminalName={localStorage.getItem('terminalName')}
                             saleComment={_get(this.props,'receiptData.saleComment','')}
-                            itemsDiscount={_get(cart,'itemDiscountAmount.amount', '')}
-                            cartDiscount={_get(cart,'cartDiscountAmount.amount', '')}
-                            employeeDiscount={_get(cart,'employeeDiscountAmount.amount', '')}
+                            itemsDiscount={_get(cart,'totalItemDiscountMoney').getAmount()}
+                            cartDiscount={_get(cart,'cartDiscount.cartDiscountMoney').getAmount()}
+                            employeeDiscount={_get(cart,'employeeDiscountMoney').getAmount()}
                             // regularTotal={_get(cart, 'regularTotal', '')}
                             // totalDiscount={_get(cart,'totalDiscount.amount', '')}
                             // netTotal={_get(cart,'netTotal','')}
                             totalAmountPaid={_get(this.props, 'receiptData.totalAmountPaid.amount',0)}
                             changeDue={_get(this.props, 'receiptData.changeDue.amount', 0)}
-                            totalTax={_get(cart,'totalTaxAmount.amount',0)}
-                            totalAmount={_get(cart,'totalAmount.amount',0)}
+                            totalTax={_get(cart,'totalTaxAmount').getAmount()}
+                            totalAmount={_get(cart,'totalMoney').getAmount()}
                             paymentMethods={_get(this.props,'receiptData.payments',[])}
                         />
                     </div>
