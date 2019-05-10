@@ -63,7 +63,7 @@ const HandlePrint = (props) => {
     }
 
     const orderHistory = _get(props, 'itemList', []).map(item => {
-        let itemSubTotal = _get(item,'saleItem.itemSubTotal.amount',0)
+        let itemSubTotal = _get(item,'itemSubTotal.amount',0)
         if (_isEmpty(item.giftCard)) {
             ohSubTotal += itemSubTotal
         } else {
@@ -75,10 +75,10 @@ const HandlePrint = (props) => {
                 <div style={{ width: "10%", textAlign: "center" }}>{_get(item, 'saleItem.qty', '')}</div>
                 <div style={{ width: "30%", textAlign: "right" }}>{_isEmpty(item.giftCard) ? '$'+((_get(item, 'product.salePrice.amount', 0))/100).toFixed(2) : (_get(item, 'giftCard.value.amount', 0)/100).toFixed(2)}<br />
                     <div style={{ fontSize: "9px" }}>
-                        {_get(item,'saleItem.itemDiscountTotal.amount',0) == 0 ? '' : <span>(Item Disc.: {'$'+((_get(item,'saleItem.itemDiscountTotal.amount',0))/100).toFixed(2)})</span>}
+                        {_get(item,'itemDiscountTotal.amount',0) == 0 ? '' : <span>(Item Disc.: {'$'+((_get(item,'itemDiscountTotal.amount',0))/100).toFixed(2)})</span>}
                         <br />
-                        {_get(item,'saleItem.employeeDiscountTotal.amount',0) == 0 ? '' : <span>(Emp Disc.: {'$'+((_get(item,'saleItem.employeeDiscountTotal.amount',0))/100).toFixed(2)})</span>}
-                        {_get(item,'saleItem.cartDiscountTotal.amount',0) == 0 ? '' : <span>(Cart Disc.: {'$'+((_get(item,'saleItem.cartDiscountTotal.amount',0))/100).toFixed(2)})</span>}
+                        {_get(item,'employeeDiscountTotal.amount',0) == 0 ? '' : <span>(Emp Disc.: {'$'+((_get(item,'employeeDiscountTotal.amount',0))/100).toFixed(2)})</span>}
+                        {_get(item,'cartDiscountTotal.amount',0) == 0 ? '' : <span>(Cart Disc.: {'$'+((_get(item,'cartDiscountTotal.amount',0))/100).toFixed(2)})</span>}
                     </div>
                 </div>
                 <div style={{ width: "25%", textAlign: "right" }}>{_isEmpty(item.giftCard) ? '$'+(itemSubTotal/100).toFixed(2) : (_get(item, 'giftCard.value.amount', 0)/100)}</div>
