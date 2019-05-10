@@ -151,8 +151,21 @@ class CustomerTab extends React.Component {
             return offlineContent
     }
 
-    proceedAsGuest = () => {
-        addGuestToCart(this.props.dispatch);
+    proceedAsGuest = async ()  => {
+        await addGuestToCart(this.props.dispatch) ;
+
+        let cartDiscountObj = {}
+        if (_get(this.props, 'cart.cartDiscount.isPercentage', false)) {
+            cartDiscountObj.type = '%'
+            cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountPercent', 0)
+        }
+        else {
+            cartDiscountObj.type = '$'
+            cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountMoney', 0).getAmount()
+        }
+        cartDiscountObj.cartItems = _get(this.props, 'cart.cartItems', [])
+
+        this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
         this.handleClickProceed()
     }
 
