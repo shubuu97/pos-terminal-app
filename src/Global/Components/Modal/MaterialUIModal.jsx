@@ -18,6 +18,11 @@ import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import RemoveCircleIcons from '@material-ui/icons/RemoveCircleOutline';
 import AddIcons from '@material-ui/icons/AddCircleOutline';
+import Dinero from 'dinero.js';
+
+let DineroInit = (amount, currency, precision) => (
+    Dinero({amount:  parseInt(amount) || 0, currency: currency || 'USD', precision: precision || 2})
+)
 
 function rand() {
     return Math.round(Math.random() * 20) - 10;
@@ -127,7 +132,7 @@ class Customer extends React.Component {
                                         <span className='each-card-code'>{_get(this.props.productDetails, 'sku', '')}</span>
                                     </div>
                                     <div className="each-card-price flex-row">
-                                        {_get(this.props.productDetails, 'salePrice.currencyCode', '')} {_get(this.props.productDetails, 'salePrice.amount', 0).toFixed(2)}
+                                        {DineroInit(_get(this.props.productDetails, 'salePrice.amount', 0)).toFormat('$0,0.00')}
                                         <div className='indicator'></div>
                                     </div>
                                     {_get(this.props.inventoryDetails, 'quantity', 0) <= 0 ?
