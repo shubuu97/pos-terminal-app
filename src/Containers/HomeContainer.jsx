@@ -27,7 +27,6 @@ import axiosFetcher from '../Global/dataFetch/axiosFetcher';
 import ProductsSection from '../Components/ProductsSection/ProductsSection'
 import CheckoutSection from '../Components/CheckoutSection/CheckoutSection'
 import PaymentSection from '../Components/PaymentSection/PaymentSection'
-import OrderHistoryDialog from '../Components/OrderHisoty/OrderHistoryDialog';
 import withDialog from '../Components/DialogHoc'
 import OnHoldDialogue from '../Components/Dialogues/HoldCartDialogue/OnHoldDialogue';
 import HistoryDialogue from '../Components/Dialogues/HistoryDialogue.jsx/HistoryDialogue';
@@ -696,15 +695,6 @@ class HomeContainer extends React.Component {
                             holdCartData={this.props.holdCartData}
                             dispatch={dispatch}
                             index={this.state.holdIndex}
-                        /> : null
-                }
-                {
-                    this.state.openOrderHistory ?
-                        <OrderHistoryDialog
-                            offline={this.state.offline}
-                            handleClose={this.handleOrderHistoryClose}
-                            open={this.state.openOrderHistory}
-                            dispatch={dispatch}
                         /> : null
                 }
                 {
