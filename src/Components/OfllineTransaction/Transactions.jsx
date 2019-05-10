@@ -18,6 +18,7 @@ import Transaction from './Transaction';
 /* Pouchdb Imports */
 import PouchDb from 'pouchdb';
 import SyncBeforeSession from '../SessionComponents/SyncBeforeSessionEnd';
+import dineroObj from '../../Global/PosFunctions/dineroObj';
 
 const styles = theme => ({
     root: {
@@ -81,15 +82,15 @@ class Transactions extends React.Component {
                                         </div>
                                         <div className='each-detail flex-column align-center'>
                                             <span className='summary-title'>transaction Total</span>
-                                            <span className='summary-money'>${_get(transaction, 'totalAmount.amount')}</span>
+                                            <span className='summary-money'>{dineroObj(_get(transaction, 'totalAmount.amount')).toFormat('$0,0.00')}</span>
                                         </div>
                                         <div className='each-detail flex-column align-center'>
                                             <span className='summary-title'>Total Amount Paid</span>
-                                            <span className='summary-money'>{_get(transaction, 'totalAmountPaid.currencyCode')}{_get(transaction, 'totalAmountPaid.amount')}</span>
+                                            <span className='summary-money'>{ dineroObj(_get(transaction, 'totalAmountPaid.amount')).toFormat('$0,0.00')}</span>
                                         </div>
                                         <div className='each-detail flex-column align-center'>
                                             <span className='summary-title'>Change Due</span>
-                                            <span className='summary-money'>{_get(transaction, 'changeDue.currencyCode')}{_get(transaction, 'changeDue.amount')}</span>
+                                            <span className='summary-money'>{ dineroObj(_get(transaction, 'changeDue.amount')).toFormat('$0,00.00')}</span>
                                         </div>
                                         <div className='each-detail flex-column align-center'>
                                             <span className='summary-title'>Customer Name</span>
