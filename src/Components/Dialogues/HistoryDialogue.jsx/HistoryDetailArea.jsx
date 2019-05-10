@@ -283,9 +283,6 @@ console.log(selectedOrder.sale, 'igyfydyty')
                         logo={this.state.logo}
                     />
                 </div>
-
-
-
             </div>
         );
     }

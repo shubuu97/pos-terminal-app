@@ -11,6 +11,7 @@ import _get from 'lodash/get';
 import Button from "@material-ui/core/Button";
 import ReactToPrint from 'react-to-print';
 import RefundPrintView from './RefundPrintView';
+import DineroObj from '../../../Global/PosFunctions/dineroObj'
 
 const styles = theme => ({
   root: {
@@ -41,12 +42,13 @@ class RefundHistory extends React.Component {
   showItemList = () => {
     let saleItems = _get(this.props.data, "returnItems", []);
     let saleItemResp = saleItems.map((saleItem, index) => {
-      return (<tr>
-        <td>{_get(saleItem, "returnProduct.name", '')}</td>
-        <td>{_get(saleItem, "qty", 0)}</td>
-        <td>{_get(saleItem, "itemRefundEffectiveTotal.amount", 0)}</td>
-
-      </tr>)
+      return (
+        <tr>
+          <td>{_get(saleItem, "returnProduct.name", '')}</td>
+          <td>{_get(saleItem, "qty", 0)}</td>
+          <td>{DineroObj(_get(saleItem, "itemRefundEffectiveTotal.amount", 0)).toFormat('$0,0.00')}</td>
+        </tr>
+      )
     })
     return (
       <React.Fragment>
@@ -63,13 +65,13 @@ class RefundHistory extends React.Component {
     return (
       <ExpansionPanel expanded={expanded === 'panel1'} onChange={this.handleChange('panel1')}>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography className={classes.secondaryHeading}>Refund Date:</Typography>
-          <Typography className={classes.heading}>{moment.utc(_get(data, 'timestamp.seconds', 0) * 1000).format('MM/DD/YYYY hh:mm:ss')}</Typography>
-          <Typography className={classes.secondaryHeading}>   Refund Amount:</Typography>
-          <Typography className={classes.heading}>{_get(data, 'refundTotal.amount', 0).toFixed(2)}</Typography>
+          <Typography className={classes.secondaryHeading}>Refund Date: </Typography>
+          <Typography className={classes.heading}> {moment.utc(_get(data, 'timestamp.seconds', 0) * 1000).format('MM/DD/YYYY hh:mm:ss')}</Typography>
+          <Typography className={classes.secondaryHeading}>Refund Amount: </Typography>
+          <Typography className={classes.heading}>{DineroObj(_get(data, 'refundTotal.amount', 0)).toFormat('$0,0.00')}</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
-          <Typography>
+          <div className='flex-column fwidth'>
             <div className="mui-row" style={{ paddingLeft: '5%', paddingRight: '6%' }}>
               <table className="mui-table mui-table--bordered">
                 <thead>
@@ -90,16 +92,17 @@ class RefundHistory extends React.Component {
                 content={() => this.printElementRef}
               />
             </div>
-            <div style={{ display: "none" }}>
-              <RefundPrintView
-                ref={el => this.printElementRef = el}
-                store={this.props.store}
-                selectedOrder={this.props.selectedOrder}
-                logo={this.props.logo}
-                data={this.props.data}
-              />
-            </div>
-          </Typography>
+          </div>
+
+          <div style={{ display: "none" }}>
+            <RefundPrintView
+              ref={el => this.printElementRef = el}
+              store={this.props.store}
+              selectedOrder={this.props.selectedOrder}
+              logo={this.props.logo}
+              data={this.props.data}
+            />
+          </div>
         </ExpansionPanelDetails>
       </ExpansionPanel >
     )
