@@ -371,7 +371,7 @@ class PaymentSection extends React.Component {
 
     makReqObj = async (offline) => {
         let { customer, cartItems, totalAmount, sessionId } = this.props;
-        let { cartDiscountAmount, employeeDiscountAmount, itemDiscountAmount, totalTaxAmount } = this.props.cart
+        let { cartDiscount, employeeDiscountMoney, totalItemDiscountMoney, totalTaxAmount } = this.props.cart
         let saleItems = cartItems.map((item) => {
             let obj = {}
             obj.productId = item.doc.product.id;
@@ -380,7 +380,7 @@ class PaymentSection extends React.Component {
             obj.itemRegularTotal = item.itemRegularTotalMoney;
             obj.cartDiscountTotal = item.cartDiscountMoney;
             obj.itemDiscountTotal = item.itemDiscountMoney
-            obj.employeeDiscountTotal = item.employeeDiscountMoney
+            obj.employeeDiscountTotal = item.empDiscountMoney
             obj.itemSubTotal = item.subTotal
             obj.itemTaxAmount = item.itemTaxAmount
             obj.saleType = item.saleType;
@@ -551,12 +551,12 @@ class PaymentSection extends React.Component {
             sessionId: localStorage.getItem('sessionId'),
             saleItems,
             payments,
-            miscSaleItems: [],
+            miscSaleItems: [],  
             totalAmount,
             totalAmountPaid: { currency: 'USD', amount: totalAmountPaid.getAmount() },
-            cartDiscountAmount,
-            employeeDiscountAmount,
-            itemDiscountAmount,
+            cartDiscountAmount:_get(cartDiscount,'cartDiscountMoney',{}),
+            employeeDiscountAmount:employeeDiscountMoney,
+            itemDiscountAmount:totalItemDiscountMoney,
             totalTaxAmount,
             offline,
             saleComment: _get(this.state, 'comment', ''),
