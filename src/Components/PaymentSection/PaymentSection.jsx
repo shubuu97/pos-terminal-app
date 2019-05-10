@@ -578,7 +578,7 @@ class PaymentSection extends React.Component {
         this.setState({ isLoadingTransaction: true })
         await this.makReqObj(offline).then((reqObj) => {
             if (offline) {
-                this.handleSaleTransactionOffline(reqObj);
+                this.handleSaleTransactionOffline(JSON.parse(JSON.stringify(reqObj)));
             }
             else {
                 this.handleSaleTransactionOnline(reqObj);
