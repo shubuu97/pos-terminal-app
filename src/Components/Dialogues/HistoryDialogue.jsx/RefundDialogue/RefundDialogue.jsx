@@ -307,7 +307,7 @@ class RefundDialogue extends React.Component {
             });
             this.makeReturnArray(index, expectedQty);
             this.calculateTotalRefundAmount();
-        }a
+        }
     }
     calAmounts = (subTotal, quantity, returnQuantity) => {
         let perItemPrice = subTotal / quantity;
