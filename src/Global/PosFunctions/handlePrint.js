@@ -72,7 +72,7 @@ const HandlePrint = (props) => {
         return (
             <div style={{ display: 'flex', flex: '1', paddingTop: "10px", paddingBottom: "10px", borderBottom: 'dotted 1px #9e9e9e' }}>
                 <div style={{ width: "35%", paddingRight: '10px' }}>{_isEmpty(item.giftCard) ? _get(item, 'product.name', '') : 'Gift Card'}</div>
-                <div style={{ width: "10%", textAlign: "center" }}>{_get(item, 'saleItem.qty', '')}</div>
+                <div style={{ width: "10%", textAlign: "center" }}>{_get(item, 'qty', '')}</div>
                 <div style={{ width: "30%", textAlign: "right" }}>{_isEmpty(item.giftCard) ? '$'+((_get(item, 'product.salePrice.amount', 0))/100).toFixed(2) : (_get(item, 'giftCard.value.amount', 0)/100).toFixed(2)}<br />
                     <div style={{ fontSize: "9px" }}>
                         {_get(item,'itemDiscountTotal.amount',0) == 0 ? '' : <span>(Item Disc.: {'$'+((_get(item,'itemDiscountTotal.amount',0))/100).toFixed(2)})</span>}
