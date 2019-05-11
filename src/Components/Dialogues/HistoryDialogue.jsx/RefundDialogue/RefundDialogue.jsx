@@ -310,11 +310,12 @@ class RefundDialogue extends React.Component {
         }
     }
     calAmounts = (subTotal, quantity, returnQuantity) => {
-        let perPriceItemPrice = subTotal / quantity;
-        let refundEstimatedAmount = perPriceItemPrice * returnQuantity;
+        let perItemPrice = subTotal / quantity;
+        let refundEstimatedAmount = perItemPrice * returnQuantity;
         return parseFloat(roundUp(refundEstimatedAmount, 2));
     }
     calculateTotalRefundAmount = () => {
+        console.log(this.state.returnItems, 'this.state.returnItems')
         let totalRefundAmount = this.state.returnItems.reduce((accumulator, refundItem) => {
             return accumulator + refundItem.itemRefundEffectiveTotal.amount
         }, 0);

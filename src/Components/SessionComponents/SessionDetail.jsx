@@ -85,7 +85,7 @@ class SessionDetail extends React.Component {
         this.setState({
             manager: _get(data, 'manager'),
             session: _get(data, 'session'),
-            terminal:_get(data,'terminal'),
+            terminal: _get(data, 'terminal'),
             transactions: _get(data, 'transactions')
 
         })
@@ -121,6 +121,7 @@ class SessionDetail extends React.Component {
                     this.intervalId = setInterval(this.handleEndSession, 5000);
             }
             else {
+                debugger;
                 clearInterval(this.intervalId);
                 this.setState({ isLoading: true })
                 this.setState({ syncBeforeEndSession: false, showReasonModal: false });
@@ -271,7 +272,7 @@ class SessionDetail extends React.Component {
                 total = total + _get(transaction, 'amount.amount')
             }
         })
-        
+
         return dineroObj(total).toFormat('$0,0.00');
 
     }
@@ -289,7 +290,7 @@ class SessionDetail extends React.Component {
     calDiffrence = () => {
         let difference
         if (_get(this.state, 'session.status', '') == "closed") {
-            difference = dineroObj(_get(this, 'state.session.closingBalance.amount', 0)).subtract(dineroObj(_get(this.state, 'session.currentBalance.amount', 0))).toFormat('$0,0.00'); 
+            difference = dineroObj(_get(this, 'state.session.closingBalance.amount', 0)).subtract(dineroObj(_get(this.state, 'session.currentBalance.amount', 0))).toFormat('$0,0.00');
         }
         else {
             difference = dineroObj(splitDot(this.state.realClosingBalance)).subtract(dineroObj(_get(this.state, 'session.currentBalance.amount', 0))).toFormat('$0,0.00');
@@ -298,6 +299,8 @@ class SessionDetail extends React.Component {
         return difference
     }
     specifyReason = (closeReason) => {
+        debugger
+        this.state.closeReason = closeReason;
         this.setState({ closeReason, showReasonModal: false });
         this.handleEndSession()
     }
