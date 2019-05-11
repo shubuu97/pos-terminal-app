@@ -32,6 +32,7 @@ import PaymentReceipt from './paymentReceipt';
 import CostCenter from './CostCenter';
 import DecliningBalance from './PaymentMethods/DecliningBalance';
 import Dinero from 'dinero.js';
+import splitDotWithInt from '../../Global/PosFunctions/splitDotWithInt';
 
 
 let dineroObj = (amount, currency) => {
@@ -173,7 +174,7 @@ class PaymentSection extends React.Component {
         let paymentTimeStamp = {
             seconds: parseInt(new Date().getTime() / 1000),
         }
-        _set(value, 'amount', dineroObj(this.props.giftCardAmount*100).getAmount())
+        _set(value, 'amount', splitDotWithInt(this.props.giftCardAmount))
         _set(value, 'currency', 'USD');
         let data = {
             giftCardId: _get(this.state, 'giftCard.id', ''),
@@ -349,22 +350,16 @@ class PaymentSection extends React.Component {
             this.props.dispatch(commonActionCreater({ decliningBalance: '', totalAmount: this.props.totalAmount }, 'DECLINING_BALANCE'));
         }
     }
-    dineroObj = (amount, currency) => {
-        return Dinero({
-            amount: parseInt(amount) || 0,
-            currency: currency || 'USD'
-        });
-    }
 
     calcPaymentAmount = (a, b, c, d, e, f, g) => {
         let paymentAmount = dineroObj(0);
-        a = dineroObj(a * 100);
-        b = dineroObj(b * 100);
-        c = dineroObj(c * 100);
-        d = dineroObj(d * 100);
-        e = dineroObj(e * 100);
-        f = dineroObj(f * 100);
-        g = dineroObj(g * 100);
+        a = dineroObj(splitDotWithInt(a));
+        b = dineroObj(splitDotWithInt(b));
+        c = dineroObj(splitDotWithInt(c));
+        d = dineroObj(splitDotWithInt(d));
+        e = dineroObj(splitDotWithInt(e));
+        f = dineroObj(splitDotWithInt(f));
+        g = dineroObj(splitDotWithInt(g));
         paymentAmount = paymentAmount.add(a).add(b).add(c).add(d).add(e).add(f).add(g)
         return paymentAmount;
     };
@@ -392,7 +387,7 @@ class PaymentSection extends React.Component {
         if ((parseFloat(this.props.cashAmount) || 0)) {
             payments.push({
                 paymentMethod: 0,
-                paymentAmount: { currency: 'USD', amount: (dineroObj(this.props.cashAmount*100).getAmount()) },
+                paymentAmount: { currency: 'USD', amount:splitDotWithInt(this.props.cashAmount)},
                 paymentReference: ""
             })
         }
@@ -406,14 +401,14 @@ class PaymentSection extends React.Component {
         if ((parseFloat(this.props.cardAmount) || 0)) {
             payments.push({
                 paymentMethod: 1,
-                paymentAmount: { currency: 'USD', amount:(dineroObj(this.props.cardAmount*100).getAmount())},
+                paymentAmount: { currency: 'USD', amount:splitDotWithInt(this.props.cardAmount)},
                 paymentReference: this.props.cardRefrenceId
             })
         }
         if ((parseFloat(this.props.giftCardAmount) || 0)) {
             let url = 'Sale/RedeemValueFromGiftCard';
             let value = {};
-            _set(value, 'amount',dineroObj(this.props.giftCardAmount*100).getAmount());
+            _set(value, 'amount',splitDotWithInt(this.props.giftCardAmount));
             _set(value, 'currency', 'USD');
             let data = {
                 retailerId: localStorage.getItem('retailerId'),
@@ -433,14 +428,14 @@ class PaymentSection extends React.Component {
             }))
             payments.push({
                 paymentMethod: 2,
-                paymentAmount: { currency: 'USD', amount:dineroObj(this.props.giftCardAmount*100).getAmount()},
+                paymentAmount: { currency: 'USD', amount:splitDotWithInt(this.props.giftCardAmount)},
                 paymentReference: apiResponse,
             })
         }
         if ((parseFloat(this.props.decliningBalance) || 0)) {
             let url = 'Payment/DecliningBalance/Save';
             let value = {};
-            _set(value, 'amount',dineroObj(this.props.decliningBalance*100).getAmount());
+            _set(value, 'amount',splitDotWithInt(this.props.decliningBalance));
             _set(value, 'currency', 'USD');
             let data = {
                 retailerId: localStorage.getItem('retailerId'),
@@ -459,7 +454,7 @@ class PaymentSection extends React.Component {
             }))
             payments.push({
                 paymentMethod: 6,
-                paymentAmount: { currency: 'USD', amount: dineroObj(this.props.decliningBalance*100).getAmount() },
+                paymentAmount: { currency: 'USD', amount: splitDotWithInt(this.props.decliningBalance) },
                 paymentReference: apiResponse.referenceId,
             })
         }
@@ -475,7 +470,7 @@ class PaymentSection extends React.Component {
                 storeId: localStorage.getItem('storeId'),
                 pointsToRedeem: parseInt(this.props.loyaltyRedeemPoints),
             }
-            LoyaltyValue = dineroObj(this.props.loyaltyRedeem*100).getAmount();
+            LoyaltyValue = splitDotWithInt(this.props.loyaltyRedeem);
             let apiResponse = await this.props.dispatch(postData(`${APPLICATION_BFF_URL}${url}`, data, 'GET_REF_FROM_LOYALTY_REDEEM', {
                 init: 'GET_REF_FROM_LOYALTY_REDEEM_INIT',
                 success: 'GET_REF_FROM_LOYALTY_REDEEM_SUCCESS',
@@ -498,7 +493,7 @@ class PaymentSection extends React.Component {
                 storeId: localStorage.getItem('storeId'),
                 departmentName: this.props.costCenterDepartment,
                 chargeType: this.props.costCenterType,
-                value: { currency: 'USD', amount: dineroObj(this.props.costCenterAmount*100).getAmount() },
+                value: { currency: 'USD', amount: splitDotWithInt(this.props.costCenterAmount) },
             }
             let apiResponse = await this.props.dispatch(postData(`${APPLICATION_BFF_URL}${url}`, data, 'GET_COST_CENTER_CHARGE', {
                 init: 'GET_COST_CENTER_CHARGE_INIT',
@@ -507,7 +502,7 @@ class PaymentSection extends React.Component {
             }))
             payments.push({
                 paymentMethod: 3,
-                paymentAmount: { currency: 'USD', amount: (parseFloat(this.props.costCenterAmount) || 0) },
+                paymentAmount: { currency: 'USD', amount: (splitDotWithInt(this.props.costCenterAmount) || 0) },
                 paymentReference: apiResponse,
             })
         }
@@ -523,7 +518,7 @@ class PaymentSection extends React.Component {
                 storeId: localStorage.getItem('storeId'),
                 value: {
                     currency: 'USD',
-                    amount:dineroObj(this.props.employeePay*100).getAmount()
+                    amount:splitDotWithInt(this.props.employeePay)
                 }
             }
             let apiResponse = await this.props.dispatch(postData(`${APPLICATION_BFF_URL}${url}`, data, 'GET_REF_FROM_LOYALTY_REDEEM', {
@@ -533,14 +528,14 @@ class PaymentSection extends React.Component {
             }))
             payments.push({
                 paymentMethod: 4,
-                paymentAmount: { currency: 'USD', amount:dineroObj(this.props.employeePay*100).getAmount()},
+                paymentAmount: { currency: 'USD', amount:splitDotWithInt(this.props.employeePay)},
                 paymentReference: apiResponse
             })
         }
 
 
 
-        let totalAmountPaid = this.calcPaymentAmount(this.props.cashAmount,this.props.cardAmount,this.props.employeePay,this.props.giftCardAmount,LoyaltyValue,this.props.costCenterAmount);
+        let totalAmountPaid = this.calcPaymentAmount(this.props.cashAmount,this.props.cardAmount,this.props.employeePay,this.props.giftCardAmount,LoyaltyValue,this.props.costCenterAmount,this.props.decliningBalance);
 
         let reqObj = {
             customerId: customer.id,

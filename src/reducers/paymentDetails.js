@@ -109,7 +109,7 @@ const paymentReducer = (state = {
             loyaltyRedeem = _get(action, 'data.loyaltyRedeem') || dineroObj(0, 'USD');
             paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount, decliningBalance)
             remainingAmount = calcRemainingAmount(totalAmount, paymentAmount);
-            if (paymentAmount.greaterThan(totalAmount)) {
+            if (paymentAmount.greaterThanOrEqual(totalAmount)) {
                 amountExceeded = paymentAmount.subtract(totalAmount);
                 loyaltyRedeem = loyaltyRedeem.subtract(amountExceeded)
                 remainingAmount = dineroObj(0, 'USD');
