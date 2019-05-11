@@ -47,6 +47,9 @@ class DenominationDetailsForm extends React.Component {
         let currenctFocusValue = this.state[currentFocus]
         if (num != '<') {
             currenctFocusValue = currenctFocusValue + num;
+            let regex = /^\d*[\.\d]{1,3}$/;
+                if(!regex.test(currenctFocusValue))
+                return false;
         }
         else {
             currenctFocusValue = ''
