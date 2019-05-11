@@ -310,11 +310,12 @@ class RefundDialogue extends React.Component {
         }
     }
     calAmounts = (subTotal, quantity, returnQuantity) => {
-        let perPriceItemPrice = subTotal / quantity;
-        let refundEstimatedAmount = perPriceItemPrice * returnQuantity;
+        let perItemPrice = subTotal / quantity;
+        let refundEstimatedAmount = perItemPrice * returnQuantity;
         return parseFloat(roundUp(refundEstimatedAmount, 2));
     }
     calculateTotalRefundAmount = () => {
+        console.log(this.state.returnItems, 'this.state.returnItems')
         let totalRefundAmount = this.state.returnItems.reduce((accumulator, refundItem) => {
             return accumulator + refundItem.itemRefundEffectiveTotal.amount
         }, 0);
@@ -617,6 +618,9 @@ class RefundDialogue extends React.Component {
             let focusItemValue = this.props[currentFocus];
             if (num != '<') {
                 focusItemValue = (focusItemValue || '') + num;
+                let regex = /^\d*[\.\d]{1,3}$/;
+                if(!regex.test(focusItemValue))
+                return false;
             }
             else {
                 focusItemValue = '';
@@ -767,7 +771,7 @@ class RefundDialogue extends React.Component {
                             this.state.step == 1 || this.state.step == 2 ?
                                 <div className='refund-action-section flex-row'>
                                     <div className='action-btn flex-row justify-center align-center' onClick={this.props.handleRefundClose}>Cancel</div>
-                                    <div className='action-btn flex-row justify-center align-center' style={this.state.returnItems.every(val=>val.qty==0)|| (this.state.step == 2&&this.props.remainingAmount.toUnit()>0)? { opacity: '0.3', pointerEvents: 'none' } : null} onClick={this.handleProceed}>Complete</div>
+                                    <div className='action-btn flex-row justify-center align-center' style={this.state.returnItems.every(val=>!val.qty)|| (this.state.step == 2&&this.props.remainingAmount.toUnit()>0)? { opacity: '0.3', pointerEvents: 'none' } : null} onClick={this.handleProceed}>Complete</div>
                                 </div> : null
                         }
 

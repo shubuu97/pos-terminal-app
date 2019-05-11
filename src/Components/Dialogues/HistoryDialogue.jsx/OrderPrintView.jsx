@@ -23,7 +23,7 @@ render() {
     const { store } = this.props;
     let address = _get(store, 'store.address', '')
     let selectedOrder = _get(this.props, "selectedOrder", []);
-    console.log(selectedOrder, 'jguuufurdr')
+    console.log(selectedOrder, 'jguifyudfyudtydyt')
     let storeAddress = _get(address, 'addressLine1', '') + ', ' +
         _get(address, 'addressLine2', '') + ', ' + _get(address, 'city', '') + ', ' +
         _get(address, 'state', '') + ', ' + _get(address, 'country', '') + ', ' +
@@ -31,7 +31,6 @@ render() {
 
     const customerName = _get(selectedOrder, 'customer.customer.firstName') + ' ' +
         _get(selectedOrder, 'customer.customer.lastName');
-        // console.log(this.props.logo, 'gugfhfyfyuf')
     return (
         <div>
             <HandlePrint
@@ -41,7 +40,7 @@ render() {
                 orderId={_get(selectedOrder, 'sale.id', '')}
                 currency='$'
                 saleComment={_get(selectedOrder, 'sale.saleComment', '')}
-                itemList={_get(selectedOrder, 'saleParts', [])}
+                itemList={_get(selectedOrder, 'sale.saleItems', [])}
                 orderDate={moment(_get(selectedOrder, 'sale.saleCommitTimeStamp.seconds', 0) * 1000).format('llll')}
                 storeName={_get(selectedOrder, 'store.name', '')}
                 storeAddress={storeAddress}
