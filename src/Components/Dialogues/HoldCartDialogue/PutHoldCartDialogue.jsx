@@ -47,6 +47,9 @@ class HoldCartDialogue extends React.Component {
         this.props.handleHold(this.state.Title);
         let unHoldedCart = {}
         this.props.dispatch(commonActionCreater(unHoldedCart, 'ON_HOLD_DATA'));
+        this.setState({
+            Title: ''
+        });
         this.props.handleClose();
     };
 
