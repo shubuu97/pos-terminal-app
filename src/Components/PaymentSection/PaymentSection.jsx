@@ -265,6 +265,10 @@ class PaymentSection extends React.Component {
             }
             if (num != '<') {
                 focusItemValue = (focusItemValue || '') + num;
+                let regex = /^\d*[\.\d]{1,3}$/;
+                if(!regex.test(focusItemValue))
+                return false;
+
             }
             else {
                 focusItemValue = 0;

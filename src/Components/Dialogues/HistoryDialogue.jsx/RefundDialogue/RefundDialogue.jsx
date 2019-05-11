@@ -618,6 +618,9 @@ class RefundDialogue extends React.Component {
             let focusItemValue = this.props[currentFocus];
             if (num != '<') {
                 focusItemValue = (focusItemValue || '') + num;
+                let regex = /^\d*[\.\d]{1,3}$/;
+                if(!regex.test(focusItemValue))
+                return false;
             }
             else {
                 focusItemValue = '';
