@@ -22,15 +22,12 @@ import _set from 'lodash/set';
 import { commonActionCreater } from '../../../../Redux/commonAction';
 /* Redux Imports */
 import { connect } from 'react-redux';
-import roundUp from '../../../../Global/PosFunctions/roundUp';
 import genericPostData from '../../../../Global/dataFetch/genericPostData';
-import { postData } from '../../../../Redux/postAction';
-import { APPLICATION_BFF_URL } from '../../../../Redux/urlConstants';
 import showMessage from '../../../../Redux/toastAction';
-import HandlePrint from '../../../../Global/PosFunctions/handlePrint';
 import RefundPrintView from '../RefundPrintView';
 import dineroObj from '../../../../Global/PosFunctions/dineroObj';
 import splitDot from '../../../../Global/PosFunctions/splitDot';
+import splitDotWithInt from '../../../../Global/PosFunctions/splitDotWithInt';
 
 const request = require('superagent');
 const convert = require('xml-js');
@@ -129,7 +126,7 @@ class RefundDialogue extends React.Component {
     refundSale = async () => {
         let saleId = _get(this.props, 'selectedSaleTransaction.sale.id')
         let refunds = [];
-        if ((parseFloat(this.props.cashAmount) || 0)) {
+        if ((splitDotWithInt(this.props.cashAmount) || 0)) {
 
             refunds.push({
                 paymentMethod: 0,
@@ -137,14 +134,14 @@ class RefundDialogue extends React.Component {
                 paymentReference: ""
             })
         }
-        if ((parseFloat(this.props.cardAmount) || 0)) {
+        if ((splitDotWithInt(this.props.cardAmount) || 0)) {
             refunds.push({
                 paymentMethod: 1,
                 paymentAmount: { currencyCode: 'USD', amount:parseInt(splitDot(this.props.cardAmount))},
                 paymentReference: this.props.cardRefrenceId
             })
         }
-        if ((parseFloat(this.props.giftCardAmount) || 0)) {
+        if ((splitDotWithInt(this.props.giftCardAmount) || 0)) {
 
             let apiRespGetGiftCard = await genericPostData({
                 dispatch: this.props.dispatch,
@@ -309,34 +306,36 @@ class RefundDialogue extends React.Component {
             this.calculateTotalRefundAmount();
         }
     }
-    calAmounts = (subTotal, quantity, returnQuantity) => {
-        let perItemPrice = subTotal / quantity;
-        let refundEstimatedAmount = perItemPrice * returnQuantity;
-        return parseFloat(roundUp(refundEstimatedAmount, 2));
+    calAmounts = (amount, quantity, returnQuantity) => {
+        let remainingQty = quantity-returnQuantity;
+        if(remainingQty==0){
+            return amount;
+        }
+        let allocatedAmount = dineroObj(amount).allocate([returnQuantity,remainingQty]);
+        return allocatedAmount[0].getAmount()
     }
     calculateTotalRefundAmount = () => {
         console.log(this.state.returnItems, 'this.state.returnItems')
         let totalRefundAmount = this.state.returnItems.reduce((accumulator, refundItem) => {
             return accumulator + refundItem.itemRefundEffectiveTotal.amount
         }, 0);
-        totalRefundAmount = parseFloat(roundUp(totalRefundAmount, 2));
-
-        this.setState({ totalRefundAmount });
+       this.setState({ totalRefundAmount });
     }
     makeReturnArray = (index, expectedQty, replenishInventory) => {
         let refundObj = {};
         let selectedSaleItems = _get(this.props, `selectedSaleTransaction.sale.saleItems[${index}]`, {});
 
         //logic to calculate itemRefundSubTotalAmount;
-        let qty = selectedSaleItems.qty;
-        let itemSubTotal = _get(selectedSaleItems, 'itemSubTotal.amount', 0);
-        let itemTaxAmount = _get(selectedSaleItems, 'itemTaxAmount.amount', 0);
-        let itemEffectiveTotal = _get(selectedSaleItems, 'itemEffectiveTotal.amount', 0);
-
+        let qty = selectedSaleItems.returnableQty;
+        let itemSubTotal = _get(selectedSaleItems, 'returnableSubTotal.amount', 0);
+        let itemTaxAmount = _get(selectedSaleItems, 'returnableTaxTotal.amount', 0);
+        //let itemEffectiveTotal = _get(selectedSaleItems, 'returnableEffectiveTotal.amount', 0);
+        debugger;
         let itemRefundSubTotalAmount = this.calAmounts(itemSubTotal, qty, expectedQty);
         let itemRefundTaxTotalAmount = this.calAmounts(itemTaxAmount, qty, expectedQty);
-        let itemRefundEffectiveTotalAmount = this.calAmounts(itemEffectiveTotal, qty, expectedQty);
-
+        let itemRefundEffectiveTotalAmount = itemRefundSubTotalAmount + itemRefundTaxTotalAmount;
+        console.log(itemRefundEffectiveTotalAmount,"itemRefundEffectiveTotalAmount")
+        debugger
 
         refundObj.itemRefundSubTotal = { currencyCode: "$", amount: itemRefundSubTotalAmount };
         refundObj.itemRefundTaxTotal = { currencyCode: "$", amount: itemRefundTaxTotalAmount };

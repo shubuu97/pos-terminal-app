@@ -388,28 +388,21 @@ class PaymentSection extends React.Component {
         });
 
         let payments = []
-        if ((parseFloat(this.props.cashAmount) || 0)) {
+        if ((splitDotWithInt(this.props.cashAmount) || 0)) {
             payments.push({
                 paymentMethod: 0,
                 paymentAmount: { currency: 'USD', amount:splitDotWithInt(this.props.cashAmount)},
                 paymentReference: ""
             })
         }
-        // if ((parseFloat(this.props.employeePay) || 0)) {
-        //     payments.push({
-        //         paymentMethod: 'EMPLOYEE_PAYROLL_DEDUCT',
-        //         paymentAmount: { currency: 'USD', amount: (parseFloat(this.props.employeePay) || 0) },
-        //         paymentReference: ""
-        //     })
-        // }
-        if ((parseFloat(this.props.cardAmount) || 0)) {
+        if ((splitDotWithInt(this.props.cardAmount) || 0)) {
             payments.push({
                 paymentMethod: 1,
                 paymentAmount: { currency: 'USD', amount:splitDotWithInt(this.props.cardAmount)},
                 paymentReference: this.props.cardRefrenceId
             })
         }
-        if ((parseFloat(this.props.giftCardAmount) || 0)) {
+        if ((splitDotWithInt(this.props.giftCardAmount) || 0)) {
             let url = 'Sale/RedeemValueFromGiftCard';
             let value = {};
             _set(value, 'amount',splitDotWithInt(this.props.giftCardAmount));
@@ -436,7 +429,7 @@ class PaymentSection extends React.Component {
                 paymentReference: apiResponse,
             })
         }
-        if ((parseFloat(this.props.decliningBalance) || 0)) {
+        if ((splitDotWithInt(this.props.decliningBalance) || 0)) {
             let url = 'Payment/DecliningBalance/Save';
             let value = {};
             _set(value, 'amount',splitDotWithInt(this.props.decliningBalance));
@@ -463,7 +456,7 @@ class PaymentSection extends React.Component {
             })
         }
         let LoyaltyValue = 0
-        if ((parseFloat(this.props.loyaltyRedeemPoints) || 0)) {
+        if ((splitDotWithInt(this.props.loyaltyRedeemPoints) || 0)) {
             let url = 'Sale/RedeemRewardPoints';
             let data = {
                 retailerId: localStorage.getItem('retailerId'),
@@ -486,7 +479,7 @@ class PaymentSection extends React.Component {
                 paymentReference: apiResponse,
             })
         }
-        if ((parseFloat(this.props.costCenterAmount) || 0)) {
+        if ((splitDotWithInt(this.props.costCenterAmount) || 0)) {
             let url = 'Payment/CostCenterCharge/Save';
             let data = {
                 retailerId: localStorage.getItem('retailerId'),
@@ -511,7 +504,7 @@ class PaymentSection extends React.Component {
             })
         }
 
-        if ((parseFloat(this.props.employeePay) || 0)) {
+        if ((splitDotWithInt(this.props.employeePay) || 0)) {
             let url = 'Payment/EmployeePayrollDeduct/Save';
             let data = {
                 retailerId: localStorage.getItem('retailerId'),

@@ -1,5 +1,5 @@
 let splitDotWithInt = (num) => {
-    if (num !== undefined) {
+    if (num) {
         let b = num.toString().split(".");
         let c
         if (b[1] != undefined) {
@@ -19,7 +19,7 @@ let splitDotWithInt = (num) => {
         return parseInt(c)
     }
     else {
-        return ''
+        return 0
     }
 
 }
