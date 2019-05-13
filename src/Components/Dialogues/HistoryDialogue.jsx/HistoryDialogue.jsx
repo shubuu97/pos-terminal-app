@@ -48,6 +48,12 @@ class HistoryDialogue extends React.Component {
         this.setState({ searchInput: value })
         this.props.handleSearch(value);
     }
+    handleKeyPress = (e, value) => {
+        if (e.charCode    == 13) {
+            this.setState({ searchInput: value })
+            this.props.handleSearch(value);
+        }
+    }
 
     render() {
         const { classes } = this.props;
@@ -72,6 +78,7 @@ class HistoryDialogue extends React.Component {
                                     this.props.handleSearch ?
                                         <div className='history-search flex-row'>
                                             <SearchBar
+                                                handleKeyPress={this.handleKeyPress}
                                                 handleChange={this.handleSearchChange}
                                                 handleInput={this.state.searchInput}
                                                 placeholder={"Search Transaction"}
@@ -94,7 +101,7 @@ class HistoryDialogue extends React.Component {
                                 this.props.selectedSaleTransaction ?
                                     <HistoryDetailArea
                                         selectedSaleTransaction={this.props.selectedSaleTransaction}
-                                        handleHistoryClose = {this.props.handleClose}
+                                        handleHistoryClose={this.props.handleClose}
                                     /> : null
                             }
                         </div>

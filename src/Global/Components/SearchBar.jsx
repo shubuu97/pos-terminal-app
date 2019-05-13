@@ -32,21 +32,23 @@ const styles = {
 };
 
 function CustomizedInputBase(props) {
+
   const { classes } = props;
   var searchInput = document.getElementById("searchInput");
-  if (searchInput) {
-    searchInput.addEventListener("keydown", function (e) {
-      if (e.keyCode === 13) {  //checks whether the pressed key is "Enter"
-        props.handleChange(document.getElementById('searchInput').value)
-      }
-    });
-  }
+  // if (searchInput) {
+  //   searchInput.addEventListener("keydown", function (e) {
+  //     if (e.keyCode === 13) {  //checks whether the pressed key is "Enter"
+  //       props.handleChange(document.getElementById('searchInput').value)
+  //     }
+  //   });
+  // }
   return (
     <Paper className={classes.root} elevation={1} >
       {/* <IconButton className={classes.iconButton} aria-label="Menu">
         <MenuIcon />
       </IconButton> */}
       <InputBase
+        onKeyPress={(e)=>props.handleKeyPress(e,document.getElementById('searchInput').value)}
         className={classes.input}
         placeholder={props.placeholder}
         id='searchInput'
