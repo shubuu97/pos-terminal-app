@@ -23,6 +23,8 @@ import { withStyles } from '@material-ui/core/styles';
 import _findIndex from 'lodash/findIndex';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import addToCart from '../../Global/PosFunctions/addToCart';
+import splitDotWithInt from '../../Global/PosFunctions/splitDotWithInt';
+let regex = /^\d*[\.\d]{1,3}$/;
 
 function Transition(props) {
     return <Slide direction="down" {...props} />;
@@ -61,7 +63,7 @@ class GiftCardModal extends React.Component {
             giftCard: {
                 giftCode: '',
                 value: {
-                    amount: 0,
+                    amount: '',
                     currency: 'USD'
                 }
             },
@@ -100,7 +102,7 @@ class GiftCardModal extends React.Component {
                     giftCard,
                     giftCodeMsg: 'This giftcode already exist.',
                     isGiftCodeError: true
-                })    
+                })
             }
             //  else {
             //     _set(giftCard, 'value.amount', 0);
@@ -155,7 +157,7 @@ class GiftCardModal extends React.Component {
             data.retailerId = localStorage.getItem('retailerId');
             data.storeId = localStorage.getItem('storeId');
             _set(data, 'createdOn.seconds', parseInt((new Date().getTime()) / 1000));
-            _set(data, 'value.amount', data.value.amount * 100)
+            _set(data, 'value.amount', splitDotWithInt(data.value.amount))
         }
         let url = 'GiftCard/Create';
         this.getExistingGiftCard(url, data, this.handleSaveGiftDataSuccess, this.handleSaveGiftDataError);
@@ -203,13 +205,13 @@ class GiftCardModal extends React.Component {
 
     handleBlur = (e) => {
         this.props.cart.cartItems.map(item => {
-            if(item.doc.product.name == Number(this.state.giftCard.giftCode)) {
-                this.setState({isGiftCodeError: true, giftCodeMsg: 'Gift Code already added in cart.'})
+            if (item.doc.product.name == Number(this.state.giftCard.giftCode)) {
+                this.setState({ isGiftCodeError: true, giftCodeMsg: 'Gift Code already added in cart.' })
             } else {
-                this.setState({isGiftCodeError: false, giftCodeMsg: ''})
+                this.setState({ isGiftCodeError: false, giftCodeMsg: '' })
             }
         })
-        
+
         let val = _get(e, 'target.value', '');
         let url = 'GiftCard/GetByCodeAndStore';
         let data = {
@@ -221,8 +223,8 @@ class GiftCardModal extends React.Component {
 
     handleGiftCodeChange = (e, name) => {
         let val = _get(e, 'target.value', '');
-        if(val !== '') {
-            this.setState({ isGiftCodeError: false, giftCodeMsg: '' })            
+        if (val !== '') {
+            this.setState({ isGiftCodeError: false, giftCodeMsg: '' })
             this.props.cart.cartItems.map(item => {
                 if (item.doc.product.name == Number(val)) {
                     this.setState({ isGiftCodeError: true, giftCodeMsg: 'Gift Code already added in cart.' })
@@ -237,17 +239,45 @@ class GiftCardModal extends React.Component {
         _set(giftCard, 'giftCode', val);
         this.setState({ giftCard })
     }
-
-    handleGiftValueChange = (e) => {
-        let val = _get(e, 'target.value', '');
-        if (Number(val) < 5 || Number(val) > 100 || val == '') {
-            this.setState({ isGiftValueError: true, giftValueMsg: 'Value must be between 5 and 100' })
-        } else {
-            this.setState({ isGiftValueError: false, giftValueMsg: '' })
-        }
+    handleGiftValueChange = (val) => {
         let giftCard = _get(this.state, 'giftCard', {});
-        _set(giftCard, 'value.amount', !isNaN(val) ? Number(val) : val);
-        this.setState({ giftCard })
+        if (splitDotWithInt(val) < 500 || splitDotWithInt(val) > 10000 || val == '') {
+            this.setState({ isGiftValueError: true, giftValueMsg: 'Value must be between 5 and 100' })
+            _set(giftCard, 'value.amount', val);
+            this.setState({ giftCard });
+
+        } else {
+            debugger;
+            if (regex.test(val)) {
+                _set(giftCard, 'value.amount', val);
+                this.setState({ giftCard })
+            }
+            else if (regex.test(val.substring(0, val.length - 1))) {
+                _set(giftCard, 'value.amount', val.substring(0, val.length - 1));
+                this.setState({ giftCard })
+            }
+            else {
+                _set(giftCard, 'value.amount', '');
+                this.setState({ giftCard });
+            }
+            this.setState({ isGiftValueError: false, giftValueMsg: '' });
+
+        }
+
+    }
+    handleInputChange = num => event => {
+        let focusItemValue = _get(this.state, 'giftCard.value.amount');
+        if (num != '<') {
+            focusItemValue = (focusItemValue || '') + num;
+            let regex = /^\d*[\.\d]{1,3}$/;
+            if (!regex.test(focusItemValue))
+                return false;
+
+        }
+        else {
+            focusItemValue = '';
+        }
+        this.handleGiftValueChange(focusItemValue)
     }
 
     render() {
@@ -266,40 +296,62 @@ class GiftCardModal extends React.Component {
                         Create Gift Card
                     </DialogTitle>
                     <DialogContent>
-                        <div style={this.getModalStyle()}>
-                            <div className="">
-                                <TextField
-                                    id="giftCode"
-                                    label="Gift Code"
-                                    value={_get(this.state, 'giftCard.giftCode', '')}
-                                    onChange={(e) => this.handleGiftCodeChange(e, 'giftCode')}
-                                    onBlur={(e) => this.handleBlur(e)}
-                                    margin="outline"
-                                    fullWidth
-                                    type='text'
-                                    variant="outlined"
-                                    className='mt-10'
-                                />
+                        <div className="d-flex justify-space-evenly" >
+                            <div style={this.getModalStyle()}>
+                                <div className="">
+                                    <TextField
+                                        id="giftCode"
+                                        label="Gift Code"
+                                        value={_get(this.state, 'giftCard.giftCode', '')}
+                                        onChange={(e) => this.handleGiftCodeChange(e, 'giftCode')}
+                                        onBlur={(e) => this.handleBlur(e)}
+                                        margin="outline"
+                                        fullWidth
+                                        type='text'
+                                        variant="outlined"
+                                        className='mt-10'
+                                    />
+                                </div>
+                                <div style={{ color: 'red' }}>
+                                    {this.state.giftCodeMsg}
+                                </div>
+                                <div className="">
+                                    <TextField
+                                        id="value"
+                                        label="Value"
+                                        value={_get(this.state, 'giftCard.value.amount', '')}
+                                        onChange={(e) => this.handleGiftValueChange(e.target.value)}
+                                        margin="outline"
+                                        fullWidth
+                                        helperText='Between 5$-100$'
+                                        variant="outlined"
+                                        className='mt-10'
+                                    />
+                                </div>
+                                <div style={{ color: 'red' }}>
+                                    {this.state.giftValueMsg}
+                                </div>
                             </div>
-                            <div style={{ color: 'red' }}>
-                                {this.state.giftCodeMsg}
-                            </div>
-                            <div className="">
-                                <TextField
-                                    id="value"
-                                    label="Value"
-                                    value={_get(this.state, 'giftCard.value.amount', '')}
-                                    type='number'
-                                    onChange={(e) => this.handleGiftValueChange(e, 'value')}
-                                    margin="outline"
-                                    fullWidth
-                                    helperText='Between 5$-100$'
-                                    variant="outlined"
-                                    className='mt-10'
-                                />
-                            </div>
-                            <div style={{ color: 'red' }}>
-                                {this.state.giftValueMsg}
+                            <div className="numpad-global ml-20 mt-10">
+                                <div className='card numpad-card' style={{}}>
+                                    <span className='card-title'>Numpad</span>
+                                    <div className='flex-row flex-wrap justify-center pt-15'>
+                                        <div className='key small-key' onClick={this.handleInputChange('1')}>1</div>
+                                        <div className='key small-key' onClick={this.handleInputChange('2')}>2</div>
+                                        <div className='key small-key' onClick={this.handleInputChange('3')}>3</div>
+                                        <div className='key small-key' onClick={this.handleInputChange('4')}>4</div>
+                                        <div className='key small-key' onClick={this.handleInputChange('5')}>5</div>
+                                        <div className='key small-key' onClick={this.handleInputChange('6')}>6</div>
+                                        <div className='key small-key' onClick={this.handleInputChange('7')}>7</div>
+                                        <div className='key small-key' onClick={this.handleInputChange('8')}>8</div>
+                                        <div className='key small-key' onClick={this.handleInputChange('9')}>9</div>
+                                        <div className='key small-key' onClick={this.handleInputChange('.')}>.</div>
+                                        <div className='key small-key' onClick={this.handleInputChange('0')}>0</div>
+                                        <div className='key small-key' onClick={this.handleInputChange('<')}>clr</div>
+                                        <div className='small-key'></div>
+                                        <div className='key big-key'>Enter</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </DialogContent>
