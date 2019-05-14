@@ -21,9 +21,10 @@ const styles = theme => ({
     fontSize: theme.typography.pxToRem(15),
     flexBasis: '33.33%',
     flexShrink: 0,
+    paddingRight: '25px'
   },
   secondaryHeading: {
-    fontSize: theme.typography.pxToRem(15),
+    fontSize: theme.typography.pxToRem(10),
     color: theme.palette.text.secondary,
   },
 });
@@ -44,7 +45,7 @@ class RefundHistory extends React.Component {
     let saleItemResp = saleItems.map((saleItem, index) => {
       return (
         <tr>
-          <td>{_get(saleItem, "returnProduct.name", '')}</td>
+          <td style={{maxWidth: '40px'}}>{_get(saleItem, "returnProduct.name", '')}</td>
           <td>{_get(saleItem, "qty", 0)}</td>
           <td>{DineroObj(_get(saleItem, "itemRefundEffectiveTotal.amount", 0)).toFormat('$0,0.00')}</td>
         </tr>
@@ -61,13 +62,13 @@ class RefundHistory extends React.Component {
     const { classes, data } = this.props;
     const { expanded } = this.state;
     let expansionPanel = []
-    console.log(data, 'fyfyfy')
     return (
       <ExpansionPanel expanded={expanded === 'panel1'} onChange={this.handleChange('panel1')}>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography className={classes.secondaryHeading}>Refund Date: </Typography>
-          <Typography className={classes.heading}> {moment.utc(_get(data, 'timestamp.seconds', 0) * 1000).format('MM/DD/YYYY hh:mm:ss')}</Typography>
-          <Typography className={classes.secondaryHeading}>Refund Amount: </Typography>
+        <Typography className={classes.heading}>{_get(data,'id','')}</Typography>
+          {/* <Typography className={classes.secondaryHeading}>Refund Date: </Typography> */}
+          <Typography className={classes.heading}> {moment(_get(data, 'timestamp.seconds', 0) * 1000).format('MM/DD/YYYY h:mm a')}</Typography>
+          {/* <Typography className={classes.secondaryHeading}>Refund Amount: </Typography> */}
           <Typography className={classes.heading}>{DineroObj(_get(data, 'refundTotal.amount', 0)).toFormat('$0,0.00')}</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
@@ -114,7 +115,6 @@ class RefundHistory extends React.Component {
 
     return (
       <div className='flex-column'>
-        <span className='title'> Refund History</span>
         <div className={classes.root}>
           {this.populatePanels()}
         </div>
