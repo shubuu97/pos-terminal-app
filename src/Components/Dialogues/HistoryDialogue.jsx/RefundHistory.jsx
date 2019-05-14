@@ -45,7 +45,7 @@ class RefundHistory extends React.Component {
     let saleItemResp = saleItems.map((saleItem, index) => {
       return (
         <tr>
-          <td>{_get(saleItem, "returnProduct.name", '')}</td>
+          <td style={{maxWidth: '40px'}}>{_get(saleItem, "returnProduct.name", '')}</td>
           <td>{_get(saleItem, "qty", 0)}</td>
           <td>{DineroObj(_get(saleItem, "itemRefundEffectiveTotal.amount", 0)).toFormat('$0,0.00')}</td>
         </tr>
