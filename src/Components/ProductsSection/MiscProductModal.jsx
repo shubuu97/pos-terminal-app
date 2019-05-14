@@ -23,6 +23,10 @@ import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import addToCart from '../../Global/PosFunctions/addToCart';
+import splitDotWithInt from '../../Global/PosFunctions/splitDotWithInt';
+let regex = /^\d*[\.\d]{1,3}$/;
+
+
 
 function Transition(props) {
     return <Slide direction="down" {...props} />;
@@ -100,8 +104,8 @@ class MiscProductModal extends React.Component {
         } else {
             let data = { ...this.state };
             let salePrice = {
-                amount: Number(this.state.price) * 100,
-                currency:"USD",
+                amount: splitDotWithInt(this.state.price),
+                currency: "USD",
             }
             data.salePrice = salePrice;
             data.upcCode = Number(data.upcCode);
@@ -146,11 +150,48 @@ class MiscProductModal extends React.Component {
         })
     }
 
+    handleChangePrice = (e, name) => {
+        let value = e.target.value;
+        if (regex.test(value)) {
+            this.setState({
+                ...this.state,
+                [name]: e.target.value
+            })
+        }
+        else if (regex.test(value.substring(0, value.length - 1))) {
+            this.setState({
+                ...this.state,
+                [name]: value.substring(0, value.length - 1)
+            })
+        }
+        else {
+            this.setState({
+                ...this.state,
+                [name]: ''
+            })
+        }
+    }
+
     handleCheckBoxChange = (val, name) => {
         this.setState({
             [name]: val
         })
     }
+    handleInputChange = num => event => {
+        let focusItemValue = this.state.price;
+        if (num != '<') {
+            focusItemValue = (focusItemValue || '') + num;
+            let regex = /^\d*[\.\d]{1,3}$/;
+            if (!regex.test(focusItemValue))
+                return false;
+
+        }
+        else {
+            focusItemValue = '';
+        }
+        this.setState({ price: focusItemValue });
+    }
+
 
     render() {
         return (
@@ -168,44 +209,30 @@ class MiscProductModal extends React.Component {
                         Miscellaneous Product
                     </DialogTitle>
                     <DialogContent>
-                        <div>
-                            <div className="">
-                                <TextField
-                                    id="name"
-                                    label="Product Name"
-                                    value={_get(this.state, 'name', '')}
-                                    onChange={(e) => this.handleChange(e, 'name')}
-                                    // onBlur={(e) => this.handleBlur(e)}
-                                    margin="outline"
-                                    fullWidth
-                                    type='text'
-                                    variant="outlined"
-                                    className='mt-10'
-                                />
-                            </div>
-                            <div style={{ color: "red" }}>{this.state.errorMsg}</div>
-                            <div className="">
-                                <TextField
-                                    id="upcCode"
-                                    label="Product UPC"
-                                    value={_get(this.state, 'upcCode', '')}
-                                    type='text'
-                                    onChange={(e) => this.handleChange(e, 'upcCode')}
-                                    margin="outline"
-                                    fullWidth
-                                    // helperText='Between 5$-100$'
-                                    variant="outlined"
-                                    className='mt-10'
-                                />
-                            </div>
-                            <div className=" flex-row align-center">
-                                <div className="mui-col-md-6 no-pad">
+                        <div className="d-flex">
+                            <div>
+                                <div className="">
                                     <TextField
-                                        id="price"
-                                        label="Product Price"
-                                        value={_get(this.state, 'price', '')}
-                                        type='number'
-                                        onChange={(e) => this.handleChange(e, 'price')}
+                                        id="name"
+                                        label="Product Name"
+                                        value={_get(this.state, 'name', '')}
+                                        onChange={(e) => this.handleChange(e, 'name')}
+                                        // onBlur={(e) => this.handleBlur(e)}
+                                        margin="outline"
+                                        fullWidth
+                                        type='text'
+                                        variant="outlined"
+                                        className='mt-10'
+                                    />
+                                </div>
+                                <div style={{ color: "red" }}>{this.state.errorMsg}</div>
+                                <div className="">
+                                    <TextField
+                                        id="upcCode"
+                                        label="Product UPC"
+                                        value={_get(this.state, 'upcCode', '')}
+                                        type='text'
+                                        onChange={(e) => this.handleChange(e, 'upcCode')}
                                         margin="outline"
                                         fullWidth
                                         // helperText='Between 5$-100$'
@@ -213,13 +240,50 @@ class MiscProductModal extends React.Component {
                                         className='mt-10'
                                     />
                                 </div>
-                                <div className="mui-col-md-6 mt-10">
-                                    <FormControlLabel
-                                        control={<Checkbox onChange={(event, value) => this.handleCheckBoxChange(value, 'isTaxable')} value="isTaxable" color="primary" checked={this.state.isTaxable} />}
-                                        label="Taxable"
-                                    />
-                                </div>
+                                <div className=" flex-row align-center">
+                                    <div className="mui-col-md-6 no-pad">
+                                        <TextField
+                                            id="price"
+                                            label="Product Price"
+                                            value={_get(this.state, 'price', '')}
+                                            onChange={(e) => this.handleChangePrice(e, 'price')}
+                                            margin="outline"
+                                            onFocus={() => this.setState({ currentFocus: 'price' })}
+                                            fullWidth
+                                            // helperText='Between 5$-100$'
+                                            variant="outlined"
+                                            className='mt-10'
+                                        />
+                                    </div>
+                                    <div className="mui-col-md-6 mt-10">
+                                        <FormControlLabel
+                                            control={<Checkbox onChange={(event, value) => this.handleCheckBoxChange(value, 'isTaxable')} value="isTaxable" color="primary" checked={this.state.isTaxable} />}
+                                            label="Taxable"
+                                        />
+                                    </div>
 
+                                </div>
+                            </div>
+                            <div className="numpad-global ml-20 mt-10">
+                                <div className='card numpad-card' style={{}}>
+                                    <span className='card-title'>Numpad</span>
+                                    <div className='flex-row flex-wrap justify-center pt-15'>
+                                        <div className='key small-key' onClick={this.handleInputChange('1')}>1</div>
+                                        <div className='key small-key' onClick={this.handleInputChange('2')}>2</div>
+                                        <div className='key small-key' onClick={this.handleInputChange('3')}>3</div>
+                                        <div className='key small-key' onClick={this.handleInputChange('4')}>4</div>
+                                        <div className='key small-key' onClick={this.handleInputChange('5')}>5</div>
+                                        <div className='key small-key' onClick={this.handleInputChange('6')}>6</div>
+                                        <div className='key small-key' onClick={this.handleInputChange('7')}>7</div>
+                                        <div className='key small-key' onClick={this.handleInputChange('8')}>8</div>
+                                        <div className='key small-key' onClick={this.handleInputChange('9')}>9</div>
+                                        <div className='key small-key' onClick={this.handleInputChange('.')}>.</div>
+                                        <div className='key small-key' onClick={this.handleInputChange('0')}>0</div>
+                                        <div className='key small-key' onClick={this.handleInputChange('<')}>clr</div>
+                                        <div className='small-key'></div>
+                                        <div className='key big-key'>Enter</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </DialogContent>

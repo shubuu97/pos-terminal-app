@@ -16,7 +16,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { connect } from 'react-redux';
 import { commonActionCreater } from '../../Redux/commonAction';
-let regex = /^\d*[\.\d]+$/;
+let regex = /^\d*[\.\d]{1,3}$/;
+
 
 
 
