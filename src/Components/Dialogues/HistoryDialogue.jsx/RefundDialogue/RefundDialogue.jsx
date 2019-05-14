@@ -330,12 +330,10 @@ class RefundDialogue extends React.Component {
         let itemSubTotal = _get(selectedSaleItems, 'returnableSubTotal.amount', 0);
         let itemTaxAmount = _get(selectedSaleItems, 'returnableTaxTotal.amount', 0);
         //let itemEffectiveTotal = _get(selectedSaleItems, 'returnableEffectiveTotal.amount', 0);
-        debugger;
         let itemRefundSubTotalAmount = this.calAmounts(itemSubTotal, qty, expectedQty);
         let itemRefundTaxTotalAmount = this.calAmounts(itemTaxAmount, qty, expectedQty);
         let itemRefundEffectiveTotalAmount = itemRefundSubTotalAmount + itemRefundTaxTotalAmount;
         console.log(itemRefundEffectiveTotalAmount,"itemRefundEffectiveTotalAmount")
-        debugger
 
         refundObj.itemRefundSubTotal = { currencyCode: "$", amount: itemRefundSubTotalAmount };
         refundObj.itemRefundTaxTotal = { currencyCode: "$", amount: itemRefundTaxTotalAmount };
