@@ -13,6 +13,7 @@ const SetTransform = createTransform(
    cart.allowedCartDiscountMoney = Dinero(cart.allowedCartDiscountMoney);
    cart.cartDiscount.cartDiscountMoney = Dinero(cart.cartDiscount.cartDiscountMoney);
    cart.discountableMoney = Dinero(cart.discountableMoney);
+   cart.loyaltyDiscountMoney = Dinero(cart.loyaltyDiscountMoney);
    let cartItems = cart.cartItems;
 
    for(let i=0;i<cartItems.length;i++){

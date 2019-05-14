@@ -23,6 +23,7 @@ import DiscountDialogue from '../../Dialogues/DiscountDialogue/DiscountDialogue'
 /* Global Function import */
 import globalClearCart from '../../../Global/PosFunctions/clearCart';
 import addGuestToCart from '../../../Global/PosFunctions/addGuestToCart';
+import splitDotWithInt from '../../../Global/PosFunctions/splitDotWithInt'
 /* Asset Import  */
 import EmptyCartImg from '../../../assets/images/pos/empty_cart.png'
 const DineroInit = () => {
@@ -112,6 +113,7 @@ class OrdersTab extends React.Component {
             cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountMoney', 0).getAmount()
         }
         cartDiscountObj.cartItems = cartItems
+        cartDiscountObj.prevCart = _get(this, 'props.cart', {});
         this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
     }
 
@@ -161,29 +163,25 @@ class OrdersTab extends React.Component {
             // * Changing Cart Discounts
             cartDiscountObj.type = type
             if (type != '%') {
-                cartDiscountObj.cartDiscount = parseInt(parseFloat(data) * 100)
+                cartDiscountObj.cartDiscount = splitDotWithInt(parseFloat(data))
             } else {
                 cartDiscountObj.cartDiscount = parseFloat(data)
             }
+            cartDiscountObj.prevCart = _get(this, 'props.cart', {});
             this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
         }
         else if (identifier == 'ItemDiscount') {
             // * Changing Item Discount
             if (type != '%') {
-                reqObj[index].itemDiscountMoney = Dinero({ amount: parseInt(data * 100), currency: 'USD' })
+                reqObj[index].itemDiscountMoney = Dinero({ amount: splitDotWithInt(data), currency: 'USD' })
                 reqObj[index].itemDiscountPercent = (data / ((reqObj[index].itemRegularTotalMoney).toUnit())) * 100
                 reqObj[index].isPercent = false
             } else {
-                if (data > reqObj[index].allowedCartDiscountPercent) {
-                    reqObj[index].itemDiscountMoney = reqObj[index].allowedItemDiscountMoney
-                }
-                else {
-                    reqObj[index].itemDiscountMoney = reqObj[index].itemRegularTotalMoney.percentage(data)
-                }
                 reqObj[index].itemDiscountPercent = data
                 reqObj[index].isPercent = true
             }
             cartDiscountObj.cartItems = reqObj
+            cartDiscountObj.prevCart = _get(this, 'props.cart', {});
             this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
         }
     };
@@ -322,6 +320,7 @@ class OrdersTab extends React.Component {
         cartDiscountObj.cartItems[index].itemDiscountMoney = DineroFunc(0)
         cartDiscountObj.cartItems[index].itemDiscountPercent = 0;
         cartDiscountObj.cartItems[index].isPercent = false;
+        cartDiscountObj.prevCart = _get(this, 'props.cart', {});
         this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
     }
 

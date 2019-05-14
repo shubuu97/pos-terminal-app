@@ -156,7 +156,6 @@ const paymentReducer = (state = {
             }));
             break;
         case 'EMPLOYEE_PAYROLL':
-            debugger;
             amountAvailToRedeem = dineroObj(_get(state, 'employeeAvailableAmount.limit.amount'));
             employeePay = _get(action, 'data.employeePay', 0)
             paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount, decliningBalance)

@@ -28,6 +28,16 @@ class CalculationSection extends React.Component {
         cartDiscountObj.type = ''
         cartDiscountObj.cartDiscount = 0
         cartDiscountObj.cartItems = this.props.cartItems
+        cartDiscountObj.prevCart = _get(this, 'props.cart', {});
+        this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
+    }
+
+    handleLoyaltyDiscountRemove = () => {
+        let cartDiscountObj = {}
+        cartDiscountObj.type = ''
+        cartDiscountObj.cartDiscount = 0
+        cartDiscountObj.cartItems = this.props.cartItems
+        cartDiscountObj.prevCart = _get(this, 'props.cart', {});
         this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
     }
 
@@ -44,6 +54,7 @@ class CalculationSection extends React.Component {
 
         // Discounts
         let cartDiscount = _get(cart, 'cartDiscount.cartDiscountMoney', Dinero({ amount: 0, currency: 'USD' }))
+        let loyaltyDiscount = _get(cart, 'loyaltyDiscountMoney', Dinero({ amount: 0, currency: 'USD' }))
         let employeeDiscount = _get(cart, 'employeeDiscountMoney', Dinero({ amount: 0, currency: 'USD' }))
         let totalItemDiscount = _get(cart, 'totalItemDiscountMoney', Dinero({ amount: 0, currency: 'USD' }))
         return (
@@ -64,6 +75,18 @@ class CalculationSection extends React.Component {
                                         Cart Discount
                                     </span>
                                     <span className='cart-amount'>- {cartDiscount.toFormat('$0,0.00')}</span>
+                                </div> : null
+                        }
+                        {
+                            loyaltyDiscount.getAmount() > 0 ?
+                                <div className='cart-each-details'>
+                                    <span className='cart-title flex-row align-center'>
+                                        <RemoveCircleIcons style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }}
+                                            onClick={this.handleLoyaltyDiscountRemove}
+                                        />
+                                        Loyalty Discount
+                                    </span>
+                                    <span className='cart-amount'>- {loyaltyDiscount.toFormat('$0,0.00')}</span>
                                 </div> : null
                         }
                         {

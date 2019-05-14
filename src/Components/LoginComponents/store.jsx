@@ -88,22 +88,22 @@ class Store extends React.Component {
     // saveImageToPouch = () => {
     //     let blobDb = new PouchDb('blobDb')
     //     let image = document.getElementById('logoImage')
-    //     debugger
+    //    
     //     blobUtil.imgSrcToBlob(image.src).then((blob) => {
-    //         debugger
+    //        
     //         console.log(blob, 'check blob value')
     //     })
     //     .catch(err=> {
-    //         debugger
+    //        
     //     })
         //     return blobDb.putAttachment('storeLogo', 'storeLogo.png', blob, 'image/png');
         //   }).then(() => {
         //      return blobDb.get('storeLogo', {attachments: true});
         //   }).then((doc) => {
-        //       debugger
+        //      
         //     return blobDb.getAttachment('storeLogo', 'storeLogo.png');
         //   }).then(function (blob) {
-        //       debugger
+        //      
         //     var url = URL.createObjectURL(blob);
         //     console.log(url, 'here is the url')
         //   });

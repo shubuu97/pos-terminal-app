@@ -9,6 +9,7 @@ import Dinero from 'dinero.js'
 /* Material import */
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles'
+import TextField from '@material-ui/core/TextField';
 /* Material Icons */
 import PersonAdd from '@material-ui/icons/PersonAddOutlined';
 import History from '@material-ui/icons/History';
@@ -18,13 +19,14 @@ import { connect } from 'react-redux';
 import ReactSelect from '../../../Global/Components/ReactSelect/async-react-select';
 import globalClearCart from '../../../Global/PosFunctions/clearCart';
 import addGuestToCart from '../../../Global/PosFunctions/addGuestToCart';
+import splitDotWithInt from '../../../Global/PosFunctions/splitDotWithInt'
 /* Component Imports */
 import CalculationSection from './CalculationSection';
 import PouchDb from 'pouchdb';
 import PAM from "pouchdb-adapter-memory";
 import { commonActionCreater } from '../../../Redux/commonAction';
 import Customer from '../Customer';
-import {reset} from 'redux-form';
+import { reset } from 'redux-form';
 
 PouchDb.plugin(PAM);
 PouchDb.plugin(require('pouchdb-quick-search'));
@@ -92,13 +94,12 @@ class CustomerTab extends React.Component {
         let empStoreId = _get(doc, 'value.employeeStoreId', '')
         //populating cart reducer with customer
         this.setState({ value: '' })
-        if(storeId == empStoreId){
+        if (storeId == empStoreId) {
             this.props.dispatch(commonActionCreater(employeeDiscount, 'ADD_EMPLOYEE_DISCOUNT'));
         }
-        else{
+        else {
             this.props.dispatch(commonActionCreater(0, 'ADD_EMPLOYEE_DISCOUNT'));
         }
-
         let cartDiscountObj = {}
         if (_get(this.props, 'cart.cartDiscount.isPercentage', false)) {
             cartDiscountObj.type = '%'
@@ -109,6 +110,7 @@ class CustomerTab extends React.Component {
             cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountMoney', 0).getAmount()
         }
         cartDiscountObj.cartItems = _get(this.props, 'cart.cartItems', [])
+        cartDiscountObj.prevCart = _get(this, 'props.cart', {});
         this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
         this.props.dispatch(commonActionCreater(doc.value, 'ADD_CUSTOMER_TO_CART'));
 
@@ -117,14 +119,28 @@ class CustomerTab extends React.Component {
         let customer = value.customer;
         let email = value.email;
         let phoneNumber = value.phoneNumber;
-        this.setState({ billingAddress, customer, email, phoneNumber });
-
+        let rewardPoints = value.rewardPoints;
+        this.setState({ billingAddress, customer, email, phoneNumber, rewardPoints });
     }
 
     handleOpen = () => {
         this.setState({ open: true })
         this.props.dispatch(commonActionCreater(true, 'IS_CUSTOMER_DIALOGUE_OPEN'))
     }
+
+    handleChange = name => event => {
+        if(name == 'loyalty' && event.target.value > _get(this, 'props.cart.allowedLoyaltyPoints', 0)){
+            this.setState({
+                loyalty: _get(this, 'props.cart.allowedLoyaltyPoints', 0),
+            });
+        }
+        else{
+            this.setState({
+                [name]: event.target.value,
+            });
+        }
+        
+    };
 
     handleClose = (props) => {
         // ! Uncomment if you want to clear form values onclick of cancel button 
@@ -151,9 +167,8 @@ class CustomerTab extends React.Component {
             return offlineContent
     }
 
-    proceedAsGuest = async ()  => {
-        await addGuestToCart(this.props.dispatch) ;
-
+    proceedAsGuest = async () => {
+        await addGuestToCart(this.props.dispatch);
         let cartDiscountObj = {}
         if (_get(this.props, 'cart.cartDiscount.isPercentage', false)) {
             cartDiscountObj.type = '%'
@@ -164,13 +179,31 @@ class CustomerTab extends React.Component {
             cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountMoney', 0).getAmount()
         }
         cartDiscountObj.cartItems = _get(this.props, 'cart.cartItems', [])
-
+        cartDiscountObj.prevCart = _get(this, 'props.cart', {});
         this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
         this.handleClickProceed()
     }
 
+    applyLoyaltyDiscount = () => {
+        let loyaltyPoints = this.state.loyalty;
+        let cartDiscountObj = {}
+        if (_get(this.props, 'cart.cartDiscount.isPercentage', false)) {
+            cartDiscountObj.type = '%'
+            cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountPercent', 0)
+        }
+        else {
+            cartDiscountObj.type = '$'
+            cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountMoney', 0).getAmount()
+        }
+        cartDiscountObj.cartItems = _get(this.props, 'cart.cartItems', [])
+        cartDiscountObj.prevCart = _get(this, 'props.cart', {});
+        cartDiscountObj.loyaltyPoints = splitDotWithInt(loyaltyPoints)
+        this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
+    }
+
     render() {
-        let { checkoutactionArea, checkoutMainPart, checkoutCustomerArea, checkoutcalcArea, checkoutcartArea, guest, employee } = this.props
+        let { checkoutactionArea, checkoutMainPart, checkoutCustomerArea, checkoutcalcArea, checkoutcartArea, guest, employee, customer } = this.props
+        console.log(this.props.customer, 'customer')
         return (
             <div className="customer-section" >
                 <div className="customer-main flex-column align-center" style={{ height: checkoutcartArea }}>
@@ -183,22 +216,24 @@ class CustomerTab extends React.Component {
                             loadOptions={this.loadOptions}
                             className='fwidth'
                         />
-                        {this.handleHideWhenOffline(
-                            { online:!this.props.offline },
-                            [<div className='add-customer flex-row align-center justify-center'>
-                                <PersonAdd onClick={this.handleOpen} style={{ fontSize: '1.3em', color: 'rgba(0,0,0,0.5)', cursor: 'pointer' }} />
-                            </div>],
-                            [<div className='add-customer flex-row align-center justify-center disable-button'>
-                                <PersonAdd onClick={this.handleOpen} style={{ fontSize: '1.3em', color: 'rgba(0,0,0,0.5)', cursor: 'pointer' }} />
-                            </div>]
-                        )}
+                        {
+                            this.handleHideWhenOffline(
+                                { online: !this.props.offline },
+                                [<div className='add-customer flex-row align-center justify-center'>
+                                    <PersonAdd onClick={this.handleOpen} style={{ fontSize: '1.3em', color: 'rgba(0,0,0,0.5)', cursor: 'pointer' }} />
+                                </div>],
+                                [<div className='add-customer flex-row align-center justify-center disable-button'>
+                                    <PersonAdd onClick={this.handleOpen} style={{ fontSize: '1.3em', color: 'rgba(0,0,0,0.5)', cursor: 'pointer' }} />
+                                </div>]
+                            )
+                        }
                         <Customer
                             open={this.state.open}
                             closeModal={this.handleClose}
                             fullScreen={false}
                         />
                     </div>
-                    <div className='d-flex mt-20 fwidth'>
+                    {/* <div className='d-flex mt-20 fwidth'>
                         <div className='customer-info'>
                             <div className='each-info'>
                                 <div className='info-title'>Name</div>
@@ -226,14 +261,71 @@ class CustomerTab extends React.Component {
                                 <History style={{ fontSize: '2.3em', color: 'rgba(0,0,0,0.5)' }} />
                             </div>]
                         )}
-                    </div>
-                    {
-                       !guest ? 
-                        <div className='flex-column align-center justify-center'>
-                            <div>Or</div>
-                            <Button className={`${this.props.classes.darkColor} mt-20`} variant="contained" onClick={this.proceedAsGuest}>Proceed as Guest</Button>
-                        </div> : null
+                    </div> */}
 
+                    <div className="card customer-summary fwidth">
+                        <div className="flex-row justify-space-between">
+                            <div className="customer-basic-info flex-column">
+                                <div className="flex-row">
+                                    <div className="customer-name flex-column">
+                                        <span className="card-title">Name</span>
+                                        <span className="card-data">{_get(this.props, 'customer.customer.firstName')} {_get(this.props, 'customer.customer.lastName')}</span>
+                                    </div>
+                                    {
+                                        !customer.guest ?
+                                            <div className="customer-phone flex-column">
+                                                <span className="card-title">Phone</span>
+                                                <span className="card-data">16788272542</span>
+                                            </div> : null
+                                    }
+                                </div>
+                                {
+                                    !customer.guest ?
+                                        <div className="customer-email flex-column">
+                                            <span className="card-title">Email</span>
+                                            <span className="card-data">noah.reiber@31d5952e-619f-4b02-9fd8-0f620e1fa222.com</span>
+                                        </div> : null
+                                }
+                            </div>
+                            {
+                                this.handleHideWhenOffline(
+                                    { online: !this.props.offline },
+                                    [<div onClick={this.props.handleHistoryOpen} className='add-customer flex-row align-center justify-center'>
+                                        <History style={{ fontSize: '2.3em', color: 'rgba(0,0,0,0.5)' }} />
+                                    </div>],
+                                    [<div onClick={this.props.handleHistoryOpen} className='disable-button add-customer flex-row align-center justify-center'>
+                                        <History style={{ fontSize: '2.3em', color: 'rgba(0,0,0,0.5)' }} />
+                                    </div>]
+                                )
+                            }
+                        </div>
+                    </div>
+                    {/* {
+                        !guest ?
+                            <div className='flex-column align-center justify-center'>
+                                <div>Or</div>
+                                <Button className={`${this.props.classes.darkColor} mt-20`} variant="contained" onClick={this.proceedAsGuest}>Proceed as Guest</Button>
+                            </div> : null
+
+                    } */}
+
+                    {
+                        !customer.guest ?
+                            <div className='flex-row fwidth justify-space-between align-center'>
+                                <TextField
+                                    id="outlined-name"
+                                    label="Loyalty Discount"
+                                    value={this.state.loyalty}
+                                    onChange={this.handleChange('loyalty')}
+                                    helperText={_get(this.props, 'cart.customer.rewardPoints', 0)}
+                                    margin="normal"
+                                    variant="outlined"
+                                    fullWidth
+                                />
+                                <span className='pay-button flex-row justify-center align-center' onClick={() => this.applyLoyaltyDiscount()}>Pay</span>
+                            </div>
+                            :
+                            null
                     }
                 </div>
                 <div className="order-amount-section">
@@ -254,7 +346,7 @@ class CustomerTab extends React.Component {
 function mapStateToProps(state) {
     let customer = _get(state, 'cart.customer');
     let cart = _get(state, 'cart');
-    return { ...customer, cart }
+    return { customer, cart }
 }
 
 export default connect(mapStateToProps)(withStyles(styles)(CustomerTab));
