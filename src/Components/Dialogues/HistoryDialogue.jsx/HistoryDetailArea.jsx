@@ -3,6 +3,7 @@ import moment from "moment";
 import ReactToPrint from 'react-to-print';
 /* Lodash Imports */
 import _get from 'lodash/get';
+import _isEmpty from 'lodash/isEmpty';
 import RefundHistory from './RefundHistory';
 import RefundDialogue from './RefundDialogue/RefundDialogue';
 /* Material import */
@@ -40,11 +41,32 @@ class HistoryDetailArea extends React.Component {
     showItemList = () => {
         let saleItems = _get(this.props, "selectedSaleTransaction.sale.saleItems", []);
         let saleItemResp = saleItems.map((saleItem, index) => {
+            let totalDiscount = _get(saleItem,'cartDiscountTotal.amount',0) + _get(saleItem,'employeeDiscountTotal.amount',0) + _get(saleItem,'itemDiscountTotal.amount',0)
             return (<tr>
-                <td>{_get(saleItem, "product.name", '')}</td>
-                <td>{_get(saleItem, "qty", 0)}</td>
-                <td>{_get(saleItem, "returnQty", 0)}</td>
+                <td style={{maxWidth: '70px'}}>{_get(saleItem, "product.name", '')}</td>
+                <td>
+                    <div><span>Ordered: </span><span>{_get(saleItem, "qty", 0)}</span></div>
+                    <div><span>Returned:</span> <span>{_get(saleItem, "returnQty", 0)}</span></div>
+                </td>
+                <td>{DineroInit(_get(saleItem,'product.salePrice.amount',0)).toFormat('$0,0.00')}</td>
+                <td>{DineroInit(totalDiscount).toFormat('$0,0.00')}<br />
+                
+                    {_get(saleItem,'cartDiscountTotal.amount',0) > 0 ? 
+                     <span>Cart: {DineroInit(_get(saleItem,'cartDiscountTotal.amount',0)).toFormat('$0,0.00')}</span> : ''
+                    }
 
+                    &nbsp;&nbsp;
+
+                    {_get(saleItem,'itemDiscountTotal.amount',0) > 0 ? <span>Item: {DineroInit(_get(saleItem,'itemDiscountTotal.amount',0)).toFormat('$0,0.00')}</span> : ''
+                    }
+                    
+                    &nbsp;&nbsp;
+                    {_get(saleItem,'employeeDiscountTotal.amount',0) ? <span>Emp: {DineroInit(_get(saleItem,'employeeDiscountTotal.amount',0)).toFormat('$0,0.00')}</span> : ''}
+                
+                </td>
+                <td>{DineroInit(_get(saleItem,'itemSubTotal.amount',0)).toFormat('$0,0.00')}</td>
+                <td>{DineroInit(_get(saleItem,'itemTaxAmount.amount',0)).toFormat('$0,0.00')}</td>
+                <td>{DineroInit(_get(saleItem,'itemEffectiveTotal.amount',0)).toFormat('$0,0.00')}</td>
             </tr>)
         })
         return (
@@ -100,17 +122,16 @@ class HistoryDetailArea extends React.Component {
     }
     summaryPanel = () => {
         let selectedOrder = _get(this.props, "selectedSaleTransaction", []);
-console.log(selectedOrder.sale, 'igyfydyty')
         return (
             <div className="mui-col-md-12 flex-column mt-10" >
-                <div className='flex-row justify-space-between mb-5'>
+                {/* <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Created Date: `}</span>
                     <span className='summary-value'>{moment(_get(selectedOrder, 'sale.saleCommitTimeStamp.seconds', 0) * 1000).format('MM/DD/YYYY h:mm a')}</span>
                 </div>
                 <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Served By: `}</span>
                     <span className='summary-value'>{_get(selectedOrder, 'operator.person.firstName', '') + ' ' + _get(selectedOrder, 'operator.person.lastName', '')}</span>
-                </div>
+                </div> */}
                 {
                     (_get(selectedOrder, 'sale.cartDiscountAmount.amount', 0) + _get(selectedOrder, 'sale.employeeDiscountAmount.amount', 0) + _get(selectedOrder, 'sale.itemDiscountAmount.amount', 0)) > 0 ?
                         <div className='flex-row justify-space-between mb-5'>
@@ -215,54 +236,75 @@ console.log(selectedOrder.sale, 'igyfydyty')
     render() {
         const { store } = this.props;
         let selectedOrder = _get(this.props, "selectedSaleTransaction", []);
-        console.log(selectedOrder, 'selectedOrder selectedOrder')
         return (
             <div className='history-main flex-column overflow-y'>
-                <div className='flex-row justify-space-between'>
-                    <div className="card history-order-details">
-                        <span className='card-title'>Order Details</span>
-                        <div className="mui-row" style={{ paddingLeft: '5%', paddingRight: '6%' }}>
-                            <table className="mui-table mui-table--bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Product</th>
-                                        <th>Qty</th>
-                                        <th>Returned Qty</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {this.showItemList()}
-                                </tbody>
-                            </table>
+                <span className='order-summary-title'>Order #{_get(selectedOrder,'sale.id','')}</span>
+                <div className="order-summary-header">
+                    <div style={{margin: '10px'}}>
+                        <div>
+                            <span className='summary-key'>{`Created Date: `}</span>
+                            <span className='summary-value'>{moment(_get(this.props.selectedSaleTransaction, 'sale.saleCommitTimeStamp.seconds', 0) * 1000).format('MM/DD/YYYY h:mm a')}</span>
                         </div>
+                    
+                        <div>
+                            <span className='summary-key'>{`Served By: `}</span>
+                            <span className='summary-value'>{_get(this.props.selectedSaleTransaction, 'operator.person.firstName', '') + ' ' + _get(this.props.selectedSaleTransaction, 'operator.person.lastName', '')}</span>
+                        </div> 
                     </div>
-                    <div className='order-summary-section'>
-                        <div className='card order-summary'>
-                            <span className='card-title'>Summary</span>
-                            {this.summaryPanel()}
-                        </div>
-                        <div className='order-action-section flex-row'>
-                            {/* <div onClick={() => this.handlePrint()} className='action-btn flex-row justify-center align-center'>Re-Print</div> */}
-                            <ReactToPrint
-                                trigger={() => <div className='action-btn flex-row justify-center align-center'>Re-Print</div>}
-                                content={() => this.printElementRef}
-                            />
-                            <div className={this.everyQtyReturned() ? 'disable-button action-btn flex-row justify-center align-center' : ' action-btn flex-row justify-center align-center'} onClick={() => { this.setState({ openRefund: true }) }}>Refund</div>
-                        </div>
+
+                    <div className='order-action-section flex-row'>
+                        <ReactToPrint
+                            trigger={() => <div className='action-btn flex-row justify-center align-center'>Re-Print</div>}
+                            content={() => this.printElementRef}
+                        />
+                        <div className={this.everyQtyReturned() ? 'disable-button action-btn flex-row justify-center align-center' : ' action-btn flex-row justify-center align-center'} onClick={() => { this.setState({ openRefund: true }) }}>Refund</div>
+                    </div> 
+                </div>
+                    
+                <div className="card history-order-details">
+                    <div style={{ paddingLeft: '3%', paddingRight: '4%' }}>
+                        <table className="mui-table mui-table--bordered">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Qty</th>
+                                    <th>Price</th>
+                                    <th>Discount</th>
+                                    <th>Subtotal</th>
+                                    <th>Tax</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {this.showItemList()}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+                <div className="flex-row justify-space-between" style={{marginTop: '20px'}}>
+                    <div className='order-summary-section'>
+                        <span className='order-summary-title'>Summary</span>
+                        <div className='card order-summary'>
+                            {this.summaryPanel()}
+                        </div>
+                    </div>
 
                 {/* Refund History Area */}
-                {_get(selectedOrder.sale, 'returns', []).map(returnData => {
-                    return <div className='refund-detail-section'>
-                        <RefundHistory
-                            store={store}
-                            selectedOrder={selectedOrder}
-                            logo={this.state.logo}
-                            data={returnData} />
+                    <div className="refund-history-section">
+                        {_isEmpty(_get(selectedOrder.sale, 'returns')) ? '' : 
+                        <span className='order-summary-title'> Refund History</span>}
+                        {_get(selectedOrder.sale, 'returns', []).map(returnData => {
+                            return <div className='refund-detail-section'>
+                                <RefundHistory
+                                    store={store}
+                                    selectedOrder={selectedOrder}
+                                    logo={this.state.logo}
+                                    data={returnData} />
+                            </div>
+                        })
+                        }
                     </div>
-                })
-                }
+                </div>
 
                 {/* Refund Dialogue */}
                 {

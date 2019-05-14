@@ -483,7 +483,7 @@ class HomeContainer extends React.Component {
                                 <label className="c-name">{_get(transactions, 'customer.customer.firstName', '') + ' ' + _get(transactions, 'customer.customer.lastName', '')}</label>
                             </div>
                             <div className="mui-col-md-6 text-right">
-                                <label className="c-name">{`Amount: ${(DineroInit(_get(transactions, 'sale.totalAmount.amount', 0), _get(transactions, 'sale.totalAmount.currency', 'USD'))).toFormat('$0,0.00')}`}</label>
+                                <label className="c-name">{`${(DineroInit(_get(transactions, 'sale.totalAmount.amount', 0), _get(transactions, 'sale.totalAmount.currency', 'USD'))).toFormat('$0,0.00')}`}</label>
                             </div>
                         </div>
                     </div>

@@ -376,6 +376,9 @@ p {
     pointer-events: none;
 }
 
+.ul-style-remove {
+    list-style-type: none; 
+}
 
 /* Material UI changes */
 
@@ -2011,7 +2014,7 @@ p {
     background: @background;
 
     .history-sidebar{
-        width: 30%;
+        width: 25%;
         height: calc(100vh - 90px);
         border-right: 1px solid black;
         padding: 20px;
@@ -2031,30 +2034,31 @@ p {
             margin:10px 0;
         }
     }
+
+    .order-summary-title {
+        font-size: 1.2em;
+        font-weight: bold;
+    }
+
+    .order-summary-header {
+        display: flex;
+        justify-content: space-between;
+    }
+
     .history-main{
         width: 70%;
         padding: 20px;
         height: calc(100vh - 90px);
-        .history-order-details{
-            width: 60%;
-            height: 60vh;
-            overflow-x: hidden;
+        overflow-x: hidden;
+        .history-order-details {
+            width: 96%;
             overflow-y: auto;
-        }
-        .order-summary-section{
-            width: 35%;
-            .order-summary{
-                height: 47.5vh;
-                overflow-y: auto;
-            }
-            .summary-key{
-                font-size: 0.9em;
-                color: @softer-text;
-            }
-            .summary-value{
-                font-size: 1em;
-                color: @soft-text;
-            }
+            height: auto;
+            flex: 0 0 96%;
+            display: flex;
+            flex-direction: column;
+            max-height: 200px;
+            overflow-x: hidden;
         }
         
         .card{
@@ -2063,8 +2067,8 @@ p {
         .order-action-section{
             height: calc(15vh - 20px);
             margin: 10px;
+            margin-top: -30px;
             .action-btn{
-                width: 50%;
                 background-color: #0f8fad;
                 box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
                 border-radius: 5px;
@@ -2076,10 +2080,30 @@ p {
         }
     }
 
-    .refund-detail-section{
-        margin: 10px;
-        .MuiPaper-elevation1{
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    .order-summary-section{
+        width: 40%;
+        height: 60vh;
+        .order-summary{
+            height: auto;
+            overflow-y: auto;
+        }
+        .summary-key{
+            font-size: 0.9em;
+            color: @softer-text;
+        }
+        .summary-value{
+            font-size: 1em;
+            color: @soft-text;
+        }
+    }
+
+    .refund-history-section {
+        width: 58%;
+        .refund-detail-section{
+            margin: 10px;
+            .MuiPaper-elevation1{
+                box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            }
         }
     }
 
