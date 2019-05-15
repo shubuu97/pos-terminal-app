@@ -101,14 +101,6 @@ class CustomerTab extends React.Component {
             this.props.dispatch(commonActionCreater(0, 'ADD_EMPLOYEE_DISCOUNT'));
         }
         let cartDiscountObj = {}
-        if (_get(this.props, 'cart.cartDiscount.isPercentage', false)) {
-            cartDiscountObj.type = '%'
-            cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountPercent', 0)
-        }
-        else {
-            cartDiscountObj.type = '$'
-            cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountMoney', 0).getAmount()
-        }
         cartDiscountObj.cartItems = _get(this.props, 'cart.cartItems', [])
         cartDiscountObj.prevCart = _get(this, 'props.cart', {});
         this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
@@ -170,14 +162,6 @@ class CustomerTab extends React.Component {
     proceedAsGuest = async () => {
         await addGuestToCart(this.props.dispatch);
         let cartDiscountObj = {}
-        if (_get(this.props, 'cart.cartDiscount.isPercentage', false)) {
-            cartDiscountObj.type = '%'
-            cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountPercent', 0)
-        }
-        else {
-            cartDiscountObj.type = '$'
-            cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountMoney', 0).getAmount()
-        }
         cartDiscountObj.cartItems = _get(this.props, 'cart.cartItems', [])
         cartDiscountObj.prevCart = _get(this, 'props.cart', {});
         this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
@@ -187,14 +171,6 @@ class CustomerTab extends React.Component {
     applyLoyaltyDiscount = () => {
         let loyaltyPoints = this.state.loyalty;
         let cartDiscountObj = {}
-        if (_get(this.props, 'cart.cartDiscount.isPercentage', false)) {
-            cartDiscountObj.type = '%'
-            cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountPercent', 0)
-        }
-        else {
-            cartDiscountObj.type = '$'
-            cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountMoney', 0).getAmount()
-        }
         cartDiscountObj.cartItems = _get(this.props, 'cart.cartItems', [])
         cartDiscountObj.prevCart = _get(this, 'props.cart', {});
         cartDiscountObj.loyaltyPoints = splitDotWithInt(loyaltyPoints)

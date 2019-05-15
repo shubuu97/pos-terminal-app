@@ -4,8 +4,6 @@ import { commonActionCreater } from '../../Redux/commonAction';
 
 const clearCart = (dispatch) => {
     let cartDiscountObj = {}
-    cartDiscountObj.type = ''
-    cartDiscountObj.cartDiscount = 0
     cartDiscountObj.cartItems = []
     cartDiscountObj.prevCart = {}
     dispatch(commonActionCreater({}, 'ADD_CUSTOMER_TO_CART'));

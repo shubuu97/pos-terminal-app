@@ -30,14 +30,6 @@ const addToCart = (product, cartItems, cart, quantity, dispatch) => {
         // this.setState({ qty })
     }
     let cartDiscountObj = {}
-    if (_get(cart, 'cartDiscount.isPercentage', false)) {
-        cartDiscountObj.type = '%'
-        cartDiscountObj.cartDiscount = _get(cart, 'cartDiscount.cartDiscountPercent', 0)
-    }
-    else {
-        cartDiscountObj.type = '$'
-        cartDiscountObj.cartDiscount = _get(cart, 'cartDiscount.cartDiscountMoney', 0).getAmount();
-    }
     cartDiscountObj.cartItems = reqObj
     cartDiscountObj.prevCart = cart
     dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));

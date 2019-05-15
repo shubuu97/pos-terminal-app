@@ -104,14 +104,6 @@ class OrdersTab extends React.Component {
 
     handleCartDiscountCalculate = (cartItems) => {
         let cartDiscountObj = {}
-        if (_get(this.props, 'cart.cartDiscount.isPercentage', false)) {
-            cartDiscountObj.type = '%'
-            cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountPercent', 0)
-        }
-        else {
-            cartDiscountObj.type = '$'
-            cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountMoney', 0).getAmount()
-        }
         cartDiscountObj.cartItems = cartItems
         cartDiscountObj.prevCart = _get(this, 'props.cart', {});
         this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
@@ -141,31 +133,22 @@ class OrdersTab extends React.Component {
     };
     handleDiscount = (data, identifier, index, type) => {
         let cartItems = _get(this, 'props.cart.cartItems', []);
-
-        // * Making object for CartDiscount
         let cartDiscountObj = {}
-        if (_get(this.props, 'cart.cartDiscount.isPercentage', false)) {
-            cartDiscountObj.type = '%'
-            cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountPercent', 0)
-        }
-        else {
-            cartDiscountObj.type = '$'
-            cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountMoney', 0).getAmount()
-        }
         // * Making object for Cart reducer
         let reqObj = [
             ...cartItems
         ]
         cartDiscountObj.cartItems = reqObj
 
-
         if (identifier == 'Discount') {
             // * Changing Cart Discounts
             cartDiscountObj.type = type
             if (type != '%') {
                 cartDiscountObj.cartDiscount = splitDotWithInt(parseFloat(data))
+                cartDiscountObj.isPercentage = false
             } else {
                 cartDiscountObj.cartDiscount = parseFloat(data)
+                cartDiscountObj.isPercentage = true
             }
             cartDiscountObj.prevCart = _get(this, 'props.cart', {});
             this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
@@ -308,14 +291,6 @@ class OrdersTab extends React.Component {
 
     handleItemDiscountRemove = (index) => {
         let cartDiscountObj = {}
-        if (_get(this.props, 'cart.cartDiscount.isPercentage', false)) {
-            cartDiscountObj.type = '%'
-            cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountPercent', 0)
-        }
-        else {
-            cartDiscountObj.type = '$'
-            cartDiscountObj.cartDiscount = _get(this.props, 'cart.cartDiscount.cartDiscountMoney', 0).getAmount()
-        }
         cartDiscountObj.cartItems = _get(this.props, 'cart.cartItems', [])
         cartDiscountObj.cartItems[index].itemDiscountMoney = DineroFunc(0)
         cartDiscountObj.cartItems[index].itemDiscountPercent = 0;

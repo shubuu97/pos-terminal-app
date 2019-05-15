@@ -24,8 +24,9 @@ class CalculationSection extends React.Component {
     }
 
     handleCartDiscountRemove = () => {
+        debugger
         let cartDiscountObj = {}
-        cartDiscountObj.type = ''
+        cartDiscountObj.isPercentage = false
         cartDiscountObj.cartDiscount = 0
         cartDiscountObj.cartItems = this.props.cartItems
         cartDiscountObj.prevCart = _get(this, 'props.cart', {});
@@ -34,8 +35,7 @@ class CalculationSection extends React.Component {
 
     handleLoyaltyDiscountRemove = () => {
         let cartDiscountObj = {}
-        cartDiscountObj.type = ''
-        cartDiscountObj.cartDiscount = 0
+        cartDiscountObj.loyaltyPoints = 0
         cartDiscountObj.cartItems = this.props.cartItems
         cartDiscountObj.prevCart = _get(this, 'props.cart', {});
         this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
@@ -84,7 +84,7 @@ class CalculationSection extends React.Component {
                                         <RemoveCircleIcons style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }}
                                             onClick={this.handleLoyaltyDiscountRemove}
                                         />
-                                        Loyalty Discount
+                                        Loyalty
                                     </span>
                                     <span className='cart-amount'>- {loyaltyDiscount.toFormat('$0,0.00')}</span>
                                 </div> : null

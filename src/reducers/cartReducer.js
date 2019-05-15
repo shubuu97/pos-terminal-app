@@ -75,8 +75,8 @@ const cartItem = (state = {
             }
             let discountableItemsIndex = []
             let discountableItems = []
-
-            action.data.cartItems.forEach((item, index) => {
+            debugger
+            _get(action, 'data.cartItems', _get(action, 'data.prevCart.cartItems', [])).forEach((item, index) => {
                 item.itemSalesPriceMoney = DineroFunc((_get(item, 'doc.product.salePrice.amount', 0)))
                 item.itemRegularTotalMoney = item.itemSalesPriceMoney.multiply(_get(item, 'qty', 0))
                 regularTotalMoney = regularTotalMoney.add(item.itemRegularTotalMoney);
@@ -96,15 +96,19 @@ const cartItem = (state = {
             // * Deciding if discount in "Absolute" or "Percent"
             let isPercentage = false
             let cartDiscountPercent
-            if (action.data.type === '%') {
+            if (_get(action, 'data.isPercentage', _get(action, 'prevCart.cartDiscount.isPercentage'), false)) {
                 cartDiscountPercent = _get(action, 'data.cartDiscount', 0);
                 cartDiscountMoney = discountableMoney.percentage(cartDiscountPercent);
                 isPercentage = true
             }
             else {
                 // * Converting "Absolute" to "Percentage" and saving both to reducer
-                // ! Static Currency
-                cartDiscountMoney = DineroFunc((_get(action, 'data.cartDiscount', 0)))
+                if(action.data.cartDiscount >= 0){
+                    cartDiscountMoney = DineroFunc(action.data.cartDiscount)
+                }
+                else{
+                    cartDiscountMoney = _get(action, 'data.prevCart.cartDiscount.cartDiscountMoney', DineroFunc(0))
+                }
                 cartDiscountPercent = (cartDiscountMoney.getAmount() / discountableMoney.getAmount()) * 100
                 isPercentage = false
             }
@@ -151,7 +155,7 @@ const cartItem = (state = {
                 }
             }
             // ************ Item Discount ************
-            action.data.cartItems.forEach((item, index) => {
+            _get(action, 'data.cartItems', _get(action, 'data.prevCart.cartItems', [])).forEach((item, index) => {
                 // item.itemSalesPriceMoney = DineroFunc((_get(item, 'doc.product.salePrice.amount', 0)))
                 // item.itemRegularTotalMoney = item.itemSalesPriceMoney.multiply(_get(item, 'qty', 0))
                 // ****** Item Discounts calculations ****** //
@@ -258,7 +262,7 @@ const cartItem = (state = {
             let allowedLoyaltyPoints = parseInt(allowedLoyaltyDiscountMoney.getAmount()/(0.5*100))
            
             return Object.assign({}, state, {
-                cartItems: action.data.cartItems,
+                cartItems: _get(action, 'data.cartItems', _get(action, 'data.prevCart.cartItem', [])),
                 allowedCartDiscount,
                 allowedCartDiscountMoney,
                 allowedLoyaltyDiscountMoney,
