@@ -43,6 +43,11 @@ const cartItem = (state = {
                 earningRules: action.data,
             });
             break;
+        case 'GET_LOYALTY_REDEMPTION_RULES':
+            return Object.assign({}, state, {
+                redemptionRules: action.data,
+            });
+            break;
         case 'CART_ITEM_LIST':
             let maxAllowedDiscountMoney = DineroFunc(0)
             const employeeDiscountPercent = _get(state, 'empDiscount', 0);
@@ -70,12 +75,11 @@ const cartItem = (state = {
                 earningMultiplier: _get(state, 'earningRules.earningRule.earningMultiplier', 0)
             }
             let redeemLoyaltyRules = {
-                redemptionMultiplier: _get(state, 'RedemptionRules.lookUpData.redemptionRule.redemptionMultiplier', 0),
-                minimumSaleAmount: _get(state, 'RedemptionRules.lookUpData.redemptionRule.minimumSaleAmount', 0),
+                redemptionMultiplier: _get(state, 'redemptionRules.redemptionRule.redemptionMultiplier', 0),
+                minimumSaleAmount: _get(state, 'redemptionRules.redemptionRule.minimumSaleAmount.amount', 0),
             }
             let discountableItemsIndex = []
             let discountableItems = []
-            debugger
             _get(action, 'data.cartItems', _get(action, 'data.prevCart.cartItems', [])).forEach((item, index) => {
                 item.itemSalesPriceMoney = DineroFunc((_get(item, 'doc.product.salePrice.amount', 0)))
                 item.itemRegularTotalMoney = item.itemSalesPriceMoney.multiply(_get(item, 'qty', 0))
@@ -90,8 +94,6 @@ const cartItem = (state = {
             })
             // * Calculating max discount
             maxAllowedDiscountMoney = discountableMoney.percentage(80);
-
-
             // ************ Cart Discount ************
             // * Deciding if discount in "Absolute" or "Percent"
             let isPercentage = false
@@ -103,10 +105,10 @@ const cartItem = (state = {
             }
             else {
                 // * Converting "Absolute" to "Percentage" and saving both to reducer
-                if(action.data.cartDiscount >= 0){
+                if (action.data.cartDiscount >= 0) {
                     cartDiscountMoney = DineroFunc(action.data.cartDiscount)
                 }
-                else{
+                else {
                     cartDiscountMoney = _get(action, 'data.prevCart.cartDiscount.cartDiscountMoney', DineroFunc(0))
                 }
                 cartDiscountPercent = (cartDiscountMoney.getAmount() / discountableMoney.getAmount()) * 100
@@ -148,8 +150,8 @@ const cartItem = (state = {
             }
             // ************ Loyalty Discount ************
             let loyaltyDiscountAllocation = []
-            if(loyaltyPoints && regularTotalMoney.toUnit()>redeemLoyaltyRules.minimumSaleAmount){
-                loyaltyDiscountMoney = DineroFunc(loyaltyPoints * 0.5) 
+            if (loyaltyPoints && regularTotalMoney.toUnit() > redeemLoyaltyRules.minimumSaleAmount) {
+                loyaltyDiscountMoney = DineroFunc(loyaltyPoints * parseFloat(redeemLoyaltyRules.redemptionMultiplier))
                 if (discountableItems.length > 0) {
                     loyaltyDiscountAllocation = loyaltyDiscountMoney.allocate(discountableItems)
                 }
@@ -169,7 +171,7 @@ const cartItem = (state = {
                         item.loyaltyDiscountMoney = loyaltyDiscountAllocation[key] || DineroFunc(0)
                         item.empDiscountMoney = employeeDiscountAllocation[key] || DineroFunc(0)
                         item.allowedItemDiscountMoney = item.itemDiscountableMoney.subtract(item.empDiscountMoney).subtract(item.cartDiscountMoney).subtract(item.loyaltyDiscountMoney)
-                        item.allowedCartDiscountPercent = ((item.allowedItemDiscountMoney).getAmount()/(item.itemRegularTotalMoney).getAmount())*100
+                        item.allowedCartDiscountPercent = ((item.allowedItemDiscountMoney).getAmount() / (item.itemRegularTotalMoney).getAmount()) * 100
                     } else {
                         item.itemDiscountableMoney = DineroFunc(0)
                         item.cartDiscountMoney = DineroFunc(0);
@@ -190,12 +192,12 @@ const cartItem = (state = {
                 item.itemDiscountPercent = _get(item, 'itemDiscountPercent', 0)
                 item.isPercent = _get(item, 'isPercent', false)
                 // * check if item qty changed
-                if(item.isPercent){
-                    if(!(item.itemRegularTotalMoney.percentage(item.itemDiscountPercent).equalsTo(item.itemDiscountMoney))){
+                if (item.isPercent) {
+                    if (!(item.itemRegularTotalMoney.percentage(item.itemDiscountPercent).equalsTo(item.itemDiscountMoney))) {
                         item.itemDiscountMoney = item.itemRegularTotalMoney.percentage(item.itemDiscountPercent)
                     }
                 }
-                
+
                 // * Checking if Item Discount Exceeds or not
                 let totalItemDiscount = item.cartDiscountMoney.add(item.empDiscountMoney).add(item.loyaltyDiscountMoney).add(item.itemDiscountMoney)
                 if (item.itemDiscountableMoney.lessThan(totalItemDiscount)) {
@@ -258,9 +260,9 @@ const cartItem = (state = {
             if (!(_get(state, 'customer.guest', false)) && netTotalMoney.getAmount() > earningLoyaltyRules.minimumSaleAmount) {
                 let loyaltyEarned = Math.round(netTotalMoney.getAmount() * earningLoyaltyRules.earningMultiplier);
             }
-            let allowedCartDiscount = Math.round((allowedCartDiscountMoney.getAmount()/discountableMoney.getAmount())*100)
-            let allowedLoyaltyPoints = parseInt(allowedLoyaltyDiscountMoney.getAmount()/(0.5*100))
-           
+            let allowedCartDiscount = Math.round((allowedCartDiscountMoney.getAmount() / discountableMoney.getAmount()) * 100)
+            let allowedLoyaltyPoints = parseInt(allowedLoyaltyDiscountMoney.getAmount() / (parseFloat(redeemLoyaltyRules.redemptionMultiplier) * 100))
+
             return Object.assign({}, state, {
                 cartItems: _get(action, 'data.cartItems', _get(action, 'data.prevCart.cartItem', [])),
                 allowedCartDiscount,

@@ -101,6 +101,7 @@ class CustomerTab extends React.Component {
             this.props.dispatch(commonActionCreater(0, 'ADD_EMPLOYEE_DISCOUNT'));
         }
         let cartDiscountObj = {}
+        cartDiscountObj.loyaltyPoints = 0
         cartDiscountObj.cartItems = _get(this.props, 'cart.cartItems', [])
         cartDiscountObj.prevCart = _get(this, 'props.cart', {});
         this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
@@ -121,17 +122,33 @@ class CustomerTab extends React.Component {
     }
 
     handleChange = name => event => {
-        if(name == 'loyalty' && event.target.value > _get(this, 'props.cart.allowedLoyaltyPoints', 0)){
-            this.setState({
-                loyalty: _get(this, 'props.cart.allowedLoyaltyPoints', 0),
-            });
+        let loyaltyPoints = event.target.value
+        let loyaltyValue
+        if (name == 'loyalty') {
+            if (loyaltyPoints > _get(this, 'props.cart.allowedLoyaltyPoints', 0)) {
+                loyaltyPoints = _get(this, 'props.cart.allowedLoyaltyPoints', 0)
+                if (loyaltyPoints > _get(this.props, 'cart.customer.rewardPoints', 0)) {
+                    loyaltyPoints = _get(this.props, 'cart.customer.rewardPoints', 0)
+                }
+                loyaltyValue = loyaltyPoints * parseFloat(_get(this.props, 'redemptionRules.redemptionMultiplier', 0))
+                this.setState({
+                    [name]: loyaltyPoints,
+                    loyaltyValue
+                });
+            }
+            else {
+                loyaltyValue = loyaltyPoints * parseFloat(_get(this.props, 'redemptionRules.redemptionMultiplier', 0))
+                this.setState({
+                    [name]: event.target.value,
+                    loyaltyValue
+                });
+            }
         }
-        else{
+        else {
             this.setState({
                 [name]: event.target.value,
             });
         }
-        
     };
 
     handleClose = (props) => {
@@ -251,7 +268,14 @@ class CustomerTab extends React.Component {
                                         !customer.guest ?
                                             <div className="customer-phone flex-column">
                                                 <span className="card-title">Phone</span>
-                                                <span className="card-data">16788272542</span>
+                                                <span className="card-data">+{_get(this.props, 'customer.phoneNumber.countryCode', '')} {_get(this.props, 'customer.phoneNumber.phoneNumber', '')}</span>
+                                            </div> : null
+                                    }
+                                    {
+                                        !customer.guest ?
+                                            <div className="customer-email flex-column">
+                                                <span className="card-title">Loyalty Points</span>
+                                                <span className="card-data">{_get(this.props, 'cart.customer.rewardPoints', 0)}</span>
                                             </div> : null
                                     }
                                 </div>
@@ -259,9 +283,10 @@ class CustomerTab extends React.Component {
                                     !customer.guest ?
                                         <div className="customer-email flex-column">
                                             <span className="card-title">Email</span>
-                                            <span className="card-data">noah.reiber@31d5952e-619f-4b02-9fd8-0f620e1fa222.com</span>
+                                            <span className="card-data">{_get(this.props, 'customer.email', '')}</span>
                                         </div> : null
                                 }
+
                             </div>
                             {
                                 this.handleHideWhenOffline(
@@ -293,7 +318,9 @@ class CustomerTab extends React.Component {
                                     label="Loyalty Discount"
                                     value={this.state.loyalty}
                                     onChange={this.handleChange('loyalty')}
-                                    helperText={_get(this.props, 'cart.customer.rewardPoints', 0)}
+                                    helperText={this.state.loyaltyValue ?
+                                        `Value : $ ${this.state.loyaltyValue}`
+                                        : null}
                                     margin="normal"
                                     variant="outlined"
                                     fullWidth
@@ -322,7 +349,8 @@ class CustomerTab extends React.Component {
 function mapStateToProps(state) {
     let customer = _get(state, 'cart.customer');
     let cart = _get(state, 'cart');
-    return { customer, cart }
+    let redemptionRules = _get(state, 'RedemptionRules.lookUpData.redemptionRule', {})
+    return { customer, cart, redemptionRules }
 }
 
 export default connect(mapStateToProps)(withStyles(styles)(CustomerTab));
