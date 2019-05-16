@@ -43,7 +43,7 @@ class ReasonDialog extends React.Component {
                     aria-describedby="alert-dialog-slide-description"
                 >
                     <DialogTitle id="alert-dialog-slide-title">
-                        {"Theory is not same the Closing balance"}
+                        {"Closing balance is not same as calculated balance"}
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-slide-description">

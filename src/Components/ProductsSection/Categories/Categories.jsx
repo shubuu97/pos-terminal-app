@@ -177,6 +177,12 @@ class Categories extends Component {
       .catch(err => { });
   };
   getHotProduct = () => {
+    this.setState({ hotActive: !this.state.hotActive });
+    if (!this.state.hotActive==false) {
+      this.handleHomeClick();
+      return;
+    }
+
     genericPostData({
       url: 'HotProducts/ByStore/Get',
       dispatch: this.props.dispatch,
@@ -242,9 +248,9 @@ class Categories extends Component {
               );
             })}
           </div>
-          <div style={this.state.hotActive ? { width: '10%', color: '#f57c7c', borderColor: '#f57c7c', background: '#fff4f4'} : { width: '10%' }} className="hot-icon" onClick={this.getHotProduct}>
-                <Whatshot style={this.state.hotActive ? {width: '24px', height: '24px', color: '#f57c7c'} : {width: '24px', height: '24px', color: 'rgba(0,0,0,0.6)'}}/>
-                <span className='hot-text' style={this.state.hotActive ? {color: '#f57c7c', fontWeight: 'bold'} : {}}>Hot Products</span>
+          <div onClick={this.getHotProduct} style={this.state.hotActive ? { width: '10%', color: '#f57c7c', borderColor: '#f57c7c', background: '#fff4f4' } : { width: '10%' }} className="hot-icon" >
+            <Whatshot style={this.state.hotActive ? { width: '24px', height: '24px', color: '#f57c7c' } : { width: '24px', height: '24px', color: 'rgba(0,0,0,0.6)' }} />
+            <span className='hot-text' style={this.state.hotActive ? { color: '#f57c7c', fontWeight: 'bold' } : {}}>Hot Products</span>
           </div>
           {/* <Whatshot style={{ fontSize: '3em', color: 'red' }} /> */}
         </div>
