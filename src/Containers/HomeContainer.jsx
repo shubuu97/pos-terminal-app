@@ -45,7 +45,7 @@ let OfflineTransactionDialog = withDialog(OfflineTransactionContainer);
 let SettingDialog = withDialog(SettingContainer);
 
 let DineroInit = (amount, currency, precision) => (
-    Dinero({amount:  parseInt(amount) || 0, currency: currency || 'USD', precision: precision || 2})
+    Dinero({ amount: parseInt(amount) || 0, currency: currency || 'USD', precision: precision || 2 })
 )
 
 
@@ -455,7 +455,7 @@ class HomeContainer extends React.Component {
     orderHistorySelect = (selectedSaleTransaction) => {
         if (_get(this.state, 'selectedSaleTransaction', false) && _get(this.state, 'selectedSaleTransaction') != selectedSaleTransaction.sale.id) {
             let element = document.getElementById(_get(this.state, 'selectedSaleTransaction.sale.id'))
-            if(element){
+            if (element) {
                 element.className = 'fwidth card'
             }
         }
@@ -903,6 +903,66 @@ const getInventoryUpdate = async (propsOfComp, dispatch) => {
         }
     })
 }
+const getHotProductUpdate = async (propsOfComp, dispatch) => {
+    let reqObj = {
+        id: localStorage.getItem('storeId'),
+        // timestamp: {
+        //     seconds: parseInt(localStorage.getItem('invetoryUpdateTime'))
+        // }
+    };
+    // let tempInvetoryUpdateTime = Date.now();
+    // tempInvetoryUpdateTime = parseInt(tempInvetoryUpdateTime / 1000);
+    // localStorage.setItem('tempInvetoryUpdateTime', tempInvetoryUpdateTime);
+    axiosFetcher({
+        method: 'POST',
+        reqObj,
+        url: 'HotProducts/Inventory/ByStore',
+        successCb: updateTimeStampAndDbForHotProduct,
+        extraArgs: propsOfComp,
+        errorCb: (err) => {
+            console.log(err, "err is here")
+        }
+    })
+}
+const updateTimeStampAndDbForHotProduct = async (res, dispatch, extraArgs) => {
+
+    // let tempInvetoryUpdateTime = localStorage.getItem('tempInvetoryUpdateTime');
+    // localStorage.setItem('invetoryUpdateTime', tempInvetoryUpdateTime);
+    // let updationrecorderdb = new PouchDb(`updationrecorderdb${localStorage.getItem('storeId')}`);
+    // await updationrecorderdb.get('invetoryUpdateTime').then(data => {
+    //     updationrecorderdb.put({
+    //         _id: 'invetoryUpdateTime',
+    //         _rev: data._rev,
+    //         invetoryUpdateTime: tempInvetoryUpdateTime,
+    //     })
+    // }).catch(err => {
+    //     if (err.status == 404) {
+    //         updationrecorderdb.put({
+    //             _id: 'invetoryUpdateTime',
+    //             invetoryUpdateTime: tempInvetoryUpdateTime,
+    //         })
+    //     }
+    // })
+
+
+    let productsdb = new PouchDb(`hotproductsdb${localStorage.getItem('storeId')}`);
+    let updatedInventory = _get(res, 'data.productWithInventory', []) || [];
+    let promiseArray = updatedInventory.map(async (product, index) => {
+        let productObj = await productsdb.get(product._id).then(
+            data => {
+                let updateObject = updatedInventory[index];
+                updateObject._rev = data._rev;
+                return updateObject
+            }).catch(err => updatedInventory[index]);
+        // _set(productObj, 'inventory.quantity', _get(product, 'inventory.quantity', 0));
+        return productObj
+    });
+    Promise.all(promiseArray).then(async ([...updatedInventoryWith_Rev]) => {
+        let resOfUpdateBulk = await productsdb.bulkDocs(updatedInventoryWith_Rev);
+    }).catch((err) => {
+    })
+
+}
 const updateTimeStampAndDbForCustomer = async (res) => {
     let tempCustomerTime = localStorage.getItem('tempCustomerTime');
     localStorage.setItem('CustomerTime', tempCustomerTime)
@@ -964,7 +1024,8 @@ const getCustomerUpdate = async (propsOfComp, dispatch) => {
 }
 const pollingWrapper = async (propsOfComp, dispatch) => {
     await getInventoryUpdate(propsOfComp, dispatch);
-    await getCustomerUpdate(propsOfComp, dispatch)
+    await getCustomerUpdate(propsOfComp, dispatch);
+    await getHotProductUpdate(propsOfComp, dispatch);
     OfflineTransactionPusher(propsOfComp, dispatch);
     return;
 
