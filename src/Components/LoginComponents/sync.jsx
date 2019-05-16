@@ -41,11 +41,13 @@ class SyncContainer extends Component {
             productCalled: 0,
             categoryCalled: 0,
             customerCalled: 0,
+            HotProductCalled: 0,
             limit: 100,
             progressMsg: '',
             productPage: 1,
             sizePerPage: 250,
-            taskCompletedCount: 0
+            taskCompletedCount: 0,
+            fixedTask: 6  //Count of static of task
         };
     }
     async componentDidMount() {
@@ -64,6 +66,7 @@ class SyncContainer extends Component {
             this.getCustomerUpdate(customerUpdateTime);
         }
         else {
+            this.pollHotProduct();
             this.pollProduct();
             this.pollCustomer();
             this.pollCategory();
@@ -287,7 +290,7 @@ class SyncContainer extends Component {
         let count = _get(productData, 'data.count');
         if (this.state.productPage == 1) {
             let xTask = Math.ceil(count / this.state.sizePerPage);
-            let taskCount = xTask + 4;
+            let taskCount = xTask + this.state.fixedTask;
             if (this.state.taskCompletedCount != 0) {
                 console.log(this.state.percentageComplete, this.state.taskCompletedCount, this.state.taskCompletedCount)
                 let percentageComplete = this.state.percentageComplete + (100 / taskCount) * this.state.taskCompletedCount;
@@ -426,6 +429,55 @@ class SyncContainer extends Component {
                 }
             })
         })
+    }
+    pollHotProduct = () => {
+        return new Promise((resolve, reject) => {
+            if (this.state.HotProductCalled == this.state.limit) {
+                return;
+            };
+            let retailerId = localStorage.getItem('storeId');
+            axiosFetcher({
+                method: 'POST',
+                url: 'HotProducts/Inventory/ByStore',
+                reqObj: { id: retailerId },
+                successCb: this.handleHotProductFetchSuccessWrapper,
+                errorCb: (err) => {
+                    this.state.HotProductCalled++;
+                    setTimeout(this.pollHotProduct, 1000);
+                }
+            })
+        })
+    }
+    handleHotProductFetchSuccessWrapper = (hotProductData) => {
+        if (this.state.taskCount != undefined) {
+            let percentageComplete = this.state.percentageComplete + 100 / this.state.taskCount;
+            this.state.taskCompletedCount++;
+            this.setState({ percentageComplete, progressMsg: 'Hot Product Succesfully Fetched' })
+        }
+        else {
+            this.state.taskCompletedCount++;
+            this.setState({ progressMsg: 'Hot Product Succesfully Fetched' })
+        }
+        this.handleHotProductFetchSuccess(hotProductData).then(() => {
+            if (this.state.taskCount != undefined) {
+                this.state.taskCompletedCount++;
+                let percentageComplete = this.state.percentageComplete + 100 / this.state.taskCount;
+                this.setState({ percentageComplete, progressMsg: 'Hot Product succesfully optimized for offline use' })
+            }
+            else {
+                this.state.taskCompletedCount++;
+                this.setState({ progressMsg: 'Hot Product succesfully optimized for offline use' })
+            }
+        })
+            .catch((err) => {
+
+            })
+    }
+    handleHotProductFetchSuccess = async (data) => {
+        let hotProductData = _get(data, 'data.productWithInventory', [])
+        let hotproductsdb = await new PouchDb(`hotproductsdb${localStorage.getItem('storeId')}`);
+        let result = await hotproductsdb.bulkDocs(hotProductData);
+        return 1
     }
 
     handleClick = () => {

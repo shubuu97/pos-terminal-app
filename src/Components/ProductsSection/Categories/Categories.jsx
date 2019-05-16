@@ -182,44 +182,29 @@ class Categories extends Component {
       this.handleHomeClick();
       return;
     }
-
-    genericPostData({
-      url: 'HotProducts/ByStore/Get',
-      dispatch: this.props.dispatch,
-      reqObj: { id: localStorage.getItem('storeId') },
-      identifier: 'HOT_PRODUCT_GET',
-      constants: {
-        init: 'HOT_PRODUCT_GET_LOGIN_INIT',
-        success: 'HOT_PRODUCT_GET_LOGIN_SUCCESS',
-        error: 'HOT_PRODUCT_GET_LOGIN_ERROR'
-      },
-      dontShowMessage: true,
-      successCb: this.hotProductGetResult
-    });
+    let productsdb = new PouchDb(`hotproductsdb${localStorage.getItem("storeId")}`);
+    productsdb
+      .allDocs({
+        include_docs: true,
+        attachments: true,
+        limit: 39,
+        skip: 0
+      })
+      .then(result => {
+        result.pagination = {}
+        result.pagination.method = "allDocs"
+        result.pagination.firstItemId = result.rows[0].id
+        result.pagination.lastItemId = result.rows[result.rows.length - 1].id
+        result.pagination.pageNo = 1
+        result.pagination.startVal = 1
+        result.pagination.endVal = result.rows.length
+        this.props.dispatch(
+          commonActionCreater(result, "GET_PRODUCT_DATA_SUCCESS")
+        );
+      })
+      .catch(err => { });
   }
-  hotProductGetResult = (result) => {
-    debugger;
-    let products = _get(result, 'products', []).map((product) => {
-      let productt = { ...product }
-      _set(productt, 'id', productt.id);
-      _set(productt, 'doc', { product });
-      return productt;
 
-    })
-    this.setState({ hotProducts: products });
-    result.pagination = {}
-    result.pagination.method = "allDocs"
-    result.pagination.firstItemId = _get(result, 'products', [])[0].id
-    let length = _get(result, 'products', []).length
-    result.pagination.lastItemId = _get(result, `products$[${length - 1}].id`)
-    _set(result, 'rows', products);
-    result.pagination.pageNo = 1
-    result.pagination.startVal = 1
-    result.pagination.endVal = _get(result, 'products', []).length
-    this.props.dispatch(
-      commonActionCreater(result, "GET_PRODUCT_DATA_SUCCESS")
-    );
-  }
   render() {
     return (
       <div>

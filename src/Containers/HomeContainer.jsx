@@ -305,7 +305,7 @@ class HomeContainer extends React.Component {
 
     }
     getProductData = () => {
-        let productsdb = new PouchDb(`productsdb${localStorage.getItem('storeId')}`);
+        let productsdb = new PouchDb(`hotproductsdb${localStorage.getItem('storeId')}`);
         productsdb.allDocs({
             include_docs: true,
             attachments: true,
