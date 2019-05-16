@@ -5,7 +5,6 @@ import BreadCrumb from "./BreadCrumb";
 import _get from "lodash/get";
 import _isEmpty from "lodash/isEmpty";
 import _set from "lodash/set";
-
 //Redux Import
 import { commonActionCreater } from "../../../Redux/commonAction";
 import { connect } from "react-redux";
@@ -14,6 +13,7 @@ import PouchDb from "pouchdb";
 import Find from "pouchdb-find";
 import PAM from "pouchdb-adapter-memory"
 import genericPostData from '../../../Global/dataFetch/genericPostData';
+/* Material Icons */
 import Whatshot from '@material-ui/icons/Whatshot'
 PouchDb.plugin(Find);
 PouchDb.plugin(PAM);
@@ -26,6 +26,7 @@ class Categories extends Component {
     this.state = {
       categoryToDisplay: [],
       displayLevel: 0,
+      hotActive: false,
       rootCategory: {
         name: "",
         categoryType: 0,
@@ -241,14 +242,9 @@ class Categories extends Component {
               );
             })}
           </div>
-          <div style={{ width: '10%' }} className="hotIcon" onClick={this.getHotProduct} style={{ width: '10%' }}>
-            <label class="checker">
-              <input class="checkbox" type="checkbox" />
-              <div class="check-bg"></div>
-              <div class="checkmark">
-                <svg width="50" height="50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z" /><path d="M0 0h24v24H0z" fill="none" /></svg>
-              </div>
-            </label>
+          <div style={this.state.hotActive ? { width: '10%', color: '#f57c7c', borderColor: '#f57c7c', background: '#fff4f4'} : { width: '10%' }} className="hot-icon" onClick={this.getHotProduct}>
+                <Whatshot style={this.state.hotActive ? {width: '24px', height: '24px', color: '#f57c7c'} : {width: '24px', height: '24px', color: 'rgba(0,0,0,0.6)'}}/>
+                <span className='hot-text' style={this.state.hotActive ? {color: '#f57c7c', fontWeight: 'bold'} : {}}>Hot Products</span>
           </div>
           {/* <Whatshot style={{ fontSize: '3em', color: 'red' }} /> */}
         </div>
