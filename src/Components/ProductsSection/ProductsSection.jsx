@@ -25,6 +25,7 @@ import SearchBar from './SearchBar';
 import PouchDb from 'pouchdb';
 import Categories from './Categories/Categories';
 import addToCart from '../../Global/PosFunctions/addToCart';
+import Dinero from 'dinero.js';
 
 PouchDb.plugin(PAM);
 PouchDb.plugin(Find);
@@ -127,7 +128,7 @@ class ProductsSection extends React.Component {
 
                                 </div>
                                 <div className='product-price flex-row justify-flex-end'>
-                                    {_get(product, 'doc.product.salePrice.currencyCode')} {_get(product, 'doc.product.salePrice.amount')}
+                                    {Dinero({amount: _get(product, 'doc.product.salePrice.amount',0), currency: 'USD'}).toFormat('$0,0.00')}
                                 </div>
                             </div>
                         );
