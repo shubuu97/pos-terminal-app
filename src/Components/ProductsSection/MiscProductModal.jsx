@@ -108,7 +108,7 @@ class MiscProductModal extends React.Component {
                 currency: "USD",
             }
             data.salePrice = salePrice;
-            data.upcCode = Number(data.upcCode);
+            data.upcCode = data.upcCode;
             data.retailerId = localStorage.getItem('retailerId');
             data.discountable = true
             delete data.price;
