@@ -88,6 +88,7 @@ class CustomerTab extends React.Component {
         // });
     };
     onChange = (doc) => {
+        debugger
         let value = _get(doc, 'value');
         let employeeDiscount = _get(doc, 'value.employeeDiscount', 0);
         let storeId = localStorage.getItem('storeId');
@@ -113,7 +114,7 @@ class CustomerTab extends React.Component {
         let email = value.email;
         let phoneNumber = value.phoneNumber;
         let rewardPoints = value.rewardPoints;
-        this.setState({ billingAddress, customer, email, phoneNumber, rewardPoints });
+        this.setState({ billingAddress, customer, email, phoneNumber, rewardPoints, loyalty: '', loyaltyValue: 0 });
     }
 
     handleOpen = () => {
@@ -182,7 +183,12 @@ class CustomerTab extends React.Component {
         cartDiscountObj.cartItems = _get(this.props, 'cart.cartItems', [])
         cartDiscountObj.prevCart = _get(this, 'props.cart', {});
         this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
+        this.setState({
+            loyalty: '',
+            loyaltyValue: 0
+        })
         this.handleClickProceed()
+        
     }
 
     applyLoyaltyDiscount = () => {
@@ -192,6 +198,10 @@ class CustomerTab extends React.Component {
         cartDiscountObj.prevCart = _get(this, 'props.cart', {});
         cartDiscountObj.loyaltyPoints = splitDotWithInt(loyaltyPoints)
         this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
+        this.setState({
+            loyalty: '',
+            loyaltyValue: 0
+        })
     }
 
     render() {
