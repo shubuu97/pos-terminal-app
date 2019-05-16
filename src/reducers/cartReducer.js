@@ -150,8 +150,8 @@ const cartItem = (state = {
             }
             // ************ Loyalty Discount ************
             let loyaltyDiscountAllocation = []
-            if (loyaltyPoints && regularTotalMoney.toUnit() > redeemLoyaltyRules.minimumSaleAmount) {
-                loyaltyDiscountMoney = DineroFunc(loyaltyPoints * parseFloat(redeemLoyaltyRules.redemptionMultiplier))
+            if (loyaltyPoints && regularTotalMoney.getAmount() > redeemLoyaltyRules.minimumSaleAmount) {
+                loyaltyDiscountMoney = DineroFunc(parseInt(loyaltyPoints * parseFloat(redeemLoyaltyRules.redemptionMultiplier)))
                 if (discountableItems.length > 0) {
                     loyaltyDiscountAllocation = loyaltyDiscountMoney.allocate(discountableItems)
                 }
@@ -197,7 +197,6 @@ const cartItem = (state = {
                         item.itemDiscountMoney = item.itemRegularTotalMoney.percentage(item.itemDiscountPercent)
                     }
                 }
-
                 // * Checking if Item Discount Exceeds or not
                 let totalItemDiscount = item.cartDiscountMoney.add(item.empDiscountMoney).add(item.loyaltyDiscountMoney).add(item.itemDiscountMoney)
                 if (item.itemDiscountableMoney.lessThan(totalItemDiscount)) {
