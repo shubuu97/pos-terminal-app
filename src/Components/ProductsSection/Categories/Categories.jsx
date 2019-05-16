@@ -26,7 +26,7 @@ class Categories extends Component {
     this.state = {
       categoryToDisplay: [],
       displayLevel: 0,
-      hotActive: false,
+      hotActive: true,
       rootCategory: {
         name: "",
         categoryType: 0,
@@ -177,11 +177,15 @@ class Categories extends Component {
       .catch(err => { });
   };
   getHotProduct = () => {
-    this.setState({ hotActive: !this.state.hotActive });
     if (!this.state.hotActive == false) {
+      this.setState({ hotActive: false });
       this.handleHomeClick();
       return;
     }
+    this.getHotProductFromPouch();
+  }
+  getHotProductFromPouch = () => {
+    this.setState({hotActive:true})
     let productsdb = new PouchDb(`hotproductsdb${localStorage.getItem("storeId")}`);
     productsdb
       .allDocs({
@@ -215,6 +219,7 @@ class Categories extends Component {
             selectedRootCategory={this.state.rootCategory}
             selectedSubCategory={this.state.subCategory}
             selectedLeafCategory={this.state.leafCategory}
+            getHotProductFromPouch = {this.getHotProductFromPouch}
             selectedCurrentCategory={this.state.selectedCategory}
           />
         </div>
