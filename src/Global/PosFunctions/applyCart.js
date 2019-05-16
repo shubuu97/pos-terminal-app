@@ -12,8 +12,9 @@ const applyCart = (dispatch, data) => {
         cartDiscountObj.cartDiscount = _get(data, 'cartDiscount.cartDiscountMoney', 0).getAmount();
     }
     cartDiscountObj.cartItems = data.cartItems
+    cartDiscountObj.prevCart = data
     dispatch(commonActionCreater(data.customer, 'ADD_CUSTOMER_TO_CART'));
-    dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST')); // ! Always call in last
+    dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST')); // ! Always call this at last
 }
 
 export default applyCart;

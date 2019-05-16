@@ -96,7 +96,6 @@ const refundReducer = (state = {
             }));
             break;
         case 'CARD_REFUND_INPUT_HANDLER':
-            debugger;
             amountAvailToRedeem = dineroObj(action.data.paidThroughCard);
             cardAmount = _get(action, 'data.cardAmount', 0)
             paymentAmount = calcPaymentAmount(cashAmount, cardAmount, employeePay, giftCardAmount, loyaltyRedeem, costCenterAmount)

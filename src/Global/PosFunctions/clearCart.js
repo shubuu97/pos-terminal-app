@@ -7,6 +7,7 @@ const clearCart = (dispatch) => {
     cartDiscountObj.type = ''
     cartDiscountObj.cartDiscount = 0
     cartDiscountObj.cartItems = []
+    cartDiscountObj.prevCart = {}
     dispatch(commonActionCreater({}, 'ADD_CUSTOMER_TO_CART'));
     dispatch(commonActionCreater('', 'SALE_COMMENT'));
     dispatch(commonActionCreater(0, 'ADD_EMPLOYEE_DISCOUNT'));

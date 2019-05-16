@@ -39,6 +39,7 @@ const addToCart = (product, cartItems, cart, quantity, dispatch) => {
         cartDiscountObj.cartDiscount = _get(cart, 'cartDiscount.cartDiscountMoney', 0).getAmount();
     }
     cartDiscountObj.cartItems = reqObj
+    cartDiscountObj.prevCart = cart
     dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
 }
 

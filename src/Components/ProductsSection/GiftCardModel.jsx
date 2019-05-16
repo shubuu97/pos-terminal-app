@@ -247,7 +247,6 @@ class GiftCardModal extends React.Component {
             this.setState({ giftCard });
 
         } else {
-            debugger;
             if (regex.test(val)) {
                 _set(giftCard, 'value.amount', val);
                 this.setState({ giftCard })

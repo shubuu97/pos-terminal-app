@@ -105,7 +105,6 @@ class SessionDetail extends React.Component {
     }
     handleEndSession = async () => {
         if (this.state.realClosingBalance) {
-            debugger;
             let difference = dineroObj(splitDot(this.state.realClosingBalance)).subtract(dineroObj(_get(this.state, 'session.currentBalance.amount', 0))).getAmount();
             if (difference != 0 && this.state.closeReason == '') {
                 this.setState({ showReasonModal: true });
@@ -121,7 +120,6 @@ class SessionDetail extends React.Component {
                     this.intervalId = setInterval(this.handleEndSession, 5000);
             }
             else {
-                debugger;
                 clearInterval(this.intervalId);
                 this.setState({ isLoading: true })
                 this.setState({ syncBeforeEndSession: false, showReasonModal: false });
@@ -299,7 +297,6 @@ class SessionDetail extends React.Component {
         return difference
     }
     specifyReason = (closeReason) => {
-        debugger
         this.state.closeReason = closeReason;
         this.setState({ closeReason, showReasonModal: false });
         this.handleEndSession()
