@@ -101,7 +101,7 @@ class ProductsSection extends React.Component {
             if ((/^[0-9-]{4,}[0-9]$/).test(_get(this.state, 'searchText', ''))) {
                 let searchBox = document.getElementById('searchBox')
                 searchBox.select();
-                let upcCode = Number(_get(this.state, 'searchText', 0))
+                let upcCode = _get(this.state, 'searchText', 0)
                 this.productsdb.find({
                     selector: { "product.upcCode": upcCode }
                 }).then((result) => {

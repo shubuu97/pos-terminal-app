@@ -74,7 +74,7 @@ class Categories extends Component {
 
   handleHomeClick = () => {
     this.props.getHomeClicked()
-    this.setState({ selectedCategory: { categoryType: -1 } });
+    this.setState({ selectedCategory: { categoryType: -1 }, hotActive: false });
     this.getProductData();
     this.getCategory(0);
   };
