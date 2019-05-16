@@ -278,7 +278,7 @@ class SessionDetail extends React.Component {
         let total = 0;
 
         this.state.transactions.map((transaction) => {
-            if (transaction.adjustmentType == 'CASHOUT') {
+            if (transaction.adjustmentType == 'CASHOUT'||transaction.adjustmentType == 'REFUND') {
                 total = total + _get(transaction, 'amount.amount')
             }
         })
