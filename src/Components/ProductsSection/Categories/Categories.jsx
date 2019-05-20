@@ -51,7 +51,7 @@ class Categories extends Component {
   }
 
   componentDidMount() {
-    let hps = localStorage.getItem('hotProducts') || [];
+    let hps = localStorage.getItem('hotProducts') || '[]';
     hps = JSON.parse(hps)
     if (hps.length > 0) {
       localStorage.setItem('IS_HOT_PRODUCT_ACTIVE', true);
@@ -198,7 +198,8 @@ class Categories extends Component {
     this.getHotProductFromPouch();
   }
   getHotProductFromPouch = () => {
-    let hotProducts = localStorage.getItem('hotProducts');
+    debugger;
+    let hotProducts = localStorage.getItem('hotProducts')||'[]';
     hotProducts = JSON.parse(hotProducts);
     if (hotProducts.length == 0) {
       this.handleHomeClick()

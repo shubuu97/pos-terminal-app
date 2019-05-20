@@ -443,7 +443,7 @@ class HomeContainer extends React.Component {
         // let p3 = new PouchDb(`categoryDb${localStorage.getItem('storeId')}`).destroy();
         this.setState({ isLoading: true })
         // Promise.all([p1, p2, p3]).then((data) => {
-        let hotProducts = localStorage.getItem('hotProducts')
+        let hotProducts = localStorage.getItem('hotProducts')||'[]'
         localStorage.clear();
         localStorage.setItem('hotProducts', hotProducts)
         this.setState({ isLoading: false });
