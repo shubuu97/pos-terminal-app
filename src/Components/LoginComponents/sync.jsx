@@ -64,7 +64,7 @@ class SyncContainer extends Component {
         if (invetoryUpdateTime) {
             this.getInventoryUpdate(invetoryUpdateTime);
             this.getCustomerUpdate(customerUpdateTime);
-            this.
+            this.pollHotProduct();
 }
         else {
             this.pollHotProduct();
