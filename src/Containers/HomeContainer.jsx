@@ -5,7 +5,8 @@ import moment from "moment";
 import _get from 'lodash/get';
 import _set from 'lodash/set';
 import _isEmpty from 'lodash/isEmpty';
-import _find from 'lodash/find'
+import _find from 'lodash/find';
+import _findIndex from 'lodash/findIndex';
 /* Material Icons */
 import SignalWifiOffOutlined from '@material-ui/icons/SignalWifiOffOutlined'
 import FullScreen from '@material-ui/icons/Fullscreen'
@@ -305,22 +306,58 @@ class HomeContainer extends React.Component {
 
     }
     getProductData = () => {
-        let productsdb = new PouchDb(`hotproductsdb${localStorage.getItem('storeId')}`);
-        productsdb.allDocs({
-            include_docs: true,
-            attachments: true,
-            limit: 39,
-            skip: 0
-        }).then(async (result) => {
-            if (localStorage.getItem("showOutOfStock") == "false") {
-                this.filteredResult = [];
-                this.resolveArray = [];
-                this.filterResult(result).then(async (rows) => {
-                    if (rows.length == 0) {
-                        return;
-                    }
-                    let result = { rows };
+        debugger;
+        let hotProducts = localStorage.getItem('hotProducts') || [];
+        hotProducts = JSON.parse(hotProducts);
+        debugger;
+        if (hotProducts.length > 0) {
+            let result = { rows: [] }
+            result.rows = hotProducts.map(hotProduct => {
+                let obj = {};
+                _set(obj, 'id', hotProduct._id)
+                _set(obj, 'doc', hotProduct);
+                return obj;
+            });
+            result.pagination = {}
+            result.pagination.method = "allDocs"
+            result.pagination.firstItemId = result.rows[0].id
+            result.pagination.lastItemId = result.rows[result.rows.length - 1].id
+            result.pagination.pageNo = 1
+            result.pagination.startVal = 1
+            result.pagination.endVal = result.rows.length;
+            this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+            return;
 
+        }
+        else {
+            debugger;
+            let productsdb = new PouchDb(`productsdb${localStorage.getItem('storeId')}`);
+            productsdb.allDocs({
+                include_docs: true,
+                attachments: true,
+                limit: 39,
+                skip: 0
+            }).then(async (result) => {
+                if (localStorage.getItem("showOutOfStock") == "false") {
+                    this.filteredResult = [];
+                    this.resolveArray = [];
+                    this.filterResult(result).then(async (rows) => {
+                        if (rows.length == 0) {
+                            return;
+                        }
+                        let result = { rows };
+
+                        result.pagination = {}
+                        result.pagination.method = "allDocs"
+                        result.pagination.firstItemId = result.rows[0].id
+                        result.pagination.lastItemId = result.rows[result.rows.length - 1].id
+                        result.pagination.pageNo = 1
+                        result.pagination.startVal = 1
+                        result.pagination.endVal = result.rows.length
+                        this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+                    })
+                }
+                else {
                     result.pagination = {}
                     result.pagination.method = "allDocs"
                     result.pagination.firstItemId = result.rows[0].id
@@ -329,21 +366,12 @@ class HomeContainer extends React.Component {
                     result.pagination.startVal = 1
                     result.pagination.endVal = result.rows.length
                     this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
-                })
-            }
-            else {
-                result.pagination = {}
-                result.pagination.method = "allDocs"
-                result.pagination.firstItemId = result.rows[0].id
-                result.pagination.lastItemId = result.rows[result.rows.length - 1].id
-                result.pagination.pageNo = 1
-                result.pagination.startVal = 1
-                result.pagination.endVal = result.rows.length
-                this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
-            }
-        }).catch((err) => {
-            console.log(err)
-        });
+                }
+            }).catch((err) => {
+                console.log(err)
+            });
+        }
+
     }
 
     handleTerminalHistoryOpen = () => {
@@ -415,7 +443,9 @@ class HomeContainer extends React.Component {
         // let p3 = new PouchDb(`categoryDb${localStorage.getItem('storeId')}`).destroy();
         this.setState({ isLoading: true })
         // Promise.all([p1, p2, p3]).then((data) => {
+        let hotProducts = localStorage.getItem('hotProducts')
         localStorage.clear();
+        localStorage.setItem('hotProducts', hotProducts)
         this.setState({ isLoading: false });
         window.location.reload();
         this.props.history.push('/login')
@@ -917,7 +947,7 @@ const getHotProductUpdate = async (propsOfComp, dispatch) => {
         method: 'POST',
         reqObj,
         url: 'HotProducts/Inventory/ByStore',
-        successCb: updateTimeStampAndDbForHotProduct,
+        successCb: (data) => updateTimeStampAndDbForHotProduct(data, dispatch),
         extraArgs: propsOfComp,
         errorCb: (err) => {
             console.log(err, "err is here")
@@ -926,41 +956,45 @@ const getHotProductUpdate = async (propsOfComp, dispatch) => {
 }
 const updateTimeStampAndDbForHotProduct = async (res, dispatch, extraArgs) => {
 
-    // let tempInvetoryUpdateTime = localStorage.getItem('tempInvetoryUpdateTime');
-    // localStorage.setItem('invetoryUpdateTime', tempInvetoryUpdateTime);
-    // let updationrecorderdb = new PouchDb(`updationrecorderdb${localStorage.getItem('storeId')}`);
-    // await updationrecorderdb.get('invetoryUpdateTime').then(data => {
-    //     updationrecorderdb.put({
-    //         _id: 'invetoryUpdateTime',
-    //         _rev: data._rev,
-    //         invetoryUpdateTime: tempInvetoryUpdateTime,
-    //     })
-    // }).catch(err => {
-    //     if (err.status == 404) {
-    //         updationrecorderdb.put({
-    //             _id: 'invetoryUpdateTime',
-    //             invetoryUpdateTime: tempInvetoryUpdateTime,
-    //         })
-    //     }
-    // })
 
 
-    let productsdb = new PouchDb(`hotproductsdb${localStorage.getItem('storeId')}`);
+    //let productsdb = new PouchDb(`hotproductsdb${localStorage.getItem('storeId')}`);
     let updatedInventory = _get(res, 'data.productWithInventory', []) || [];
-    let promiseArray = updatedInventory.map(async (product, index) => {
-        let productObj = await productsdb.get(product._id).then(
-            data => {
-                let updateObject = updatedInventory[index];
-                updateObject._rev = data._rev;
-                return updateObject
-            }).catch(err => updatedInventory[index]);
-        // _set(productObj, 'inventory.quantity', _get(product, 'inventory.quantity', 0));
-        return productObj
-    });
-    Promise.all(promiseArray).then(async ([...updatedInventoryWith_Rev]) => {
-        let resOfUpdateBulk = await productsdb.bulkDocs(updatedInventoryWith_Rev);
-    }).catch((err) => {
-    })
+    localStorage.setItem('hotProducts', JSON.stringify(updatedInventory));
+    console.log(localStorage.getItem('IS_HOT_PRODUCT_ACTIVE'));
+    debugger;
+    if (localStorage.getItem('IS_HOT_PRODUCT_ACTIVE') == 'true') {
+        debugger;
+        let hotProducts = localStorage.getItem('hotProducts') || [];
+        hotProducts = JSON.parse(hotProducts);
+
+        if (hotProducts.length > 0) {
+            let result = { rows: [] }
+            result.rows = hotProducts.map(hotProduct => {
+                let obj = {};
+                _set(obj, 'id', hotProduct._id)
+                _set(obj, 'doc', hotProduct);
+                return obj;
+            });
+            result.pagination = {}
+            result.pagination.method = "allDocs"
+            result.pagination.firstItemId = result.rows[0].id
+            result.pagination.lastItemId = result.rows[result.rows.length - 1].id
+            result.pagination.pageNo = 1
+            result.pagination.startVal = 1
+            result.pagination.endVal = result.rows.length;
+            dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+            return;
+
+        }
+        else{
+            localStorage.setItem('hotProducts',false);
+            return
+        }
+    }
+    return 1;
+
+
 
 }
 const updateTimeStampAndDbForCustomer = async (res) => {
