@@ -153,28 +153,32 @@ class ProductsSection extends React.Component {
     }
 
     scroll = () => {
-        let eachCardHeight = document.getElementById('productCard').offsetHeight
-        let scrollHead = document.getElementById('productList').scrollTop
-        let pageNo = this.props.pageNo;
-        let nextScrollTrigger = (pageNo * eachCardHeight * 13) - 400 // ! Assuming limit is 39, needs to be dynamic
-        console.log('Scroll Head - ', scrollHead, nextScrollTrigger)
-        if (scrollHead > nextScrollTrigger) {
-            let result = {
-                rows: [],
-                pagination: {}
-            }
-            result.rows = this.props.productList
-            result.pagination.method = this.props.method
-            result.pagination.query = this.props.query
-            result.pagination.fields = this.props.fields
-            result.pagination.firstItemId = result.rows[0].id
-            result.pagination.lastItemId = result.rows[result.rows.length - 1].id
-            result.pagination.pageNo = this.props.pageNo + 1
-            result.pagination.startVal = this.props.endVal + 1
-            result.pagination.endVal = result.pagination.pageNo * this.state.itemCount
-            result.pagination.pageNo = this.props.pageNo + 1
-            this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
-            this.getNextProducts()
+        let pCard = document.getElementById('productCard');
+        if(pCard!=null){
+            let eachCardHeight =  pCard.offsetHeight
+            let scrollHead = document.getElementById('productList').scrollTop
+            let pageNo = this.props.pageNo;
+            let nextScrollTrigger = (pageNo * eachCardHeight * 13) - 400 // ! Assuming limit is 39, needs to be dynamic
+            console.log('Scroll Head - ', scrollHead, nextScrollTrigger)
+            if (scrollHead > nextScrollTrigger) {
+                let result = {
+                    rows: [],
+                    pagination: {}
+                }
+                result.rows = this.props.productList
+                result.pagination.method = this.props.method
+                result.pagination.query = this.props.query
+                result.pagination.fields = this.props.fields
+                result.pagination.firstItemId = result.rows[0].id
+                result.pagination.lastItemId = result.rows[result.rows.length - 1].id
+                result.pagination.pageNo = this.props.pageNo + 1
+                result.pagination.startVal = this.props.endVal + 1
+                result.pagination.endVal = result.pagination.pageNo * this.state.itemCount
+                result.pagination.pageNo = this.props.pageNo + 1
+                this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+                this.getNextProducts()
+        }
+     
         }
     }
 

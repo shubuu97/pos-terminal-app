@@ -51,17 +51,17 @@ class Categories extends Component {
   }
 
   componentDidMount() {
-   let hps =  localStorage.getItem('hotProducts')||[];
-   hps = JSON.parse(hps)
-     if(hps.length>0){
-      localStorage.setItem('IS_HOT_PRODUCT_ACTIVE',true);
-      this.setState({hotActive:true})
+    let hps = localStorage.getItem('hotProducts') || [];
+    hps = JSON.parse(hps)
+    if (hps.length > 0) {
+      localStorage.setItem('IS_HOT_PRODUCT_ACTIVE', true);
+      this.setState({ hotActive: true })
 
-     }
-     else{
-      localStorage.setItem('IS_HOT_PRODUCT_ACTIVE',false);
-      this.setState({hotActive:false})
-     }
+    }
+    else {
+      localStorage.setItem('IS_HOT_PRODUCT_ACTIVE', false);
+      this.setState({ hotActive: false })
+    }
     let categoryDb = new PouchDb(`categoryDb${localStorage.getItem("storeId")}`);
     categoryDb
       .find({
@@ -85,7 +85,7 @@ class Categories extends Component {
 
   handleHomeClick = () => {
     this.props.getHomeClicked();
-    localStorage.setItem('IS_HOT_PRODUCT_ACTIVE',false);
+    localStorage.setItem('IS_HOT_PRODUCT_ACTIVE', false);
     this.setState({ selectedCategory: { categoryType: -1 }, hotActive: false });
     this.getProductData();
     this.getCategory(0);
@@ -190,7 +190,7 @@ class Categories extends Component {
   };
   getHotProduct = () => {
     if (!this.state.hotActive == false) {
-      localStorage.setItem('IS_HOT_PRODUCT_ACTIVE',false);
+      localStorage.setItem('IS_HOT_PRODUCT_ACTIVE', false);
       this.setState({ hotActive: false });
       this.handleHomeClick();
       return;
@@ -198,14 +198,14 @@ class Categories extends Component {
     this.getHotProductFromPouch();
   }
   getHotProductFromPouch = () => {
-    this.setState({ hotActive: true });
-    localStorage.setItem('IS_HOT_PRODUCT_ACTIVE',true);
     let hotProducts = localStorage.getItem('hotProducts');
     hotProducts = JSON.parse(hotProducts);
-    if(hotProducts.length==0){
-      this.props.dispatch(commonActionCreater({}, 'GET_PRODUCT_DATA_SUCCESS'));
+    if (hotProducts.length == 0) {
+      this.handleHomeClick()
       return;
     }
+    this.setState({ hotActive: true });
+    localStorage.setItem('IS_HOT_PRODUCT_ACTIVE', true);
     let result = { rows: [] }
     result.rows = hotProducts.map(hotProduct => {
       let obj = {};

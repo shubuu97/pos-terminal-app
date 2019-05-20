@@ -988,7 +988,8 @@ const updateTimeStampAndDbForHotProduct = async (res, dispatch, extraArgs) => {
 
         }
         else{
-            localStorage.setItem('hotProducts',false);
+            let arr = []
+            localStorage.setItem('hotProducts',JSON.stringify(arr));
             return
         }
     }
