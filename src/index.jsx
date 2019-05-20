@@ -52,11 +52,11 @@ if (process.env.NODE_ENV !== 'production') {
   middleware.push(createLogger());
 };
 const persistConfig = {
-  key: 'SMEInvestorRoot',
+  key: 'POS',
   storage,
   stateReconciler: hardSet,
   transforms: [SetTransform],
-  blacklist: ['form', 'ShowToast', 'PaymentDetails', 'RefundPaymentDetails', 'resetProduct', 'resetCategory']
+  blacklist: ['form', 'ShowToast', 'PaymentDetails', 'RefundPaymentDetails', 'resetProduct', 'resetCategory',]
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
