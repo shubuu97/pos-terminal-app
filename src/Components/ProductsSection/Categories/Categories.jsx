@@ -51,6 +51,17 @@ class Categories extends Component {
   }
 
   componentDidMount() {
+    let hps = localStorage.getItem('hotProducts') || '[]';
+    hps = JSON.parse(hps)
+    if (hps.length > 0) {
+      localStorage.setItem('IS_HOT_PRODUCT_ACTIVE', true);
+      this.setState({ hotActive: true })
+
+    }
+    else {
+      localStorage.setItem('IS_HOT_PRODUCT_ACTIVE', false);
+      this.setState({ hotActive: false })
+    }
     let categoryDb = new PouchDb(`categoryDb${localStorage.getItem("storeId")}`);
     categoryDb
       .find({
@@ -73,7 +84,8 @@ class Categories extends Component {
   }
 
   handleHomeClick = () => {
-    this.props.getHomeClicked()
+    this.props.getHomeClicked();
+    localStorage.setItem('IS_HOT_PRODUCT_ACTIVE', false);
     this.setState({ selectedCategory: { categoryType: -1 }, hotActive: false });
     this.getProductData();
     this.getCategory(0);
@@ -178,6 +190,7 @@ class Categories extends Component {
   };
   getHotProduct = () => {
     if (!this.state.hotActive == false) {
+      localStorage.setItem('IS_HOT_PRODUCT_ACTIVE', false);
       this.setState({ hotActive: false });
       this.handleHomeClick();
       return;
@@ -185,28 +198,30 @@ class Categories extends Component {
     this.getHotProductFromPouch();
   }
   getHotProductFromPouch = () => {
-    this.setState({hotActive:true})
-    let productsdb = new PouchDb(`hotproductsdb${localStorage.getItem("storeId")}`);
-    productsdb
-      .allDocs({
-        include_docs: true,
-        attachments: true,
-        limit: 39,
-        skip: 0
-      })
-      .then(result => {
-        result.pagination = {}
-        result.pagination.method = "allDocs"
-        result.pagination.firstItemId = result.rows[0].id
-        result.pagination.lastItemId = result.rows[result.rows.length - 1].id
-        result.pagination.pageNo = 1
-        result.pagination.startVal = 1
-        result.pagination.endVal = result.rows.length
-        this.props.dispatch(
-          commonActionCreater(result, "GET_PRODUCT_DATA_SUCCESS")
-        );
-      })
-      .catch(err => { });
+    debugger;
+    let hotProducts = localStorage.getItem('hotProducts')||'[]';
+    hotProducts = JSON.parse(hotProducts);
+    if (hotProducts.length == 0) {
+      this.handleHomeClick()
+      return;
+    }
+    this.setState({ hotActive: true });
+    localStorage.setItem('IS_HOT_PRODUCT_ACTIVE', true);
+    let result = { rows: [] }
+    result.rows = hotProducts.map(hotProduct => {
+      let obj = {};
+      _set(obj, 'id', hotProduct._id)
+      _set(obj, 'doc', hotProduct);
+      return obj;
+    });
+    result.pagination = {}
+    result.pagination.method = "allDocs"
+    result.pagination.firstItemId = result.rows[0].id
+    result.pagination.lastItemId = result.rows[result.rows.length - 1].id
+    result.pagination.pageNo = 1
+    result.pagination.startVal = 1
+    result.pagination.endVal = result.rows.length;
+    this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
   }
 
   render() {
@@ -219,7 +234,7 @@ class Categories extends Component {
             selectedRootCategory={this.state.rootCategory}
             selectedSubCategory={this.state.subCategory}
             selectedLeafCategory={this.state.leafCategory}
-            getHotProductFromPouch = {this.getHotProductFromPouch}
+            getHotProductFromPouch={this.getHotProductFromPouch}
             selectedCurrentCategory={this.state.selectedCategory}
           />
         </div>

@@ -274,14 +274,14 @@ class CustomerTab extends React.Component {
                                         <span className="card-data">{_get(this.props, 'customer.customer.firstName')} {_get(this.props, 'customer.customer.lastName')}</span>
                                     </div>
                                     {
-                                        !customer.guest ?
+                                        !_get(customer, 'guest', true) ?
                                             <div className="customer-phone flex-column">
                                                 <span className="card-title">Phone</span>
                                                 <span className="card-data">+{_get(this.props, 'customer.phoneNumber.countryCode', '')} {_get(this.props, 'customer.phoneNumber.phoneNumber', '')}</span>
                                             </div> : null
                                     }
                                     {
-                                        !customer.guest ?
+                                        !_get(customer, 'guest', true) ?
                                             <div className="customer-email flex-column">
                                                 <span className="card-title">Loyalty Points</span>
                                                 <span className="card-data">{_get(this.props, 'cart.customer.rewardPoints', 0)}</span>

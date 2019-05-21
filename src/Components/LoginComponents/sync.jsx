@@ -47,7 +47,7 @@ class SyncContainer extends Component {
             productPage: 1,
             sizePerPage: 250,
             taskCompletedCount: 0,
-            fixedTask: 6  //Count of static of task
+            fixedTask: 5  //Count of static of task
         };
     }
     async componentDidMount() {
@@ -64,6 +64,7 @@ class SyncContainer extends Component {
         if (invetoryUpdateTime) {
             this.getInventoryUpdate(invetoryUpdateTime);
             this.getCustomerUpdate(customerUpdateTime);
+            this.pollHotProduct();
         }
         else {
             this.pollHotProduct();
@@ -245,17 +246,17 @@ class SyncContainer extends Component {
     }
 
     insertingProductToDb = async (productData) => {
-        let productsdb = await new PouchDb(`productsdb${localStorage.getItem('storeId')}`);
+        let productsdb = new PouchDb(`productsdb${localStorage.getItem('storeId')}`);
         let result = await productsdb.bulkDocs(productData);
         let indexingResult = await this.makingIndexOnProductData()
         return 1;
     }
     makingIndexOnProductData = async () => {
-        let t = Date.now()
+        let t = Date.now();
+        let productsdb = new PouchDb(`productsdb${localStorage.getItem('storeId')}`);
         console.log('######index time####', Date.now())
-        let productsdb = await new PouchDb(`productsdb${localStorage.getItem('storeId')}`);
         console.log("############### making index of product ###############")
-        let p1 = productsdb.search({
+        let p1 = await productsdb.search({
             fields: [
                 'product.name',
                 'product.description',
@@ -264,26 +265,45 @@ class SyncContainer extends Component {
                 'product.upcCode'
             ],
             build: true
-        })
+        }).catch(err => {
+            debugger;
+            if(err.status==500){
+                return
+            }
+            this.makingIndexOnProductData()
+        });
         console.log("############### making index of Category ###############")
-        let p2 = productsdb.search({
+        let p2 = await productsdb.search({
             fields: [
                 'product.category1',
                 'product.category2',
                 'product.category3'],
             build: true
+        }).catch(err => {
+            debugger;
+            if(err.status==500){
+                return
+            }
+            this.makingIndexOnProductData()
         });
         console.log("############### making index of Upc codes ###############")
-        let p3 = productsdb.createIndex({
+        let p3 = await productsdb.createIndex({
             index: {
                 fields: ["product.upcCode"],
                 name: 'upcIndex',
                 type: 'string'
             }
-        });
-        await Promise.all([p1, p2, p3]);
-        console.log('###########time diffrence##########', Date.now() - t)
-        return;
+        }).catch(err=>{
+            if(err.status==500){
+                return
+            }
+            this.makingIndexOnProductData()
+             });
+        // await Promise.all([p1, p2, p3]).catch(err=>{
+        //     debugger;
+        // });
+        // console.log('###########time diffrence##########', Date.now() - t)
+        // return;
     }
 
     handleProductFetchSuccessWrapper = (productData) => {
@@ -316,6 +336,8 @@ class SyncContainer extends Component {
             }
         })
             .catch((err) => {
+                console.log("errerrerr", err)
+                debugger;
             })
     }
 
@@ -449,6 +471,7 @@ class SyncContainer extends Component {
         })
     }
     handleHotProductFetchSuccessWrapper = (hotProductData) => {
+        debugger;
         if (this.state.taskCount != undefined) {
             let percentageComplete = this.state.percentageComplete + 100 / this.state.taskCount;
             this.state.taskCompletedCount++;
@@ -458,26 +481,9 @@ class SyncContainer extends Component {
             this.state.taskCompletedCount++;
             this.setState({ progressMsg: 'Hot Product Succesfully Fetched' })
         }
-        this.handleHotProductFetchSuccess(hotProductData).then(() => {
-            if (this.state.taskCount != undefined) {
-                this.state.taskCompletedCount++;
-                let percentageComplete = this.state.percentageComplete + 100 / this.state.taskCount;
-                this.setState({ percentageComplete, progressMsg: 'Hot Product succesfully optimized for offline use' })
-            }
-            else {
-                this.state.taskCompletedCount++;
-                this.setState({ progressMsg: 'Hot Product succesfully optimized for offline use' })
-            }
-        })
-            .catch((err) => {
-
-            })
-    }
-    handleHotProductFetchSuccess = async (data) => {
-        let hotProductData = _get(data, 'data.productWithInventory', [])
-        let hotproductsdb = await new PouchDb(`hotproductsdb${localStorage.getItem('storeId')}`);
-        let result = await hotproductsdb.bulkDocs(hotProductData);
-        return 1
+        let updatedInventory = _get(hotProductData, 'data.productWithInventory', []) || [];
+        localStorage.setItem('hotProducts', JSON.stringify(updatedInventory));
+        return 1;
     }
 
     handleClick = () => {
