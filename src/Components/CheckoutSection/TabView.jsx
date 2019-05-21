@@ -94,6 +94,7 @@ class FullWidthTabs extends React.Component {
                     checkoutcartArea={this.props.checkoutcartArea}
                     handleClickOpen={this.props.handleClickOpen}
                     handleChangeIndex={this.handleChangeIndex}
+                    tabValue={this.state.value}
                 />
             </TabContainer>
         )

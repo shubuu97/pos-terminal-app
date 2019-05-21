@@ -454,7 +454,7 @@ p {
 /* Home Styles */
 .full-screen-button {
     position: fixed;
-    bottom: 30px;
+    bottom: 20px;
     left: 30px;
     background: #fff;
     border-radius: 100px;
@@ -1203,62 +1203,162 @@ p {
         height: 50%;
     }
 
-    .payment-section {
-        background: @background-white;
 
-        .section-heading {
-            font-size: 1.4em;
-            color: @soft-text;
-            padding: 10px;
+    // ! Old Payment tab, to be removed
+    // .payment-section {
+    //     background: @background-white;
 
-        }
+    //     .section-heading {
+    //         font-size: 1.4em;
+    //         color: @soft-text;
+    //         padding: 10px;
 
-        .card {
-            box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.2);
-            background: #f4fcff;
-            min-height: 50px;
-            width: 90%;
-            align-self: center;
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 5px;
-        }
+    //     }
 
+    //     .card {
+    //         box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.2);
+    //         background: #f4fcff;
+    //         min-height: 50px;
+    //         width: 90%;
+    //         align-self: center;
+    //         margin: 10px 0;
+    //         padding: 10px;
+    //         border-radius: 5px;
+    //     }
+    //     .payment-summary {
+    //         padding: 20px 0;
 
+    //         .summary-area {
+    //             justify-content: space-between;
 
-        .payment-summary {
-            padding: 20px 0;
+    //             .each-detail {
+    //                 width: 25%;
+    //             }
 
-            .summary-area {
-                justify-content: space-between;
+    //             .summary-money {
+    //                 font-size: 1.2em;
+    //                 color: @soft-text;
+    //             }
+    //         }
 
-                .each-detail {
-                    width: 25%;
+    //         .total-area {
+    //             justify-content: flex-end;
+    //             align-items: flex-end;
+    //             padding: 15px;
+
+    //             .payment-total {
+    //                 font-size: 2em;
+    //             }
+    //         }
+
+    //         .summary-title {
+    //             font-size: 0.8em;
+    //             color: @softer-text;
+    //             padding: 10px 0 3px 0;
+    //         }
+    //     }
+    // }
+
+        .payment-section{
+            height: calc(100vh - 74px);
+            border-right: solid 2px #c3c3c3;
+            .customer-section{
+                height: 15%;
+                border-bottom: 2px solid #c3c3c3;
+                .customer-display{
+                    width: 65%;
+                    margin: 0 10px;
+                    .customer-name{
+                        font-size: 1.1em;
+                        color: rgba(0,0,0,0.6);
+                        font-weight: bold;
+                    }
+                    .customer-email{
+                        font-size: 0.8em;
+                        color: rgba(0,0,0,0.6);
+                    }
+                    .customer-phone{
+                        font-size: 0.8em;
+                        color: rgba(0,0,0,0.6);
+                    }
                 }
+                .action-icons{
+                    width: 20%;
+                    display: flex;
+                    justify-content: center;
+                }
+                .icon-width{
+                    width: 15%;
+                    display: flex;
+                    justify-content: center;
+                }
+            }
+            
+            .cart-section{
+                height: 70%;
+                overflow-x: auto;
+                background: #f9f9f9;
+                .each-cart-item{
+                    width: 90%;
+                    padding: 20px 5%;
+                    border-bottom: 1px solid #c3c3c3;
+                    background: #fff;
+                    .image-container{
+                        width: 15%;
+                        img{
+                            width: 100%;
+                            height: auto;
+                        }
+                    }
+                    .product-name{
+                        width: 35%;
+                        font-size: 0.9em;
+                        color: rgba(0, 0, 0, 0.6);
+                    }
+                    .product-deductions{
+                        width: 10%;
+                        .product-cost-price{
+                        
+                            font-size: 0.9em;
+                            color: rgba(0, 0, 0, 0.7);
+                        }
+                        .product-discount{
+                            font-size: 0.9em;
+                            color: #62a212
+                        }
+                        .product-tax{
+                            font-size: 0.9em;
+                            color: #a21212
+                        }
+                    }
+                    .product-final-price{
+                        width: 20%;
+                        font-size: 1.2em;
+                        font-weight: bold;
+                        color: rgba(0, 0, 0, 0.7);
+                    }
 
-                .summary-money {
-                    font-size: 1.2em;
-                    color: @soft-text;
                 }
             }
 
-            .total-area {
+            .cart-total{
+                height: 8%;
+                border-top: 2px solid #c3c3c3;
                 justify-content: flex-end;
-                align-items: flex-end;
-                padding: 15px;
-
-                .payment-total {
+                padding: 4%;
+                .cart-total-amount{
                     font-size: 2em;
+                    font-weight: bold;
                 }
             }
 
-            .summary-title {
-                font-size: 0.8em;
-                color: @softer-text;
-                padding: 10px 0 3px 0;
+            .calculation-section{
+                border-top: 1px solid #000;
             }
         }
-    }
+
+
+
 }
 
 .card-payment-dialogue {
@@ -1379,8 +1479,6 @@ p {
 }
 
 .pos-payment {
-    border-left: solid 2px #c3c3c3;
-
     .submit-transaction .MuiButton-contained.MuiButton-disabled {
         opacity: .2;
         background-color: #2ea96c;

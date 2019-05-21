@@ -61,11 +61,13 @@ class OrdersTab extends React.Component {
     }
 
     componentWillReceiveProps(props) {
-        if (this.state.cartItemQty != _get(props, 'cart.cartQty', 0)) {
-            this.props.dispatch(commonActionCreater(1, 'SWITCH_TAB_NUMBER'))
-            this.setState({
-                cartItemQty: _get(props, 'cart.cartQty', 0)
-            })
+        if(props.tabValue != 2 || _get(props, 'cart.cartQty', 0) == 0){
+            if (this.state.cartItemQty != _get(props, 'cart.cartQty', 0)) {
+                this.props.dispatch(commonActionCreater(1, 'SWITCH_TAB_NUMBER'))
+                this.setState({
+                    cartItemQty: _get(props, 'cart.cartQty', 0)
+                })
+            }
         }
     }
 

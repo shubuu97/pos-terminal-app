@@ -24,7 +24,6 @@ class CalculationSection extends React.Component {
     }
 
     handleCartDiscountRemove = () => {
-        debugger
         let cartDiscountObj = {}
         cartDiscountObj.isPercentage = false
         cartDiscountObj.cartDiscount = 0
@@ -78,18 +77,6 @@ class CalculationSection extends React.Component {
                                 </div> : null
                         }
                         {
-                            loyaltyDiscount.getAmount() > 0 ?
-                                <div className='cart-each-details'>
-                                    <span className='cart-title flex-row align-center'>
-                                        <RemoveCircleIcons style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }}
-                                            onClick={this.handleLoyaltyDiscountRemove}
-                                        />
-                                        Loyalty
-                                    </span>
-                                    <span className='cart-amount'>- {loyaltyDiscount.toFormat('$0,0.00')}</span>
-                                </div> : null
-                        }
-                        {
                             employeeDiscount.getAmount() > 0 ?
                                 <div className='cart-each-details'>
                                     <span className='cart-title'>Emp. Discount </span>
@@ -103,6 +90,18 @@ class CalculationSection extends React.Component {
                                         Item Discounts
                                     </span>
                                     <span className='cart-amount'>- {totalItemDiscount.toFormat('$0,0.00')}</span>
+                                </div> : null
+                        }
+                        {
+                            loyaltyDiscount.getAmount() > 0 ?
+                                <div className='cart-each-details'>
+                                    <span className='cart-title flex-row align-center'>
+                                        <RemoveCircleIcons style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }}
+                                            onClick={this.handleLoyaltyDiscountRemove}
+                                        />
+                                        Loyalty
+                                    </span>
+                                    <span className='cart-amount'>- {loyaltyDiscount.toFormat('$0,0.00')}</span>
                                 </div> : null
                         }
                         {
@@ -125,10 +124,15 @@ class CalculationSection extends React.Component {
                             <span className='cart-amount'>{totalTaxAmount.toFormat('$0,0.00')}</span>
                         </div>
                     </div>
-                    <div className="cart-total">
-                        <span className='total-text'>Total </span>
-                        <span className='total-amount'>{totalMoney.toFormat('$0,0.00')}</span>
-                    </div>
+                    {
+                        _get(this.props, 'hideTotalArea', false) ?
+                            null
+                            :
+                            <div className="cart-total">
+                                <span className='total-text'>Total </span>
+                                <span className='total-amount'>{totalMoney.toFormat('$0,0.00')}</span>
+                            </div>
+                    }
                 </div>
             </div>
         );

@@ -1,4 +1,6 @@
 import React from 'react';
+import PouchDb from 'pouchdb';
+import PAM from "pouchdb-adapter-memory";
 // import { Detector } from 'react-detect-offline';
 /* Lodash Imports */
 import _get from 'lodash/get';
@@ -15,6 +17,8 @@ import PersonAdd from '@material-ui/icons/PersonAddOutlined';
 import History from '@material-ui/icons/History';
 /* Redux Imports */
 import { connect } from 'react-redux';
+import { reset } from 'redux-form';
+import { commonActionCreater } from '../../../Redux/commonAction';
 /* Global Imports */
 import ReactSelect from '../../../Global/Components/ReactSelect/async-react-select';
 import globalClearCart from '../../../Global/PosFunctions/clearCart';
@@ -22,11 +26,8 @@ import addGuestToCart from '../../../Global/PosFunctions/addGuestToCart';
 import splitDotWithInt from '../../../Global/PosFunctions/splitDotWithInt'
 /* Component Imports */
 import CalculationSection from './CalculationSection';
-import PouchDb from 'pouchdb';
-import PAM from "pouchdb-adapter-memory";
-import { commonActionCreater } from '../../../Redux/commonAction';
 import Customer from '../Customer';
-import { reset } from 'redux-form';
+
 
 PouchDb.plugin(PAM);
 PouchDb.plugin(require('pouchdb-quick-search'));
@@ -88,7 +89,6 @@ class CustomerTab extends React.Component {
         // });
     };
     onChange = (doc) => {
-        debugger
         let value = _get(doc, 'value');
         let employeeDiscount = _get(doc, 'value.employeeDiscount', 0);
         let storeId = localStorage.getItem('storeId');
@@ -187,8 +187,7 @@ class CustomerTab extends React.Component {
             loyalty: '',
             loyaltyValue: 0
         })
-        this.handleClickProceed()
-        
+        this.handleClickProceed() 
     }
 
     applyLoyaltyDiscount = () => {

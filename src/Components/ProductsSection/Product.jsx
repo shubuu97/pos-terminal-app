@@ -18,6 +18,12 @@ import { connect } from "react-redux";
 /* Global Function Imports */
 import addToCart from '../../Global/PosFunctions/addToCart'
 
+const DineroInit = () => {
+    return Dinero({
+        amount: 0,
+        currency: 'USD'
+    })
+}
 class Product extends React.PureComponent {
     constructor(props) {
         super(props);
@@ -59,13 +65,7 @@ class Product extends React.PureComponent {
         let regex = /_design.*/g;
         let isddoc = regex.test(id);
         let dispatch = this.props.dispatch
-        // ! MAYUK - To be changed When Marine gives us the right format
-        let Money = Dinero(
-            {
-                amount: parseInt(_get(data, 'doc.product.salePrice.amount', 0)),
-                currency: 'USD',
-            }
-        )
+        let Money = Dinero(_get(data, 'doc.product.salePrice', DineroInit()))
         return (
             <React.Fragment>
                 {!isddoc ?
