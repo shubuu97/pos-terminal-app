@@ -99,7 +99,7 @@ class PaymentTab extends React.Component {
     handleSwitchToGuest = async () => {
         await addGuestToCart(this.props.dispatch);
         this.setState({edit: false})
-        this.dispatchCartAction(_get(this.props, 'cart.cartItems', []))
+        this.dispatchCartAction(_get(this.props, 'cart.cartItems', []), 0)
     }
 
     handleOpen = () => {
@@ -175,10 +175,14 @@ class PaymentTab extends React.Component {
         );
     };
 
-    dispatchCartAction = (cartItems) => {
+    dispatchCartAction = (cartItems, loyaltyPoints) => {
         let cartDiscountObj = {}
         cartDiscountObj.cartItems = cartItems
         cartDiscountObj.prevCart = _get(this, 'props.cart', {});
+        if(loyaltyPoints != undefined){
+            debugger
+            cartDiscountObj.loyaltyPoints = loyaltyPoints
+        }
         this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
     }
 
