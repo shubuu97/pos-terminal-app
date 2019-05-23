@@ -40,6 +40,7 @@ import OfflineTransactionContainer from './OfflineTransactionContainer';
 import Customer from '../Components/CheckoutSection/Customer';
 import SettingContainer from './SettingContainer';
 import Dinero from 'dinero.js';
+import CustomerDialogue from '../Components/Dialogues/CustomerDialogue/CustomerDialogue';
 
 let SessionDialog = withDialog(SessionContainer)
 let OfflineTransactionDialog = withDialog(OfflineTransactionContainer);
@@ -67,6 +68,7 @@ class HomeContainer extends React.Component {
             isOpenProduct: true,
             isOpenPayment: false,
             openOnHold: false,
+            openCustomerDialogue: true,
             openOrderHistory: false,
             openMiscProduct: false,
             openCartOnHoldOrClear: false,
@@ -443,7 +445,7 @@ class HomeContainer extends React.Component {
         // let p3 = new PouchDb(`categoryDb${localStorage.getItem('storeId')}`).destroy();
         this.setState({ isLoading: true })
         // Promise.all([p1, p2, p3]).then((data) => {
-        let hotProducts = localStorage.getItem('hotProducts')||'[]'
+        let hotProducts = localStorage.getItem('hotProducts') || '[]'
         localStorage.clear();
         localStorage.setItem('hotProducts', hotProducts)
         this.setState({ isLoading: false });
@@ -699,6 +701,17 @@ class HomeContainer extends React.Component {
                             dispatch={dispatch}
                         /> : null
                 }
+
+                {
+                    this.state.openCustomerDialogue ?
+                        <CustomerDialogue
+                            handleClickOpen={() => this.handleClickOpen('openCustomerDialogue')}
+                            handleClose={() => this.handleClose('openCustomerDialogue')}
+                            open={this.state.openCustomerDialogue}
+                            dispatch={dispatch}
+                        /> : null
+                }
+
                 {
                     this.state.openHistoryDialogue ?
                         <HistoryDialogue
@@ -986,9 +999,9 @@ const updateTimeStampAndDbForHotProduct = async (res, dispatch, extraArgs) => {
             return;
 
         }
-        else{
+        else {
             let arr = []
-            localStorage.setItem('hotProducts',JSON.stringify(arr));
+            localStorage.setItem('hotProducts', JSON.stringify(arr));
             return
         }
     }
