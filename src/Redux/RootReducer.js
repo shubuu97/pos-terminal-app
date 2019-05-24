@@ -18,6 +18,8 @@ import PaymentDetails from '../reducers/paymentDetails';
 import RefundPaymentDetails from '../reducers/refundPaymentDetails'
 import productList from '../reducers/productList'
 import zipCodeReducer from '../reducers/zipCodeReducer';
+// !Cannabis Specific
+import customerQueue from '../reducers/manageCustomersCannabis';
 // import cartOrderDetailsFun from './commonStaticReducer';
 
 
@@ -84,7 +86,8 @@ let rootRducer = combineReducers({
     resetProduct,
     resetCategory,
     isCustomerTabOpen,
-    isHotProductActive
+    isHotProductActive,
+    customerQueue
 })
 
 export default rootRducer;

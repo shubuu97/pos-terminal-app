@@ -965,9 +965,6 @@ const getHotProductUpdate = async (propsOfComp, dispatch) => {
     })
 }
 const updateTimeStampAndDbForHotProduct = async (res, dispatch, extraArgs) => {
-
-
-
     //let productsdb = new PouchDb(`hotproductsdb${localStorage.getItem('storeId')}`);
     let updatedInventory = _get(res, 'data.productWithInventory', []) || [];
     localStorage.setItem('hotProducts', JSON.stringify(updatedInventory));

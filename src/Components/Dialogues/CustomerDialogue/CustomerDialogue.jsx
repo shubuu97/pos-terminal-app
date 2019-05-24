@@ -5,7 +5,9 @@ import PouchDb from 'pouchdb';
 import PAM from "pouchdb-adapter-memory";
 /* Lodash Imports */
 import _get from 'lodash/get';
+import _find from 'lodash/find';
 /* Redux Imports */
+import { connect } from 'react-redux';
 import { commonActionCreater } from '../../../Redux/commonAction'
 /* Global Imports */
 import genericPostData from '../../../Global/dataFetch/genericPostData';
@@ -89,8 +91,7 @@ class CustomerDialogue extends React.Component {
     };
 
     populateCustomerQueue = () => {
-
-        let customerQueue = customerData
+        let customerQueue = this.props.customerQueue
         let view = []
         customerQueue.map((data, index) => {
             view.push(
@@ -101,11 +102,11 @@ class CustomerDialogue extends React.Component {
                     <div className='flex-row justify-space-between'>
                         <div className='flex-row align-center'>
                             {
-                                data.type == 'Medical' ?
+                                _get(data, 'customerType', 1) == 2 ?
                                     <HealingIcon style={{ paddingRight: '10px' }} /> :
                                     <SpaIcon style={{ paddingRight: '10px' }} />
                             }
-                            <span className='card-title'>{data.customerName}</span>
+                            <span className='card-title'>{_get(data, 'customer.firstName', '')} {_get(data, 'customer.lastName', '')}</span>
                         </div>
                         <DeleteIcons style={{ color: '#ff000096', fontSize: '1.5em' }} />
                     </div>
@@ -131,8 +132,6 @@ class CustomerDialogue extends React.Component {
                 </div>
             )
         })
-
-
         return (
             <div className='guest-queue overflow-x flex-row flex-wrap'>
                 {view}
@@ -159,7 +158,6 @@ class CustomerDialogue extends React.Component {
                 selectedCustomer: '',
                 customerData: ''
             })
-
         }
     }
 
@@ -168,11 +166,18 @@ class CustomerDialogue extends React.Component {
     };
 
     onInputChange = (newValue) => {
-        console.log(newValue, 'newValue')
         this.setState({ value: newValue });
         return newValue;
     }
-    onChange = (doc) => {
+    addCustomerToQueue = (doc) => {
+        let customerQueue = this.props.customerQueue
+        if(_find(customerQueue, customerQueue => customerQueue.id == doc.value.id )){
+            console.log('Customer Already In Queue')
+        }
+        else{
+            customerQueue.push(doc.value);
+        }
+        this.props.dispatch(commonActionCreater(customerQueue, 'UPDATE_CUSTOMER_QUEUE'));
         
     }
 
@@ -234,7 +239,6 @@ class CustomerDialogue extends React.Component {
                             </IconButton>
                             <span className='ml-20'>Customers</span>
                         </div>
-
                         <div className='customer-main flex-row'>
                             <div className='check-in-area flex-column'>
                                 <span className='heading'>Check-In</span>
@@ -243,7 +247,7 @@ class CustomerDialogue extends React.Component {
                                         value={this.state.value}
                                         onInputChange={this.onInputChange}
                                         //defaultOptions
-                                        onChange={this.onChange}
+                                        onChange={this.addCustomerToQueue}
                                         loadOptions={this.loadOptions}
                                         className='fwidth'
                                     />
@@ -253,8 +257,6 @@ class CustomerDialogue extends React.Component {
                                     <CheckInForm />
                                 </div>
                             </div>
-
-
                             <div
                                 className='queue-area flex-column'
                                 style={
@@ -265,7 +267,6 @@ class CustomerDialogue extends React.Component {
                                 <span className='heading'>Queue</span>
                                 {this.populateCustomerQueue()}
                             </div >
-
                             {
                                 this.state.selectedCustomer ?
                                     <div className='customer-info-area flex-column justify-space-between align-flex-end'>
@@ -316,10 +317,8 @@ class CustomerDialogue extends React.Component {
                                                 Proceed To Checkout
                                             </Button>
                                         </div>
-
                                     </div> : null
                             }
-
                         </div>
                     </div>
                 </Dialog>
@@ -328,8 +327,16 @@ class CustomerDialogue extends React.Component {
     }
 }
 
+function mapStateToProps(state) {
+    let customerQueue = _get(state, 'customerQueue.queue', []);
+
+    return {
+        customerQueue
+    }
+}
+
 CustomerDialogue.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(CustomerDialogue);
+export default connect(mapStateToProps)(withStyles(styles)(CustomerDialogue));
