@@ -31,7 +31,6 @@ class CheckInForm extends React.Component {
     };
 
     handleDateChange = name => date => {
-        debugger
         this.setState({ [name]: date });
     };
 
@@ -63,7 +62,7 @@ class CheckInForm extends React.Component {
                 <div className='pad-10 flex-row flex-wrap justify-space-between'>
                     <TextField
                         id="outlined-name"
-                        label="Name"
+                        label="*Name"
                         value={this.state.name}
                         onChange={this.handleTextfieldChange('name')}
                         margin="normal"
@@ -72,7 +71,7 @@ class CheckInForm extends React.Component {
                     />
                     <TextField
                         id="outlined-name"
-                        label="State"
+                        label="*State"
                         value={this.state.State}
                         onChange={this.handleTextfieldChange('State')}
                         margin="normal"
@@ -83,7 +82,7 @@ class CheckInForm extends React.Component {
                     <DatePicker
                         disableFuture
                         margin="normal"
-                        label="Date of birth"
+                        label="*Date of birth"
                         value={this.state.selectedDate}
                         onChange={this.handleDateChange('selectedDate')}
                         style={{ width: '48%' }}

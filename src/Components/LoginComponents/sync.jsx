@@ -105,7 +105,7 @@ class SyncContainer extends Component {
                 _id: 'invetoryUpdateTime',
                 _rev: data._rev,
                 invetoryUpdateTime: tempInvetoryUpdateTime,
-            }).catch(err => { debugger; });
+            }).catch(err => {  });
         });
 
 
@@ -266,7 +266,6 @@ class SyncContainer extends Component {
             ],
             build: true
         }).catch(err => {
-            debugger;
             if(err.status==500){
                 return
             }
@@ -280,7 +279,6 @@ class SyncContainer extends Component {
                 'product.category3'],
             build: true
         }).catch(err => {
-            debugger;
             if(err.status==500){
                 return
             }
@@ -337,7 +335,6 @@ class SyncContainer extends Component {
         })
             .catch((err) => {
                 console.log("errerrerr", err)
-                debugger;
             })
     }
 
@@ -471,7 +468,6 @@ class SyncContainer extends Component {
         })
     }
     handleHotProductFetchSuccessWrapper = (hotProductData) => {
-        debugger;
         if (this.state.taskCount != undefined) {
             let percentageComplete = this.state.percentageComplete + 100 / this.state.taskCount;
             this.state.taskCompletedCount++;

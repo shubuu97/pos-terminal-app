@@ -1,10 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from "moment";
+import PouchDb from 'pouchdb';
+import PAM from "pouchdb-adapter-memory";
 /* Lodash Imports */
 import _get from 'lodash/get';
 /* Redux Imports */
 import { commonActionCreater } from '../../../Redux/commonAction'
+/* Global Imports */
+import genericPostData from '../../../Global/dataFetch/genericPostData';
+import ReactSelect from '../../../Global/Components/ReactSelect/async-react-select';
+import applyCart from '../../../Global/PosFunctions/applyCart'
 /* Material Imports */
 import { withStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
@@ -22,8 +28,10 @@ import LocalHospitalIcon from '@material-ui/icons/LocalHospitalOutlined';
 import SpaIcon from '@material-ui/icons/SpaOutlined';
 import SearchIcon from '@material-ui/icons/SearchOutlined'
 /*  */
-import applyCart from '../../../Global/PosFunctions/applyCart'
 import CheckInForm from './CheckInForm';
+
+PouchDb.plugin(PAM);
+PouchDb.plugin(require('pouchdb-quick-search'));
 
 const styles = {
     appBar: {
@@ -76,6 +84,8 @@ class CustomerDialogue extends React.Component {
         weightRange: '',
         showPassword: false,
         selectedCustomer: '',
+        value: '',
+        searchText: '',
     };
 
     populateCustomerQueue = () => {
@@ -157,7 +167,57 @@ class CustomerDialogue extends React.Component {
         this.setState({ [prop]: event.target.value });
     };
 
+    onInputChange = (newValue) => {
+        console.log(newValue, 'newValue')
+        this.setState({ value: newValue });
+        return newValue;
+    }
+    onChange = (doc) => {
+        
+    }
+
+    loadOptions = (searchText, callback) => {
+        let reqObj = {
+            "text": searchText,
+            "offset": 0,
+            "limit": 20,
+            "filters": [
+                {
+                    "field": "retailerId",
+                    "value": localStorage.getItem('retailerId')
+                }
+            ]
+        }
+        genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj: reqObj,
+            url: 'Search/Customers',
+            dontShowMessage: true,
+            constants: {
+                init: 'ELASTIC_SEARCH_CUSTOMERS_INIT',
+                success: 'ELASTIC_SEARCH_CUSTOMERS_SUCCESS',
+                error: 'ELASTIC_SEARCH_CUSTOMERS_ERROR'
+            },
+            identifier: 'ELASTIC_SEARCH_CUSTOMERS_RULES',
+            successCb: (data) => {  }
+        }).then((data)=>{
+            callback(this.mapCustomer(data))
+        })
+    };
+
+    mapCustomer = (data) => {
+        let customers = _get(data, 'customers', [])
+        return customers.map(rowObj => {
+            let doc = rowObj;
+            let objectToReturn = {};
+            objectToReturn.label = `${_get(doc, 'customer.firstName')} ${_get(doc, 'customer.lastName')}`;
+            objectToReturn.value = doc;
+            return objectToReturn;
+        });
+    };
+
     render() {
+        console.log('Value')
         const { classes } = this.props;
         return (
             <div className='customer-dialogue'>
@@ -176,21 +236,16 @@ class CustomerDialogue extends React.Component {
                         </div>
 
                         <div className='customer-main flex-row'>
-
-
-
                             <div className='check-in-area flex-column'>
                                 <span className='heading'>Check-In</span>
                                 <div className='previous-search flex-row'>
-                                    <TextField
-                                        id="outlined-adornment-amount"
-                                        variant="outlined"
-                                        label="Search for Registered Customer"
-                                        value={this.state.amount}
-                                        onChange={this.handleChange('amount')}
-                                        InputProps={{
-                                            startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>,
-                                        }}
+                                    <ReactSelect
+                                        value={this.state.value}
+                                        onInputChange={this.onInputChange}
+                                        //defaultOptions
+                                        onChange={this.onChange}
+                                        loadOptions={this.loadOptions}
+                                        className='fwidth'
                                     />
                                 </div>
                                 <div className='align-self-center'>or</div>

@@ -50,7 +50,7 @@ class CustomerTab extends React.Component {
     }
     onInputChange = (newValue) => {
         //const inputValue = newValue.replace(/\W/g, '');
-        this.setState({ value: newValue });
+        //this.setState({ value: newValue });
         return newValue;
     }
     mapCustomer = (data) => {
@@ -75,7 +75,7 @@ class CustomerTab extends React.Component {
             limit: 20,
             skip: 0
         }).then((res) => {
-            callback(this.mapCustomer(res))
+           return callback(this.mapCustomer(res))
         })
         // posdb.queryToView('customerView/byCustomerName', {
         //   include_docs: true,

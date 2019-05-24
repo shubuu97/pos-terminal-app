@@ -198,7 +198,6 @@ class Categories extends Component {
     this.getHotProductFromPouch();
   }
   getHotProductFromPouch = () => {
-    debugger;
     let hotProducts = localStorage.getItem('hotProducts')||'[]';
     hotProducts = JSON.parse(hotProducts);
     if (hotProducts.length == 0) {

@@ -38,7 +38,7 @@ class CustomizedInputBase extends React.Component {
   }
 
   componentDidUpdate() {
-    if(this.props.isOpenProduct && !this.props.isOpenHistoryDialogue && !this.props.isCustomerTabOpen && !this.props.isGiftCardModelOpen) {
+    if (this.props.isOpenProduct && !this.props.isOpenHistoryDialogue && !this.props.isCustomerTabOpen && !this.props.isGiftCardModelOpen && !this.props.openCustomerDialogue) {
       this.focusInput.focus()
     }
   }
@@ -49,21 +49,21 @@ class CustomizedInputBase extends React.Component {
       <Paper className={classes.root} elevation={1} >
         <InputBase
           id="searchBox"
-          inputRef={(val) => {this.focusInput = val}}
+          inputRef={(val) => { this.focusInput = val }}
           value={this.props.value}
           className={classes.input}
           onKeyPress={this.props.onKeyPress}
           placeholder="Search For Item"
           onChange={(event) => this.props.handleChange(event.target.value, event)} />
         {
-          this.props.value == '' ? '' : 
-          <i onClick={this.props.onClear} class="material-icons">clear</i>
+          this.props.value == '' ? '' :
+            <i onClick={this.props.onClear} class="material-icons">clear</i>
         }
         <IconButton className={classes.iconButton} aria-label="Search">
           <SearchIcon />
         </IconButton>
       </Paper>
-    ); 
+    );
   }
 }
 

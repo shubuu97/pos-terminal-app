@@ -180,7 +180,6 @@ class PaymentTab extends React.Component {
         cartDiscountObj.cartItems = cartItems
         cartDiscountObj.prevCart = _get(this, 'props.cart', {});
         if(loyaltyPoints != undefined){
-            debugger
             cartDiscountObj.loyaltyPoints = loyaltyPoints
         }
         this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));

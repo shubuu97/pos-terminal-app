@@ -375,6 +375,7 @@ class ProductsSection extends React.Component {
                             isOpenProduct={_get(this.props, 'isOpenProduct', false)}
                             isOpenHistoryDialogue={_get(this.props, 'isOpenHistoryDialogue', false)}
                             isCustomerTabOpen={_get(this.props, 'isCustomerTabOpen.lookUpData', false)}
+                            openCustomerDialogue={_get(this.props, 'openCustomerDialogue', false)}
                             handleChange={this.handleChange}
                             onKeyPress={this.onKeyPress}
                             value={this.state.searchText}

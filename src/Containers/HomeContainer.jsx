@@ -15,13 +15,13 @@ import FullscreenExit from '@material-ui/icons/FullscreenExit'
 import CircularProgress from '@material-ui/core/CircularProgress';
 /* Redux Imports */
 import { connect } from 'react-redux';
-import genericPostData from '../Global/dataFetch/genericPostData';
 import { commonActionCreater } from '../Redux/commonAction';
 /* React Pose */
 import posed from 'react-pose';
 /* Pouch DB */
 import PouchDb from 'pouchdb';
 /* Global Imports */
+import genericPostData from '../Global/dataFetch/genericPostData';
 import pollingHoc from '../Global/PosFunctions/pollingHoc';
 import axiosFetcher from '../Global/dataFetch/axiosFetcher';
 /* Component Imports */
@@ -308,10 +308,8 @@ class HomeContainer extends React.Component {
 
     }
     getProductData = () => {
-        debugger;
         let hotProducts = localStorage.getItem('hotProducts') || [];
         hotProducts = JSON.parse(hotProducts);
-        debugger;
         if (hotProducts.length > 0) {
             let result = { rows: [] }
             result.rows = hotProducts.map(hotProduct => {
@@ -332,7 +330,6 @@ class HomeContainer extends React.Component {
 
         }
         else {
-            debugger;
             let productsdb = new PouchDb(`productsdb${localStorage.getItem('storeId')}`);
             productsdb.allDocs({
                 include_docs: true,
@@ -653,6 +650,7 @@ class HomeContainer extends React.Component {
                         isOpenProduct={isOpenProduct}
                         isOpenHistoryDialogue={this.state.openHistoryDialogue}
                         isGiftCardModelOpen={this.state.openGiftCard}
+                        openCustomerDialogue = {this.state.openCustomerDialogue}
                     />
                 </Products>
                 <CheckoutSection
@@ -974,9 +972,7 @@ const updateTimeStampAndDbForHotProduct = async (res, dispatch, extraArgs) => {
     let updatedInventory = _get(res, 'data.productWithInventory', []) || [];
     localStorage.setItem('hotProducts', JSON.stringify(updatedInventory));
     console.log(localStorage.getItem('IS_HOT_PRODUCT_ACTIVE'));
-    debugger;
     if (localStorage.getItem('IS_HOT_PRODUCT_ACTIVE') == 'true') {
-        debugger;
         let hotProducts = localStorage.getItem('hotProducts') || [];
         hotProducts = JSON.parse(hotProducts);
 
