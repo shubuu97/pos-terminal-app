@@ -81,14 +81,37 @@ class CannabisCustomerTab extends React.Component {
 
     render() {
         let { checkoutactionArea, checkoutMainPart, checkoutCustomerArea, checkoutcalcArea, checkoutcartArea, guest, employee, customer } = this.props
-        console.log(this.props.customer, 'customer')
-        debugger
+        console.log(this.props.customerQueue.customer.queueId, 'customerQueue')
         return (
             <div className="customer-section" >
                 <div className="cannabis-customer-main flex-column align-center" style={{ height: checkoutcartArea }}>
                     {
                         _get(this.props, 'customerQueue.customer.queueId', false) ?
-                            <div>
+                            <div className='flex-row fwidth flex-wrap pt-20'>
+                                <div className='cannabis-selected-customer flex-column pad-10 pl-20'>
+                                    <span className='cannabis-heading'>Name</span>
+                                    <span className='cannabis-value'>{_get(this.props, 'customerQueue.customer.customer.customer.firstName', '')} {_get(this.props, 'customerQueue.customer.customer.customer.lastName', '')}</span>
+                                </div>
+                                <div className='cannabis-selected-customer flex-column pad-10 pl-20'>
+                                    <span className='cannabis-heading'>State</span>
+                                    <span className='cannabis-value'>{_get(this.props,'customerQueue.customer.customer.billingAddress.state','...')}</span>
+                                </div>
+                                <div className='cannabis-selected-customer flex-column pad-10 pl-20'>
+                                    <span className='cannabis-heading'>Med ID</span>
+                                    <span className='cannabis-value'>{_get(this.props, 'customerQueue.customer.customer.medicalLicenseNumber', '...')}</span>
+                                </div>
+                                <div className='cannabis-selected-customer flex-column pad-10 pl-20'>
+                                    <span className='cannabis-heading'>ID</span>
+                                    <span className='cannabis-value'>{_get(this.props, 'customerQueue.customer.customer.id', '...')}</span>
+                                </div>
+                                <div className='cannabis-selected-customer flex-column pad-10 pl-20'>
+                                    <span className='cannabis-heading'>Gram Limit</span>
+                                    <span className='cannabis-value'>{_get(this.props, 'customerQueue.customer.customer.gramLimit', '100')}</span>
+                                </div>
+                                <div className='cannabis-selected-customer flex-column pad-10 pl-20'>
+                                    <span className='cannabis-heading'>Plant Count Limit</span>
+                                    <span className='cannabis-value'>{_get(this.props, 'customerQueue.customer.customer.plantCountLimit', '20')}</span>
+                                </div>
 
                             </div>
                             :
