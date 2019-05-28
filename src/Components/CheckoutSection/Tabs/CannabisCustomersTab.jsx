@@ -81,7 +81,6 @@ class CannabisCustomerTab extends React.Component {
 
     render() {
         let { checkoutactionArea, checkoutMainPart, checkoutCustomerArea, checkoutcalcArea, checkoutcartArea, guest, employee, customer } = this.props
-        console.log(this.props.customerQueue.customer.queueId, 'customerQueue')
         return (
             <div className="customer-section" >
                 <div className="cannabis-customer-main flex-column align-center" style={{ height: checkoutcartArea }}>
