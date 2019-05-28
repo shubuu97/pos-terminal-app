@@ -12,6 +12,7 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Slide from '@material-ui/core/Slide';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import { withStyles } from '@material-ui/core/styles';
 /* Material Icons */
 import RemoveCircleIcons from '@material-ui/icons/RemoveCircleOutline';
 import DeleteIcons from '@material-ui/icons/DeleteOutline';
@@ -41,6 +42,12 @@ let DineroFunc = (amount) => {
         currency: 'USD'
     })
 }
+
+const styles = props => ({
+    barColorPrimary: {
+      backgroundColor: '#da2020',
+    }
+  });
 
 class OrdersTab extends React.Component {
 
@@ -305,11 +312,10 @@ class OrdersTab extends React.Component {
         this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
     }
 
-
-
     render() {
         let { checkoutcalcArea, checkoutactionArea, checkoutcartArea, checkoutMainPart } = this.props;
         let cartListHeight = checkoutcartArea - 30
+        const { classes } = this.props;
         return (
             <div className="orders-section" >
                 <DiscountDialogue
@@ -339,6 +345,10 @@ class OrdersTab extends React.Component {
                         <LinearProgress
                             variant="buffer"
                             value={_get(this.props, 'cart.cartQty', 0)*10}
+                            classes={
+                                _get(this.props, 'cart.cartQty', 0) > 10 ?
+                                {barColorPrimary: classes.barColorPrimary} : {}
+                            }
                             style={{
                                 width: '100%',
                                 height: '15px',
@@ -366,4 +376,4 @@ class OrdersTab extends React.Component {
     }
 }
 
-export default OrdersTab;
+export default withStyles(styles)(OrdersTab);

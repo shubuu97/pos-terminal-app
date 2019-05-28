@@ -104,7 +104,6 @@ class FullWidthTabs extends React.Component {
         // * This function was made to prevent rewriting of code
         const { cart, cartItems } = this.props;
         let cannibis = localStorage.getItem('cannibis')
-        debugger
         return (
             <TabContainer>
                 {
@@ -139,6 +138,20 @@ class FullWidthTabs extends React.Component {
         )
     }
 
+    disablePaymentTab = () => {
+        debugger
+        let disabled = false
+        if (this.props.cartItems.length <= 0) {
+            disabled = true
+        }
+        if (localStorage.getItem('cannibis')) {
+            if (this.props.cart.cartQty > 10) {
+                disabled = true
+            }
+        }
+        return disabled
+    }
+
     render() {
         const { cart, cartItems } = this.props;
         return (
@@ -158,31 +171,32 @@ class FullWidthTabs extends React.Component {
                         <Tab label="Customer"
                             className={this.props.cardRefrenceId ? 'disable-button' : null}
                             disabled={this.props.cardRefrenceId ? true : false} />
-                        <Tab className={cartItems.length > 0 ? '' : 'disable-button'} label="Payment" disabled={cartItems.length > 0 ? false : true} />
+                        <Tab className={!(this.disablePaymentTab()) ? '' : 'disable-button'} label="Payment" disabled={this.disablePaymentTab()} />
                     </Tabs>
                 </AppBar>
 
                 {/* There is no easy way to disable single tab from SwipeableViews */}
-                {cartItems.length > 0 ?
-                    <SwipeableViews
-                        index={this.state.value}
-                        onChangeIndex={this.handleChangeIndex}
-                    >
-                        {this.orderTab()}
-                        {this.customersTab()}
-                        <TabContainer>
-                            <PaymentTab
-                                checkoutMainPart={this.props.checkoutMainPart}
-                            />
-                        </TabContainer>
-                    </SwipeableViews> :
-                    <SwipeableViews
-                        index={this.state.value}
-                        onChangeIndex={this.handleChangeIndex}
-                    >
-                        {this.orderTab()}
-                        {this.customersTab()}
-                    </SwipeableViews>
+                {
+                    cartItems.length > 0 ?
+                        <SwipeableViews
+                            index={this.state.value}
+                            onChangeIndex={this.handleChangeIndex}
+                        >
+                            {this.orderTab()}
+                            {this.customersTab()}
+                            <TabContainer>
+                                <PaymentTab
+                                    checkoutMainPart={this.props.checkoutMainPart}
+                                />
+                            </TabContainer>
+                        </SwipeableViews> :
+                        <SwipeableViews
+                            index={this.state.value}
+                            onChangeIndex={this.handleChangeIndex}
+                        >
+                            {this.orderTab()}
+                            {this.customersTab()}
+                        </SwipeableViews>
                 }
             </div>
         );
