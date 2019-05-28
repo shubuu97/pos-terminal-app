@@ -11,7 +11,7 @@ import Dinero from 'dinero.js'
 /* Material import */
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles'
-import TextField from '@material-ui/core/TextField';
+import LinearProgress from '@material-ui/core/LinearProgress';
 /* Material Icons */
 import PersonAdd from '@material-ui/icons/PersonAddOutlined';
 import History from '@material-ui/icons/History';
@@ -29,6 +29,7 @@ import CalculationSection from './CalculationSection';
 import Customer from '../Customer';
 
 
+
 PouchDb.plugin(PAM);
 PouchDb.plugin(require('pouchdb-quick-search'));
 const styles = theme => ({
@@ -38,6 +39,8 @@ const styles = theme => ({
         height: '50px'
     }
 })
+
+
 
 class CannabisCustomerTab extends React.Component {
 
@@ -94,7 +97,7 @@ class CannabisCustomerTab extends React.Component {
                                 </div>
                                 <div className='cannabis-selected-customer flex-column pad-10 pl-20'>
                                     <span className='cannabis-heading'>State</span>
-                                    <span className='cannabis-value'>{_get(this.props,'customerQueue.customer.customer.billingAddress.state','...')}</span>
+                                    <span className='cannabis-value'>{_get(this.props, 'customerQueue.customer.customer.billingAddress.state', '...')}</span>
                                 </div>
                                 <div className='cannabis-selected-customer flex-column pad-10 pl-20'>
                                     <span className='cannabis-heading'>Med ID</span>
@@ -126,8 +129,18 @@ class CannabisCustomerTab extends React.Component {
                                 >Customer Queue</Button>
                             </div>
                     }
+
                 </div>
                 <div className="order-amount-section">
+                    <LinearProgress
+                        variant="buffer"
+                        value={_get(this.props, 'cart.cartQty', 0)*10}
+                        style={{
+                            width:'100%',
+                            height:'15px',
+                            borderRadius:'8px',
+                        }}
+                    />
                     <CalculationSection
                         checkoutcalcArea={checkoutcalcArea}
                     />

@@ -11,6 +11,7 @@ import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Slide from '@material-ui/core/Slide';
+import LinearProgress from '@material-ui/core/LinearProgress';
 /* Material Icons */
 import RemoveCircleIcons from '@material-ui/icons/RemoveCircleOutline';
 import DeleteIcons from '@material-ui/icons/DeleteOutline';
@@ -333,6 +334,18 @@ class OrdersTab extends React.Component {
                     </div>
                 </div>
                 <div className="order-amount-section">
+                    {
+                        localStorage.getItem('cannibis') || false ? 
+                        <LinearProgress
+                            variant="buffer"
+                            value={_get(this.props, 'cart.cartQty', 0)*10}
+                            style={{
+                                width: '100%',
+                                height: '15px',
+                                borderRadius: '8px',
+                            }}
+                        /> : null
+                    }
                     <CalculationSection
                         checkoutcalcArea={checkoutcalcArea}
                         handleClickOpenDiscount={this.handleClickOpenDiscount}
