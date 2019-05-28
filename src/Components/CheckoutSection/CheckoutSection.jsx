@@ -51,6 +51,7 @@ class CheckoutSection extends React.Component {
                     // ! Actions
                     handleClickOpen={this.handleClickOpen}
                     handleHistoryOpen={this.props.handleHistoryOpen}
+                    handleClickOpenCustomer={this.props.handleClickOpenCustomer}
                 />
 
                 {

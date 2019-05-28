@@ -110,6 +110,7 @@ class FullWidthTabs extends React.Component {
                 {
                     cannibis ?
                         <CannabisCustomersTab
+                            handleClickOpenCustomer={this.props.handleClickOpenCustomer}
                             offline={this.props.offline}
                             cartItems={cartItems}
                             {...this.props}

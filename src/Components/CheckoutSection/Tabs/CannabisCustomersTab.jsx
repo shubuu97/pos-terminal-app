@@ -98,8 +98,8 @@ class CannabisCustomerTab extends React.Component {
                                     className='mr-10'
                                     variant='contained'
                                     color="primary"
-                                    style={{width:'50%'}}
-                                    //onClick={}
+                                    style={{ width: '50%' }}
+                                    onClick={() => this.props.handleClickOpenCustomer()}
                                 >Customer Queue</Button>
                             </div>
                     }
