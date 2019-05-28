@@ -84,7 +84,6 @@ class CannabisCustomerTab extends React.Component {
 
     render() {
         let { checkoutactionArea, checkoutMainPart, checkoutCustomerArea, checkoutcalcArea, checkoutcartArea, guest, employee, customer } = this.props
-        console.log(this.props.customerQueue.customer.queueId, 'customerQueue')
         return (
             <div className="customer-section" >
                 <div className="cannabis-customer-main flex-column align-center" style={{ height: checkoutcartArea }}>
@@ -125,7 +124,7 @@ class CannabisCustomerTab extends React.Component {
                                     variant='contained'
                                     color="primary"
                                     style={{ width: '50%' }}
-                                //onClick={}
+                                    onClick={() => this.props.handleClickOpenCustomer()}
                                 >Customer Queue</Button>
                             </div>
                     }

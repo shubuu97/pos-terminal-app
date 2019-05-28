@@ -286,7 +286,8 @@ class CustomerDialogue extends React.Component {
                 this.getQueueList()
             })
         })
-
+        this.props.handleClose();
+    
     }
 
     render() {

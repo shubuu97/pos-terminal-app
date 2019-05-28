@@ -671,6 +671,8 @@ class HomeContainer extends React.Component {
                     toggleViewPayment={this.toggleViewPayment}
                     toggleViewProduct={this.toggleViewProduct}
                     handleHistoryOpen={this.handleHistoryOpen}
+                    handleClickOpenCustomer={() => this.handleClickOpen('openCustomerDialogue')}
+
                 />
                 <Payment pose={isOpenPayment ? 'open' : 'closed'}>
                     {isOpenPayment ?
