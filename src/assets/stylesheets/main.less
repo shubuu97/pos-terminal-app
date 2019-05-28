@@ -2505,6 +2505,8 @@ p {
 }
 
 
+// ***** CANNABIS STYLES ***** //
+
 /* Customer Dialogue - Check-In and Queue */
 
 .customer-dialogue-section{
@@ -2528,6 +2530,14 @@ p {
             font-size: 0.8em;
             color: @softer-text;
             padding: 10px 0 3px 0;
+        }
+        .status-code{
+            top: 0;
+            left: 0;
+            height: 15px;
+            width: 15px;
+            background: rgb(255, 142, 142);
+            border-radius: 5px 0;
         }
     }
     .card-active{
@@ -2583,9 +2593,6 @@ p {
                 }
 
 
-
-
-
             }
         }
 
@@ -2616,5 +2623,23 @@ p {
 
 
 
+    }
+}
+
+
+/* Cannabis Customer Tab */
+.customer-section{
+    .cannabis-customer-main{
+        .no-customer-selected{
+            margin: auto 20px;
+            .select-new-customer-text{
+                font-size: 2em;
+                font-weight: bold;
+                color: rgba(0, 0, 0, 0.5);
+                padding-bottom: 30px;
+                text-align: center;
+                line-height: 1.2em;
+            }
+        }
     }
 }

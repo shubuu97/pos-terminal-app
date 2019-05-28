@@ -10,6 +10,7 @@ import Button from '@material-ui/core/Button';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import Slide from '@material-ui/core/Slide';
 /* Material Icons */
 import RemoveCircleIcons from '@material-ui/icons/RemoveCircleOutline';
 import DeleteIcons from '@material-ui/icons/DeleteOutline';
@@ -61,7 +62,7 @@ class OrdersTab extends React.Component {
     }
 
     componentWillReceiveProps(props) {
-        if(props.tabValue != 2 || _get(props, 'cart.cartQty', 0) == 0){
+        if (props.tabValue != 2 || _get(props, 'cart.cartQty', 0) == 0) {
             if (this.state.cartItemQty != _get(props, 'cart.cartQty', 0)) {
                 this.props.dispatch(commonActionCreater(1, 'SWITCH_TAB_NUMBER'))
                 this.setState({
@@ -186,106 +187,108 @@ class OrdersTab extends React.Component {
             totalCartItems += item.cartQuantity;
             orderTotal += item.subTotal;
             this.state.orderTotal = this.state.orderTotal + item.subTotal;
-        
             return (
-                <ExpansionPanel
-                    className='each-checkout-item'
-                    expanded={_get(item,'doc.product.isGiftCard', false) ? false : this.state.expanded === `Panel${_get(item, 'doc.product.sku', _get(item, 'id'))}`}
-                    onChange={this.handleChange(`Panel${_get(item, 'doc.product.sku', _get(item, 'id'))}`)}>
-                    <ExpansionPanelSummary>
-                        <div className='each-product-des fwidth flex-row justify-space-between'>
+                <Slide direction="right" in={true} mountOnEnter unmountOnExit>
+                    <ExpansionPanel
+                        className='each-checkout-item'
+                        expanded={_get(item, 'doc.product.isGiftCard', false) ? false : this.state.expanded === `Panel${_get(item, 'doc.product.sku', _get(item, 'id'))}`}
+                        onChange={this.handleChange(`Panel${_get(item, 'doc.product.sku', _get(item, 'id'))}`)}>
+                        <ExpansionPanelSummary>
+                            <div className='each-product-des fwidth flex-row justify-space-between'>
 
-                            {/* Item Quantity */}
-                            {
-                                _get(item, 'doc.product.isGiftCard') ?
-                                    null :
-                                    <div className='each-item-qty absolute'>
-                                        {item.qty}
-                                    </div>
-                            }
-
-                            {/* Item Discount */}
-                            {
-                                _get(item, 'itemDiscountMoney', DineroFunc(0)).getAmount() > 0 ?
-                                    <div className='each-item-discount absolute'></div> : null
-                            }
-
-                            {/* Delete Icon and Title */}
-                            <div className=' des-first-part flex-row align-center'>
-                                <DeleteIcons
-                                    onClick={() => this.handleDelete(item)}
-                                    style={{ color: '#ff000096', fontSize: '1.5em' }} />
-                                <div className='title'>{_get(item, 'doc.product.isGiftCard') ? <div><span>Gift Card :</span> {_get(item, 'doc.product.name')}</div> :
-                                    _get(item, 'doc.product.name')}</div>
-                            </div>
-
-                            {/* Item Price and Regular Price */}
-                            <div className='flex-column'>
-                                <div className='each-product-price'>{subTotal.toFormat('$0,0.00')}</div>
-                                <div className='each-product-reg-price'>Reg Price - {regularTotal.toFormat('$0,0.00')}</div>
-                            </div>
-                        </div>
-                    </ExpansionPanelSummary>
-                    <ExpansionPanelDetails>
-                        <div className='fwidth flex-row justify-space-between'>
-                            {
-                                item.saleType === 0 &&
-                                <div className='expanded-options'>
-                                    <span className='option-title'>Quantity</span>
-                                    <div className='flex-row justify-center align-center'>
-                                        <RemoveCircleIcons onClick={() => this.handleDecreseQuantity(item)} style={{ fontSize: '1.7em' }} />
-                                        <span className='quantity'>{item.qty}</span>
-                                        <AddIcons onClick={() => this.handleIncreaseQuantity(item)} style={{ fontSize: '1.7em' }} />
-                                    </div>
-                                </div>
-                            }
-                            {
-                                _get(item, 'doc.product.discountable', false) ?
-                                    _get(item, 'cartDiscountMoney', DineroFunc(0)).getAmount() > 0 ?
-                                        <div className='expanded-options'>
-                                            <span className='option-title'>Cart Discount</span>
-                                            <div className='flex-row justify-center align-center'>
-                                                {item.cartDiscountMoney.toFormat('$0,0.00')}
-                                            </div>
-                                        </div> : null : null
-                            }
-                            {
-                                _get(item, 'doc.product.discountable', false) ?
-                                    _get(item, 'empDiscountMoney', DineroFunc(0)).getAmount() > 0 ?
-                                        <div className='expanded-options'>
-                                            <span className='option-title'>Employee Discount</span>
-                                            <div className='flex-row justify-center align-center'>
-                                                {item.empDiscountMoney.toFormat('$0,0.00')}
-                                            </div>
-                                        </div> : null : null
-                            }
-                            {
-                                _get(item, 'doc.product.discountable', false) ?
-                                    _get(item, 'itemDiscountMoney', DineroFunc(0)).getAmount() > 0 ?
-                                        <div className='expanded-options'>
-                                            <span className='option-title'>Item Discount</span>
-                                            <div className='flex-row justify-center align-center' onClick={() => this.handleItemDiscountRemove(index)}>
-                                                {item.itemDiscountMoney.toFormat('$0,0.00')}
-                                                <RemoveCircleIcons
-                                                    style={{ fontSize: '1.2em', color: '#ff000096', paddingLeft: 5 }}
-                                                />
-                                            </div>
+                                {/* Item Quantity */}
+                                {
+                                    _get(item, 'doc.product.isGiftCard') ?
+                                        null :
+                                        <div className='each-item-qty absolute'>
+                                            {item.qty}
                                         </div>
-                                        :
-                                        <div className='expanded-options'>
-                                            <span className='option-title'>Item Discount</span>
-                                            <div className='flex-row justify-center align-center' onClick={() => this.handleClickOpenItemDiscount(index)}>
-                                                <AddCircleOutline
-                                                    style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }}
-                                                /> Add</div>
-                                        </div> : null
-                            }
-                        </div>
-                    </ExpansionPanelDetails>
-                </ExpansionPanel >
+                                }
+
+                                {/* Item Discount */}
+                                {
+                                    _get(item, 'itemDiscountMoney', DineroFunc(0)).getAmount() > 0 ?
+                                        <div className='each-item-discount absolute'></div> : null
+                                }
+
+                                {/* Delete Icon and Title */}
+                                <div className=' des-first-part flex-row align-center'>
+                                    <DeleteIcons
+                                        onClick={() => this.handleDelete(item)}
+                                        style={{ color: '#ff000096', fontSize: '1.5em' }} />
+                                    <div className='title'>{_get(item, 'doc.product.isGiftCard') ? <div><span>Gift Card :</span> {_get(item, 'doc.product.name')}</div> :
+                                        _get(item, 'doc.product.name')}</div>
+                                </div>
+
+                                {/* Item Price and Regular Price */}
+                                <div className='flex-column'>
+                                    <div className='each-product-price'>{subTotal.toFormat('$0,0.00')}</div>
+                                    <div className='each-product-reg-price'>Reg Price - {regularTotal.toFormat('$0,0.00')}</div>
+                                </div>
+                            </div>
+                        </ExpansionPanelSummary>
+                        <ExpansionPanelDetails>
+                            <div className='fwidth flex-row justify-space-between'>
+                                {
+                                    item.saleType === 0 &&
+                                    <div className='expanded-options'>
+                                        <span className='option-title'>Quantity</span>
+                                        <div className='flex-row justify-center align-center'>
+                                            <RemoveCircleIcons onClick={() => this.handleDecreseQuantity(item)} style={{ fontSize: '1.7em' }} />
+                                            <span className='quantity'>{item.qty}</span>
+                                            <AddIcons onClick={() => this.handleIncreaseQuantity(item)} style={{ fontSize: '1.7em' }} />
+                                        </div>
+                                    </div>
+                                }
+                                {
+                                    _get(item, 'doc.product.discountable', false) ?
+                                        _get(item, 'cartDiscountMoney', DineroFunc(0)).getAmount() > 0 ?
+                                            <div className='expanded-options'>
+                                                <span className='option-title'>Cart Discount</span>
+                                                <div className='flex-row justify-center align-center'>
+                                                    {item.cartDiscountMoney.toFormat('$0,0.00')}
+                                                </div>
+                                            </div> : null : null
+                                }
+                                {
+                                    _get(item, 'doc.product.discountable', false) ?
+                                        _get(item, 'empDiscountMoney', DineroFunc(0)).getAmount() > 0 ?
+                                            <div className='expanded-options'>
+                                                <span className='option-title'>Employee Discount</span>
+                                                <div className='flex-row justify-center align-center'>
+                                                    {item.empDiscountMoney.toFormat('$0,0.00')}
+                                                </div>
+                                            </div> : null : null
+                                }
+                                {
+                                    _get(item, 'doc.product.discountable', false) ?
+                                        _get(item, 'itemDiscountMoney', DineroFunc(0)).getAmount() > 0 ?
+                                            <div className='expanded-options'>
+                                                <span className='option-title'>Item Discount</span>
+                                                <div className='flex-row justify-center align-center' onClick={() => this.handleItemDiscountRemove(index)}>
+                                                    {item.itemDiscountMoney.toFormat('$0,0.00')}
+                                                    <RemoveCircleIcons
+                                                        style={{ fontSize: '1.2em', color: '#ff000096', paddingLeft: 5 }}
+                                                    />
+                                                </div>
+                                            </div>
+                                            :
+                                            <div className='expanded-options'>
+                                                <span className='option-title'>Item Discount</span>
+                                                <div className='flex-row justify-center align-center' onClick={() => this.handleClickOpenItemDiscount(index)}>
+                                                    <AddCircleOutline
+                                                        style={{ fontSize: '1.2em', color: '#ff000096', paddingRight: 5 }}
+                                                    /> Add</div>
+                                            </div> : null
+                                }
+                            </div>
+                        </ExpansionPanelDetails>
+                    </ExpansionPanel >
+                </Slide>
             )
         });
-        return cartItems.reverse()
+        let cart = cartItems.reverse()
+        return cart
     }
     handleProceedToCustomer = () => {
         this.props.dispatch(commonActionCreater(2, 'SWITCH_TAB_NUMBER'))

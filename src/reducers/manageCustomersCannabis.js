@@ -6,6 +6,11 @@ const manageCustomerCannabis = (state = {}, action) => {
                 queue: action.data
             });
             break;
+        case 'CUSTOMER_SERVING':
+            return Object.assign({}, state, {
+                customer: action.data
+            });
+            break;
     }
     return state;
 }

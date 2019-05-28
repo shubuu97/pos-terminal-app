@@ -48,35 +48,6 @@ function Transition(props) {
     return <Slide direction="up" {...props} />;
 }
 
-const customerData = [
-    {
-        id: 2314,
-        customerName: 'Mayuk Agarwal',
-        age: 24,
-        time: "05:30 PM",
-        medId: 2345678,
-        state: 'CO',
-        type: 'Medical'
-    },
-    {
-        id: 3424,
-        customerName: 'Yogendra Jain',
-        age: 25,
-        time: "05:40 PM",
-        medId: 5344232,
-        state: 'AL',
-        type: 'Adult'
-    },
-    {
-        id: 5464,
-        customerName: 'Shubham Chitransh',
-        age: 23,
-        time: "06:30 PM",
-        state: 'CO',
-        type: 'Adult'
-    }
-]
-
 class CustomerDialogue extends React.Component {
 
     state = {
@@ -88,48 +59,85 @@ class CustomerDialogue extends React.Component {
         selectedCustomer: '',
         value: '',
         searchText: '',
+        iconSelected: false,
     };
+
+    componentDidMount() {
+        this.getQueueList()
+    }
+
+    getQueueList = () => {
+        let id = localStorage.getItem('storeId')
+        genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj: { id },
+            url: 'Get/CustomerQueue/Active',
+            dontShowMessage: true,
+            constants: {
+                init: 'GET_ACTIVE_CUSTOMERS_INIT',
+                success: 'GET_ACTIVE_CUSTOMERS_SUCCESS',
+                error: 'GET_ACTIVE_CUSTOMERS_ERROR'
+            },
+            identifier: 'GET_ACTIVE_CUSTOMERS',
+            successCb: (data) => { }
+        }).then((data) => {
+            this.props.dispatch(commonActionCreater(data.queueItems, 'UPDATE_CUSTOMER_QUEUE'));
+        })
+    }
 
     populateCustomerQueue = () => {
         let customerQueue = this.props.customerQueue
         let view = []
         customerQueue.map((data, index) => {
             view.push(
-                <div className='card' id={data.id} onClick={() => this.selectCustomer(data.id, data)} style={
-                    this.state.selectedCustomer ?
-                        { width: '90%' } : { width: '40%' }
-                }>
+                <div
+                    className={data.customer.id == this.state.selectedCustomer ? 'card relative card-active' : 'card relative'}
+                    id={data.customer.id}
+                    onClick={this.state.iconSelected ? null : () => this.setState({ selectedCustomer: data.customer.id, customerData: data })}
+                    style={
+                        this.state.selectedCustomer ?
+                            { width: '90%' } : { width: '40%' }
+                    }>
+                    {
+                        _get(data, 'status', 0) == 2 ?
+                            <div className="absolute status-code"></div> : null
+                    }
                     <div className='flex-row justify-space-between'>
                         <div className='flex-row align-center'>
                             {
-                                _get(data, 'customerType', 1) == 2 ?
+                                _get(data, 'customer.customerType', 1) == 1 ?
                                     <HealingIcon style={{ paddingRight: '10px' }} /> :
                                     <SpaIcon style={{ paddingRight: '10px' }} />
                             }
-                            <span className='card-title'>{_get(data, 'customer.firstName', '')} {_get(data, 'customer.lastName', '')}</span>
+                            <span className='card-title'>{_get(data, 'customer.customer.firstName', '')} {_get(data, 'customer.customer.lastName', '')}</span>
                         </div>
-                        <DeleteIcons style={{ color: '#ff000096', fontSize: '1.5em' }} />
+                        <DeleteIcons
+                            onMouseLeave={() => this.setState({ iconSelected: false })}
+                            onMouseEnter={() => this.setState({ iconSelected: true })}
+                            onClick={() => this.deleteCustomerFromQueue(data)}
+                            style={{ color: '#ff000096', fontSize: '1.5em' }}
+                        />
                     </div>
                     <div className='flex-row justify-space-between'>
                         <div className='flex-column des'>
                             <span className='des-title'>Age</span>
-                            <span>{data.age}</span>
+                            <span>{_get(data, 'customer.age', '...')}</span>
                         </div>
                         <div className='flex-column des'>
                             <span className='des-title'>Time</span>
-                            <span>{data.time}</span>
+                            <span>{moment.utc(_get(data, 'checkIn.seconds', 0) * 1000).format('h:mm a')}</span>
 
                         </div>
                         <div className='flex-column des'>
                             <span className='des-title'>Med Id</span>
-                            <span>{_get(data, 'medId', '...')}</span>
+                            <span>{_get(data, 'customer.medicalLicenseNumber', '...')}</span>
                         </div>
                         <div className='flex-column des'>
                             <span className='des-title'>State</span>
-                            <span>{data.state}</span>
+                            <span>{_get(data, 'customer.billingAddress.state', '...')}</span>
                         </div>
                     </div>
-                </div>
+                </div >
             )
         })
         return (
@@ -139,28 +147,6 @@ class CustomerDialogue extends React.Component {
         )
     }
 
-    selectCustomer = (id, data) => {
-        if (this.state.selectedCustomer != id) {
-            if (this.state.selectedCustomer) {
-                document.getElementById(this.state.selectedCustomer).classList.remove("card-active");
-            }
-            this.setState({
-                selectedCustomer: id,
-                customerData: data
-            })
-            document.getElementById(id).classList.add("card-active");
-        }
-        else {
-            if (this.state.selectedCustomer) {
-                document.getElementById(this.state.selectedCustomer).classList.remove("card-active");
-            }
-            this.setState({
-                selectedCustomer: '',
-                customerData: ''
-            })
-        }
-    }
-
     handleChange = prop => event => {
         this.setState({ [prop]: event.target.value });
     };
@@ -168,17 +154,6 @@ class CustomerDialogue extends React.Component {
     onInputChange = (newValue) => {
         this.setState({ value: newValue });
         return newValue;
-    }
-    addCustomerToQueue = (doc) => {
-        let customerQueue = this.props.customerQueue
-        if(_find(customerQueue, customerQueue => customerQueue.id == doc.value.id )){
-            console.log('Customer Already In Queue')
-        }
-        else{
-            customerQueue.push(doc.value);
-        }
-        this.props.dispatch(commonActionCreater(customerQueue, 'UPDATE_CUSTOMER_QUEUE'));
-        
     }
 
     loadOptions = (searchText, callback) => {
@@ -204,8 +179,8 @@ class CustomerDialogue extends React.Component {
                 error: 'ELASTIC_SEARCH_CUSTOMERS_ERROR'
             },
             identifier: 'ELASTIC_SEARCH_CUSTOMERS_RULES',
-            successCb: (data) => {  }
-        }).then((data)=>{
+            successCb: (data) => { }
+        }).then((data) => {
             callback(this.mapCustomer(data))
         })
     };
@@ -221,8 +196,100 @@ class CustomerDialogue extends React.Component {
         });
     };
 
+    addCustomerToQueue = (customer) => {
+        let customerQueue = this.props.customerQueue
+        if (_find(customerQueue, customerQueue => customerQueue.id == customer.value.id)) {
+            console.log('Customer Already In Queue')
+        }
+        else {
+            let reqObj = {
+                storeId: localStorage.getItem('storeId'),
+                customerId: customer.value.id,
+                status: 1,
+                checkIn: {
+                    seconds: parseInt(Date.now() / 1000)
+                },
+            }
+            genericPostData({
+                dispatch: this.props.dispatch,
+                reqObj: reqObj,
+                url: 'Add/CustomerQueue',
+                dontShowMessage: true,
+                constants: {
+                    init: 'ADD_CUSTOMER_TO_QUEUE_INIT',
+                    success: 'ADD_CUSTOMER_TO_QUEUE_SUCCESS',
+                    error: 'ADD_CUSTOMER_TO_QUEUE_ERROR'
+                },
+                identifier: 'ADD_CUSTOMER_TO_QUEUE',
+                successCb: (data) => { }
+            }).then((data) => {
+                this.props.dispatch(commonActionCreater(data.queueItems, 'UPDATE_CUSTOMER_QUEUE'));
+            })
+        }
+    }
+
+    deleteCustomerFromQueue = (customer) => {
+        let id = customer.queueId
+        if(customer.queueId == this.props.checkoutCustomer.queueId){
+            this.props.dispatch(commonActionCreater({}, 'CUSTOMER_SERVING'));
+        }
+        genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj: { id },
+            url: 'Remove/CustomerQueueById',
+            dontShowMessage: true,
+            constants: {
+                init: 'REMOVE_CUSTOMER_TO_QUEUE_INIT',
+                success: 'REMOVE_CUSTOMER_TO_QUEUE_SUCCESS',
+                error: 'REMOVE_CUSTOMER_TO_QUEUE_ERROR'
+            },
+            identifier: 'REMOVE_CUSTOMER_TO_QUEUE',
+            successCb: (data) => { }
+        }).then((data) => {
+            if (customer.customer.id == this.state.selectedCustomer) {
+                this.setState({ selectedCustomer: '' })
+            }
+            this.props.dispatch(commonActionCreater(data.queueItems, 'UPDATE_CUSTOMER_QUEUE'));
+        })
+    }
+
+    proceedToCheckout = (customer) => {
+        let reqObj = []
+        if (this.props.checkoutCustomer.queueId) {
+            reqObj.push({
+                queueId: this.props.checkoutCustomer.queueId,
+                status: 1
+            })
+        }
+        reqObj.push({
+            queueId: customer.queueId,
+            status: 2
+        })
+        reqObj.map((data) => {
+            genericPostData({
+                dispatch: this.props.dispatch,
+                reqObj: data,
+                url: 'Update/CustomerQueue',
+                dontShowMessage: true,
+                constants: {
+                    init: 'CUSTOMER_UPDATE_INIT',
+                    success: 'CUSTOMER_UPDATE_SUCCESS',
+                    error: 'CUSTOMER_UPDATE_ERROR'
+                },
+                identifier: 'CUSTOMER_UPDATE',
+                successCb: (data) => { }
+            }).then((data) => {
+                this.setState({ selectedCustomer: '' })
+                if(data.queueItem.status == 2){
+                    this.props.dispatch(commonActionCreater(data.queueItem, 'CUSTOMER_SERVING'));
+                }
+                this.getQueueList()
+            })
+        })
+
+    }
+
     render() {
-        console.log('Value')
         const { classes } = this.props;
         return (
             <div className='customer-dialogue'>
@@ -254,7 +321,9 @@ class CustomerDialogue extends React.Component {
                                 </div>
                                 <div className='align-self-center'>or</div>
                                 <div className='add-new-area'>
-                                    <CheckInForm />
+                                    <CheckInForm
+                                        addCustomerToQueue={this.addCustomerToQueue}
+                                    />
                                 </div>
                             </div>
                             <div
@@ -275,27 +344,31 @@ class CustomerDialogue extends React.Component {
                                             <div className='flex-row flex-wrap justify-space-between pt-20'>
                                                 <div className='flex-column fwidth pt-215pb-10 '>
                                                     <span className='info-heading'>Name</span>
-                                                    <span className='info-value'>{this.state.customerData.customerName}</span>
+                                                    <span className='info-value'>{_get(this.state, 'customerData.customer.customer.firstName', '')} {_get(this.state, 'customerData.customer.customer.lastName', '')}</span>
                                                 </div>
                                                 <div className='flex-column halfwidth pt-15 pb-10'>
                                                     <span className='info-heading'>Age</span>
-                                                    <span className='info-value'>{this.state.customerData.age}</span>
-                                                </div>
-                                                <div className='flex-column halfwidth pt-15 pb-10'>
-                                                    <span className='info-heading'>Time</span>
-                                                    <span className='info-value'>{this.state.customerData.time}</span>
-                                                </div>
-                                                <div className='flex-column halfwidth pt-15 pb-10'>
-                                                    <span className='info-heading'>Med ID</span>
-                                                    <span className='info-value'>{this.state.customerData.medId}</span>
+                                                    <span className='info-value'>{_get(this.state, 'customerData.customer.age', '...')}</span>
                                                 </div>
                                                 <div className='flex-column halfwidth pt-15 pb-10'>
                                                     <span className='info-heading'>State</span>
-                                                    <span className='info-value'>{this.state.customerData.state}</span>
+                                                    <span className='info-value'>{_get(this.state, 'customerData.customer.billingAddress.state', '...')}</span>
+                                                </div>
+                                                <div className='flex-column halfwidth pt-15 pb-10'>
+                                                    <span className='info-heading'>Med ID</span>
+                                                    <span className='info-value'>{_get(this.state, 'customerData.customer.medicalLicenseNumber', '...')}</span>
                                                 </div>
                                                 <div className='flex-column halfwidth pt-15 pb-10'>
                                                     <span className='info-heading'>ID</span>
-                                                    <span className='info-value'>{this.state.customerData.id}</span>
+                                                    <span className='info-value'>{_get(this.state, 'customerData.customer.id', '...')}</span>
+                                                </div>
+                                                <div className='flex-column halfwidth pt-15 pb-10'>
+                                                    <span className='info-heading'>Gram Limit</span>
+                                                    <span className='info-value'>{_get(this.state, 'customerData.customer.gramLimit', '...')}</span>
+                                                </div>
+                                                <div className='flex-column halfwidth pt-15 pb-10'>
+                                                    <span className='info-heading'>Plant Count Limit</span>
+                                                    <span className='info-value'>{_get(this.state, 'customerData.customer.plantCountLimit', '...')}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -304,15 +377,16 @@ class CustomerDialogue extends React.Component {
                                                 className='mr-10'
                                                 variant='outlined'
                                                 color="error"
-                                            //onClick={}
+                                                onClick={() => this.deleteCustomerFromQueue(_get(this.state, 'customerData'))}
                                             >
                                                 Delete
                                             </Button>
                                             <Button
                                                 className='mr-10'
+                                                disabled={this.state.customerData.status == 2}
                                                 variant='contained'
                                                 color="primary"
-                                            //onClick={}
+                                                onClick={() => this.proceedToCheckout(_get(this.state, 'customerData'))}
                                             >
                                                 Proceed To Checkout
                                             </Button>
@@ -329,9 +403,11 @@ class CustomerDialogue extends React.Component {
 
 function mapStateToProps(state) {
     let customerQueue = _get(state, 'customerQueue.queue', []);
+    let checkoutCustomer = _get(state, 'customerQueue.customer', {})
 
     return {
-        customerQueue
+        customerQueue,
+        checkoutCustomer,
     }
 }
 

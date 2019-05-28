@@ -13,6 +13,7 @@ import Typography from '@material-ui/core/Typography';
 /* Component Imports */
 import OrdersTab from './Tabs/OrdersTab';
 import CustomersTab from './Tabs/CustomersTab';
+import CannabisCustomersTab from './Tabs/CannabisCustomersTab';
 import PaymentTab from './Tabs/PaymentTab';
 import { commonActionCreater } from '../../Redux/commonAction';
 
@@ -102,20 +103,37 @@ class FullWidthTabs extends React.Component {
     customersTab = () => {
         // * This function was made to prevent rewriting of code
         const { cart, cartItems } = this.props;
+        let cannibis = localStorage.getItem('cannibis')
+        debugger
         return (
             <TabContainer>
-                <CustomersTab
-                    offline={this.props.offline}
-                    cartItems={cartItems}
-                    {...this.props}
-                    checkoutMainPart={this.props.checkoutMainPart}
-                    checkoutactionArea={this.props.checkoutactionArea}
-                    checkoutCustomerArea={this.props.checkoutCustomerArea}
-                    checkoutcalcArea={this.props.checkoutcalcArea}
-                    checkoutcartArea={this.props.checkoutcartArea}
-                    handleClickOpen={this.props.handleClickOpen}
-                    handleHistoryOpen={this.props.handleHistoryOpen}
-                />
+                {
+                    cannibis ?
+                        <CannabisCustomersTab
+                            offline={this.props.offline}
+                            cartItems={cartItems}
+                            {...this.props}
+                            checkoutMainPart={this.props.checkoutMainPart}
+                            checkoutactionArea={this.props.checkoutactionArea}
+                            checkoutCustomerArea={this.props.checkoutCustomerArea}
+                            checkoutcalcArea={this.props.checkoutcalcArea}
+                            checkoutcartArea={this.props.checkoutcartArea}
+                            handleClickOpen={this.props.handleClickOpen}
+                            handleHistoryOpen={this.props.handleHistoryOpen}
+                        /> :
+                        <CustomersTab
+                            offline={this.props.offline}
+                            cartItems={cartItems}
+                            {...this.props}
+                            checkoutMainPart={this.props.checkoutMainPart}
+                            checkoutactionArea={this.props.checkoutactionArea}
+                            checkoutCustomerArea={this.props.checkoutCustomerArea}
+                            checkoutcalcArea={this.props.checkoutcalcArea}
+                            checkoutcartArea={this.props.checkoutcartArea}
+                            handleClickOpen={this.props.handleClickOpen}
+                            handleHistoryOpen={this.props.handleHistoryOpen}
+                        />
+                }
             </TabContainer>
         )
     }

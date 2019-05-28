@@ -6,6 +6,10 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
 /* Redux Imports */
+import { connect } from 'react-redux';
+import { commonActionCreater } from '../../../Redux/commonAction'
+/* Global Imports */
+import genericPostData from '../../../Global/dataFetch/genericPostData';
 
 /* Component Imports */
 import { DatePicker } from 'material-ui-pickers';
@@ -33,6 +37,112 @@ class CheckInForm extends React.Component {
     handleDateChange = name => date => {
         this.setState({ [name]: date });
     };
+
+    resetForm = () => {
+        debugger
+    }
+
+    addCustomerMoveInQueue = async () => {
+        let p1 =  this.addCustomerForm()
+        p1.then((data)=>{
+            debugger;
+            let customer = {
+                value: data
+            }
+            this.props.addCustomerToQueue(customer)
+        })
+    }
+
+    addCustomerForm = async () => {
+        let fullCustomerObj = {
+            retailerId: localStorage.getItem(''),
+            customer: {
+                firstName: '',
+                middleName: '',
+                lastName: ''
+            },
+            email: '',
+            billingAddress: {
+                addressLine1: '',
+                addressLine2: '',
+                city: '',
+                state: '',
+                country: '',
+                postalCode: '',
+            },
+            phoneNumber: {
+                countryCode: 1,
+                phoneNumber: 0,
+            },
+            rewardPoints: 0,
+            guest: false,
+
+            //Cannabis Attributes
+            customerType: 1, // MEDICAL = 1; ADULT = 2;
+            gender: 1, // Male=1; Female=2; Other=3
+            dob: '', // MM/DD/YYYY format string
+
+            //MEDICAL CANNABIS CUSTOMER
+            tempMedicalLicense: true,
+            medicalLicenseNumber: '',
+            medicalLicenseExpiration: '', // MM/DD/YYYY format string
+            gramLimit: 0,
+            plantCountLimit: 0,
+            taxExempt: true,
+            attachments: [
+                {
+                    name: 1,
+                    url: 2,
+                    info: 3,
+                }
+            ],
+            age: 0,
+        }
+
+        let reqObj = {
+            retailerId: localStorage.getItem('retailerId'),
+            customer: {
+                firstName: _get(this.state, 'firstName', ''),
+                middleName: _get(this.state, 'middleName', ''),
+                lastName: _get(this.state, 'lastName', '')
+            },
+            billingAddress: {
+                state: _get(this.state, 'State', '')
+            },
+            dob: _get(this.state, 'dob', ''),
+        }
+        if (this.state.userType == 'Medical') {
+            reqObj.customerType = 1
+            reqObj.tempMedicalLicense = _get(this.state, 'medLicense', false)
+            reqObj.medicalLicenseNumber = _get(this.state, 'medCardNo', '')
+            reqObj.medicalLicenseExpiration = _get(this.state, 'mmrExp', '')
+            reqObj.gramLimit = parseInt(_get(this.state, 'gramLimit', 0))
+            reqObj.plantCountLimit = parseInt(_get(this.state, 'plantCount', 0))
+        }
+        else {
+            reqObj.customerType = 2
+        }
+
+        return genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj,
+            url: 'Customer/Create',
+            dontShowMessage: true,
+            constants: {
+                init: 'ADD_NEW_CANNABIS_CUSTOMER_INIT',
+                success: 'ADD_NEW_CANNABIS_CUSTOMER_SUCCESS',
+                error: 'ADD_NEW_CANNABIS_CUSTOMER_ERROR'
+            },
+            identifier: 'ADD_NEW_CANNABIS_CUSTOMER',
+            successCb: (data) => { }
+        }).then((data) => {
+            debugger
+            return data
+        })
+
+    }
+
+
 
     render() {
         return (
@@ -62,12 +172,30 @@ class CheckInForm extends React.Component {
                 <div className='pad-10 flex-row flex-wrap justify-space-between'>
                     <TextField
                         id="outlined-name"
-                        label="*Name"
-                        value={this.state.name}
-                        onChange={this.handleTextfieldChange('name')}
+                        label="*First Name"
+                        value={this.state.firstName}
+                        onChange={this.handleTextfieldChange('firstName')}
                         margin="normal"
                         variant="outlined"
-                        fullWidth
+                        style={{ width: '32%' }}
+                    />
+                    <TextField
+                        id="outlined-name"
+                        label="*Middle Name"
+                        value={this.state.middleName}
+                        onChange={this.handleTextfieldChange('middleName')}
+                        margin="normal"
+                        variant="outlined"
+                        style={{ width: '32%' }}
+                    />
+                    <TextField
+                        id="outlined-name"
+                        label="*Last Name"
+                        value={this.state.lastName}
+                        onChange={this.handleTextfieldChange('lastName')}
+                        margin="normal"
+                        variant="outlined"
+                        style={{ width: '32%' }}
                     />
                     <TextField
                         id="outlined-name"
@@ -83,8 +211,8 @@ class CheckInForm extends React.Component {
                         disableFuture
                         margin="normal"
                         label="*Date of birth"
-                        value={this.state.selectedDate}
-                        onChange={this.handleDateChange('selectedDate')}
+                        value={this.state.dob}
+                        onChange={this.handleDateChange('dob')}
                         style={{ width: '48%' }}
                         variant="outlined"
                         openTo="year"
@@ -183,7 +311,7 @@ class CheckInForm extends React.Component {
                         className='mr-10'
                         variant='outlined'
                         color="error"
-                        //onClick={}
+                        onClick={this.resetForm}
                     >
                         Reset
                     </Button>
@@ -191,7 +319,7 @@ class CheckInForm extends React.Component {
                         className='mr-10'
                         variant='contained'
                         color="primary"
-                        //onClick={}
+                        onClick={this.addCustomerForm}
                     >
                         Add
                     </Button>
@@ -199,19 +327,18 @@ class CheckInForm extends React.Component {
                         className='mr-10'
                         variant='contained'
                         color="primary"
-                        //onClick={}
+                        onClick={this.addCustomerMoveInQueue}
                     >
                         Add & Check In
                     </Button>
                 </div>
-
-
-
-
-
             </div>
         );
     }
 }
 
-export default CheckInForm;
+function mapStateToProps(state) {
+    
+}
+
+export default connect(mapStateToProps)(CheckInForm);

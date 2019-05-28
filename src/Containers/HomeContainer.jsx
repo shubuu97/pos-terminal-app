@@ -617,6 +617,7 @@ class HomeContainer extends React.Component {
     render() {
         let windowHeight = document.documentElement.scrollHeight
         let { productListHeight, isOpenProduct, isOpenPayment, headerHeight, categoriesHeight, checkoutHeader, checkoutMainPart, checkoutcalcArea, checkoutactionArea, checkoutcartArea, checkoutCustomerArea } = this.state
+        localStorage.setItem('cannibis', true)
 
         let { productList, dispatch, cart } = this.props
         return (
@@ -639,6 +640,7 @@ class HomeContainer extends React.Component {
                         handleHistoryOpen={this.handleTerminalHistoryOpen}
                         handleClickOpenOnHold={() => this.handleClickOpen('openOnHold')}
                         handleClickOpenHistory={() => this.handleClickOpen('openHistoryDialogue')}
+                        handleClickOpenCustomer={() => this.handleClickOpen('openCustomerDialogue')}
                         handleClickOpenSessionContainer={this.handleClickOpenSessionContainer}
                         handleClickQuickBook={() => this.setState({ openQuickBookContainer: true })}
                         handleLockTerminal={this.handleLockTerminal}

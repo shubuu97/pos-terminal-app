@@ -364,6 +364,7 @@ class ProductsSection extends React.Component {
                             handleTransactionPopulate={this.props.handleTransactionPopulate}
                             handleClickOpenOnHold={this.props.handleClickOpenOnHold}
                             handleClickOpenHistory={this.props.handleClickOpenHistory}
+                            handleClickOpenCustomer={this.props.handleClickOpenCustomer}
                             handleHistoryOpen={this.props.handleHistoryOpen}
                             handleClickOpenSessionContainer={this.props.handleClickOpenSessionContainer}
                             handleClickQuickBook={this.props.handleClickQuickBook}
