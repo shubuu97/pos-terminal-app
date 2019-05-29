@@ -139,7 +139,6 @@ class FullWidthTabs extends React.Component {
     }
 
     disablePaymentTab = () => {
-        debugger
         let disabled = false
         if (this.props.cartItems.length <= 0) {
             disabled = true

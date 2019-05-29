@@ -282,6 +282,7 @@ class CustomerDialogue extends React.Component {
                 this.setState({ selectedCustomer: '' })
                 if(data.queueItem.status == 2){
                     this.props.dispatch(commonActionCreater(data.queueItem, 'CUSTOMER_SERVING'));
+                    this.props.dispatch(commonActionCreater(data.queueItem.customer, 'ADD_CUSTOMER_TO_CART'));
                 }
                 this.getQueueList()
             })
@@ -341,7 +342,7 @@ class CustomerDialogue extends React.Component {
                                 this.state.selectedCustomer ?
                                     <div className='customer-info-area flex-column justify-space-between align-flex-end'>
                                         <div className='flex-column fwidth'>
-                                            <span className='heading'>Cutomer Info</span>
+                                            <span className='heading'>Customer Info</span>
                                             <div className='flex-row flex-wrap justify-space-between pt-20'>
                                                 <div className='flex-column fwidth pt-215pb-10 '>
                                                     <span className='info-heading'>Name</span>

@@ -39,13 +39,12 @@ class CheckInForm extends React.Component {
     };
 
     resetForm = () => {
-        debugger
+
     }
 
     addCustomerMoveInQueue = async () => {
         let p1 =  this.addCustomerForm()
         p1.then((data)=>{
-            debugger;
             let customer = {
                 value: data
             }
@@ -136,7 +135,6 @@ class CheckInForm extends React.Component {
             identifier: 'ADD_NEW_CANNABIS_CUSTOMER',
             successCb: (data) => { }
         }).then((data) => {
-            debugger
             return data
         })
 

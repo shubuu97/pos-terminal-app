@@ -266,8 +266,8 @@ class PaymentSection extends React.Component {
             if (num != '<') {
                 focusItemValue = (focusItemValue || '') + num;
                 let regex = /^\d*[\.\d]{1,3}$/;
-                if(!regex.test(focusItemValue))
-                return false;
+                if (!regex.test(focusItemValue))
+                    return false;
 
             }
             else {
@@ -391,21 +391,21 @@ class PaymentSection extends React.Component {
         if ((splitDotWithInt(this.props.cashAmount) || 0)) {
             payments.push({
                 paymentMethod: 0,
-                paymentAmount: { currency: 'USD', amount:splitDotWithInt(this.props.cashAmount)},
+                paymentAmount: { currency: 'USD', amount: splitDotWithInt(this.props.cashAmount) },
                 paymentReference: ""
             })
         }
         if ((splitDotWithInt(this.props.cardAmount) || 0)) {
             payments.push({
                 paymentMethod: 1,
-                paymentAmount: { currency: 'USD', amount:splitDotWithInt(this.props.cardAmount)},
+                paymentAmount: { currency: 'USD', amount: splitDotWithInt(this.props.cardAmount) },
                 paymentReference: this.props.cardRefrenceId
             })
         }
         if ((splitDotWithInt(this.props.giftCardAmount) || 0)) {
             let url = 'Sale/RedeemValueFromGiftCard';
             let value = {};
-            _set(value, 'amount',splitDotWithInt(this.props.giftCardAmount));
+            _set(value, 'amount', splitDotWithInt(this.props.giftCardAmount));
             _set(value, 'currency', 'USD');
             let data = {
                 retailerId: localStorage.getItem('retailerId'),
@@ -425,14 +425,14 @@ class PaymentSection extends React.Component {
             }))
             payments.push({
                 paymentMethod: 2,
-                paymentAmount: { currency: 'USD', amount:splitDotWithInt(this.props.giftCardAmount)},
+                paymentAmount: { currency: 'USD', amount: splitDotWithInt(this.props.giftCardAmount) },
                 paymentReference: apiResponse,
             })
         }
         if ((splitDotWithInt(this.props.decliningBalance) || 0)) {
             let url = 'Payment/DecliningBalance/Save';
             let value = {};
-            _set(value, 'amount',splitDotWithInt(this.props.decliningBalance));
+            _set(value, 'amount', splitDotWithInt(this.props.decliningBalance));
             _set(value, 'currency', 'USD');
             let data = {
                 retailerId: localStorage.getItem('retailerId'),
@@ -515,7 +515,7 @@ class PaymentSection extends React.Component {
                 storeId: localStorage.getItem('storeId'),
                 value: {
                     currency: 'USD',
-                    amount:splitDotWithInt(this.props.employeePay)
+                    amount: splitDotWithInt(this.props.employeePay)
                 }
             }
             let apiResponse = await this.props.dispatch(postData(`${APPLICATION_BFF_URL}${url}`, data, 'GET_REF_FROM_LOYALTY_REDEEM', {
@@ -525,14 +525,14 @@ class PaymentSection extends React.Component {
             }))
             payments.push({
                 paymentMethod: 4,
-                paymentAmount: { currency: 'USD', amount:splitDotWithInt(this.props.employeePay)},
+                paymentAmount: { currency: 'USD', amount: splitDotWithInt(this.props.employeePay) },
                 paymentReference: apiResponse
             })
         }
 
 
 
-        let totalAmountPaid = this.calcPaymentAmount(this.props.cashAmount,this.props.cardAmount,this.props.employeePay,this.props.giftCardAmount,LoyaltyValue,this.props.costCenterAmount,this.props.decliningBalance);
+        let totalAmountPaid = this.calcPaymentAmount(this.props.cashAmount, this.props.cardAmount, this.props.employeePay, this.props.giftCardAmount, LoyaltyValue, this.props.costCenterAmount, this.props.decliningBalance);
 
         let reqObj = {
             customerId: customer.id,
@@ -543,17 +543,17 @@ class PaymentSection extends React.Component {
             sessionId: localStorage.getItem('sessionId'),
             saleItems,
             payments,
-            miscSaleItems: [],  
+            miscSaleItems: [],
             totalAmount,
             totalAmountPaid: { currency: 'USD', amount: totalAmountPaid.getAmount() },
-            cartDiscountAmount:_get(cartDiscount,'cartDiscountMoney',{}),
-            employeeDiscountAmount:employeeDiscountMoney,
-            itemDiscountAmount:totalItemDiscountMoney,
+            cartDiscountAmount: _get(cartDiscount, 'cartDiscountMoney', {}),
+            employeeDiscountAmount: employeeDiscountMoney,
+            itemDiscountAmount: totalItemDiscountMoney,
             totalTaxAmount,
             offline,
             saleComment: _get(this.state, 'comment', ''),
             saleTimeStamp: { seconds: parseInt((new Date().getTime() / 1000)) },
-            changeDue: { currency: 'USD', amount: this.props.remainingAmount.isNegative() ? this.props.remainingAmount.multiply(-1).getAmount():this.props.remainingAmount.getAmount() }
+            changeDue: { currency: 'USD', amount: this.props.remainingAmount.isNegative() ? this.props.remainingAmount.multiply(-1).getAmount() : this.props.remainingAmount.getAmount() }
 
         };
         if (offline) {
@@ -570,12 +570,30 @@ class PaymentSection extends React.Component {
         this.setState({ isLoadingTransaction: true })
         await this.makReqObj(offline).then((reqObj) => {
             if (offline) {
-                this.handleSaleTransactionOffline(JSON.parse(JSON.stringify(reqObj)));
+                this.handleSaleTransactionOffline(JSON.parse(JSON.stringify(reqObj))); 
             }
             else {
                 this.handleSaleTransactionOnline(reqObj);
             }
-
+            if(localStorage.getItem('cannibis')){
+                let queueId = _get(this.props, 'cannabisCustomer.queueId', '')
+                genericPostData({
+                    dispatch: this.props.dispatch,
+                    reqObj: { id : queueId },
+                    url: 'Remove/CustomerQueueById',
+                    dontShowMessage: true,
+                    constants: {
+                        init: 'REMOVE_CUSTOMER_TO_QUEUE_INIT',
+                        success: 'REMOVE_CUSTOMER_TO_QUEUE_SUCCESS',
+                        error: 'REMOVE_CUSTOMER_TO_QUEUE_ERROR'
+                    },
+                    identifier: 'REMOVE_CUSTOMER_TO_QUEUE',
+                    successCb: (data) => { }
+                }).then((data) => {
+                    this.props.dispatch(commonActionCreater(data.queueItems, 'UPDATE_CUSTOMER_QUEUE'));
+                    this.props.dispatch(commonActionCreater({}, 'CUSTOMER_SERVING'));
+                })
+            }
         })
             .catch((error) => {
                 this.setState({ isLoadingTransaction: false });
@@ -662,25 +680,26 @@ class PaymentSection extends React.Component {
     buttonToRender = () => {
         let online = !this.props.offline;
         if (online)
-            return (<LoaderButton
-                color='primary'
-                isFetching={this.state.isLoadingTransaction}
-                fullWidth
-                disabled={this.disableDecider()}
-                variant='contained'
-                onClick={() => this.handleSaleTransaction(!online)}
-            >  Submit Transaction
-        </LoaderButton>)
+            return (
+                <LoaderButton
+                    color='primary'
+                    isFetching={this.state.isLoadingTransaction}
+                    fullWidth
+                    disabled={this.disableDecider()}
+                    variant='contained'
+                    onClick={() => this.handleSaleTransaction(!online)}
+                >  Submit Transaction</LoaderButton>
+            )
         else {
-            return (<LoaderButton
+            return (
+            <LoaderButton
                 style={{ color: 'red' }}
                 fullWidth
                 isFetching={this.state.isLoadingTransaction}
                 disabled={this.disableDecider()}
                 variant='contained'
                 onClick={() => this.handleSaleTransaction(!online)}
-            >  Submit Transaction Offline
-        </LoaderButton>)
+            >  Submit Transaction Offline</LoaderButton>)
         }
     }
 
@@ -874,6 +893,7 @@ function mapStateToProps(state) {
     let costCenterType = _get(state, 'PaymentDetails.costCenterType');
     let costCenterDepartment = _get(state, 'PaymentDetails.costCenterDepartment');
     let decliningBalance = _get(state, 'PaymentDetails.decliningBalance');
+    let cannabisCustomer = _get(state, 'customerQueue.customer', {})
 
     let paymentMethods = _get(state, 'storeData.lookUpData.store.paymentMethods')
     return {
@@ -902,7 +922,8 @@ function mapStateToProps(state) {
         costCenterType,
         costCenterDepartment,
         paymentMethods,
-        decliningBalance
+        decliningBalance,
+        cannabisCustomer
 
     }
 }

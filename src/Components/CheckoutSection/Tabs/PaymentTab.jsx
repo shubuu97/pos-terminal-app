@@ -196,7 +196,7 @@ class PaymentTab extends React.Component {
                     </div>
                     <div className='customer-display flex-row'>
                         {
-                            customer.guest ?
+                            _get(customer, 'guest', false) ?
                                 this.state.edit ?
                                     <ReactSelect
                                         value={this.state.value}
@@ -216,7 +216,7 @@ class PaymentTab extends React.Component {
                     </div>
                     <div className='action-icons'>
                         {
-                            !customer.guest || this.state.edit ?
+                            !_get(customer, 'guest', false) || this.state.edit ?
                                 <CloseIcon
                                     onClick={() => this.handleSwitchToGuest()}
                                 />
