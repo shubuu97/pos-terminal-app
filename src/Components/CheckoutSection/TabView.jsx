@@ -120,6 +120,7 @@ class FullWidthTabs extends React.Component {
                             checkoutcartArea={this.props.checkoutcartArea}
                             handleClickOpen={this.props.handleClickOpen}
                             handleHistoryOpen={this.props.handleHistoryOpen}
+                            disablePaymentTab={this.disablePaymentTab}
                         /> :
                         <CustomersTab
                             offline={this.props.offline}
@@ -145,6 +146,9 @@ class FullWidthTabs extends React.Component {
         }
         if (localStorage.getItem('cannibis')) {
             if (this.props.cart.cartQty > 10) {
+                disabled = true
+            }
+            if(Object.entries(this.props.cannabisCustomer).length === 0){
                 disabled = true
             }
         }
@@ -205,9 +209,10 @@ class FullWidthTabs extends React.Component {
 function mapStateToProps(state) {
     let cartItems = _get(state, 'cart.cartItems', []);
     let cart = _get(state, 'cart', {});
+    let cannabisCustomer = _get(state, 'customerQueue.customer', {})
     let afterSellRedirectToCart = _get(state, 'afterSellRedirectToCart.lookUpData')
     let cardRefrenceId = _get(state, 'PaymentDetails.cardRefrenceId');
 
-    return { cartItems, cart, afterSellRedirectToCart, cardRefrenceId };
+    return { cartItems, cart, afterSellRedirectToCart, cardRefrenceId, cannabisCustomer };
 }
 export default connect(mapStateToProps)(FullWidthTabs);

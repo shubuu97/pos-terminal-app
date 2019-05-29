@@ -85,6 +85,11 @@ class CannabisCustomerTab extends React.Component {
         })
     }
 
+    disablePaymentTab = () => {
+        let result = this.props.disablePaymentTab()
+        return result
+    }
+
     render() {
         let { checkoutactionArea, checkoutMainPart, checkoutCustomerArea, checkoutcalcArea, checkoutcartArea, guest, employee, customer } = this.props
         const { classes } = this.props;
@@ -154,7 +159,7 @@ class CannabisCustomerTab extends React.Component {
                     <div className='button-section flex-row ' style={{ height: checkoutactionArea }}>
                         <Button className='mr-20 btnsecondary' variant="outlined" onClick={this.handleClearCart}>Clear</Button>
                         <Button className={_get(this, 'props.cartItems', []).length ? 'mr-20 btnsecondary' : 'mr-20 btnsecondary disable-button'} variant="outlined" onClick={this.props.handleClickOpen}>Hold</Button>
-                        <Button className={_get(this, 'props.cartItems', []).length && _get(this, 'props.cart.cartQty', 0) <= 10 ? 'btnprimary' : 'btnprimary disable-button'} style={{ flex: 1 }} onClick={this.handleClickProceed} variant="contained">Proceed</Button>
+                        <Button className={!(this.disablePaymentTab()) ? 'btnprimary' : 'btnprimary disable-button'} style={{ flex: 1 }} onClick={this.handleClickProceed} variant="contained">Proceed</Button>
                     </div>
                 </div>
             </div>

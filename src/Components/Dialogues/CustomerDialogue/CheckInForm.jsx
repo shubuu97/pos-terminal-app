@@ -162,7 +162,7 @@ class CheckInForm extends React.Component {
                             color="primary"
                             onClick={() => { this.setState({ userType: 'Adult' }) }}
                         >
-                            Adult
+                            Recreational
                         </Button>
                     </div>
                 </div>
