@@ -313,7 +313,6 @@ class ProductsSection extends React.Component {
                 limit: 39,
                 skip: 1
             }).then((result) => {
-
                 result.pagination = {}
                 result.pagination.method = method
                 result.pagination.query = this.props.query
@@ -386,11 +385,12 @@ class ProductsSection extends React.Component {
                         <div className="header-right-sec">
                             <ul>
                                 {
+                                    !(localStorage.getItem('cannibis')) ?
                                     this.handleHideWhenOffline(
                                         !this.props.offline,
                                         [<li onClick={this.props.handleMiscProduct}><LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>],
                                         [<li className="disable-button" onClick={this.props.handleMiscProduct}><LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>]
-                                    )
+                                    ) : null
                                 }
 
                                 {
