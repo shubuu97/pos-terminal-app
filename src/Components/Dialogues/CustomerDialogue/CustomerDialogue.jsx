@@ -230,7 +230,7 @@ class CustomerDialogue extends React.Component {
 
     deleteCustomerFromQueue = (customer) => {
         let id = customer.queueId
-        if(customer.queueId == this.props.checkoutCustomer.queueId){
+        if (customer.queueId == this.props.checkoutCustomer.queueId) {
             this.props.dispatch(commonActionCreater({}, 'CUSTOMER_SERVING'));
         }
         genericPostData({
@@ -280,7 +280,7 @@ class CustomerDialogue extends React.Component {
                 successCb: (data) => { }
             }).then((data) => {
                 this.setState({ selectedCustomer: '' })
-                if(data.queueItem.status == 2){
+                if (data.queueItem.status == 2) {
                     this.props.dispatch(commonActionCreater(data.queueItem, 'CUSTOMER_SERVING'));
                     this.props.dispatch(commonActionCreater(data.queueItem.customer, 'ADD_CUSTOMER_TO_CART'));
                 }
@@ -288,7 +288,7 @@ class CustomerDialogue extends React.Component {
             })
         })
         this.props.handleClose();
-    
+
     }
 
     render() {
@@ -342,7 +342,14 @@ class CustomerDialogue extends React.Component {
                                 this.state.selectedCustomer ?
                                     <div className='customer-info-area flex-column justify-space-between align-flex-end'>
                                         <div className='flex-column fwidth'>
-                                            <span className='heading'>Customer Info</span>
+                                            <div className='flex-row justify-space-between align-center'>
+                                                <span className='heading'>Customer Info</span>
+                                                <DeleteIcons
+                                                    onClick={() => this.deleteCustomerFromQueue(_get(this.state, 'customerData'))}
+                                                    style={{ color: '#ff000096', fontSize: '1.8em' }}
+                                                />
+                                            </div>
+
                                             <div className='flex-row flex-wrap justify-space-between pt-20'>
                                                 <div className='flex-column fwidth pt-215pb-10 '>
                                                     <span className='info-heading'>Name</span>
@@ -375,14 +382,14 @@ class CustomerDialogue extends React.Component {
                                             </div>
                                         </div>
                                         <div className='customer-action'>
-                                            <Button
+                                            {/* <Button
                                                 className='mr-10'
                                                 variant='outlined'
                                                 color="error"
                                                 onClick={() => this.deleteCustomerFromQueue(_get(this.state, 'customerData'))}
                                             >
                                                 Delete
-                                            </Button>
+                                            </Button> */}
                                             <Button
                                                 className='mr-10'
                                                 disabled={this.state.customerData.status == 2}

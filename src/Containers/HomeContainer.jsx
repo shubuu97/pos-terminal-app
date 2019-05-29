@@ -68,7 +68,7 @@ class HomeContainer extends React.Component {
             isOpenProduct: true,
             isOpenPayment: false,
             openOnHold: false,
-            openCustomerDialogue: true,
+            openCustomerDialogue: false,
             openOrderHistory: false,
             openMiscProduct: false,
             openCartOnHoldOrClear: false,

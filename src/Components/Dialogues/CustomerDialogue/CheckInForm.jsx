@@ -213,9 +213,9 @@ class CheckInForm extends React.Component {
                         onChange={this.handleDateChange('dob')}
                         style={{ width: '48%' }}
                         variant="outlined"
-                        openTo="year"
-                        format="DD/MM/YYYY"
-                        views={["year", "month", "date"]}
+                        //openTo="year"
+                        format="MM/DD/YYYY"
+                        //views={["year", "month", "date"]}
                     />
 
                     <div class='flex-column checkbox-style'>
@@ -264,9 +264,9 @@ class CheckInForm extends React.Component {
                                 onChange={this.handleDateChange('mmrExp')}
                                 style={{ width: '48%' }}
                                 variant="outlined"
-                                openTo="year"
-                                format="DD/MM/YYYY"
-                                views={["year", "month", "date"]}
+                                //openTo="year"
+                                format="MM/DD/YYYY"
+                                //views={["year", "month", "date"]}
                             />
                             <TextField
                                 id="outlined-name"
@@ -305,7 +305,7 @@ class CheckInForm extends React.Component {
                 }
 
                 <div className='fwidth flex-row justify-flex-end form-actions '>
-                    <Button
+                    {/* <Button
                         className='mr-10'
                         variant='outlined'
                         color="error"
@@ -320,14 +320,14 @@ class CheckInForm extends React.Component {
                         onClick={this.addCustomerForm}
                     >
                         Add
-                    </Button>
+                    </Button> */}
                     <Button
                         className='mr-10'
                         variant='contained'
                         color="primary"
                         onClick={this.addCustomerMoveInQueue}
                     >
-                        Add & Check In
+                        Check In
                     </Button>
                 </div>
             </div>

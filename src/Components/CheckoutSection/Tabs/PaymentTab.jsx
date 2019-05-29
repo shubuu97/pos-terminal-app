@@ -98,7 +98,7 @@ class PaymentTab extends React.Component {
 
     handleSwitchToGuest = async () => {
         await addGuestToCart(this.props.dispatch);
-        this.setState({edit: false})
+        this.setState({ edit: false })
         this.dispatchCartAction(_get(this.props, 'cart.cartItems', []), 0)
     }
 
@@ -179,7 +179,7 @@ class PaymentTab extends React.Component {
         let cartDiscountObj = {}
         cartDiscountObj.cartItems = cartItems
         cartDiscountObj.prevCart = _get(this, 'props.cart', {});
-        if(loyaltyPoints != undefined){
+        if (loyaltyPoints != undefined) {
             cartDiscountObj.loyaltyPoints = loyaltyPoints
         }
         this.props.dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));
@@ -214,19 +214,23 @@ class PaymentTab extends React.Component {
                                 </div>
                         }
                     </div>
-                    <div className='action-icons'>
-                        {
-                            !_get(customer, 'guest', false) || this.state.edit ?
-                                <CloseIcon
-                                    onClick={() => this.handleSwitchToGuest()}
-                                />
-                                :
-                                <div className='fwidth'>
-                                    <CreateIcon onClick={()=>this.setState({edit: true})} style={{ fontSize: '2em', paddingRight: '15px' }} />
-                                    <PersonAddOutlinedIcon onClick={this.handleOpen} style={{ fontSize: '2em' }} />
-                                </div>
-                        }
-                    </div>
+                    {
+                        // ! MAYUK - TEMP CODE NEEDS TO BE FIXED
+                        !(localStorage.getItem('cannibis')) ?
+                        <div className='action-icons'>
+                            {
+                                !_get(customer, 'guest', false) || this.state.edit ?
+                                    <CloseIcon
+                                        onClick={() => this.handleSwitchToGuest()}
+                                    />
+                                    :
+                                    <div className='fwidth'>
+                                        <CreateIcon onClick={() => this.setState({ edit: true })} style={{ fontSize: '2em', paddingRight: '15px' }} />
+                                        <PersonAddOutlinedIcon onClick={this.handleOpen} style={{ fontSize: '2em' }} />
+                                    </div>
+                            }
+                        </div> : null
+                    }
                 </div>
                 {this.populateCart()}
                 <div className='cart-total flex-row align-center'>
