@@ -1,13 +1,18 @@
 import React from 'react';
+import jwtDecode from 'jwt-decode';
+import _get from 'lodash/get';
+/* Global Import */
 import LoaderButton from '../../Global/Components/LoaderButton';
+import genericPostData from '../../Global/dataFetch/genericPostData';
+/* Material Imports */
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
-import jwtDecode from 'jwt-decode';
-import genericPostData from '../../Global/dataFetch/genericPostData';
-import _get from 'lodash/get';
+/* Redux Imports */
+import { connect } from 'react-redux';
+import { commonActionCreater } from '../../Redux/commonAction'
 
 class Login extends React.Component {
     constructor(props) {
@@ -39,7 +44,7 @@ class Login extends React.Component {
     afterLoginSuccess = (data) => {
         this.setState({ isFetching: false });
         let decodeToken = jwtDecode(_get(data, 'token'));
-        console.log(decodeToken, 'decodeToken')
+        this.props.dispatch(commonActionCreater(decodeToken, 'LOGIN_CREDS_DECODE'));
         //todo encryption to be 
         localStorage.setItem('Token', _get(data, 'token'));
         localStorage.setItem('userPin', _get(decodeToken, 'Operator.loginPin', ''));

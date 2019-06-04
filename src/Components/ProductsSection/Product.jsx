@@ -44,6 +44,16 @@ class Product extends React.PureComponent {
         this.setState({ openModal: false })
     }
 
+    handleProductClick = (data, cartItems, cart, qty, dispatch, index) => {
+        if(this.props.cannabisRetailer){
+            this.viewProductDetails(index)
+        }
+        else{
+            this.addToCart(data, cartItems, cart, qty, dispatch)
+        }
+        
+    }
+
     addToCart = (product, cartItems, cart, quantity, dispatch) => {
         let products = {
             doc: product.doc
@@ -69,7 +79,7 @@ class Product extends React.PureComponent {
         return (
             <React.Fragment>
                 {!isddoc ?
-                    <div className='each-tile white-background flex-row relative' id='productCard' onClick={() => this.addToCart(data, cartItems, cart, 1, dispatch)} index={this.props.index} key={this.props.key}>
+                    <div className='each-tile white-background flex-row relative' id='productCard' onClick={() => this.handleProductClick(data, cartItems, cart, 1, dispatch, index)} index={this.props.index} key={this.props.key}>
                         <div className='absolute added-item-position'>
                             {(_find(cartItems, cartItem => cartItem.doc._id == data.id )) ? <div className='added-item-count'>{(_find(cartItems, cartItem => cartItem.doc._id == data.id)).qty}</div> : null}
                         </div>
@@ -112,6 +122,7 @@ class Product extends React.PureComponent {
                             cartItems={cartItems}
                             product={data}
                             dispatch={dispatch}
+                            cannabisRetailer={this.props.cannabisRetailer}
                             addToCart={(product, cartItems, cart, qty, dispatch) => this.addToCart(product, cartItems, cart, qty, dispatch)}
                         /> : ''
                 }
@@ -121,9 +132,10 @@ class Product extends React.PureComponent {
 
 const mapStateToProps = state => {
     let { cart } = state;
-
+    let cannabisRetailer = _get(state, 'loginCreds.lookUpData.Retailer.type', false)
     return {
-        cart
+        cart,
+        cannabisRetailer
     }
 };
 

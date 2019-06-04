@@ -992,7 +992,7 @@ const updateTimeStampAndDbForHotProduct = async (res, dispatch, extraArgs) => {
             result.pagination.pageNo = 1
             result.pagination.startVal = 1
             result.pagination.endVal = result.rows.length;
-            dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+            //dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
             return;
 
         }

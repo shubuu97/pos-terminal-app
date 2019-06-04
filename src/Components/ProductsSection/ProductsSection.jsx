@@ -15,6 +15,7 @@ import LibraryAdd from '@material-ui/icons/LibraryAddOutlined';
 /* Redux Imports */
 import { commonActionCreater } from '../../Redux/commonAction'
 import { connect } from 'react-redux';
+import genericPostData from '../../Global/dataFetch/genericPostData';
 /* Pouch Imports */
 import PAM from "pouchdb-adapter-memory"
 import Find from "pouchdb-find";
@@ -42,18 +43,7 @@ class ProductsSection extends React.Component {
         }
     }
 
-    handleChange = (searchText, e) => {
-        this.setState({ searchText })
-        if(e) {
-            if (this.previousTimeStamp) {
-                if ((e.timeStamp - this.previousTimeStamp) <= 20) {
-                    this.previousTimeStamp = e.timeStamp
-                    return
-                }
-            }
-            this.previousTimeStamp = e.timeStamp
-        }
-        
+    searhOnPouch = (searchText) => {
         if (searchText.length > 2) {
             this.productsdb.search({
                 query: searchText,
@@ -97,6 +87,108 @@ class ProductsSection extends React.Component {
         }
     }
 
+    searchWithElastic = (searchText) => {
+        let reqObj = {
+            "text": searchText,
+            "offset": 0,
+            "limit": 39,
+            "filters": [
+                {
+                    "field": "retailerId",
+                    "value": localStorage.getItem('retailerId')
+                }
+            ]
+        }
+        if (searchText.length > 2) {
+            genericPostData({
+                dispatch: this.props.dispatch,
+                reqObj: reqObj,
+                url: 'Search/Products',
+                dontShowMessage: true,
+                constants: {
+                    init: 'ELASTIC_SEARCH_PRODUCTS_INIT',
+                    success: 'ELASTIC_SEARCH_PRODUCTS_SUCCESS',
+                    error: 'ELASTIC_SEARCH_PRODUCTS_ERROR'
+                },
+                identifier: 'ELASTIC_SEARCH_PRODUCTS_RULES',
+                successCb: (data) => { }
+            }).then((data) => {
+                let result = {}
+                result.pagination = {}
+                result.pagination.method = "allDocs"
+                result.pagination.firstItemId = data.products[0].id
+                result.pagination.lastItemId = data.products[data.products.length - 1].id
+                result.pagination.pageNo = 1
+                result.pagination.startVal = 1
+                result.pagination.endVal = data.products.length
+                let rows = data.products.map((d) => {
+                    let obj = {
+                        doc: {
+                            product: d
+                        },
+                        id: d.id
+                    }
+                    return obj
+                })
+                result.rows = rows
+                console.log(result, 'result')
+                this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+            })
+        }
+        if (searchText == '') {
+            genericPostData({
+                dispatch: this.props.dispatch,
+                reqObj: reqObj,
+                url: 'Search/Products',
+                dontShowMessage: true,
+                constants: {
+                    init: 'ELASTIC_SEARCH_PRODUCTS_INIT',
+                    success: 'ELASTIC_SEARCH_PRODUCTS_SUCCESS',
+                    error: 'ELASTIC_SEARCH_PRODUCTS_ERROR'
+                },
+                identifier: 'ELASTIC_SEARCH_PRODUCTS_RULES',
+                successCb: (data) => { }
+            }).then((data) => {
+                let result = {}
+                result.pagination = {}
+                result.pagination.method = "allDocs"
+                result.pagination.firstItemId = data.products[0].id
+                result.pagination.lastItemId = data.products[data.products.length - 1].id
+                result.pagination.pageNo = 1
+                result.pagination.startVal = 1
+                result.pagination.endVal = data.products.length
+                let rows = data.products.map((d) => {
+                    let obj = {
+                        doc: {
+                            product: d
+                        },
+                        id: d.id
+                    }
+                    return obj
+                })
+                result.rows = rows
+                console.log(result, 'result')
+                this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+            })
+        }
+    }
+
+    handleChange = (searchText, e) => {
+        this.setState({ searchText })
+        if (e) {
+            if (this.previousTimeStamp) {
+                if ((e.timeStamp - this.previousTimeStamp) <= 20) {
+                    this.previousTimeStamp = e.timeStamp
+                    return
+                }
+            }
+            this.previousTimeStamp = e.timeStamp
+        }
+        // ! Mayuk - Needs to be configed 
+        //this.searhOnPouch(searchText);
+        this.searchWithElastic(searchText);
+    }
+
     onKeyPress = (key) => {
         if (key.charCode == 13) {
             if ((/^[0-9-]{4,}[0-9]$/).test(_get(this.state, 'searchText', ''))) {
@@ -128,13 +220,13 @@ class ProductsSection extends React.Component {
 
                                 </div>
                                 <div className='product-price flex-row justify-flex-end'>
-                                    {Dinero({amount: _get(product, 'doc.product.salePrice.amount',0), currency: 'USD'}).toFormat('$0,0.00')}
+                                    {Dinero({ amount: _get(product, 'doc.product.salePrice.amount', 0), currency: 'USD' }).toFormat('$0,0.00')}
                                 </div>
                             </div>
                         );
 
                     } else {
-                        this.props.enqueueSnackbar('No Product Found',{
+                        this.props.enqueueSnackbar('No Product Found', {
                             variant: 'error'
                         });
                     }
@@ -154,8 +246,8 @@ class ProductsSection extends React.Component {
 
     scroll = () => {
         let pCard = document.getElementById('productCard');
-        if(pCard!=null){
-            let eachCardHeight =  pCard.offsetHeight
+        if (pCard != null) {
+            let eachCardHeight = pCard.offsetHeight
             let scrollHead = document.getElementById('productList').scrollTop
             let pageNo = this.props.pageNo;
             let nextScrollTrigger = (pageNo * eachCardHeight * 13) - 400 // ! Assuming limit is 39, needs to be dynamic
@@ -177,8 +269,8 @@ class ProductsSection extends React.Component {
                 result.pagination.pageNo = this.props.pageNo + 1
                 this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
                 this.getNextProducts()
-        }
-     
+            }
+
         }
     }
 
@@ -386,11 +478,11 @@ class ProductsSection extends React.Component {
                             <ul>
                                 {
                                     !(localStorage.getItem('cannibis')) ?
-                                    this.handleHideWhenOffline(
-                                        !this.props.offline,
-                                        [<li onClick={this.props.handleMiscProduct}><LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>],
-                                        [<li className="disable-button" onClick={this.props.handleMiscProduct}><LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>]
-                                    ) : null
+                                        this.handleHideWhenOffline(
+                                            !this.props.offline,
+                                            [<li onClick={this.props.handleMiscProduct}><LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>],
+                                            [<li className="disable-button" onClick={this.props.handleMiscProduct}><LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>]
+                                        ) : null
                                 }
 
                                 {

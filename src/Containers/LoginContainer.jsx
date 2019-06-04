@@ -46,29 +46,30 @@ const styles = theme => ({
 });
 
 class SignIn extends React.Component {
+
     constructor(props) {
         super(props);
         this.state = {
             currentStep: 1
         }
     }
-    handleStepChange = (currentStep) => {
-        if(currentStep==4){
-          this.props.history.push('/');
-          
-        }
-        this.setState({ currentStep })
-    };
+
     componentDidMount(){
         if(this.props.sessionRedirectToLogin){
             this.setState({currentStep:3});
             this.props.dispatch(commonActionCreater(false,'SESSION_START_REDIRECT_TO_LOGIN'));
         }
     }
+    
+    handleStepChange = (currentStep) => {
+        if(currentStep==4){
+          this.props.history.push('/');
+        }
+        this.setState({ currentStep })
+    }
 
     render() {
         const { classes } = this.props;
-
         return (
             <main className={classes.main}>
                 <CssBaseline />

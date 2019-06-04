@@ -50,6 +50,7 @@ let loyaltyRedeem = commonStaticReducer('LOYALTY_INPUT_HANDLER');
 let employeePayroll = commonStaticReducer('EMPLOYEE_PAYROLL')
 let isCustomerTabOpen = commonStaticReducer('IS_CUSTOMER_DIALOGUE_OPEN')
 let isHotProductActive = commonStaticReducer('IS_HOT_PRODUCT_ACTIVE');
+let loginCreds = commonStaticReducer('LOGIN_CREDS_DECODE');
 
 // let cartOrderDetails = cartOrderDetailsFun('ORDER_DETAILS');
 
@@ -57,6 +58,7 @@ let isHotProductActive = commonStaticReducer('IS_HOT_PRODUCT_ACTIVE');
 let rootRducer = combineReducers({
     form:formReducer,
     loginData,
+    loginCreds,
     storeData,
     categoryList,
     RedemptionRules,

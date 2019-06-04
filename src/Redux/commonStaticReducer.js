@@ -1,16 +1,15 @@
-function commonReducerFunc(identifier)
-{
-const staticReducers = (state = { data: {}, }, action) => {
-    switch (action.type) {
-        case `${identifier}`:
-            return Object.assign({}, state, {
-                type: action.type,
-                lookUpData: action.data
-            });
+function commonReducerFunc(identifier) {
+    const staticReducers = (state = { data: {}, }, action) => {
+        switch (action.type) {
+            case `${identifier}`:
+                return Object.assign({}, state, {
+                    type: action.type,
+                    lookUpData: action.data
+                });
+        }
+        return state;
     }
-    return state;
-}
-return staticReducers
+    return staticReducers
 }
 
 

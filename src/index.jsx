@@ -17,7 +17,8 @@ import './assets/stylesheets/main.less'
 import MomentUtils from '@date-io/moment';
 import { MuiPickersUtilsProvider } from 'material-ui-pickers';
 /*Material UI Imports*/
-import { createGenerateClassName } from '@material-ui/core/styles';
+import { StylesProvider, createGenerateClassName } from '@material-ui/styles';
+//import { createGenerateClassName } from '@material-ui/core/styles';
 import theme from './Global/MaterialUiSettings/theme';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 /*Redux Persist Import */
@@ -84,7 +85,7 @@ ReactDOM.render(
   //   <div>
   //     <Favicon url="/src/assets/images/favicon.ico" />
 
-  <JssProvider generateClassName={generateClassName}>
+  <StylesProvider generateClassName={generateClassName}>
     <MuiThemeProvider theme={theme}>
       <MuiPickersUtilsProvider utils={MomentUtils}>
         <SnackbarProvider maxSnack={8} autoHideDuration={4000} style={{ width: '100%' }}>
@@ -108,7 +109,7 @@ ReactDOM.render(
         </SnackbarProvider>
       </MuiPickersUtilsProvider>
     </MuiThemeProvider>
-  </JssProvider>,
+  </StylesProvider>,
   //   </div>,
   document.getElementById('root')
 )

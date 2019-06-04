@@ -1,16 +1,21 @@
 import React from 'react';
+import Dinero from 'dinero.js';
 /* Lodash Imports */
 import _get from 'lodash/get';
 import _set from 'lodash/set';
 import _isArray from 'lodash/isArray';
 import _find from 'lodash/find';
-// Redux Form Imports
+/* Redux Imports */
 import { reduxForm, Field, FormSection } from 'redux-form';
-// MaterialUi Imports
+/* Material Imports */
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogActions from '@material-ui/core/DialogActions';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
 import { withStyles } from '@material-ui/core/styles';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
@@ -18,37 +23,13 @@ import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import RemoveCircleIcons from '@material-ui/icons/RemoveCircleOutline';
 import AddIcons from '@material-ui/icons/AddCircleOutline';
-import Dinero from 'dinero.js';
+/* Global Components */
+import ReactSelect from '../FormComponents/ReactSelect'
+
 
 let DineroInit = (amount, currency, precision) => (
-    Dinero({amount:  parseInt(amount) || 0, currency: currency || 'USD', precision: precision || 2})
+    Dinero({ amount: parseInt(amount) || 0, currency: currency || 'USD', precision: precision || 2 })
 )
-
-function rand() {
-    return Math.round(Math.random() * 20) - 10;
-}
-
-function getModalStyle() {
-    const top = 35;
-    const left = 35;
-
-    return {
-        top: `${top}%`,
-        left: `${left}%`,
-        transform: `translate(-${top}%, -${left}%)`,
-    };
-}
-
-const styles = theme => ({
-    paper: {
-        position: 'absolute',
-        width: theme.spacing.unit * 100,
-        backgroundColor: theme.palette.background.paper,
-        boxShadow: theme.shadows[5],
-        padding: theme.spacing.unit * 4,
-        outline: 'none',
-    },
-});
 
 const DialogTitle = withStyles(theme => ({
     root: {
@@ -76,13 +57,21 @@ const DialogTitle = withStyles(theme => ({
     );
 });
 
-class Customer extends React.Component {
+class MaterialUIModal extends React.Component {
 
-    state = {
-        open: false,
-        qty: 0,
-        fromInfoView: false
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            open: false,
+            qty: 0,
+            fromInfoView: false,
+            packageSelected: ''
+        };
+    }
+
+    componentDidMount() {
+
+    }
 
     handleClose = () => {
         this.setState({ open: false });
@@ -103,26 +92,32 @@ class Customer extends React.Component {
         this.setState({ qty: 0, fromInfoView: true })
     }
 
+    handleSelectedPackage = (packageSelected) => {
+        this.setState({
+            packageSelected
+        })
+    }
+
     render() {
         let { handleSubmit, fullScreen } = this.props;
         return (
             <div>
                 <Dialog
-                    fullWidth='100%'
                     open={this.props.open}
                     onClose={this.props.onClose}
                     aria-labelledby="form-dialog-title"
                     fullWidth
+                    maxWidth='md'
                 >
                     <DialogTitle id="customized-dialog-title" onClose={this.props.handleClose}>
                         {this.props.title}
                     </DialogTitle>
                     <DialogContent>
                         <div className="mui-row mt-20 product-details-modal">
-                            <div className="mui-col-md-6 pop-img">
+                            <div className="mui-col-md-4 pop-img">
                                 <img src={_get(this.props.productDetails, 'image', '')} alt={_get(this.props.productDetails, 'image', '')} />
                             </div>
-                            <div className="mui-col-md-6">
+                            <div className="mui-col-md-8">
                                 <div className='flex-column fwidth'>
                                     <div className='truncate'>
                                         <span className="each-card-name">{_get(this.props.productDetails, 'name', '')}</span>
@@ -140,19 +135,33 @@ class Customer extends React.Component {
                                             <span className="each-card-code-head">Out of stock</span>
                                         </div> : ''
                                     }
-                                    <div className='expanded-options'>
-                                        <div className="qty-block">
-                                            <span className='option-title'>Qty:</span>
-                                            <div className='qty-btn'>
-                                                <RemoveCircleIcons onClick={() => this.decrementer()} style={{ fontSize: '2.7em' }} />
-                                                <span className='quantity'>{this.state.qty}</span>
-                                                <AddIcons onClick={() => this.incrementer()} style={{ fontSize: '2.7em' }} />
-                                            </div>
-                                        </div>
-                                        {this.state.qty > 0 ?
-                                            <div className='button-section flex-row '>
-                                                <Button className='btnmodalprimary' variant="outlined" onClick={() => this.addToCart(this.props.index, this.state.qty, this.state.fromInfoView)}>Add To Cart</Button>
-                                            </div> : ''
+                                    <div className='expanded-options flex-row justify-space-between'>
+                                        {
+                                            this.props.cannabisRetailer ?
+                                                <div style={{ width: '80%' }}>
+                                                    <ReactSelect
+                                                        name='Select Package'
+                                                        dispatch= {this.props.dispatch}
+                                                        productId = {_get(this.props.productDetails, 'id', '')}
+                                                        handleSelectedPackage={this.handleSelectedPackage}
+                                                    />
+                                                </div>
+                                                :
+                                                <div className="qty-block">
+                                                    <span className='option-title'>Qty:</span>
+                                                    <div className='qty-btn'>
+                                                        <RemoveCircleIcons onClick={() => this.decrementer()} style={{ fontSize: '2.7em' }} />
+                                                        <span className='quantity'>{this.state.qty}</span>
+                                                        <AddIcons onClick={() => this.incrementer()} style={{ fontSize: '2.7em' }} />
+                                                    </div>
+                                                </div>
+
+                                        }
+                                        {
+                                            this.state.qty > 0 ?
+                                                <div className='button-section flex-row '>
+                                                    <Button className='btnmodalprimary' variant="outlined" onClick={() => this.addToCart(this.props.index, this.state.qty, this.state.fromInfoView)}>Add To Cart</Button>
+                                                </div> : ''
                                         }
                                     </div>
                                     <div className='truncate'>
@@ -178,8 +187,8 @@ class Customer extends React.Component {
     }
 }
 
-Customer = reduxForm({
+MaterialUIModal = reduxForm({
     form: 'CustomerForm'
-})(Customer)
+})(MaterialUIModal)
 
-export default Customer;
+export default MaterialUIModal;
