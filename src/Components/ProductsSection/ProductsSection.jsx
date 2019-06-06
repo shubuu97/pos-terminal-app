@@ -43,7 +43,7 @@ class ProductsSection extends React.Component {
         }
     }
 
-    searhOnPouch = (searchText) => {
+    searchOnPouch = (searchText) => {
         if (searchText.length > 2) {
             this.productsdb.search({
                 query: searchText,
@@ -89,57 +89,23 @@ class ProductsSection extends React.Component {
 
     searchWithElastic = (searchText) => {
         let reqObj = {
-            "text": searchText,
-            "offset": 0,
-            "limit": 39,
-            "filters": [
-                {
-                    "field": "retailerId",
-                    "value": localStorage.getItem('retailerId')
-                }
-            ]
-        }
-        if (searchText.length > 2) {
-            genericPostData({
-                dispatch: this.props.dispatch,
-                reqObj: reqObj,
-                url: 'Search/Products',
-                dontShowMessage: true,
-                constants: {
-                    init: 'ELASTIC_SEARCH_PRODUCTS_INIT',
-                    success: 'ELASTIC_SEARCH_PRODUCTS_SUCCESS',
-                    error: 'ELASTIC_SEARCH_PRODUCTS_ERROR'
-                },
-                identifier: 'ELASTIC_SEARCH_PRODUCTS_RULES',
-                successCb: (data) => { }
-            }).then((data) => {
-                let result = {}
-                result.pagination = {}
-                result.pagination.method = "allDocs"
-                result.pagination.firstItemId = data.products[0].id
-                result.pagination.lastItemId = data.products[data.products.length - 1].id
-                result.pagination.pageNo = 1
-                result.pagination.startVal = 1
-                result.pagination.endVal = data.products.length
-                let rows = data.products.map((d) => {
-                    let obj = {
-                        doc: {
-                            product: d
-                        },
-                        id: d.id
+            request: {
+                "text": searchText,
+                "offset": 0,
+                "limit": 39,
+                "filters": [
+                    {
+                        "field": "retailerId",
+                        "value": localStorage.getItem('retailerId')
                     }
-                    return obj
-                })
-                result.rows = rows
-                console.log(result, 'result')
-                this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
-            })
+                ]
+            }
         }
-        if (searchText == '') {
+        if (searchText == '' || searchText > 2) {
             genericPostData({
                 dispatch: this.props.dispatch,
                 reqObj: reqObj,
-                url: 'Search/Products',
+                url: 'Search/Inventory',
                 dontShowMessage: true,
                 constants: {
                     init: 'ELASTIC_SEARCH_PRODUCTS_INIT',
@@ -185,7 +151,7 @@ class ProductsSection extends React.Component {
             this.previousTimeStamp = e.timeStamp
         }
         // ! Mayuk - Needs to be configed 
-        //this.searhOnPouch(searchText);
+        //this.searchOnPouch(searchText);
         this.searchWithElastic(searchText);
     }
 
@@ -272,6 +238,56 @@ class ProductsSection extends React.Component {
             }
 
         }
+    }
+
+    scrollCannabis = () => {
+        let reqObj = {
+            request: {
+                "text": '',
+                "offset": 0,
+                "limit": 39,
+                "filters": [
+                    {
+                        "field": "retailerId",
+                        "value": localStorage.getItem('retailerId')
+                    }
+                ]
+            }
+        }
+        genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj: reqObj,
+            url: 'Search/Inventory',
+            dontShowMessage: true,
+            constants: {
+                init: 'ELASTIC_SEARCH_PRODUCTS_INIT',
+                success: 'ELASTIC_SEARCH_PRODUCTS_SUCCESS',
+                error: 'ELASTIC_SEARCH_PRODUCTS_ERROR'
+            },
+            identifier: 'ELASTIC_SEARCH_PRODUCTS_RULES',
+            successCb: (data) => { }
+        }).then((data) => {
+            let result = {}
+            result.pagination = {}
+            result.pagination.method = "allDocs"
+            result.pagination.firstItemId = data.products[0].id
+            result.pagination.lastItemId = data.products[data.products.length - 1].id
+            result.pagination.pageNo = 1
+            result.pagination.startVal = 1
+            result.pagination.endVal = data.products.length
+            let rows = data.products.map((d) => {
+                let obj = {
+                    doc: {
+                        product: d
+                    },
+                    id: d.id
+                }
+                return obj
+            })
+            result.rows = rows
+            console.log(result, 'result')
+            this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+        })
     }
 
     // getPrevProducts = () => {
@@ -477,7 +493,7 @@ class ProductsSection extends React.Component {
                         <div className="header-right-sec">
                             <ul>
                                 {
-                                    !(localStorage.getItem('cannibis')) ?
+                                    !(localStorage.getItem('cannabisStore')) ?
                                         this.handleHideWhenOffline(
                                             !this.props.offline,
                                             [<li onClick={this.props.handleMiscProduct}><LibraryAdd style={{ color: 'white', padding: '0 10px', fontSize: 33 }} /></li>],

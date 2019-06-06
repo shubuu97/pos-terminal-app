@@ -216,7 +216,7 @@ class PaymentTab extends React.Component {
                     </div>
                     {
                         // ! MAYUK - TEMP CODE NEEDS TO BE FIXED
-                        !(localStorage.getItem('cannibis')) ?
+                        !(localStorage.getItem('cannabisStore')) ?
                         <div className='action-icons'>
                             {
                                 !_get(customer, 'guest', false) || this.state.edit ?

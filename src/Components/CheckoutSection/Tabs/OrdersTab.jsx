@@ -45,9 +45,9 @@ let DineroFunc = (amount) => {
 
 const styles = props => ({
     barColorPrimary: {
-      backgroundColor: '#da2020',
+        backgroundColor: '#da2020',
     }
-  });
+});
 
 class OrdersTab extends React.Component {
 
@@ -82,6 +82,7 @@ class OrdersTab extends React.Component {
 
     // * Minor Functions for Opening closing Modals 
     handleChange = panel => (event, expanded) => {
+        debugger
         this.setState({
             expanded: expanded ? panel : false,
         });
@@ -122,8 +123,16 @@ class OrdersTab extends React.Component {
 
     // * Functions to Update Cart Reducers 
     handleDelete = (item) => {
+        debugger
         let cartItems = [...this.props.cartItems];
-        let index = _findIndex(cartItems, cartItem => cartItem.doc._id == item.doc._id);
+        let index
+        if (localStorage.getItem('cannabisStore')) {
+            index = _findIndex(cartItems, cartItem => cartItem.packages[0].label == item.packages[0].label);
+        }
+        else {
+            index = _findIndex(cartItems, cartItem => cartItem.doc._id == item.doc._id);
+        }
+
         cartItems.splice(index, 1);
         this.handleCartDiscountCalculate(cartItems)
     };
@@ -199,14 +208,14 @@ class OrdersTab extends React.Component {
                 <Slide direction="right" in={true} mountOnEnter unmountOnExit>
                     <ExpansionPanel
                         className='each-checkout-item'
-                        expanded={_get(item, 'doc.product.isGiftCard', false) ? false : this.state.expanded === `Panel${_get(item, 'doc.product.sku', _get(item, 'id'))}`}
-                        onChange={this.handleChange(`Panel${_get(item, 'doc.product.sku', _get(item, 'id'))}`)}>
+                        expanded={_get(item, 'doc.product.isGiftCard', false) ? false : this.state.expanded === `Panel${_get(item, 'packages[0].label', _get(item, 'id'))}`}
+                        onChange={this.handleChange(`Panel${_get(item, 'packages[0].label', _get(item, 'id'))}`)}>
                         <ExpansionPanelSummary>
                             <div className='each-product-des fwidth flex-row justify-space-between'>
 
                                 {/* Item Quantity */}
                                 {
-                                    _get(item, 'doc.product.isGiftCard') ?
+                                    _get(item, 'doc.product.isGiftCard') || localStorage.getItem('cannabisStore') ?
                                         null :
                                         <div className='each-item-qty absolute'>
                                             {item.qty}
@@ -224,8 +233,23 @@ class OrdersTab extends React.Component {
                                     <DeleteIcons
                                         onClick={() => this.handleDelete(item)}
                                         style={{ color: '#ff000096', fontSize: '1.5em' }} />
-                                    <div className='title'>{_get(item, 'doc.product.isGiftCard') ? <div><span>Gift Card :</span> {_get(item, 'doc.product.name')}</div> :
-                                        _get(item, 'doc.product.name')}</div>
+                                    <div className='flex-column'>
+                                        <div className='title'>
+                                            {
+                                                _get(item, 'doc.product.isGiftCard') ?
+                                                    <div><span>Gift Card : </span> {_get(item, 'doc.product.name')}</div>
+                                                    :
+                                                    _get(item, 'doc.product.name')
+                                            }
+                                        </div>
+                                        {
+                                            localStorage.getItem('cannabisStore') ?
+                                                <span className='title-label'>
+                                                    {_get(item, 'packages[0].label', '')}
+                                                </span> : null
+                                        }
+                                    </div>
+
                                 </div>
 
                                 {/* Item Price and Regular Price */}
@@ -238,15 +262,23 @@ class OrdersTab extends React.Component {
                         <ExpansionPanelDetails>
                             <div className='fwidth flex-row justify-space-between'>
                                 {
-                                    item.saleType === 0 &&
-                                    <div className='expanded-options'>
-                                        <span className='option-title'>Quantity</span>
-                                        <div className='flex-row justify-center align-center'>
-                                            <RemoveCircleIcons onClick={() => this.handleDecreseQuantity(item)} style={{ fontSize: '1.7em' }} />
-                                            <span className='quantity'>{item.qty}</span>
-                                            <AddIcons onClick={() => this.handleIncreaseQuantity(item)} style={{ fontSize: '1.7em' }} />
+                                    localStorage.getItem('cannabisStore') ?
+                                        <div className='expanded-options'>
+                                            <span className='option-title'>Quantity</span>
+                                            <div className='flex-row justify-center align-center'>
+                                                <span className='quantity'>{item.qty}</span>
+                                            </div>
                                         </div>
-                                    </div>
+                                        :
+                                        item.saleType === 0 &&
+                                        <div className='expanded-options'>
+                                            <span className='option-title'>Quantity</span>
+                                            <div className='flex-row justify-center align-center'>
+                                                <RemoveCircleIcons onClick={() => this.handleDecreseQuantity(item)} style={{ fontSize: '1.7em' }} />
+                                                <span className='quantity'>{item.qty}</span>
+                                                <AddIcons onClick={() => this.handleIncreaseQuantity(item)} style={{ fontSize: '1.7em' }} />
+                                            </div>
+                                        </div>
                                 }
                                 {
                                     _get(item, 'doc.product.discountable', false) ?
@@ -341,20 +373,20 @@ class OrdersTab extends React.Component {
                 </div>
                 <div className="order-amount-section">
                     {
-                        localStorage.getItem('cannibis') || false ? 
-                        <LinearProgress
-                            variant="buffer"
-                            value={_get(this.props, 'cart.cartQty', 0)*10}
-                            classes={
-                                _get(this.props, 'cart.cartQty', 0) > 10 ?
-                                {barColorPrimary: classes.barColorPrimary} : {}
-                            }
-                            style={{
-                                width: '100%',
-                                height: '15px',
-                                borderRadius: '8px',
-                            }}
-                        /> : null
+                        localStorage.getItem('cannabisStore') || false ?
+                            <LinearProgress
+                                variant="buffer"
+                                value={_get(this.props, 'cart.cartQty', 0) * 10}
+                                classes={
+                                    _get(this.props, 'cart.cartQty', 0) > 10 ?
+                                        { barColorPrimary: classes.barColorPrimary } : {}
+                                }
+                                style={{
+                                    width: '100%',
+                                    height: '15px',
+                                    borderRadius: '8px',
+                                }}
+                            /> : null
                     }
                     <CalculationSection
                         checkoutcalcArea={checkoutcalcArea}

@@ -90,12 +90,19 @@ class HomeContainer extends React.Component {
         else {
             this.calcHeight();
             this.getRuleSet();
-            this.getProductData();
+            if (localStorage.getItem('cannabisStore')) {
+                this.getCannabisProductData();
+            }
+            else {
+                this.getProductData();
+            }
+
             this.fetchFreedomPayDetails();
             this.props.startPolling();
         }
         this.props.dispatch(commonActionCreater(false, 'IS_CUSTOMER_DIALOGUE_OPEN'))
     }
+
     fetchFreedomPayDetails = () => {
         axiosFetcher({
             method: 'POST',
@@ -107,6 +114,7 @@ class HomeContainer extends React.Component {
             }
         })
     }
+
     fetchFreedomPayDetailsSuccess = (res) => {
         localStorage.setItem('freedomPayClientEnvironment', _get(res, 'data.freedomPayClientEnvironment'));
         localStorage.setItem('freedomPayClientUrl', _get(res, 'data.freedomPayClientUrl'));
@@ -370,7 +378,56 @@ class HomeContainer extends React.Component {
                 console.log(err)
             });
         }
+    }
 
+    getCannabisProductData = () => {
+        let reqObj = {
+            request: {
+                "text": '',
+                "offset": 0,
+                "limit": 39,
+                "filters": [
+                    {
+                        "field": "retailerId",
+                        "value": localStorage.getItem('retailerId')
+                    }
+                ]
+            }
+        }
+        genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj: reqObj,
+            url: 'Search/Inventory',
+            dontShowMessage: true,
+            constants: {
+                init: 'ELASTIC_SEARCH_PRODUCTS_INIT',
+                success: 'ELASTIC_SEARCH_PRODUCTS_SUCCESS',
+                error: 'ELASTIC_SEARCH_PRODUCTS_ERROR'
+            },
+            identifier: 'ELASTIC_SEARCH_PRODUCTS_RULES',
+            successCb: (data) => { }
+        }).then((data) => {
+            let result = {}
+            result.pagination = {}
+            result.pagination.method = "allDocs"
+            result.pagination.firstItemId = data.products[0].id
+            result.pagination.lastItemId = data.products[data.products.length - 1].id
+            result.pagination.pageNo = 1
+            result.pagination.startVal = 1
+            result.pagination.endVal = data.products.length
+            let rows = data.products.map((d) => {
+                let obj = {
+                    doc: {
+                        product: d
+                    },
+                    id: d.id
+                }
+                return obj
+            })
+            result.rows = rows
+            console.log(result, 'result')
+            this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+        })
     }
 
     handleTerminalHistoryOpen = () => {
@@ -617,7 +674,6 @@ class HomeContainer extends React.Component {
     render() {
         let windowHeight = document.documentElement.scrollHeight
         let { productListHeight, isOpenProduct, isOpenPayment, headerHeight, categoriesHeight, checkoutHeader, checkoutMainPart, checkoutcalcArea, checkoutactionArea, checkoutcartArea, checkoutCustomerArea } = this.state
-        localStorage.setItem('cannibis', true)
 
         let { productList, dispatch, cart } = this.props
         return (
@@ -652,7 +708,7 @@ class HomeContainer extends React.Component {
                         isOpenProduct={isOpenProduct}
                         isOpenHistoryDialogue={this.state.openHistoryDialogue}
                         isGiftCardModelOpen={this.state.openGiftCard}
-                        openCustomerDialogue = {this.state.openCustomerDialogue}
+                        openCustomerDialogue={this.state.openCustomerDialogue}
                     />
                 </Products>
                 <CheckoutSection

@@ -45,21 +45,21 @@ class Product extends React.PureComponent {
     }
 
     handleProductClick = (data, cartItems, cart, qty, dispatch, index) => {
-        if(this.props.cannabisRetailer){
+        if (this.props.cannabisRetailer) {
             this.viewProductDetails(index)
         }
-        else{
+        else {
             this.addToCart(data, cartItems, cart, qty, dispatch)
         }
-        
+
     }
 
-    addToCart = (product, cartItems, cart, quantity, dispatch) => {
+    addToCart = (product, cartItems, cart, quantity, dispatch, selectedPackage) => {
         let products = {
             doc: product.doc
         }
         if (!this.state.iconSelected) {
-            addToCart(products, cartItems, cart, quantity, dispatch)
+            addToCart(products, cartItems, cart, quantity, dispatch, selectedPackage)
             this.setState({
                 qty: this.state.qty + quantity
             })
@@ -76,13 +76,29 @@ class Product extends React.PureComponent {
         let isddoc = regex.test(id);
         let dispatch = this.props.dispatch
         let Money = Dinero(_get(data, 'doc.product.salePrice', DineroInit()))
+        debugger
         return (
             <React.Fragment>
                 {!isddoc ?
-                    <div className='each-tile white-background flex-row relative' id='productCard' onClick={() => this.handleProductClick(data, cartItems, cart, 1, dispatch, index)} index={this.props.index} key={this.props.key}>
-                        <div className='absolute added-item-position'>
-                            {(_find(cartItems, cartItem => cartItem.doc._id == data.id )) ? <div className='added-item-count'>{(_find(cartItems, cartItem => cartItem.doc._id == data.id)).qty}</div> : null}
-                        </div>
+                    <div
+                        className='each-tile white-background flex-row relative'
+                        id='productCard'
+                        onClick={() => this.handleProductClick(data, cartItems, cart, 1, dispatch, index)}
+                        index={this.props.index}
+                        key={this.props.key}
+                        style={
+                            _get(data, 'doc.inventory.quantity', 0) == 0 ?
+                            {background: 'rgba(0,0,0,0.05)'}
+                            : 
+                            {}
+                        }>
+                        {
+                            localStorage.getItem('cannabisStore') ?
+                                null :
+                                <div className='absolute added-item-position'>
+                                    {(_find(cartItems, cartItem => cartItem.doc.id == data.id)) ? <div className='added-item-count'>{(_find(cartItems, cartItem => cartItem.doc.id == data.id)).qty}</div> : null}
+                                </div>
+                        }
                         <div className='product-image'>
                             <img src={_get(data, 'doc.product.image') || DefaultImage} alt="" />
                         </div>
@@ -93,10 +109,15 @@ class Product extends React.PureComponent {
                                 </div>
                                 <div className='truncate'>
                                     <span className="each-card-code-head">Available Quantity : </span>
-                                    <span className='each-card-code'>{_get(data, 'doc.inventory.quantity', 0)}</span>
+                                    {
+                                        localStorage.getItem('cannabisStore') ?
+                                            < span className='each-card-code'>{_get(data, 'doc.inventory.quantity', 0)} {_get(data, 'doc.inventory.quantity', 0) == 0 ? null : _get(data, 'doc.inventory.uom', '')}</span>
+                                            :
+                                            < span className='each-card-code'>{_get(data, 'doc.inventory.quantity', 0)}</span>
+                                    }
                                 </div>
                                 <div className="each-card-price flex-row">
-                                { Money.toFormat('$0,0.00') }
+                                    {Money.toFormat('$0,0.00')}
                                 </div>
                                 <span
                                     onMouseLeave={() => this.setState({ iconSelected: false })}
@@ -123,7 +144,7 @@ class Product extends React.PureComponent {
                             product={data}
                             dispatch={dispatch}
                             cannabisRetailer={this.props.cannabisRetailer}
-                            addToCart={(product, cartItems, cart, qty, dispatch) => this.addToCart(product, cartItems, cart, qty, dispatch)}
+                            addToCart={(product, cartItems, cart, qty, dispatch, selectedPackage) => this.addToCart(product, cartItems, cart, qty, dispatch, selectedPackage)}
                         /> : ''
                 }
             </React.Fragment>)

@@ -103,11 +103,11 @@ class FullWidthTabs extends React.Component {
     customersTab = () => {
         // * This function was made to prevent rewriting of code
         const { cart, cartItems } = this.props;
-        let cannibis = localStorage.getItem('cannibis')
+        let cannabisStore = localStorage.getItem('cannabisStore')
         return (
             <TabContainer>
                 {
-                    cannibis ?
+                    cannabisStore ?
                         <CannabisCustomersTab
                             handleClickOpenCustomer={this.props.handleClickOpenCustomer}
                             offline={this.props.offline}
@@ -144,7 +144,7 @@ class FullWidthTabs extends React.Component {
         if (this.props.cartItems.length <= 0) {
             disabled = true
         }
-        if (localStorage.getItem('cannibis')) {
+        if (localStorage.getItem('cannabisStore')) {
             if (this.props.cart.cartQty > 10) {
                 disabled = true
             }

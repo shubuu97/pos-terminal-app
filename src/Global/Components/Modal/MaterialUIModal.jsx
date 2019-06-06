@@ -65,7 +65,7 @@ class MaterialUIModal extends React.Component {
             open: false,
             qty: 0,
             fromInfoView: false,
-            packageSelected: ''
+            packageSelected: {}
         };
     }
 
@@ -88,11 +88,12 @@ class MaterialUIModal extends React.Component {
     }
 
     addToCart = (index, qty) => {
-        this.props.addToCart(this.props.product, this.props.cartItems, this.props.cart, qty, this.props.dispatch);
+        this.props.addToCart(this.props.product, this.props.cartItems, this.props.cart, qty, this.props.dispatch, this.state.packageSelected);
         this.setState({ qty: 0, fromInfoView: true })
     }
 
     handleSelectedPackage = (packageSelected) => {
+        debugger
         this.setState({
             packageSelected
         })
@@ -141,10 +142,15 @@ class MaterialUIModal extends React.Component {
                                                 <div style={{ width: '80%' }}>
                                                     <ReactSelect
                                                         name='Select Package'
-                                                        dispatch= {this.props.dispatch}
-                                                        productId = {_get(this.props.productDetails, 'id', '')}
+                                                        dispatch={this.props.dispatch}
+                                                        productId={_get(this.props.productDetails, 'id', '')}
                                                         handleSelectedPackage={this.handleSelectedPackage}
                                                     />
+                                                    {
+                                                        this.state.packageSelected ?
+                                                            <Button className='btnmodalprimary' variant="outlined" onClick={() => this.addToCart(this.props.index, this.state.qty, this.state.fromInfoView)}>Add To Cart</Button> : 
+                                                            null
+                                                    }
                                                 </div>
                                                 :
                                                 <div className="qty-block">

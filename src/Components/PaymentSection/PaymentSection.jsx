@@ -384,6 +384,7 @@ class PaymentSection extends React.Component {
             obj.itemTaxAmount = item.itemTaxAmount
             obj.saleType = item.saleType;
             obj.product = item.doc.product;
+            obj.itemPackage = item.packages[0]
             return obj;
         });
 
@@ -575,7 +576,7 @@ class PaymentSection extends React.Component {
             else {
                 this.handleSaleTransactionOnline(reqObj);
             }
-            if(localStorage.getItem('cannibis')){
+            if(localStorage.getItem('cannabisStore')){
                 let queueId = _get(this.props, 'cannabisCustomer.queueId', '')
                 genericPostData({
                     dispatch: this.props.dispatch,

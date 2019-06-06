@@ -8,7 +8,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-/* Redux Imports */ 
+/* Redux Imports */
 
 /* Global Imports */
 import genericPostData from '../../../Global/dataFetch/genericPostData';
@@ -33,11 +33,14 @@ function SimpleSelect(props) {
         age: '',
         name: 'hai',
     });
-
+    const [menuItems, setMenuItems] = React.useState()
+    const [firstLoad, setFirstLoad] = React.useState(1)
+    let allPackages
     const inputLabel = React.useRef(null);
     const [labelWidth, setLabelWidth] = React.useState(0);
-    React.useEffect(() => {
+    React.useEffect((props) => {
         setLabelWidth(inputLabel.current.offsetWidth);
+        populatePackages(props)
     }, []);
 
     function handleChange(props, event) {
@@ -45,14 +48,22 @@ function SimpleSelect(props) {
             ...oldValues,
             [event.target.name]: event.target.value,
         }))
-        if(event.target.name == 'select'){
-            props.handleSelectedPackage(event.target.value)
+        if (event.target.name == 'select') {
+            let packageData = allPackages
+            let selectedPackage = {}
+            packageData.map((data, index) => {
+                if (data.label == event.target.value) {
+                    selectedPackage = data
+                }
+            })
+            props.handleSelectedPackage(selectedPackage)
         }
     }
 
-    let populatePackages = (props) => {
+    let populatePackages = () => {
         let view = []
         let id = props.productId
+        setFirstLoad(0)
         genericPostData({
             dispatch: props.dispatch,
             reqObj: { id },
@@ -67,16 +78,31 @@ function SimpleSelect(props) {
             successCb: (data) => { }
         }).then((data) => {
             let packageData = _get(data, 'packages', [])
-            packageData.map((data, index)=>{
+            allPackages = packageData
+            packageData.map((data, index) => {
                 view.push(
                     <MenuItem value={data.label}>{data.label}</MenuItem>
                 )
+
             })
         })
+        setMenuItems(
+            <Select
+                value={values.select}
+                onChange={(event) => handleChange(props, event)}
+                input={< OutlinedInput labelWidth={labelWidth} name="select" id="select-simple" />}
+                fullWidth
+            >
+                <MenuItem value="">
+                    <em>None</em>
+                </MenuItem>
+                {view}
+            </Select >
+        )
         return (
             <Select
                 value={values.select}
-                onChange={(event)=>handleChange(props, event)}
+                onChange={(event) => handleChange(props, event)}
                 input={< OutlinedInput labelWidth={labelWidth} name="select" id="select-simple" />}
                 fullWidth
             >
@@ -94,10 +120,17 @@ function SimpleSelect(props) {
                 <InputLabel ref={inputLabel} htmlFor="select-simple">
                     {props.name}
                 </InputLabel>
-                { populatePackages(props) }
+                {
+                    firstLoad == 1 ?
+                        populatePackages()
+                        :
+                        menuItems
+                }
             </FormControl>
         </form>
     );
 }
 
 export default SimpleSelect;
+
+
