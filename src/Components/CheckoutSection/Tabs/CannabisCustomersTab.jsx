@@ -145,7 +145,7 @@ class CannabisCustomerTab extends React.Component {
                         value={_get(this.props, 'cart.cartItems', 0).length * 10}
                         classes={
                             _get(this.props, 'cart.cartItems', 0).length > 10 ?
-                                { barColorPrimary: classes.barColorPrimary } : {}
+                                { barColorPrimary: classes.barColorPrimary, colorPrimary: classes.barColorPrimary } : {}
                         }
                         style={{
                             width: '100%',
