@@ -156,7 +156,6 @@ class CheckInForm extends React.Component {
                         >
                             Medical
                         </Button>
-
                         <Button
                             variant={this.state.userType == 'Adult' ? 'contained' : 'outlined'}
                             color="primary"
@@ -166,7 +165,6 @@ class CheckInForm extends React.Component {
                         </Button>
                     </div>
                 </div>
-
                 <div className='pad-10 flex-row flex-wrap justify-space-between'>
                     <TextField
                         id="outlined-name"
@@ -217,7 +215,6 @@ class CheckInForm extends React.Component {
                         format="MM/DD/YYYY"
                         //views={["year", "month", "date"]}
                     />
-
                     <div class='flex-column checkbox-style'>
                         <span>Loyalty Program</span>
                         <div>
@@ -230,8 +227,6 @@ class CheckInForm extends React.Component {
                         </div>
                     </div>
                 </div>
-
-
                 {
                     this.state.userType == 'Medical' ?
                         <div className='pad-10 flex-row flex-wrap justify-space-between med-customer-form'>
@@ -303,7 +298,6 @@ class CheckInForm extends React.Component {
                             </div>
                         </div> : null
                 }
-
                 <div className='fwidth flex-row justify-flex-end form-actions '>
                     {/* <Button
                         className='mr-10'
