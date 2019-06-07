@@ -216,7 +216,7 @@ class ProductsSection extends React.Component {
             let eachCardHeight = pCard.offsetHeight
             let scrollHead = document.getElementById('productList').scrollTop
             let pageNo = this.props.pageNo;
-            let nextScrollTrigger = (pageNo * eachCardHeight * 13) - 400 // ! Assuming limit is 39, needs to be dynamic
+            let nextScrollTrigger = (pageNo * eachCardHeight * 13) - 600 // ! Assuming limit is 39, needs to be dynamic
             console.log('Scroll Head - ', scrollHead, nextScrollTrigger)
             if (scrollHead > nextScrollTrigger) {
                 let result = {
