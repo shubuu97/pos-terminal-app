@@ -374,10 +374,10 @@ class OrdersTab extends React.Component {
                         localStorage.getItem('cannabisStore') || false ?
                             <LinearProgress
                                 variant="buffer"
-                                value={_get(this.props, 'cart.cartQty', 0) * 10}
+                                value={_get(this.props, 'cart.cartItems', 0).length*10}
                                 classes={
-                                    _get(this.props, 'cart.cartQty', 0) > 10 ?
-                                        { barColorPrimary: classes.barColorPrimary } : {}
+                                    _get(this.props, 'cart.cartItems', 0).length > 10 ?
+                                        { barColorPrimary: classes.barColorPrimary, colorPrimary: classes.barColorPrimary } : {}
                                 }
                                 style={{
                                     width: '100%',
