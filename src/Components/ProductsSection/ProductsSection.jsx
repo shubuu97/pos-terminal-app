@@ -128,7 +128,7 @@ class ProductsSection extends React.Component {
                         doc: {
                             product: d
                         },
-                        id: d.id
+                        id: d.product.id
                     }
                     return obj
                 })
@@ -232,19 +232,25 @@ class ProductsSection extends React.Component {
                 result.pagination.pageNo = this.props.pageNo + 1
                 result.pagination.startVal = this.props.endVal + 1
                 result.pagination.endVal = result.pagination.pageNo * this.state.itemCount
-                result.pagination.pageNo = this.props.pageNo + 1
                 this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
-                this.getNextProducts()
+                if (localStorage.getItem('cannabisStore')) {
+                    this.getNextCannabisProducts(result)
+                }
+                else {
+                    this.getNextProducts()
+                }
             }
-
         }
     }
 
-    scrollCannabis = () => {
+    getNextCannabisProducts = (result) => {
+        // ! MAYUK - cleanup required in this function
+        this.setState({ disable: true, productLoading: true })
+        console.log(result, 'getNextCannabisProducts')
         let reqObj = {
             request: {
                 "text": '',
-                "offset": 0,
+                "offset": (result.pagination.pageNo - 1) * 39,
                 "limit": 39,
                 "filters": [
                     {
@@ -266,55 +272,60 @@ class ProductsSection extends React.Component {
             },
             identifier: 'ELASTIC_SEARCH_PRODUCTS_RULES',
             successCb: (data) => { }
-        }).then((data) => {
-            let result = {}
-            result.pagination = {}
-            result.pagination.method = "allDocs"
-            result.pagination.firstItemId = data.products[0].id
-            result.pagination.lastItemId = data.products[data.products.length - 1].id
-            result.pagination.pageNo = 1
-            result.pagination.startVal = 1
-            result.pagination.endVal = data.products.length
-            let rows = data.products.map((d) => {
+        }).then((result) => {
+            let rows = result.products.map((d) => {
                 let obj = {
                     doc: {
                         product: d
                     },
-                    id: d.id
+                    id: d.product.id
                 }
                 return obj
             })
-            result.rows = rows
-            console.log(result, 'result')
-            this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+            if (result.products.length == 0) {
+                this.setState({ disable: false, productLoading: false })
+                return;
+            }
+            if (localStorage.getItem("showOutOfStock") == "true") {
+                //this is the code for filtering the result;
+                this.filteredResult = [];
+                this.resolveArray = [];
+                this.filterResult(result).then((products) => {
+                    let result = { products }
+                    result.pagination = {}
+                    //result.pagination.method = method
+                    result.pagination.firstItemId = result.products[0].id
+                    result.pagination.lastItemId = result.products[result.products.length - 1].id
+                    result.pagination.pageNo = this.props.pageNo
+                    result.pagination.startVal = this.props.endVal + 1
+                    result.pagination.endVal = result.pagination.pageNo * this.state.itemCount
+
+                    result.rows = [..._get(this, 'props.productList', []), ...result.products]
+                    if (result.pagination.endVal > this.props.productCount) {
+                        result.pagination.endVal = this.props.productCount
+                    }
+                    this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+                    this.setState({ disable: false, productLoading: false })
+                });
+            }
+            else {
+                result.pagination = {}
+                //result.pagination.method = method
+                result.pagination.firstItemId = result.products[0].id
+                result.pagination.lastItemId = result.products[result.products.length - 1].id
+                result.pagination.pageNo = this.props.pageNo
+                result.pagination.startVal = this.props.endVal + 1
+                result.pagination.endVal = result.pagination.pageNo * this.state.itemCount
+
+                result.rows = [..._get(this, 'props.productList', []), ...rows]
+                if (result.pagination.endVal > this.props.productCount) {
+                    result.pagination.endVal = this.props.productCount
+                }
+                this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+                this.setState({ disable: false, productLoading: false })
+            }
         })
     }
-
-    // getPrevProducts = () => {
-    //     this.setState({ disable: true })
-    //     let startkey = this.props.firstItemId 
-    //     let this.productsdb = new PouchDb('this.productsdb');
-    //       this.productsdb.allDocs({
-    //           include_docs: true,
-    //           descending: true,
-    //           startkey,
-    //           limit: this.state.itemCount,
-    //           skip: 1
-    //       }).then((result) => {
-    //           let sortedResult = _sortBy(result.rows, 'id')
-    //           result.rows = sortedResult
-    //           result.pagination = {}
-    //           result.pagination.firstItemId = result.rows[0].id
-    //           result.pagination.lastItemId = result.rows[result.rows.length - 1].id
-    //           result.pagination.pageNo = this.props.pageNo - 1
-    //           result.pagination.startVal = this.props.startVal - this.state.itemCount
-    //           result.pagination.endVal = result.pagination.pageNo * this.state.itemCount
-    //           this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
-    //           this.setState({ disable: false })
-    //       }).catch((err) => {
-    //           console.log(err)
-    //     });
-    //   }
 
     filterResult = (result) => {
         return new Promise(async (resolve, reject) => {
@@ -520,11 +531,17 @@ class ProductsSection extends React.Component {
                 </div>
 
                 {/* Product Categories Component */}
-                <Categories
-                    categoriesHeight={categoriesHeight}
-                    getHomeClicked={this.homeButtonClicked}
-                    {...this.props}
-                />
+                {
+                    localStorage.getItem('cannabisStore') ?
+                        null :
+                        <Categories
+                            categoriesHeight={categoriesHeight}
+                            getHomeClicked={this.homeButtonClicked}
+                            getProductData={this.props.getProductData}
+                            {...this.props}
+                        />
+                }
+
 
                 {/* Products List Component */}
                 <div className='pos-products' id='productList' style={{ height: this.props.productListHeight }} onScroll={this.scroll}>

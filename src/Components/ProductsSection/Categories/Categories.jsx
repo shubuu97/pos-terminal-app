@@ -87,7 +87,7 @@ class Categories extends Component {
     this.props.getHomeClicked();
     localStorage.setItem('IS_HOT_PRODUCT_ACTIVE', false);
     this.setState({ selectedCategory: { categoryType: -1 }, hotActive: false });
-    this.getProductData();
+    this.props.getProductData();
     this.getCategory(0);
   };
 
@@ -163,31 +163,8 @@ class Categories extends Component {
       .catch(err => {
         console.log(err);
       });
-  };
+  }
 
-  getProductData = () => {
-    let productsdb = new PouchDb(`productsdb${localStorage.getItem("storeId")}`);
-    productsdb
-      .allDocs({
-        include_docs: true,
-        attachments: true,
-        limit: 39,
-        skip: 0
-      })
-      .then(result => {
-        result.pagination = {}
-        result.pagination.method = "allDocs"
-        result.pagination.firstItemId = result.rows[0].id
-        result.pagination.lastItemId = result.rows[result.rows.length - 1].id
-        result.pagination.pageNo = 1
-        result.pagination.startVal = 1
-        result.pagination.endVal = result.rows.length
-        this.props.dispatch(
-          commonActionCreater(result, "GET_PRODUCT_DATA_SUCCESS")
-        );
-      })
-      .catch(err => { });
-  };
   getHotProduct = () => {
     if (!this.state.hotActive == false) {
       localStorage.setItem('IS_HOT_PRODUCT_ACTIVE', false);

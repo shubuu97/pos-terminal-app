@@ -374,7 +374,12 @@ class PaymentSection extends React.Component {
         let saleItems = cartItems.map((item) => {
             let obj = {}
             obj.productId = item.doc.product.id;
-            obj.qty = item.qty;
+            if(localStorage.getItem('cannabisStore')){
+                obj.itemQuantity = item.qty;
+            }
+            else{
+                obj.qty = item.qty;
+            }
             obj.itemEffectiveTotal = item.itemEffectiveTotal;
             obj.itemRegularTotal = item.itemRegularTotalMoney;
             obj.cartDiscountTotal = item.cartDiscountMoney;

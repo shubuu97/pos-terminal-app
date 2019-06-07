@@ -76,7 +76,6 @@ class Product extends React.PureComponent {
         let isddoc = regex.test(id);
         let dispatch = this.props.dispatch
         let Money = Dinero(_get(data, 'doc.product.salePrice', DineroInit()))
-        debugger
         return (
             <React.Fragment>
                 {!isddoc ?
@@ -88,9 +87,9 @@ class Product extends React.PureComponent {
                         key={this.props.key}
                         style={
                             _get(data, 'doc.inventory.quantity', 0) == 0 ?
-                            {background: 'rgba(0,0,0,0.05)'}
-                            : 
-                            {}
+                                { background: 'rgba(0,0,0,0.05)' }
+                                :
+                                {}
                         }>
                         {
                             localStorage.getItem('cannabisStore') ?
@@ -111,9 +110,9 @@ class Product extends React.PureComponent {
                                     <span className="each-card-code-head">Available Quantity : </span>
                                     {
                                         localStorage.getItem('cannabisStore') ?
-                                            < span className='each-card-code'>{_get(data, 'doc.inventory.quantity', 0)} {_get(data, 'doc.inventory.quantity', 0) == 0 ? null : _get(data, 'doc.inventory.uom', '')}</span>
+                                            <span className='each-card-code'>{_get(data, 'doc.inventory.quantity', 0)} {_get(data, 'doc.inventory.quantity', 0) == 0 ? null : _get(data, 'doc.inventory.uom', '')}</span>
                                             :
-                                            < span className='each-card-code'>{_get(data, 'doc.inventory.quantity', 0)}</span>
+                                            <span className='each-card-code'>{_get(data, 'doc.inventory.quantity', 0)}</span>
                                     }
                                 </div>
                                 <div className="each-card-price flex-row">

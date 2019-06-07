@@ -82,7 +82,6 @@ class OrdersTab extends React.Component {
 
     // * Minor Functions for Opening closing Modals 
     handleChange = panel => (event, expanded) => {
-        debugger
         this.setState({
             expanded: expanded ? panel : false,
         });
@@ -123,7 +122,6 @@ class OrdersTab extends React.Component {
 
     // * Functions to Update Cart Reducers 
     handleDelete = (item) => {
-        debugger
         let cartItems = [...this.props.cartItems];
         let index
         if (localStorage.getItem('cannabisStore')) {
@@ -394,9 +392,7 @@ class OrdersTab extends React.Component {
                     />
                     <div className='button-section flex-row ' style={{ height: checkoutactionArea }}>
                         <Button className='mr-20 btnsecondary' variant="outlined" onClick={this.handleClearCart}>Clear</Button>
-
                         <Button className={_get(this, 'props.cartItems', []).length ? 'mr-20 btnsecondary' : 'mr-20 btnsecondary disable-button'} variant="outlined" onClick={this.props.handleClickOpen}>Hold</Button>
-
                         <Button className="btnprimary" style={{ flex: 1 }} onClick={this.handleProceedToCustomer} variant="contained">Proceed</Button>
                     </div>
                 </div>

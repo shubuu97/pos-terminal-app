@@ -129,7 +129,11 @@ class HomeContainer extends React.Component {
         let windowHeight = document.documentElement.clientHeight
         // ! Product Section Calculations
         let headerHeight = 70;
-        let categoriesHeight = 90;
+        let categoriesHeight = 0;
+        if (!localStorage.getItem('cannabisStore')) {
+            categoriesHeight = 90;
+        }
+        
         let productListHeight = windowHeight - (headerHeight + categoriesHeight + 25)
 
         // ! Checkout Section Calculations
@@ -316,6 +320,7 @@ class HomeContainer extends React.Component {
 
     }
     getProductData = () => {
+        debugger
         let hotProducts = localStorage.getItem('hotProducts') || [];
         hotProducts = JSON.parse(hotProducts);
         if (hotProducts.length > 0) {
@@ -420,7 +425,7 @@ class HomeContainer extends React.Component {
                     doc: {
                         product: d
                     },
-                    id: d.id
+                    id: d.product.id
                 }
                 return obj
             })
@@ -701,7 +706,7 @@ class HomeContainer extends React.Component {
                         handleClickQuickBook={() => this.setState({ openQuickBookContainer: true })}
                         handleLockTerminal={this.handleLockTerminal}
                         handleSetting={() => this.setState({ openSetting: true })}
-                        getProductData={this.getProductData}
+                        getProductData={localStorage.getItem('cannabisStore') ? this.getCannabisProductData : this.getProductData}
                         handleLogout={this.handleLogout}
                         handleGiftCard={() => this.handleGiftCard(true)}
                         handleMiscProduct={() => this.handleMiscProduct(true)}
@@ -832,7 +837,7 @@ class HomeContainer extends React.Component {
                             handleClickOpen={() => this.setState({ openSetting: true })}
                             handleClose={() => this.setState({ openSetting: false })}
                             open={this.state.openSetting}
-                            getProductData={this.getProductData}
+                            getProductData={localStorage.getItem('cannabisStore') ? this.getCannabisProductData : this.getProductData}
                             dispatch={dispatch}
                             {...this.props}
                         /> : null

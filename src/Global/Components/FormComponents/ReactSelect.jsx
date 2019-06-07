@@ -81,7 +81,7 @@ function SimpleSelect(props) {
             allPackages = packageData
             packageData.map((data, index) => {
                 view.push(
-                    <MenuItem value={data.label}>{data.label}</MenuItem>
+                    <MenuItem value={data.label}data-value={data.label}>{data.label}</MenuItem>
                 )
 
             })
