@@ -132,7 +132,6 @@ const cartItem = (state = {
 
             allowedCartDiscountMoney = discountableMoney.percentage(80)
             allowedLoyaltyDiscountMoney = discountableMoney.percentage(80)
-            debugger
             let discountableMoneyAllocation = []
             if (discountableItems.length > 0) {
                 discountableMoneyAllocation = allowedCartDiscountMoney.allocate(discountableItems)

@@ -15,7 +15,6 @@ const addToCart = (product, cartItems, cart, quantity, dispatch, selectedPackage
     if (cannabisStore) {
         let packages = []
         cartItems.map((data,index)=>{
-            debugger
             let cartItemPackage = _get(data, 'packages', [])
             packages = [...packages, ...data.packages]
         })

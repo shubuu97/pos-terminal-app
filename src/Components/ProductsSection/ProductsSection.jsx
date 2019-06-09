@@ -182,22 +182,32 @@ class ProductsSection extends React.Component {
                     identifier: 'ELASTIC_SEARCH_PRODUCTS_RULES',
                     successCb: (data) => { }
                 }).then((result) => {
-                    debugger
-                    if (!_isEmpty(result.docs)) {
-                        //addToCart(products, cartItems, cart, quantity, dispatch, selectedPackage)
+                    if (!_isEmpty(result)) {
+                        let product = {
+                            ...result.product,
+                            doc: {
+                                product: result.product
+                            }
+                        }
+                        let cartItems = _get(this.props, 'cart.cartItems', [])
+                        let cart = _get(this.props, 'cart', {})
+                        let quantity = _get(result, 'itemPackage.quantity', 0)
+                        let dispatch = this.props.dispatch
+                        let selectedPackage = result.itemPackage
+                        addToCart(product, cartItems, cart, quantity, dispatch, selectedPackage)
                         this.props.enqueueSnackbar(
                             <div className='flex-row justify-space-between cart-snackbar'>
                                 <div className='flex-row'>
                                     <div className='product-img'>
-                                        {/* <img src={_get(product, 'doc.product.image')} alt='' /> */}
+                                        <img src={_get(product, 'doc.product.image')} alt='' />
                                     </div>
                                     <div className='product-name ml-20'>
-                                        {/* {_get(product, 'doc.product.name')} */}
+                                        {_get(product, 'doc.product.name')}
                                     </div>
 
                                 </div>
                                 <div className='product-price flex-row justify-flex-end'>
-                                    {/* {Dinero({ amount: _get(product, 'doc.product.salePrice.amount', 0), currency: 'USD' }).toFormat('$0,0.00')} */}
+                                    {Dinero({ amount: _get(product, 'doc.product.salePrice.amount', 0), currency: 'USD' }).toFormat('$0,0.00')}
                                 </div>
                             </div>
                         );
@@ -614,6 +624,7 @@ class ProductsSection extends React.Component {
 
 const mapStateToProps = state => {
     let { productList } = state
+    let { cart } = state;
     let isCustomerTabOpen = state.isCustomerTabOpen
     let productCount = _get(productList, 'lookUpData.total_rows', '')
     let lastItemId = _get(productList, 'lookUpData.pagination.lastItemId', '')
@@ -628,6 +639,7 @@ const mapStateToProps = state => {
     let resetProduct = _get(state, 'resetProduct.lookUpData')
 
     return {
+        cart,
         productCount,
         lastItemId,
         firstItemId,

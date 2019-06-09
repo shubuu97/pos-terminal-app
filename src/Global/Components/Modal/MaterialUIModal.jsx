@@ -11,11 +11,6 @@ import { reduxForm, Field, FormSection } from 'redux-form';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
-import OutlinedInput from '@material-ui/core/OutlinedInput';
 import { withStyles } from '@material-ui/core/styles';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
@@ -93,7 +88,6 @@ class MaterialUIModal extends React.Component {
     }
 
     handleSelectedPackage = (packageSelected) => {
-        debugger
         this.setState({
             packageSelected
         })
@@ -161,7 +155,6 @@ class MaterialUIModal extends React.Component {
                                                         <AddIcons onClick={() => this.incrementer()} style={{ fontSize: '2.7em' }} />
                                                     </div>
                                                 </div>
-
                                         }
                                         {
                                             this.state.qty > 0 ?
@@ -186,7 +179,6 @@ class MaterialUIModal extends React.Component {
                             </div>
                         </div>
                     </DialogContent>
-
                 </Dialog>
             </div>
         );

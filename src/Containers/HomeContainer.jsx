@@ -320,7 +320,6 @@ class HomeContainer extends React.Component {
 
     }
     getProductData = () => {
-        debugger
         let hotProducts = localStorage.getItem('hotProducts') || [];
         hotProducts = JSON.parse(hotProducts);
         if (hotProducts.length > 0) {
