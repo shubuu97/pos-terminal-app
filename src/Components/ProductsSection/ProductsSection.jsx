@@ -101,7 +101,7 @@ class ProductsSection extends React.Component {
                 ]
             }
         }
-        if (searchText == '' || searchText > 2) {
+        if (searchText == '' || searchText.length > 2) {
             genericPostData({
                 dispatch: this.props.dispatch,
                 reqObj: reqObj,
@@ -115,26 +115,29 @@ class ProductsSection extends React.Component {
                 identifier: 'ELASTIC_SEARCH_PRODUCTS_RULES',
                 successCb: (data) => { }
             }).then((data) => {
-                let result = {}
-                result.pagination = {}
-                result.pagination.method = "allDocs"
-                result.pagination.firstItemId = data.products[0].id
-                result.pagination.lastItemId = data.products[data.products.length - 1].id
-                result.pagination.pageNo = 1
-                result.pagination.startVal = 1
-                result.pagination.endVal = data.products.length
-                let rows = data.products.map((d) => {
-                    let obj = {
-                        doc: {
-                            product: d
-                        },
-                        id: d.product.id
-                    }
-                    return obj
-                })
-                result.rows = rows
-                console.log(result, 'result')
-                this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+                if (!_isEmpty(data)) {
+                    let result = {}
+                    result.pagination = {}
+                    result.pagination.method = "allDocs"
+                    result.pagination.firstItemId = data.products[0].id
+                    result.pagination.lastItemId = data.products[data.products.length - 1].id
+                    result.pagination.pageNo = 1
+                    result.pagination.startVal = 1
+                    result.pagination.endVal = data.products.length
+                    let rows = data.products.map((d) => {
+                        let obj = {
+                            doc: {
+                                product: d
+                            },
+                            id: d.product.id
+                        }
+                        return obj
+                    })
+                    result.rows = rows
+                    console.log(result, 'result')
+                    this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+                }
+
             })
         }
     }
@@ -150,43 +153,51 @@ class ProductsSection extends React.Component {
             }
             this.previousTimeStamp = e.timeStamp
         }
-        // ! Mayuk - Needs to be configed 
-        //this.searchOnPouch(searchText);
-        this.searchWithElastic(searchText);
+        if (localStorage.getItem('cannabisStore')) {
+            this.searchWithElastic(searchText);
+        }
+        else {
+            this.searchOnPouch(searchText);
+        }
     }
 
     onKeyPress = (key) => {
         if (key.charCode == 13) {
-            if ((/^[0-9-]{4,}[0-9]$/).test(_get(this.state, 'searchText', ''))) {
-                let searchBox = document.getElementById('searchBox')
-                searchBox.select();
-                let upcCode = _get(this.state, 'searchText', 0)
-                this.productsdb.find({
-                    selector: { "product.upcCode": upcCode }
-                }).then((result) => {
-                    if (!_isEmpty(result.docs)) {
-                        let productData = { rows: [] }
-                        productData.rows[0] = { doc: result.docs[0] }
-                        // this.props.dispatch(commonActionCreater(productData, 'GET_PRODUCT_DATA_SUCCESS'));
-                        let cartItems = _get(this, 'props.cart.cartItems', [])
-                        let cart = _get(this, 'props.cart', {})
-                        let product = { doc: result.docs[0] }
-                        addToCart(product, cartItems, cart, 1, this.props.dispatch)
+            let searchBox = document.getElementById('searchBox')
+            searchBox.select();
+            let upcCode = _get(this.state, 'searchText', 0)
 
-                        // View for Snackbar
+            if (localStorage.getItem('cannabisStore')) {
+                let reqObj = { id: upcCode }
+                genericPostData({
+                    dispatch: this.props.dispatch,
+                    reqObj: reqObj,
+                    url: 'Package/Get/ByLabel',
+                    dontShowMessage: true,
+                    constants: {
+                        init: 'ELASTIC_SEARCH_PRODUCTS_INIT',
+                        success: 'ELASTIC_SEARCH_PRODUCTS_SUCCESS',
+                        error: 'ELASTIC_SEARCH_PRODUCTS_ERROR'
+                    },
+                    identifier: 'ELASTIC_SEARCH_PRODUCTS_RULES',
+                    successCb: (data) => { }
+                }).then((result) => {
+                    debugger
+                    if (!_isEmpty(result.docs)) {
+                        //addToCart(products, cartItems, cart, quantity, dispatch, selectedPackage)
                         this.props.enqueueSnackbar(
                             <div className='flex-row justify-space-between cart-snackbar'>
                                 <div className='flex-row'>
                                     <div className='product-img'>
-                                        <img src={_get(product, 'doc.product.image')} alt='' />
+                                        {/* <img src={_get(product, 'doc.product.image')} alt='' /> */}
                                     </div>
                                     <div className='product-name ml-20'>
-                                        {_get(product, 'doc.product.name')}
+                                        {/* {_get(product, 'doc.product.name')} */}
                                     </div>
 
                                 </div>
                                 <div className='product-price flex-row justify-flex-end'>
-                                    {Dinero({ amount: _get(product, 'doc.product.salePrice.amount', 0), currency: 'USD' }).toFormat('$0,0.00')}
+                                    {/* {Dinero({ amount: _get(product, 'doc.product.salePrice.amount', 0), currency: 'USD' }).toFormat('$0,0.00')} */}
                                 </div>
                             </div>
                         );
@@ -197,6 +208,48 @@ class ProductsSection extends React.Component {
                         });
                     }
                 })
+            }
+            else {
+                if ((/^[0-9-]{4,}[0-9]$/).test(_get(this.state, 'searchText', ''))) {
+                    this.productsdb.find({
+                        selector: { "product.upcCode": upcCode }
+                    }).then((result) => {
+                        if (!_isEmpty(result.docs)) {
+                            let productData = { rows: [] }
+                            productData.rows[0] = { doc: result.docs[0] }
+                            // this.props.dispatch(commonActionCreater(productData, 'GET_PRODUCT_DATA_SUCCESS'));
+                            let cartItems = _get(this, 'props.cart.cartItems', [])
+                            let cart = _get(this, 'props.cart', {})
+                            let product = { doc: result.docs[0] }
+                            addToCart(product, cartItems, cart, 1, this.props.dispatch)
+
+                            // View for Snackbar
+                            this.props.enqueueSnackbar(
+                                <div className='flex-row justify-space-between cart-snackbar'>
+                                    <div className='flex-row'>
+                                        <div className='product-img'>
+                                            <img src={_get(product, 'doc.product.image')} alt='' />
+                                        </div>
+                                        <div className='product-name ml-20'>
+                                            {_get(product, 'doc.product.name')}
+                                        </div>
+
+                                    </div>
+                                    <div className='product-price flex-row justify-flex-end'>
+                                        {Dinero({ amount: _get(product, 'doc.product.salePrice.amount', 0), currency: 'USD' }).toFormat('$0,0.00')}
+                                    </div>
+                                </div>
+                            );
+
+                        } else {
+                            this.props.enqueueSnackbar('No Product Found', {
+                                variant: 'error'
+                            });
+                        }
+                    })
+                }
+
+
             }
         }
     }
