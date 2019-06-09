@@ -20,6 +20,7 @@ import { connect } from 'react-redux';
 import { reset } from 'redux-form';
 import { commonActionCreater } from '../../../Redux/commonAction';
 /* Global Imports */
+import genericPostData from '../../../Global/dataFetch/genericPostData';
 import ReactSelect from '../../../Global/Components/ReactSelect/async-react-select';
 import globalClearCart from '../../../Global/PosFunctions/clearCart';
 import addGuestToCart from '../../../Global/PosFunctions/addGuestToCart';
@@ -60,6 +61,23 @@ class CannabisCustomerTab extends React.Component {
     }
 
     handleClearCart = () => {
+        let selectedCannabisCustomer = _get(this.props, 'customerQueue.customer', {})
+        selectedCannabisCustomer.status = 1
+        genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj: selectedCannabisCustomer,
+            url: 'Update/CustomerQueue',
+            dontShowMessage: true,
+            constants: {
+                init: 'CUSTOMER_UPDATE_INIT',
+                success: 'CUSTOMER_UPDATE_SUCCESS',
+                error: 'CUSTOMER_UPDATE_ERROR'
+            },
+            identifier: 'CUSTOMER_UPDATE',
+            successCb: (data) => { }
+        }).then((data) => {
+            
+        })
         globalClearCart(this.props.dispatch);
         addGuestToCart(this.props.dispatch);
     };

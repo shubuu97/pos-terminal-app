@@ -19,11 +19,13 @@ import DeleteIcons from '@material-ui/icons/DeleteOutline';
 import AddIcons from '@material-ui/icons/AddCircleOutline';
 import AddCircleOutline from '@material-ui/icons/AddCircleOutline';
 /* Redux Imports */
+import { connect } from 'react-redux';
 import { commonActionCreater } from '../../../Redux/commonAction';
 /* Component Imports */
 import CalculationSection from './CalculationSection'
 import DiscountDialogue from '../../Dialogues/DiscountDialogue/DiscountDialogue'
 /* Global Function import */
+import genericPostData from '../../../Global/dataFetch/genericPostData';
 import globalClearCart from '../../../Global/PosFunctions/clearCart';
 import addGuestToCart from '../../../Global/PosFunctions/addGuestToCart';
 import splitDotWithInt from '../../../Global/PosFunctions/splitDotWithInt'
@@ -187,6 +189,25 @@ class OrdersTab extends React.Component {
         }
     };
     handleClearCart = () => {
+        if (localStorage.getItem('cannabisStore')) {
+            let selectedCannabisCustomer = _get(this.props, 'customerQueue.customer', {})
+            selectedCannabisCustomer.status = 1
+            genericPostData({
+                dispatch: this.props.dispatch,
+                reqObj: selectedCannabisCustomer,
+                url: 'Update/CustomerQueue',
+                dontShowMessage: true,
+                constants: {
+                    init: 'CUSTOMER_UPDATE_INIT',
+                    success: 'CUSTOMER_UPDATE_SUCCESS',
+                    error: 'CUSTOMER_UPDATE_ERROR'
+                },
+                identifier: 'CUSTOMER_UPDATE',
+                successCb: (data) => { }
+            }).then((data) => {
+
+            })
+        }
         globalClearCart(this.props.dispatch);
         addGuestToCart(this.props.dispatch);
     };
@@ -374,7 +395,7 @@ class OrdersTab extends React.Component {
                         localStorage.getItem('cannabisStore') || false ?
                             <LinearProgress
                                 variant="buffer"
-                                value={_get(this.props, 'cart.cartItems', 0).length*10}
+                                value={_get(this.props, 'cart.cartItems', 0).length * 10}
                                 classes={
                                     _get(this.props, 'cart.cartItems', 0).length > 10 ?
                                         { barColorPrimary: classes.barColorPrimary, colorPrimary: classes.barColorPrimary } : {}
@@ -404,4 +425,12 @@ class OrdersTab extends React.Component {
     }
 }
 
-export default withStyles(styles)(OrdersTab);
+function mapStateToProps(state) {
+    let customer = _get(state, 'cart.customer');
+    let customerQueue = _get(state, 'customerQueue');
+    let cart = _get(state, 'cart');
+    let redemptionRules = _get(state, 'RedemptionRules.lookUpData.redemptionRule', {})
+    return { customer, cart, redemptionRules, customerQueue }
+}
+
+export default connect(mapStateToProps)(withStyles(styles)(OrdersTab))
