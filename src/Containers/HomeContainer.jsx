@@ -130,10 +130,7 @@ class HomeContainer extends React.Component {
         // ! Product Section Calculations
         let headerHeight = 70;
         let categoriesHeight = 0;
-        if (!localStorage.getItem('cannabisStore')) {
-            categoriesHeight = 90;
-        }
-        
+        categoriesHeight = 90;
         let productListHeight = windowHeight - (headerHeight + categoriesHeight + 25)
 
         // ! Checkout Section Calculations

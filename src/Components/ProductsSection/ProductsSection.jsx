@@ -595,14 +595,12 @@ class ProductsSection extends React.Component {
 
                 {/* Product Categories Component */}
                 {
-                    localStorage.getItem('cannabisStore') ?
-                        null :
-                        <Categories
-                            categoriesHeight={categoriesHeight}
-                            getHomeClicked={this.homeButtonClicked}
-                            getProductData={this.props.getProductData}
-                            {...this.props}
-                        />
+                    <Categories
+                        categoriesHeight={categoriesHeight}
+                        getHomeClicked={this.homeButtonClicked}
+                        getProductData={this.props.getProductData}
+                        {...this.props}
+                    />
                 }
 
 
