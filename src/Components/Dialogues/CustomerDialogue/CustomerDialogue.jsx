@@ -93,7 +93,7 @@ class CustomerDialogue extends React.Component {
                 <div
                     className={data.customer.id == this.state.selectedCustomer ? 'card relative card-active' : 'card relative'}
                     id={data.customer.id}
-                    onClick={this.state.iconSelected ? null : () => this.setState({ selectedCustomer: data.customer.id, customerData: data })}
+                    onClick={() => this.handleQueueItemClick(data)}
                     style={
                         this.state.selectedCustomer ?
                             { width: '90%' } : { width: '40%' }
@@ -111,12 +111,12 @@ class CustomerDialogue extends React.Component {
                             }
                             <span className='card-title'>{_get(data, 'customer.customer.firstName', '')} {_get(data, 'customer.customer.lastName', '')}</span>
                         </div>
-                        <DeleteIcons
+                        {/* <DeleteIcons
                             onMouseLeave={() => this.setState({ iconSelected: false })}
                             onMouseEnter={() => this.setState({ iconSelected: true })}
                             onClick={() => this.deleteCustomerFromQueue(data)}
                             style={{ color: '#ff000096', fontSize: '1.5em' }}
-                        />
+                        /> */}
                     </div>
                     <div className='flex-row justify-space-between'>
                         <div className='flex-column des'>
@@ -149,6 +149,10 @@ class CustomerDialogue extends React.Component {
                 {view}
             </div>
         )
+    }
+
+    handleQueueItemClick = (data) => {
+        this.setState({ selectedCustomer: data.customer.id, customerData: data })
     }
 
     handleChange = prop => event => {
