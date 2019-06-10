@@ -45,7 +45,6 @@ class CheckInForm extends React.Component {
     }
 
     handleAgeValidation = (date) => {
-        debugger
         let newDate = moment().diff(date, 'years')
         if (this.state.userType == 'Medical' && newDate < 21) {
             this.setState({ disableSubmit: true, ageError: true })
