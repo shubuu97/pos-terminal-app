@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from "moment";
 /* Lodash Imports */
 import _get from 'lodash/get';
 /* Material import */
@@ -21,6 +22,7 @@ class CheckInForm extends React.Component {
         this.state = {
             userType: 'Adult',
             loyaltyCheckbox: false,
+            disableSubmit: true,
         }
     }
 
@@ -36,15 +38,29 @@ class CheckInForm extends React.Component {
 
     handleDateChange = name => date => {
         this.setState({ [name]: date });
-    };
-
-    resetForm = () => {
+        if(name == 'dob'){
+            this.handleAgeValidation(date)
+        }
 
     }
 
+    handleAgeValidation = (date) => {
+        debugger
+        let newDate = moment().diff(date, 'years')
+        if (this.state.userType == 'Medical' && newDate < 21) {
+            this.setState({ disableSubmit: true, ageError: true })
+        }
+        else if (this.state.userType == 'Adult' && newDate < 18) {
+            this.setState({ disableSubmit: true, ageError: true })
+        }
+        else {
+            this.setState({ disableSubmit: false, ageError: false })
+        }
+    }
+
     addCustomerMoveInQueue = async () => {
-        let p1 =  this.addCustomerForm()
-        p1.then((data)=>{
+        let p1 = this.addCustomerForm()
+        p1.then((data) => {
             let customer = {
                 value: data
             }
@@ -140,8 +156,6 @@ class CheckInForm extends React.Component {
 
     }
 
-
-
     render() {
         return (
             <div className='flex-column'>
@@ -152,14 +166,16 @@ class CheckInForm extends React.Component {
                             className='mr-10'
                             variant={this.state.userType == 'Medical' ? 'contained' : 'outlined'}
                             color="primary"
-                            onClick={() => { this.setState({ userType: 'Medical' }) }}
+                            onClick={ () => { this.setState({ userType: 'Medical' }, () => {
+                                this.handleAgeValidation(this.state.dob)})}}
                         >
                             Medical
                         </Button>
                         <Button
                             variant={this.state.userType == 'Adult' ? 'contained' : 'outlined'}
                             color="primary"
-                            onClick={() => { this.setState({ userType: 'Adult' }) }}
+                            onClick={() => { this.setState({ userType: 'Adult' }, () => {
+                                this.handleAgeValidation(this.state.dob)})}}
                         >
                             Recreational
                         </Button>
@@ -213,7 +229,8 @@ class CheckInForm extends React.Component {
                         variant="outlined"
                         //openTo="year"
                         format="MM/DD/YYYY"
-                        //views={["year", "month", "date"]}
+                        error={this.state.ageError}
+                    //views={["year", "month", "date"]}
                     />
                     <div class='flex-column checkbox-style'>
                         <span>Loyalty Program</span>
@@ -261,7 +278,7 @@ class CheckInForm extends React.Component {
                                 variant="outlined"
                                 //openTo="year"
                                 format="MM/DD/YYYY"
-                                //views={["year", "month", "date"]}
+                            //views={["year", "month", "date"]}
                             />
                             <TextField
                                 id="outlined-name"
@@ -319,6 +336,7 @@ class CheckInForm extends React.Component {
                         className='mr-10'
                         variant='contained'
                         color="primary"
+                        disabled={this.state.disableSubmit}
                         onClick={this.addCustomerMoveInQueue}
                     >
                         Check In
@@ -330,7 +348,7 @@ class CheckInForm extends React.Component {
 }
 
 function mapStateToProps(state) {
-    
+
 }
 
 export default connect(mapStateToProps)(CheckInForm);

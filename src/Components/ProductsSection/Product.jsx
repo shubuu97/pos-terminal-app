@@ -84,13 +84,7 @@ class Product extends React.PureComponent {
                         id='productCard'
                         onClick={() => this.handleProductClick(data, cartItems, cart, 1, dispatch, index)}
                         index={this.props.index}
-                        key={this.props.key}
-                        style={
-                            _get(data, 'doc.inventory.quantity', 0) == 0 ?
-                                { background: 'rgba(0,0,0,0.05)' }
-                                :
-                                {}
-                        }>
+                        key={this.props.key}>
                         {
                             localStorage.getItem('cannabisStore') ?
                                 null :
@@ -125,6 +119,16 @@ class Product extends React.PureComponent {
                                     className="quick-view each-card-more"
                                     title="View Details">
                                     <InfoOutlined style={{ color: '#000' }} />
+                                </span>
+                                <span className="each-card-availabilty">
+                                    <div
+                                        className='indicator'
+                                        style={
+                                            _get(data, 'doc.inventory.quantity', 0) == 0 ?
+                                                { background: '#e600007a' }
+                                                :
+                                                { background: '#00ca008c' }
+                                        }></div>
                                 </span>
                             </div>
                         </div>

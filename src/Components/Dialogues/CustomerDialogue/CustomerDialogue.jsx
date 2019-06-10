@@ -121,17 +121,21 @@ class CustomerDialogue extends React.Component {
                     <div className='flex-row justify-space-between'>
                         <div className='flex-column des'>
                             <span className='des-title'>Age</span>
-                            <span>{_get(data, 'customer.age', '...')}</span>
+                            <span>{moment().diff(_get(data, 'customer.dob', 0), 'years')} yrs</span>
                         </div>
                         <div className='flex-column des'>
                             <span className='des-title'>Time</span>
-                            <span>{moment.utc(_get(data, 'checkIn.seconds', 0) * 1000).format('h:mm a')}</span>
+                            <span>{moment(_get(data, 'checkIn.seconds', 0) * 1000).format('h:mm a')}</span>
 
                         </div>
-                        <div className='flex-column des'>
-                            <span className='des-title'>Med Id</span>
-                            <span>{_get(data, 'customer.medicalLicenseNumber', '...')}</span>
-                        </div>
+                        {
+                            _get(data, 'customer.medicalLicenseNumber', false) ?
+                                <div className='flex-column des'>
+                                    <span className='des-title'>Med Id</span>
+                                    <span>{_get(data, 'customer.medicalLicenseNumber', '...')}</span>
+                                </div> : null
+                        }
+
                         <div className='flex-column des'>
                             <span className='des-title'>State</span>
                             <span>{_get(data, 'customer.billingAddress.state', '...')}</span>
@@ -357,7 +361,8 @@ class CustomerDialogue extends React.Component {
                                                 </div>
                                                 <div className='flex-column halfwidth pt-15 pb-10'>
                                                     <span className='info-heading'>Age</span>
-                                                    <span className='info-value'>{_get(this.state, 'customerData.customer.age', '...')}</span>
+                                                    <span className='info-value'>{moment().diff(_get(this.state, 'customerData.customer.dob', 0), 'years')} yrs
+                                                    </span>
                                                 </div>
                                                 <div className='flex-column halfwidth pt-15 pb-10'>
                                                     <span className='info-heading'>State</span>
