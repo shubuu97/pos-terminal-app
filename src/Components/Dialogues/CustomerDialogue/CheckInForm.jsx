@@ -127,7 +127,6 @@ class CheckInForm extends React.Component {
             dob: _get(this.state, 'dob', ''),
             loyalty: _get(this.state, 'loyaltyCheckbox', false)
         }
-        debugger
         if (this.state.userType == 'Medical') {
             reqObj.customerType = 1
             reqObj.tempMedicalLicense = _get(this.state, 'medLicense', false)
