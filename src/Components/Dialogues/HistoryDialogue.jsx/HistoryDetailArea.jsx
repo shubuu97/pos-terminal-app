@@ -12,6 +12,7 @@ import aobLogo from '../../../assets/images/aobLogodark.png';
 import { connect } from 'react-redux';
 import OrderPrintView from './OrderPrintView';
 import Dinero from 'dinero.js';
+import SyncIcon from '@material-ui/icons/Sync';
 
 let DineroInit = (amount, currency, precision) => (
     Dinero({amount:  parseInt(amount) || 0, currency: currency || 'USD', precision: precision || 2})
@@ -40,6 +41,17 @@ class HistoryDetailArea extends React.Component {
 
     showItemList = () => {
         let saleItems = _get(this.props, "selectedSaleTransaction.sale.saleItems", []);
+        const showSyncStatus  = status => {
+            let statusColour = ''
+            if(status == 0) {
+                statusColour = 'Yellow'
+            } else if(status == 1 || status == 2) {
+                statusColour = 'Green'
+            } else if(status == 3) {
+                statusColour = 'Red'
+            }
+            return <SyncIcon style={{color: statusColour}} />
+        }
         let saleItemResp = saleItems.map((saleItem, index) => {
             let totalDiscount = _get(saleItem,'cartDiscountTotal.amount',0) + _get(saleItem,'employeeDiscountTotal.amount',0) + _get(saleItem,'itemDiscountTotal.amount',0)
             return (<tr>
@@ -67,6 +79,7 @@ class HistoryDetailArea extends React.Component {
                 <td>{DineroInit(_get(saleItem,'itemSubTotal.amount',0)).toFormat('$0,0.00')}</td>
                 <td>{DineroInit(_get(saleItem,'itemTaxAmount.amount',0)).toFormat('$0,0.00')}</td>
                 <td>{DineroInit(_get(saleItem,'itemEffectiveTotal.amount',0)).toFormat('$0,0.00')}</td>
+                <td>{showSyncStatus(_get(saleItem,'itemPackage.syncStatus',0))}</td>
             </tr>)
         })
         return (
@@ -273,6 +286,7 @@ class HistoryDetailArea extends React.Component {
                                     <th>Subtotal</th>
                                     <th>Tax</th>
                                     <th>Total</th>
+                                    <th>Sync Status</th>
                                 </tr>
                             </thead>
                             <tbody>
