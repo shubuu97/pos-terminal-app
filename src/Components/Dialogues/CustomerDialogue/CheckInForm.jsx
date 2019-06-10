@@ -241,6 +241,7 @@ class CheckInForm extends React.Component {
                                 checked={this.state.loyaltyCheckbox}
                                 onChange={this.handleCheckboxChange('loyaltyCheckbox')}
                                 value="loyaltyCheckbox"
+                                color='secondary'
                             />
                             <span>Member</span>
                         </div>

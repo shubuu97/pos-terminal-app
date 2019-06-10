@@ -19,9 +19,9 @@ import Dialog from '@material-ui/core/Dialog';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import Snackbar from '@material-ui/core/Snackbar';
+
 /* Material Icons */
 import DeleteIcons from '@material-ui/icons/DeleteOutline';
 import HealingIcon from '@material-ui/icons/HealingOutlined';
@@ -31,6 +31,7 @@ import SpaIcon from '@material-ui/icons/SpaOutlined';
 import SearchIcon from '@material-ui/icons/SearchOutlined'
 /*  */
 import CheckInForm from './CheckInForm';
+import MySnackbarContentWrapper from './SnackbarContentGlobal'
 
 PouchDb.plugin(PAM);
 PouchDb.plugin(require('pouchdb-quick-search'));
@@ -206,10 +207,27 @@ class CustomerDialogue extends React.Component {
 
     addCustomerToQueue = (customer) => {
         let customerQueue = this.props.customerQueue
-        if (_find(customerQueue, customerQueue => customerQueue.id == customer.value.id)) {
-            console.log('Customer Already In Queue')
+        if (_find(customerQueue, customerQueue => customerQueue.customer.id == customer.value.id)) {
+            this.handleSnackbarClick('Customer Already in Queue');
         }
         else {
+            let dobDiff = moment().diff(_get(customer, 'value.dob'), 'years')
+            let medCarfDiff = moment().diff(_get(customer, 'value.medicalLicenseExpiration'), 'days')
+            debugger
+            if(customer.value.customerType == 1 ){
+                if(dobDiff<18){
+                    this.handleSnackbarClick(`Customer Illegal Age - ${dobDiff} yrs`);
+                    return
+                }
+                else if(medCarfDiff>=0){
+                    this.handleSnackbarClick(`Customer Medical Card Expired`);
+                    return
+                }
+            }
+            else if(customer.value.customerType == 2 && dobDiff<21){
+                this.handleSnackbarClick(`Customer Illegal Age - ${dobDiff} yrs`);
+                return
+            }
             let reqObj = {
                 storeId: localStorage.getItem('storeId'),
                 customerId: customer.value.id,
@@ -297,6 +315,14 @@ class CustomerDialogue extends React.Component {
         })
         this.props.handleClose();
 
+    }
+
+    handleSnackbarClick = (text) => {
+        this.setState({ open: true, snackbarText: text });
+    };
+
+    handleSnackbarClose = () => {
+        this.setState({ open: false, snackbarText: '' });
     }
 
     render() {
@@ -414,6 +440,18 @@ class CustomerDialogue extends React.Component {
                         </div>
                     </div>
                 </Dialog>
+                <Snackbar
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                    open={this.state.open}
+                    onClose={this.handleSnackbarClose}
+                    autoHideDuration={3000}
+                >
+                    <MySnackbarContentWrapper
+                        variant="error"
+                        className={classes.margin}
+                        message={this.state.snackbarText}
+                    />
+                </Snackbar>
             </div>
         );
     }
