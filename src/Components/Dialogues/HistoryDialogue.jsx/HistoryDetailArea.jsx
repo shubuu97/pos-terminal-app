@@ -15,7 +15,7 @@ import Dinero from 'dinero.js';
 import SyncIcon from '@material-ui/icons/Sync';
 
 let DineroInit = (amount, currency, precision) => (
-    Dinero({amount:  parseInt(amount) || 0, currency: currency || 'USD', precision: precision || 2})
+    Dinero({ amount: parseInt(amount) || 0, currency: currency || 'USD', precision: precision || 2 })
 )
 class HistoryDetailArea extends React.Component {
 
@@ -42,38 +42,47 @@ class HistoryDetailArea extends React.Component {
     showItemList = () => {
         let saleItems = _get(this.props, "selectedSaleTransaction.sale.saleItems", []);
         let saleItemResp = saleItems.map((saleItem, index) => {
-            let totalDiscount = _get(saleItem,'cartDiscountTotal.amount',0) + _get(saleItem,'employeeDiscountTotal.amount',0) + _get(saleItem,'itemDiscountTotal.amount',0)
+            let totalDiscount = _get(saleItem, 'cartDiscountTotal.amount', 0) + _get(saleItem, 'employeeDiscountTotal.amount', 0) + _get(saleItem, 'itemDiscountTotal.amount', 0)
             return (<tr>
-                <td style={{maxWidth: '70px'}}>{_get(saleItem, "product.name", '')}</td>
+                <td style={{ maxWidth: '70px' }}>
+                    <div><span>{_get(saleItem, "product.name", '')}</span></div>
+                    {
+                        localStorage.getItem('cannabisStore') ?
+                            <div><span style={{ fontSize: '0.8em', color: 'rgba(0,0,0,0.5)', width: '100%', wordWrap: 'break-word' }}>{_get(saleItem, "itemPackage.label", '')}</span></div> : null
+                    }
+                </td>
                 <td>
-                    <div><span>Ordered: </span><span>{_get(saleItem, "qty", 0)}</span></div>
-                    <div><span>Returned:</span> <span>{_get(saleItem, "returnQty", 0)}</span></div>
+                    {
+                        localStorage.getItem('cannabisStore') ?
+                            <div><span>Ordered: </span><span>{_get(saleItem, "itemPackage.quantity", 0)}</span></div> :
+                            <div><span>Ordered: </span><span>{_get(saleItem, "qty", 0)}</span></div>
+                    }
+                    {
+                        _get(saleItem, "returnQty", false) ?
+                            <div><span>Returned:</span> <span>{_get(saleItem, "returnQty", 0)}</span></div> : null
+                    }
                 </td>
-                <td>{DineroInit(_get(saleItem,'product.salePrice.amount',0)).toFormat('$0,0.00')}</td>
+                <td>{DineroInit(_get(saleItem, 'product.salePrice.amount', 0)).toFormat('$0,0.00')}</td>
                 <td>{DineroInit(totalDiscount).toFormat('$0,0.00')}<br />
-                
-                    {_get(saleItem,'cartDiscountTotal.amount',0) > 0 ? 
-                     <span>Cart: {DineroInit(_get(saleItem,'cartDiscountTotal.amount',0)).toFormat('$0,0.00')}</span> : ''
-                    }
 
-                    &nbsp;&nbsp;
-
-                    {_get(saleItem,'itemDiscountTotal.amount',0) > 0 ? <span>Item: {DineroInit(_get(saleItem,'itemDiscountTotal.amount',0)).toFormat('$0,0.00')}</span> : ''
+                    {_get(saleItem, 'cartDiscountTotal.amount', 0) > 0 ?
+                        <span>Cart: {DineroInit(_get(saleItem, 'cartDiscountTotal.amount', 0)).toFormat('$0,0.00')}</span> : ''
                     }
-                    
                     &nbsp;&nbsp;
-                    {_get(saleItem,'employeeDiscountTotal.amount',0) ? <span>Emp: {DineroInit(_get(saleItem,'employeeDiscountTotal.amount',0)).toFormat('$0,0.00')}</span> : ''}
-                
+                    {_get(saleItem, 'itemDiscountTotal.amount', 0) > 0 ? <span>Item: {DineroInit(_get(saleItem, 'itemDiscountTotal.amount', 0)).toFormat('$0,0.00')}</span> : ''
+                    }
+                    &nbsp;&nbsp;
+                    {_get(saleItem, 'employeeDiscountTotal.amount', 0) ? <span>Emp: {DineroInit(_get(saleItem, 'employeeDiscountTotal.amount', 0)).toFormat('$0,0.00')}</span> : ''}
                 </td>
-                <td>{DineroInit(_get(saleItem,'itemSubTotal.amount',0)).toFormat('$0,0.00')}</td>
-                <td>{DineroInit(_get(saleItem,'itemTaxAmount.amount',0)).toFormat('$0,0.00')}</td>
-                <td>{DineroInit(_get(saleItem,'itemEffectiveTotal.amount',0)).toFormat('$0,0.00')}</td>
-            </tr>)
+                <td>{DineroInit(_get(saleItem, 'itemSubTotal.amount', 0)).toFormat('$0,0.00')}</td>
+                <td>{DineroInit(_get(saleItem, 'itemTaxAmount.amount', 0)).toFormat('$0,0.00')}</td>
+                <td>{DineroInit(_get(saleItem, 'itemEffectiveTotal.amount', 0)).toFormat('$0,0.00')}</td>
+            </tr >)
         })
         return (
             <React.Fragment>
                 {saleItemResp}
-            </React.Fragment>
+            </React.Fragment >
 
         )
 
@@ -99,7 +108,7 @@ class HistoryDetailArea extends React.Component {
             case 5:
                 method = 'Loyalty'
                 break;
-                case 6:
+            case 6:
                 method = 'Declining Balance'
                 break;
         }
@@ -111,7 +120,7 @@ class HistoryDetailArea extends React.Component {
             <div className='flex-row justify-space-between mb-5'>
                 <span className='summary-key'>{this.paymentMethods(_get(payment, 'paymentMethod', 0))}</span>
                 <span className='summary-value'>
-                {(DineroInit(_get(payment, 'paymentAmount.amount', 0), _get(payment, 'paymentAmount.currency', 'USD'))).toFormat('$0,0.00')}
+                    {(DineroInit(_get(payment, 'paymentAmount.amount', 0), _get(payment, 'paymentAmount.currency', 'USD'))).toFormat('$0,0.00')}
                 </span>
             </div>
         ))
@@ -137,37 +146,37 @@ class HistoryDetailArea extends React.Component {
                     (_get(selectedOrder, 'sale.cartDiscountAmount.amount', 0) + _get(selectedOrder, 'sale.employeeDiscountAmount.amount', 0) + _get(selectedOrder, 'sale.itemDiscountAmount.amount', 0)) > 0 ?
                         <div className='flex-row justify-space-between mb-5'>
                             <span className='summary-key'>{`Discounts: `}</span>
-                            <span className='summary-value'>{(_get(selectedOrder, 'sale.cartDiscountAmount.currencyCode', '$') + (_get(selectedOrder, 'sale.cartDiscountAmount.amount', 0)/100 + _get(selectedOrder, 'sale.employeeDiscountAmount.amount', 0)/100 + _get(selectedOrder, 'sale.itemDiscountAmount.amount', 0)/100).toFixed(2))}</span>
+                            <span className='summary-value'>{(_get(selectedOrder, 'sale.cartDiscountAmount.currencyCode', '$') + (_get(selectedOrder, 'sale.cartDiscountAmount.amount', 0) / 100 + _get(selectedOrder, 'sale.employeeDiscountAmount.amount', 0) / 100 + _get(selectedOrder, 'sale.itemDiscountAmount.amount', 0) / 100).toFixed(2))}</span>
                         </div> : null
                 }
                 <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Tax: `}</span>
                     <span className='summary-value'>
-                    {(DineroInit(_get(selectedOrder, 'sale.totalTaxAmount.amount', 0), _get(selectedOrder, 'sale.totalTaxAmount.currency', 'USD'))).toFormat('$0,0.00')}
+                        {(DineroInit(_get(selectedOrder, 'sale.totalTaxAmount.amount', 0), _get(selectedOrder, 'sale.totalTaxAmount.currency', 'USD'))).toFormat('$0,0.00')}
                     </span>
                 </div>
                 <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Grand Total: `}</span>
                     <span className='summary-value'>
-                    {(DineroInit(_get(selectedOrder, 'sale.totalAmount.amount', 0), _get(selectedOrder, 'sale.totalAmount.currency', 'USD'))).toFormat('$0,0.00')}
+                        {(DineroInit(_get(selectedOrder, 'sale.totalAmount.amount', 0), _get(selectedOrder, 'sale.totalAmount.currency', 'USD'))).toFormat('$0,0.00')}
                     </span>
                 </div>
                 <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Returned Amount: `}</span>
                     <span className='summary-value'>
-                    {(DineroInit(this.calcReturnedAmountTotal(), _get(selectedOrder, 'sale.totalRefundAmount.currency', 'USD'))).toFormat('$0,0.00')}
+                        {(DineroInit(this.calcReturnedAmountTotal(), _get(selectedOrder, 'sale.totalRefundAmount.currency', 'USD'))).toFormat('$0,0.00')}
                     </span>
                 </div>
                 <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Total Paid: `}</span>
                     <span className='summary-value'>
-                    {(DineroInit(_get(selectedOrder, 'sale.totalAmountPaid.amount', 0), _get(selectedOrder, 'sale.totalAmountPaid.currency', 'USD'))).toFormat('$0,0.00')}
+                        {(DineroInit(_get(selectedOrder, 'sale.totalAmountPaid.amount', 0), _get(selectedOrder, 'sale.totalAmountPaid.currency', 'USD'))).toFormat('$0,0.00')}
                     </span>
                 </div>
                 <div className='flex-row justify-space-between mb-5'>
                     <span className='summary-key'>{`Change: `}</span>
                     <span className='summary-value'>
-                    {(DineroInit(_get(selectedOrder, 'sale.changeDue.amount', 0), _get(selectedOrder, 'sale.changeDue.currency', 'USD'))).toFormat('$0,0.00')}
+                        {(DineroInit(_get(selectedOrder, 'sale.changeDue.amount', 0), _get(selectedOrder, 'sale.changeDue.currency', 'USD'))).toFormat('$0,0.00')}
                     </span>
                 </div>
                 <div className="flex-column">
@@ -237,25 +246,25 @@ class HistoryDetailArea extends React.Component {
     render() {
         const { store } = this.props;
         let selectedOrder = _get(this.props, "selectedSaleTransaction", []);
-        let syncStatus =  _get(selectedOrder, 'sale.syncStatus', 0)
+        let syncStatus = _get(selectedOrder, 'sale.syncStatus', 0)
         return (
             <div className='history-main flex-column overflow-y'>
-                <span className='order-summary-title'>Order #{_get(selectedOrder,'sale.id','')}</span>
+                <span className='order-summary-title'>Order #{_get(selectedOrder, 'sale.id', '')}</span>
                 <div className="order-summary-header">
-                    <div style={{margin: '10px'}}>
+                    <div style={{ margin: '10px' }}>
                         <div>
                             <span className='summary-key'>{`Created Date: `}</span>
                             <span className='summary-value'>{moment(_get(this.props.selectedSaleTransaction, 'sale.saleCommitTimeStamp.seconds', 0) * 1000).format('MM/DD/YYYY h:mm a')}</span>
                         </div>
-                    
+
                         <div>
                             <span className='summary-key'>{`Served By: `}</span>
                             <span className='summary-value'>{_get(this.props.selectedSaleTransaction, 'operator.person.firstName', '') + ' ' + _get(this.props.selectedSaleTransaction, 'operator.person.lastName', '')}</span>
-                        </div> 
+                        </div>
                         <div>
                             <span className='summary-key'>{`Sync Status: `}</span>
-                            <span className='summary-value'>{syncStatus == 0 ? <span style={{color: 'yellow'}}>Pending</span> :  syncStatus == 1 || syncStatus == 2 ? <span style={{color: 'green'}}>Synced</span> :  <span style={{color: 'red'}}>Not Synced</span>}</span>
-                        </div> 
+                            <span className='summary-value'>{syncStatus == 0 ? <span style={{ color: '#d48c00' }}>Pending</span> : syncStatus == 1 || syncStatus == 2 ? <span style={{ color: 'green' }}>Synced</span> : <span style={{ color: 'red' }}>Not Synced</span>}</span>
+                        </div>
                     </div>
 
                     <div className='order-action-section flex-row'>
@@ -264,9 +273,9 @@ class HistoryDetailArea extends React.Component {
                             content={() => this.printElementRef}
                         />
                         <div className={this.everyQtyReturned() ? 'disable-button action-btn flex-row justify-center align-center' : ' action-btn flex-row justify-center align-center'} onClick={() => { this.setState({ openRefund: true }) }}>Refund</div>
-                    </div> 
+                    </div>
                 </div>
-                    
+
                 <div className="card history-order-details">
                     <div style={{ paddingLeft: '3%', paddingRight: '4%' }}>
                         <table className="mui-table mui-table--bordered">
@@ -287,7 +296,7 @@ class HistoryDetailArea extends React.Component {
                         </table>
                     </div>
                 </div>
-                <div className="flex-row justify-space-between" style={{marginTop: '20px'}}>
+                <div className="flex-row justify-space-between" style={{ marginTop: '20px' }}>
                     <div className='order-summary-section'>
                         <span className='order-summary-title'>Summary</span>
                         <div className='card order-summary'>
@@ -295,10 +304,10 @@ class HistoryDetailArea extends React.Component {
                         </div>
                     </div>
 
-                {/* Refund History Area */}
+                    {/* Refund History Area */}
                     <div className="refund-history-section">
-                        {_isEmpty(_get(selectedOrder.sale, 'returns')) ? '' : 
-                        <span className='order-summary-title'> Refund History</span>}
+                        {_isEmpty(_get(selectedOrder.sale, 'returns')) ? '' :
+                            <span className='order-summary-title'> Refund History</span>}
                         {_get(selectedOrder.sale, 'returns', []).map(returnData => {
                             return <div className='refund-detail-section'>
                                 <RefundHistory

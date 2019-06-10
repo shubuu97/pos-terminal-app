@@ -1033,13 +1033,12 @@ const updateTimeStampAndDbForHotProduct = async (res, dispatch, extraArgs) => {
     if (localStorage.getItem('IS_HOT_PRODUCT_ACTIVE') == 'true') {
         let hotProducts = localStorage.getItem('hotProducts') || [];
         hotProducts = JSON.parse(hotProducts);
-
         if (hotProducts.length > 0) {
             let result = { rows: [] }
             result.rows = hotProducts.map(hotProduct => {
                 let obj = {};
                 _set(obj, 'id', hotProduct._id)
-                _set(obj, 'doc', hotProduct);
+                _set(obj, 'doc.product.product', hotProduct);
                 return obj;
             });
             result.pagination = {}
@@ -1049,7 +1048,7 @@ const updateTimeStampAndDbForHotProduct = async (res, dispatch, extraArgs) => {
             result.pagination.pageNo = 1
             result.pagination.startVal = 1
             result.pagination.endVal = result.rows.length;
-            //dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+            dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
             return;
 
         }
@@ -1124,6 +1123,7 @@ const getCustomerUpdate = async (propsOfComp, dispatch) => {
     })
 }
 const pollingWrapper = async (propsOfComp, dispatch) => {
+    debugger;
     await getInventoryUpdate(propsOfComp, dispatch);
     await getCustomerUpdate(propsOfComp, dispatch);
     await getHotProductUpdate(propsOfComp, dispatch);

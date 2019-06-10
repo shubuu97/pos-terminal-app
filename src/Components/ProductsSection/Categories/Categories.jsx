@@ -216,7 +216,7 @@ class Categories extends Component {
         </div>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <div
-            style={{ width: '90%' }}
+            style={{ width: '100%' }}
             className="product-catogories"
           // style={{ height: this.props.categoriesHeight }}
           >
@@ -229,10 +229,10 @@ class Categories extends Component {
               );
             })}
           </div>
-          <div onClick={this.getHotProduct} style={this.state.hotActive ? { width: '10%', color: '#f57c7c', borderColor: '#f57c7c', background: '#fff4f4' } : { width: '10%' }} className="hot-icon" >
+          {/* <div onClick={this.getHotProduct} style={this.state.hotActive ? { width: '10%', color: '#f57c7c', borderColor: '#f57c7c', background: '#fff4f4' } : { width: '10%' }} className="hot-icon" >
             <Whatshot style={this.state.hotActive ? { width: '24px', height: '24px', color: '#f57c7c' } : { width: '24px', height: '24px', color: 'rgba(0,0,0,0.6)' }} />
             <span className='hot-text' style={this.state.hotActive ? { color: '#f57c7c', fontWeight: 'bold' } : {}}>Hot Products</span>
-          </div>
+          </div> */}
           {/* <Whatshot style={{ fontSize: '3em', color: 'red' }} /> */}
         </div>
       </div>

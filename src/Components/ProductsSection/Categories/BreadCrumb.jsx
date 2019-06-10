@@ -54,7 +54,7 @@ class CustomizedBreadcrumbs extends React.Component {
 
   componentDidUpdate() {
     if (this.props.resetCategory == true) {
-      this.props.getHotProductFromPouch()
+      // this.props.getHotProductFromPouch()
       this.setState({ clearCategory: true });
       this.props.dispatch(commonActionCreater(false, 'RESET_CATEGORY'));
     }
