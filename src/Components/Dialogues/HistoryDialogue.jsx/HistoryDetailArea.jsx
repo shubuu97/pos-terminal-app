@@ -41,17 +41,6 @@ class HistoryDetailArea extends React.Component {
 
     showItemList = () => {
         let saleItems = _get(this.props, "selectedSaleTransaction.sale.saleItems", []);
-        const showSyncStatus  = status => {
-            let statusColour = ''
-            if(status == 0) {
-                statusColour = 'Yellow'
-            } else if(status == 1 || status == 2) {
-                statusColour = 'Green'
-            } else if(status == 3) {
-                statusColour = 'Red'
-            }
-            return <SyncIcon style={{color: statusColour}} />
-        }
         let saleItemResp = saleItems.map((saleItem, index) => {
             let totalDiscount = _get(saleItem,'cartDiscountTotal.amount',0) + _get(saleItem,'employeeDiscountTotal.amount',0) + _get(saleItem,'itemDiscountTotal.amount',0)
             return (<tr>
@@ -79,7 +68,6 @@ class HistoryDetailArea extends React.Component {
                 <td>{DineroInit(_get(saleItem,'itemSubTotal.amount',0)).toFormat('$0,0.00')}</td>
                 <td>{DineroInit(_get(saleItem,'itemTaxAmount.amount',0)).toFormat('$0,0.00')}</td>
                 <td>{DineroInit(_get(saleItem,'itemEffectiveTotal.amount',0)).toFormat('$0,0.00')}</td>
-                <td>{showSyncStatus(_get(saleItem,'itemPackage.syncStatus',0))}</td>
             </tr>)
         })
         return (
@@ -249,6 +237,7 @@ class HistoryDetailArea extends React.Component {
     render() {
         const { store } = this.props;
         let selectedOrder = _get(this.props, "selectedSaleTransaction", []);
+        let syncStatus =  _get(selectedOrder, 'sale.syncStatus', 0)
         return (
             <div className='history-main flex-column overflow-y'>
                 <span className='order-summary-title'>Order #{_get(selectedOrder,'sale.id','')}</span>
@@ -262,6 +251,10 @@ class HistoryDetailArea extends React.Component {
                         <div>
                             <span className='summary-key'>{`Served By: `}</span>
                             <span className='summary-value'>{_get(this.props.selectedSaleTransaction, 'operator.person.firstName', '') + ' ' + _get(this.props.selectedSaleTransaction, 'operator.person.lastName', '')}</span>
+                        </div> 
+                        <div>
+                            <span className='summary-key'>{`Sync Status: `}</span>
+                            <span className='summary-value'>{syncStatus == 0 ? <span style={{color: 'yellow'}}>Pending</span> :  syncStatus == 1 || syncStatus == 2 ? <span style={{color: 'green'}}>Synced</span> :  <span style={{color: 'red'}}>Not Synced</span>}</span>
                         </div> 
                     </div>
 
@@ -286,7 +279,6 @@ class HistoryDetailArea extends React.Component {
                                     <th>Subtotal</th>
                                     <th>Tax</th>
                                     <th>Total</th>
-                                    <th>Sync Status</th>
                                 </tr>
                             </thead>
                             <tbody>
