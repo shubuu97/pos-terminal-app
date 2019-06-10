@@ -167,7 +167,7 @@ class PackageSelect extends React.Component {
     };
     render() {
         return (
-            <div>
+            <div style={{width: '60%'}}>
                 <Select
                     value={this.state.selectedOption}
                     onChange={this.handleChange}

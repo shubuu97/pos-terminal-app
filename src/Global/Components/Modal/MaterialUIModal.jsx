@@ -5,6 +5,7 @@ import _get from 'lodash/get';
 import _set from 'lodash/set';
 import _isArray from 'lodash/isArray';
 import _find from 'lodash/find';
+import _isEmpty from 'lodash/isEmpty'
 /* Redux Imports */
 import { reduxForm, Field, FormSection } from 'redux-form';
 /* Material Imports */
@@ -133,7 +134,7 @@ class MaterialUIModal extends React.Component {
                                     <div className='expanded-options flex-row justify-space-between'>
                                         {
                                             this.props.cannabisRetailer ?
-                                                <div style={{ width: '80%' }}>
+                                                <div className='flex-row justify-space-between align-center' style={{ width: '100%' }}>
                                                     <ReactSelect
                                                         name='Select Package'
                                                         dispatch={this.props.dispatch}
@@ -141,7 +142,7 @@ class MaterialUIModal extends React.Component {
                                                         handleSelectedPackage={this.handleSelectedPackage}
                                                     />
                                                     {
-                                                        this.state.packageSelected ?
+                                                        !_isEmpty(this.state.packageSelected) ?
                                                             <div className="mt-10 mbottom-10">
                                                                 <Button className='btnmodalprimary' variant="outlined" onClick={() => this.addToCart(this.props.index, this.state.qty, this.state.fromInfoView)}>Add To Cart</Button>
                                                             </div> :
