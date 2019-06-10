@@ -142,7 +142,9 @@ class MaterialUIModal extends React.Component {
                                                     />
                                                     {
                                                         this.state.packageSelected ?
-                                                            <Button className='btnmodalprimary' variant="outlined" onClick={() => this.addToCart(this.props.index, this.state.qty, this.state.fromInfoView)}>Add To Cart</Button> : 
+                                                            <div className="mt-10 mbottom-10">
+                                                                <Button className='btnmodalprimary' variant="outlined" onClick={() => this.addToCart(this.props.index, this.state.qty, this.state.fromInfoView)}>Add To Cart</Button>
+                                                            </div> :
                                                             null
                                                     }
                                                 </div>
