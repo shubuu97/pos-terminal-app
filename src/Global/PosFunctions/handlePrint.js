@@ -14,11 +14,11 @@ const HandlePrint = (props) => {
     let stSubTotal = 0
     let ohSubTotal = 0
     const saleTransaction = _get(props, 'itemList', []).map(item => {
-
+        console.log(item, 'ilgydygkjvhfugjk')
         stSubTotal += _get(item,'subTotal',DineroInit()).getAmount()
         return (
             <div style={{ display: 'flex', flex: '1', paddingTop: "10px", paddingBottom: "10px", borderBottom: 'dotted 1px #9e9e9e' }}>
-                <div style={{ width: "35%" }}>{_get(item, 'doc.product.isGiftCard', false) ? 'Gift Card' : _get(item, 'doc.product.name', ' ')}</div>
+                <div style={{ width: "35%" }}>{_get(item, 'doc.product.isGiftCard', false) ? 'Gift Card' : _get(item, 'doc.product.name', '')}<br /><span style={{fontSize: '10px'}}>{_get(item,'packages[0].label')}</span></div>
                 <div style={{ width: "10%", textAlign: "center" }}>{_get(item, 'qty', '')}</div>
                 <div style={{ width: "30%", textAlign: "right" }}>{DineroInit(_get(item, 'doc.product.salePrice.amount', 0)).toFormat('$0,0.00')}<br />
                     <div style={{ fontSize: "9px" }}>
@@ -71,7 +71,7 @@ const HandlePrint = (props) => {
         }
         return (
             <div style={{ display: 'flex', flex: '1', paddingTop: "10px", paddingBottom: "10px", borderBottom: 'dotted 1px #9e9e9e' }}>
-                <div style={{ width: "35%", paddingRight: '10px' }}>{_isEmpty(item.giftCard) ? _get(item, 'product.name', '') : 'Gift Card'}</div>
+                <div style={{ width: "35%", paddingRight: '10px' }}>{_isEmpty(item.giftCard) ? _get(item, 'product.name', ''): 'Gift Card'}<br /><span style={{fontSize: '10px'}}>{_get(item,'itemPackage.label','')}</span></div>
                 <div style={{ width: "10%", textAlign: "center" }}>{_get(item, 'qty', '')}</div>
                 <div style={{ width: "30%", textAlign: "right" }}>{_isEmpty(item.giftCard) ? '$'+((_get(item, 'product.salePrice.amount', 0))/100).toFixed(2) : (_get(item, 'giftCard.value.amount', 0)/100).toFixed(2)}<br />
                     <div style={{ fontSize: "9px" }}>

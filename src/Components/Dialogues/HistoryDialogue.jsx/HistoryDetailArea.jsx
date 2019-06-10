@@ -12,6 +12,7 @@ import aobLogo from '../../../assets/images/aobLogodark.png';
 import { connect } from 'react-redux';
 import OrderPrintView from './OrderPrintView';
 import Dinero from 'dinero.js';
+import SyncIcon from '@material-ui/icons/Sync';
 
 let DineroInit = (amount, currency, precision) => (
     Dinero({amount:  parseInt(amount) || 0, currency: currency || 'USD', precision: precision || 2})
@@ -236,6 +237,7 @@ class HistoryDetailArea extends React.Component {
     render() {
         const { store } = this.props;
         let selectedOrder = _get(this.props, "selectedSaleTransaction", []);
+        let syncStatus =  _get(selectedOrder, 'sale.syncStatus', 0)
         return (
             <div className='history-main flex-column overflow-y'>
                 <span className='order-summary-title'>Order #{_get(selectedOrder,'sale.id','')}</span>
@@ -249,6 +251,10 @@ class HistoryDetailArea extends React.Component {
                         <div>
                             <span className='summary-key'>{`Served By: `}</span>
                             <span className='summary-value'>{_get(this.props.selectedSaleTransaction, 'operator.person.firstName', '') + ' ' + _get(this.props.selectedSaleTransaction, 'operator.person.lastName', '')}</span>
+                        </div> 
+                        <div>
+                            <span className='summary-key'>{`Sync Status: `}</span>
+                            <span className='summary-value'>{syncStatus == 0 ? <span style={{color: 'yellow'}}>Pending</span> :  syncStatus == 1 || syncStatus == 2 ? <span style={{color: 'green'}}>Synced</span> :  <span style={{color: 'red'}}>Not Synced</span>}</span>
                         </div> 
                     </div>
 
