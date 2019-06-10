@@ -46,10 +46,10 @@ class CheckInForm extends React.Component {
 
     handleAgeValidation = (date) => {
         let newDate = moment().diff(date, 'years')
-        if (this.state.userType == 'Medical' && newDate < 21) {
+        if (this.state.userType == 'Medical' && newDate < 18) {
             this.setState({ disableSubmit: true, ageError: true })
         }
-        else if (this.state.userType == 'Adult' && newDate < 18) {
+        else if (this.state.userType == 'Adult' && newDate < 21) {
             this.setState({ disableSubmit: true, ageError: true })
         }
         else {
@@ -95,6 +95,7 @@ class CheckInForm extends React.Component {
             customerType: 1, // MEDICAL = 1; ADULT = 2;
             gender: 1, // Male=1; Female=2; Other=3
             dob: '', // MM/DD/YYYY format string
+            loyalty: true,
 
             //MEDICAL CANNABIS CUSTOMER
             tempMedicalLicense: true,
@@ -124,7 +125,9 @@ class CheckInForm extends React.Component {
                 state: _get(this.state, 'State', '')
             },
             dob: _get(this.state, 'dob', ''),
+            loyalty: _get(this.state, 'loyaltyCheckbox', false)
         }
+        debugger
         if (this.state.userType == 'Medical') {
             reqObj.customerType = 1
             reqObj.tempMedicalLicense = _get(this.state, 'medLicense', false)
@@ -246,19 +249,6 @@ class CheckInForm extends React.Component {
                 {
                     this.state.userType == 'Medical' ?
                         <div className='pad-10 flex-row flex-wrap justify-space-between med-customer-form'>
-
-                            <div class='flex-column checkbox-style'>
-                                <span>Med License/Card</span>
-                                <div>
-                                    <Checkbox
-                                        checked={this.state.medLicense}
-                                        onChange={this.handleCheckboxChange('medLicense')}
-                                        value="medLicense"
-                                    />
-                                    <span>Temporary</span>
-                                </div>
-                            </div>
-
                             <TextField
                                 id="outlined-name"
                                 label="Med Card Number"
@@ -300,18 +290,6 @@ class CheckInForm extends React.Component {
                                 variant="outlined"
                                 style={{ width: '48%' }}
                             />
-                            <div class='flex-column checkbox-style'>
-                                <span>Primary Med Customer</span>
-                                <div>
-                                    <Checkbox
-                                        checked={this.state.primaryMed}
-                                        onChange={this.handleCheckboxChange('primaryMed')}
-                                        value="primaryMed"
-                                        color='primary'
-                                    />
-                                    <span>Yes, they're Primary</span>
-                                </div>
-                            </div>
                         </div> : null
                 }
                 <div className='fwidth flex-row justify-flex-end form-actions '>
