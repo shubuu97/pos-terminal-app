@@ -289,7 +289,7 @@ const cartItem = (state = {
 
                 // ****** Cannabis Limit Calculations ****** //
                 if (localStorage.getItem('cannabisStore')) {
-                    limitCalculations(item, cannabisCartLimits, cannabisCartContent)
+                    limitCalculations(item, cannabisCartContent)
                 }
 
                 //regularTotalMoney = regularTotalMoney.add(item.itemRegularTotalMoney);
@@ -305,6 +305,8 @@ const cartItem = (state = {
             }
             let allowedCartDiscount = Math.round((allowedCartDiscountMoney.getAmount() / discountableMoney.getAmount()) * 100)
             let allowedLoyaltyPoints = parseInt(allowedLoyaltyDiscountMoney.getAmount() / (parseFloat(redeemLoyaltyRules.redemptionMultiplier) * 100))
+
+            let cannabisCartLimitPercentage = ((cannabisCartContent.concentrateLimit/cannabisCartLimits.concentrateLimit)*100)+((cannabisCartContent.plantCountLimit/cannabisCartLimits.plantCountLimit)*100)+((cannabisCartContent.weightLimit/cannabisCartLimits.weightLimit)*100)
 
             return Object.assign({}, state, {
                 cartItems: _get(action, 'data.cartItems', _get(action, 'data.prevCart.cartItem', [])),
@@ -324,6 +326,7 @@ const cartItem = (state = {
                 allowedLoyaltyPoints,
                 loyaltyPoints,
                 loyaltyDiscountMoney,
+                cannabisCartLimitPercentage
             });
 
             break;

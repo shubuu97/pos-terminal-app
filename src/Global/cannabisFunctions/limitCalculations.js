@@ -4,30 +4,35 @@ import _forEach from 'lodash/forEach';
 /* Redux Import */
 import { commonActionCreater } from '../../Redux/commonAction';
 
-const limitCalculations = (cartItem, cannabisLimits, cannabisCartContent) => {
-    console.log(cartItem, cannabisLimits, 'Mayuk - cartItem, cannabisTaxes')
+const limitCalculations = (cartItem, cannabisCartContent) => {
     let cannabisContent = _get(cartItem, 'doc.product.cannabisContent', 0)
     let packageQty = _get(cartItem, 'packages[0].quantity', 0)
     let cannabisWeight = cannabisContent * packageQty
-    let productType = _get(cartItem, 'doc.product.productType', 0)
+    let limitType = _get(cartItem, 'doc.product.limitType', 0)
 
     // * ProductType Enums in backend
-    // enum ProductType {
+    // enum limitType {
     //     NON_CANNABIS = 0;
-    //     CANNABIS = 1;
-    //     MEDICAL_ONLY_CANNABIS = 2;
+    //     Concentrate = 1;
+    //     Weight = 2;
+    //     plant = 3;
     // }
-
     _forEach(cannabisCartContent, (value, key) => {
         switch (key) {
             case 'concentrateLimit':
-                if(productType)
+                if (limitType == 1) {
+                    cannabisCartContent.concentrateLimit += cannabisWeight
+                }
                 break;
             case 'weightLimit':
-
+                if (limitType == 2) {
+                    cannabisCartContent.weightLimit += cannabisWeight
+                }
                 break;
             case 'plantCountLimit':
-
+                if (limitType == 3) {
+                    cannabisCartContent.plantCountLimit += cannabisWeight
+                }
                 break;
         }
     });

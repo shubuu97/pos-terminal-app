@@ -123,7 +123,7 @@ class FullWidthTabs extends React.Component {
             disabled = true
         }
         if (localStorage.getItem('cannabisStore')) {
-            if (_get(this.props, 'cart.cartItems', 0).length > 10) {
+            if (_get(this.props, 'cart.cannabisCartLimitPercentage', 0) > 100) {
                 disabled = true
             }
             if(Object.entries(this.props.cannabisCustomer).length === 0){
