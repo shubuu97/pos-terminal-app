@@ -47,7 +47,10 @@ class SyncContainer extends Component {
             productPage: 1,
             sizePerPage: 250,
             taskCompletedCount: 0,
-            fixedTask: 5  //Count of static of task
+            //!mute hot product
+            //fixedTask: 5  //Count of static of task
+            fixedTask: 4  //Count of static of task
+
         };
     }
     async componentDidMount() {
@@ -64,10 +67,12 @@ class SyncContainer extends Component {
         if (invetoryUpdateTime) {
             this.getInventoryUpdate(invetoryUpdateTime);
             this.getCustomerUpdate(customerUpdateTime);
-            this.pollHotProduct();
+            //!mute hot product
+            // this.pollHotProduct();
         }
         else {
-            this.pollHotProduct();
+            //!mute hot product
+            // this.pollHotProduct();
             this.pollProduct();
             this.pollCustomer();
             this.pollCategory();
@@ -105,7 +110,7 @@ class SyncContainer extends Component {
                 _id: 'invetoryUpdateTime',
                 _rev: data._rev,
                 invetoryUpdateTime: tempInvetoryUpdateTime,
-            }).catch(err => {  });
+            }).catch(err => { });
         });
 
 
@@ -266,7 +271,7 @@ class SyncContainer extends Component {
             ],
             build: true
         }).catch(err => {
-            if(err.status==500){
+            if (err.status == 500) {
                 return
             }
             this.makingIndexOnProductData()
@@ -279,7 +284,7 @@ class SyncContainer extends Component {
                 'product.category3'],
             build: true
         }).catch(err => {
-            if(err.status==500){
+            if (err.status == 500) {
                 return
             }
             this.makingIndexOnProductData()
@@ -291,12 +296,12 @@ class SyncContainer extends Component {
                 name: 'upcIndex',
                 type: 'string'
             }
-        }).catch(err=>{
-            if(err.status==500){
+        }).catch(err => {
+            if (err.status == 500) {
                 return
             }
             this.makingIndexOnProductData()
-             });
+        });
         // await Promise.all([p1, p2, p3]).catch(err=>{
         //     debugger;
         // });
