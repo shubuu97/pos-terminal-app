@@ -38,10 +38,12 @@ class Product extends React.PureComponent {
 
     viewProductDetails = (index) => {
         this.setState({ openModal: true })
+        this.props.isProductModalOpen(true)
     }
 
     onClose = () => {
         this.setState({ openModal: false })
+        this.props.isProductModalOpen(false)
     }
 
     handleProductClick = (data, cartItems, cart, qty, dispatch, index) => {

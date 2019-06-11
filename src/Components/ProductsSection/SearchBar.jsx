@@ -38,7 +38,7 @@ class CustomizedInputBase extends React.Component {
   }
 
   componentDidUpdate() {
-    if (this.props.isOpenProduct && !this.props.isOpenHistoryDialogue && !this.props.isCustomerTabOpen && !this.props.isGiftCardModelOpen && !this.props.openCustomerDialogue) {
+    if (this.props.isOpenProduct && !this.props.isOpenHistoryDialogue && !this.props.isCustomerTabOpen && !this.props.isGiftCardModelOpen && !this.props.openCustomerDialogue && !this.props.productModalOpen) {
       this.focusInput.focus()
     }
   }
