@@ -81,7 +81,8 @@ class CheckInForm extends React.Component {
             plantCount: '',
             gramLimit: '',
             loyaltyCheckbox: false,
-            mmrExp: ''
+            mmrExp: moment(new Date()),
+            documentUrl: ''
         })
     }
 
@@ -183,6 +184,7 @@ class CheckInForm extends React.Component {
         else {
             reqObj.customerType = 2
         }
+        this.clearFormValues()
 
         return genericPostData({
             dispatch: this.props.dispatch,
@@ -197,7 +199,6 @@ class CheckInForm extends React.Component {
             identifier: 'ADD_NEW_CANNABIS_CUSTOMER',
             successCb: (data) => { }
         }).then((data) => {
-            this.clearFormValues()
             return data
         })
     }
