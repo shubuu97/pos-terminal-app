@@ -6,6 +6,7 @@ import { stat } from 'fs';
 /* Global Imports */
 import splitDotWithInt from '../Global/PosFunctions/splitDotWithInt'
 import taxCalculations from '../Global/cannabisFunctions/taxCalculations';
+import limitCalculations from '../Global/cannabisFunctions/limitCalculations';
 
 // * Init method for Dinero
 const DineroFunc = (amount) => {
@@ -54,6 +55,11 @@ const cartItem = (state = {
                 cannabisTaxes: action.data,
             });
             break;
+        case 'GET_STORE_DATA_FOR_CART':
+            return Object.assign({}, state, {
+                storeData: action.data,
+            });
+            break;
         case 'CART_ITEM_LIST':
             let maxAllowedDiscountMoney = DineroFunc(0)
             const employeeDiscountPercent = _get(state, 'empDiscount', 0);
@@ -86,7 +92,27 @@ const cartItem = (state = {
             }
             let discountableItemsIndex = []
             let discountableItems = []
-            let cannabisTaxes = _get(state, 'cannabisTaxes', {} )
+
+            // ! Cannabis Specific Declarations
+            let cannabisTaxes = _get(state, 'cannabisTaxes', {})
+            let cannabisCartLimits = {}
+            if (localStorage.getItem('cannabisStore') && _get(state, 'customer', false)) {
+                let cannabisCustomerType = _get(state, 'customer.customerType', 0)
+                if (cannabisCustomerType == 1) {
+                    cannabisCartLimits = _get(state, 'storeData.medLimit', {})
+                }
+                else if (cannabisCustomerType == 2) {
+                    cannabisCartLimits = _get(state, 'storeData.recLimit', {})
+                }
+                if (_get(state, 'customer.purchaseLimits', false)) {
+                    cannabisCartLimits = _get(state, 'customer.purchaseLimits', {})
+                }
+            }
+            let cannabisCartContent = {
+                concentrateLimit: 0,
+                plantCountLimit: 0,
+                weightLimit: 0,
+            }
 
             _get(action, 'data.cartItems', _get(action, 'data.prevCart.cartItems', [])).forEach((item, index) => {
                 item.itemSalesPriceMoney = DineroFunc((_get(item, 'doc.product.salePrice.amount', 0)))
@@ -246,8 +272,6 @@ const cartItem = (state = {
                     if (localStorage.getItem('cannabisStore')) {
                         itemTaxPercent = Number(taxCalculations(item, cannabisTaxes))
                         item.itemTaxAmount = item.subTotal.percentage(itemTaxPercent)
-                        console.log(item.itemTaxAmount.getAmount(), 'Mayuk - Tax Cannabis')
-                        debugger
                     }
                     else {
                         let federalTaxRate = localStorage.getItem('federalTaxRate')
@@ -262,6 +286,11 @@ const cartItem = (state = {
                 }
 
                 item.itemEffectiveTotal = item.subTotal.add(item.itemTaxAmount);
+
+                // ****** Cannabis Limit Calculations ****** //
+                if (localStorage.getItem('cannabisStore')) {
+                    limitCalculations(item, cannabisCartLimits, cannabisCartContent)
+                }
 
                 //regularTotalMoney = regularTotalMoney.add(item.itemRegularTotalMoney);
                 cartQty += _get(item, 'qty', 0);

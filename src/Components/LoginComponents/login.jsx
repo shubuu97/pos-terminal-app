@@ -45,6 +45,7 @@ class Login extends React.Component {
         this.setState({ isFetching: false });
         let decodeToken = jwtDecode(_get(data, 'token'));
         this.props.dispatch(commonActionCreater(decodeToken, 'LOGIN_CREDS_DECODE'));
+        this.props.dispatch(commonActionCreater(decodeToken.Store, 'GET_STORE_DATA_FOR_CART'))
         //todo encryption to be 
         localStorage.setItem('Token', _get(data, 'token'));
         localStorage.setItem('userPin', _get(decodeToken, 'Operator.loginPin', ''));
