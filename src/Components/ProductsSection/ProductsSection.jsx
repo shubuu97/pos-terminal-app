@@ -88,30 +88,52 @@ class ProductsSection extends React.Component {
     }
 
     searchWithElastic = (searchText) => {
+        let customerType = _get(this.props, 'customer.customerType');
+
+        let filters = [{ "field": "retailerId", "value": localStorage.getItem('retailerId') }]
+        if (customerType == 1) {
+            filters = [...filters,
+            { 'field': 'productType', 'value': '0' },
+            { 'field': 'productType', 'value': '1' },
+            { 'field': 'productType', 'value': '2' },
+
+            ]
+        }
+        else if (customerType == 2) {
+            filters = [
+                ...filters,
+                { 'field': 'productType', 'value': '0' },
+                { 'field': 'productType', 'value': '1' },
+            ]
+        }
         let reqObj = {
             request: {
                 "text": searchText,
                 "offset": 0,
                 "limit": 39,
-                "filters": [
-                    {
-                        "field": "retailerId",
-                        "value": localStorage.getItem('retailerId')
-                    }
-                ]
+                "filters": filters
             }
         }
+
+        // enum ProductType {
+        //     NON_CANNABIS = 0;
+        //     CANNABIS = 1;
+        //     MEDICAL_ONLY_CANNABIS = 2;
+        // }
+
         if (searchText == '' || searchText.length > 2) {
             genericPostData({
                 dispatch: this.props.dispatch,
                 reqObj: reqObj,
                 url: 'Search/Inventory',
                 dontShowMessage: true,
+                filters,
                 constants: {
                     init: 'ELASTIC_SEARCH_PRODUCTS_INIT',
                     success: 'ELASTIC_SEARCH_PRODUCTS_SUCCESS',
                     error: 'ELASTIC_SEARCH_PRODUCTS_ERROR'
                 },
+
                 identifier: 'ELASTIC_SEARCH_PRODUCTS_RULES',
                 successCb: (data) => { }
             }).then((data) => {
@@ -310,17 +332,30 @@ class ProductsSection extends React.Component {
         // ! MAYUK - cleanup required in this function
         this.setState({ disable: true, productLoading: true })
         console.log(result, 'getNextCannabisProducts')
+        let customerType = _get(this.props, 'customer.customerType');
+
+        let filters = [{ "field": "retailerId", "value": localStorage.getItem('retailerId') }]
+        if (customerType == 1) {
+            filters = [...filters,
+            { 'field': 'productType', 'value': '0' },
+            { 'field': 'productType', 'value': '1' },
+            { 'field': 'productType', 'value': '2' },
+
+            ]
+        }
+        else if (customerType == 2) {
+            filters = [
+                ...filters,
+                { 'field': 'productType', 'value': '0' },
+                { 'field': 'productType', 'value': '1' },
+            ]
+        }
         let reqObj = {
             request: {
                 "text": '',
                 "offset": (result.pagination.pageNo - 1) * 39,
                 "limit": 39,
-                "filters": [
-                    {
-                        "field": "retailerId",
-                        "value": localStorage.getItem('retailerId')
-                    }
-                ]
+                "filters": filters
             }
         }
         genericPostData({
@@ -328,6 +363,7 @@ class ProductsSection extends React.Component {
             reqObj: reqObj,
             url: 'Search/Inventory',
             dontShowMessage: true,
+            filters,
             constants: {
                 init: 'ELASTIC_SEARCH_PRODUCTS_INIT',
                 success: 'ELASTIC_SEARCH_PRODUCTS_SUCCESS',
@@ -635,7 +671,7 @@ const mapStateToProps = state => {
     let endVal = _get(productList, 'lookUpData.pagination.endVal', '')
     let paymentMethods = _get(state, 'storeData.lookUpData.store.paymentMethods', [])
     let resetProduct = _get(state, 'resetProduct.lookUpData')
-
+    let customer = _get(state, 'customerQueue.customer.customer')
     return {
         cart,
         productCount,
@@ -649,7 +685,8 @@ const mapStateToProps = state => {
         endVal,
         paymentMethods,
         resetProduct,
-        isCustomerTabOpen
+        isCustomerTabOpen,
+        customer
     }
 }
 
