@@ -24,12 +24,14 @@ import Snackbar from '@material-ui/core/Snackbar';
 
 /* Material Icons */
 import DeleteIcons from '@material-ui/icons/DeleteOutline';
+import EditIcon from '@material-ui/icons/EditOutlined';
 import HealingIcon from '@material-ui/icons/HealingOutlined';
 import AddLocationIcon from '@material-ui/icons/AddLocationOutlined';
 import LocalHospitalIcon from '@material-ui/icons/LocalHospitalOutlined';
 import SpaIcon from '@material-ui/icons/SpaOutlined';
 import SearchIcon from '@material-ui/icons/SearchOutlined'
 /*  */
+import CustomerShow from './CustomerShow';
 import CheckInForm from './CheckInForm';
 import MySnackbarContentWrapper from './SnackbarContentGlobal'
 
@@ -61,6 +63,7 @@ class CustomerDialogue extends React.Component {
         value: '',
         searchText: '',
         iconSelected: false,
+        showEditForm: false
     };
 
     componentDidMount() {
@@ -153,7 +156,7 @@ class CustomerDialogue extends React.Component {
     }
 
     handleQueueItemClick = (data) => {
-        this.setState({ selectedCustomer: data.customer.id, customerData: data })
+        this.setState({ selectedCustomer: data.customer.id, customerData: data, showEditForm: false })
     }
 
     handleChange = prop => event => {
@@ -213,18 +216,17 @@ class CustomerDialogue extends React.Component {
         else {
             let dobDiff = moment().diff(_get(customer, 'value.dob'), 'years')
             let medCarfDiff = moment().diff(_get(customer, 'value.medicalLicenseExpiration'), 'days')
-            debugger
-            if(customer.value.customerType == 1 ){
-                if(dobDiff<18){
+            if (customer.value.customerType == 1) {
+                if (dobDiff < 18) {
                     this.handleSnackbarClick(`Customer Illegal Age - ${dobDiff} yrs`);
                     return
                 }
-                else if(medCarfDiff>=0){
+                else if (medCarfDiff >= 0) {
                     this.handleSnackbarClick(`Customer Medical Card Expired`);
                     return
                 }
             }
-            else if(customer.value.customerType == 2 && dobDiff<21){
+            else if (customer.value.customerType == 2 && dobDiff < 21) {
                 this.handleSnackbarClick(`Customer Illegal Age - ${dobDiff} yrs`);
                 return
             }
@@ -324,6 +326,17 @@ class CustomerDialogue extends React.Component {
     handleSnackbarClose = () => {
         this.setState({ open: false, snackbarText: '' });
     }
+    handleEditCancel = (data) => {
+        debugger
+        let customerData = {
+            customer: data
+        }
+        this.setState({ 
+            showEditForm: false,
+            selectedCustomer: customerData.customer.id,
+            customerData: customerData,
+        })
+    }
 
     render() {
         const { classes } = this.props;
@@ -378,43 +391,19 @@ class CustomerDialogue extends React.Component {
                                         <div className='flex-column fwidth'>
                                             <div className='flex-row justify-space-between align-center'>
                                                 <span className='heading'>Customer Info</span>
+                                                <EditIcon onClick={() => this.setState({ showEditForm: true })} />
                                                 <DeleteIcons
                                                     onClick={() => this.deleteCustomerFromQueue(_get(this.state, 'customerData'))}
                                                     style={{ color: '#ff000096', fontSize: '1.8em' }}
                                                 />
                                             </div>
-
-                                            <div className='flex-row flex-wrap justify-space-between pt-20'>
-                                                <div className='flex-column fwidth pt-215pb-10 '>
-                                                    <span className='info-heading'>Name</span>
-                                                    <span className='info-value'>{_get(this.state, 'customerData.customer.customer.firstName', '')} {_get(this.state, 'customerData.customer.customer.lastName', '')}</span>
-                                                </div>
-                                                <div className='flex-column halfwidth pt-15 pb-10'>
-                                                    <span className='info-heading'>Age</span>
-                                                    <span className='info-value'>{moment().diff(_get(this.state, 'customerData.customer.dob', 0), 'years')} yrs
-                                                    </span>
-                                                </div>
-                                                <div className='flex-column halfwidth pt-15 pb-10'>
-                                                    <span className='info-heading'>State</span>
-                                                    <span className='info-value'>{_get(this.state, 'customerData.customer.billingAddress.state', '...')}</span>
-                                                </div>
-                                                <div className='flex-column halfwidth pt-15 pb-10'>
-                                                    <span className='info-heading'>Med ID</span>
-                                                    <span className='info-value'>{_get(this.state, 'customerData.customer.medicalLicenseNumber', '...')}</span>
-                                                </div>
-                                                <div className='flex-column halfwidth pt-15 pb-10'>
-                                                    <span className='info-heading'>ID</span>
-                                                    <span className='info-value'>{_get(this.state, 'customerData.customer.id', '...')}</span>
-                                                </div>
-                                                <div className='flex-column halfwidth pt-15 pb-10'>
-                                                    <span className='info-heading'>Gram Limit</span>
-                                                    <span className='info-value'>{_get(this.state, 'customerData.customer.gramLimit', '...')}</span>
-                                                </div>
-                                                <div className='flex-column halfwidth pt-15 pb-10'>
-                                                    <span className='info-heading'>Plant Count Limit</span>
-                                                    <span className='info-value'>{_get(this.state, 'customerData.customer.plantCountLimit', '...')}</span>
-                                                </div>
-                                            </div>
+                                            {this.state.showEditForm ?
+                                                <CheckInForm 
+                                                handleCancel={this.handleEditCancel} 
+                                                getQueueList={this.getQueueList} 
+                                                {...this.state} /> 
+                                                :
+                                                <CustomerShow {...this.state} />}
                                         </div>
                                         <div className='customer-action'>
                                             {/* <Button
@@ -425,7 +414,7 @@ class CustomerDialogue extends React.Component {
                                             >
                                                 Delete
                                             </Button> */}
-                                            <Button
+                                            {this.state.showEditForm ? '' : <Button
                                                 className='mr-10'
                                                 disabled={this.state.customerData.status == 2}
                                                 variant='contained'
@@ -433,7 +422,7 @@ class CustomerDialogue extends React.Component {
                                                 onClick={() => this.proceedToCheckout(_get(this.state, 'customerData'))}
                                             >
                                                 Proceed To Checkout
-                                            </Button>
+                                            </Button>}
                                         </div>
                                     </div> : null
                             }

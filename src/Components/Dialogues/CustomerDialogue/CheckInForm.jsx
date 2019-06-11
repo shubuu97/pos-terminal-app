@@ -2,10 +2,12 @@ import React from 'react';
 import moment from "moment";
 /* Lodash Imports */
 import _get from 'lodash/get';
+import _isEmpty from 'lodash/isEmpty';
 /* Material import */
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 /* Redux Imports */
 import { connect } from 'react-redux';
 import { commonActionCreater } from '../../../Redux/commonAction'
@@ -14,15 +16,39 @@ import genericPostData from '../../../Global/dataFetch/genericPostData';
 
 /* Component Imports */
 import { DatePicker } from 'material-ui-pickers';
+import Dropzone from 'react-dropzone'
 
 class CheckInForm extends React.Component {
-
     constructor() {
         super();
         this.state = {
             userType: 'Adult',
             loyaltyCheckbox: false,
             disableSubmit: true,
+            isEdit: false,
+            documentName: '',
+            documentUrl: ''
+        }
+    }
+
+    componentDidMount() {
+        if (!_isEmpty(this.props.customerData)) {
+            const { customerData } = this.props
+            this.setState({
+                isEdit: true,
+                userType: _get(customerData, 'customer.customerType', 0) == 1 ? 'Medical' : 'Adult',
+                customerId: _get(customerData, 'customer.id', ''),
+                firstName: _get(customerData, 'customer.customer.firstName', ''),
+                middleName: _get(customerData, 'customer.customer.middleName', ''),
+                lastName: _get(customerData, 'customer.customer.lastName', ''),
+                State: _get(customerData, 'customer.billingAddress.state', ''),
+                dob: _get(customerData, 'customer.dob', ''),
+                medCardNo: _get(customerData, 'customer.medicalLicenseNumber', ''),
+                plantCount: _get(customerData, 'customer.plantCountLimit', ''),
+                gramLimit: _get(customerData, 'customer.gramLimit', ''),
+                loyaltyCheckbox: _get(customerData, 'customer.loyalty', ''),
+                mmrExp: _get(customerData, 'customer.medicalLicenseExpiration', ''),
+            })
         }
     }
 
@@ -38,10 +64,26 @@ class CheckInForm extends React.Component {
 
     handleDateChange = name => date => {
         this.setState({ [name]: date });
-        if(name == 'dob'){
+        if (name == 'dob') {
             this.handleAgeValidation(date)
         }
+    }
 
+    clearFormValues = () => {
+        this.setState({
+            isEdit: false,
+            userType: '',
+            firstName: '',
+            middleName: '',
+            lastName: '',
+            State: '',
+            dob: moment(new Date()),
+            medCardNo: '',
+            plantCount: '',
+            gramLimit: '',
+            loyaltyCheckbox: false,
+            mmrExp: ''
+        })
     }
 
     handleAgeValidation = (date) => {
@@ -134,6 +176,10 @@ class CheckInForm extends React.Component {
             reqObj.medicalLicenseExpiration = _get(this.state, 'mmrExp', '')
             reqObj.gramLimit = parseInt(_get(this.state, 'gramLimit', 0))
             reqObj.plantCountLimit = parseInt(_get(this.state, 'plantCount', 0))
+            reqObj.attachments = [{
+                name: _get(this.state,'documentName',''),
+                url: _get(this.state,'documentUrl',''),
+            }]
         }
         else {
             reqObj.customerType = 2
@@ -152,40 +198,116 @@ class CheckInForm extends React.Component {
             identifier: 'ADD_NEW_CANNABIS_CUSTOMER',
             successCb: (data) => { }
         }).then((data) => {
+            this.clearFormValues()
             return data
         })
+    }
 
+    updateCustomer = () => {
+        let reqObj = {
+            retailerId: localStorage.getItem('retailerId'),
+            id: _get(this.state, 'customerId', ''),
+            customer: {
+                firstName: _get(this.state, 'firstName', ''),
+                middleName: _get(this.state, 'middleName', ''),
+                lastName: _get(this.state, 'lastName', '')
+            },
+            billingAddress: {
+                state: _get(this.state, 'State', '')
+            },
+            dob: _get(this.state, 'dob', ''),
+            loyalty: _get(this.state, 'loyaltyCheckbox', false)
+        }
+        if (this.state.userType == 'Medical') {
+            reqObj.customerType = 1
+            reqObj.tempMedicalLicense = _get(this.state, 'medLicense', false)
+            reqObj.medicalLicenseNumber = _get(this.state, 'medCardNo', '')
+            reqObj.medicalLicenseExpiration = _get(this.state, 'mmrExp', '')
+            reqObj.gramLimit = parseInt(_get(this.state, 'gramLimit', 0))
+            reqObj.plantCountLimit = parseInt(_get(this.state, 'plantCount', 0))
+        }
+        else {
+            reqObj.customerType = 2
+        }
+        return genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj,
+            url: 'Customer/Update',
+            dontShowMessage: true,
+            constants: {
+                init: 'UPDATE_CANNABIS_CUSTOMER_INIT',
+                success: 'UPDATE_CANNABIS_CUSTOMER_SUCCESS',
+                error: 'UPDATE_CANNABIS_CUSTOMER_ERROR'
+            },
+            identifier: 'UPDATE_CANNABIS_CUSTOMER',
+            successCb: (data) => { }
+        }).then((data) => {
+            debugger
+            this.props.handleCancel(data)
+            this.props.getQueueList()
+            this.clearFormValues()
+            return data
+        })
+    }
+
+    handleFileUpload = (acceptedFiles) => {
+        const file = acceptedFiles[0]
+        this.setState({ file })
+        const formData = new FormData();
+        formData.append('file', file);
+
+        return genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj: formData,
+            url: 'Upload/File',
+            dontShowMessage: true,
+            constants: {
+                init: 'UPLOAD_IMAGE_INIT',
+                success: 'UPLOAD_IMAGE_SUCCESS',
+                error: 'UPLOAD_IMAGE_ERROR'
+            },
+            identifier: 'UPLOAD_IMAGE',
+            successCb: (data) => { }
+        }).then((data) => {
+            this.setState({ documentUrl:  data.url, imageUploaded: true })
+        })
     }
 
     render() {
         return (
             <div className='flex-column'>
                 <div className='flex-row pl-10 pr-10 pt-10 justify-space-between align-center'>
-                    <span className='sub-heading'>Add New Customer</span>
+                    <span className='sub-heading'>{this.state.isEdit ? 'Edit Customer' : 'Add New Customer'}</span>
                     <div className='flex-row'>
-                        <Button
+                        {this.state.isEdit ? '' : <span><Button
                             className='mr-10'
                             variant={this.state.userType == 'Medical' ? 'contained' : 'outlined'}
                             color="primary"
-                            onClick={ () => { this.setState({ userType: 'Medical' }, () => {
-                                this.handleAgeValidation(this.state.dob)})}}
+                            onClick={() => {
+                                this.setState({ userType: 'Medical' }, () => {
+                                    this.handleAgeValidation(this.state.dob)
+                                })
+                            }}
                         >
                             Medical
                         </Button>
-                        <Button
-                            variant={this.state.userType == 'Adult' ? 'contained' : 'outlined'}
-                            color="primary"
-                            onClick={() => { this.setState({ userType: 'Adult' }, () => {
-                                this.handleAgeValidation(this.state.dob)})}}
-                        >
-                            Recreational
-                        </Button>
+                            <Button
+                                variant={this.state.userType == 'Adult' ? 'contained' : 'outlined'}
+                                color="primary"
+                                onClick={() => {
+                                    this.setState({ userType: 'Adult' }, () => {
+                                        this.handleAgeValidation(this.state.dob)
+                                    })
+                                }}
+                            >
+                                Recreational
+                        </Button></span>}
                     </div>
                 </div>
                 <div className='pad-10 flex-row flex-wrap justify-space-between'>
                     <TextField
                         id="outlined-name"
-                        label="*First Name"
+                        label="First Name"
                         value={this.state.firstName}
                         onChange={this.handleTextfieldChange('firstName')}
                         margin="normal"
@@ -194,7 +316,7 @@ class CheckInForm extends React.Component {
                     />
                     <TextField
                         id="outlined-name"
-                        label="*Middle Name"
+                        label="Middle Name"
                         value={this.state.middleName}
                         onChange={this.handleTextfieldChange('middleName')}
                         margin="normal"
@@ -203,7 +325,7 @@ class CheckInForm extends React.Component {
                     />
                     <TextField
                         id="outlined-name"
-                        label="*Last Name"
+                        label="Last Name"
                         value={this.state.lastName}
                         onChange={this.handleTextfieldChange('lastName')}
                         margin="normal"
@@ -212,7 +334,7 @@ class CheckInForm extends React.Component {
                     />
                     <TextField
                         id="outlined-name"
-                        label="*State"
+                        label="State"
                         value={this.state.State}
                         onChange={this.handleTextfieldChange('State')}
                         margin="normal"
@@ -223,7 +345,7 @@ class CheckInForm extends React.Component {
                     <DatePicker
                         disableFuture
                         margin="normal"
-                        label="*Date of birth"
+                        label="Date of birth"
                         value={this.state.dob}
                         onChange={this.handleDateChange('dob')}
                         style={{ width: '48%' }}
@@ -271,7 +393,7 @@ class CheckInForm extends React.Component {
                             />
                             <TextField
                                 id="outlined-name"
-                                label="*Plant Count"
+                                label="Plant Count"
                                 type="number"
                                 value={this.state.plantCount}
                                 onChange={this.handleTextfieldChange('plantCount')}
@@ -282,7 +404,7 @@ class CheckInForm extends React.Component {
                             />
                             <TextField
                                 id="outlined-name"
-                                label="*Gram Limit"
+                                label="Gram Limit"
                                 type="number"
                                 value={this.state.gramLimit}
                                 onChange={this.handleTextfieldChange('gramLimit')}
@@ -290,6 +412,31 @@ class CheckInForm extends React.Component {
                                 variant="outlined"
                                 style={{ width: '48%' }}
                             />
+                            {!this.state.isEdit ? <span style={{ display: 'flex', alignItems: 'center'}}>
+                                <Dropzone onDrop={this.handleFileUpload}>
+                                {({ getRootProps, getInputProps }) => (
+                                    <section>
+                                        <div {...getRootProps()}>
+                                            <input {...getInputProps()} />
+                                            <Button variant="outlined" 
+                                                style={{ height: "55px", width: "92%", marginRight: '20px'}} >
+                                                Upload Document<CloudUploadIcon />
+                                            </Button>
+                                        </div>
+                                    </section>
+                                )}
+                            </Dropzone>
+                            {this.state.imageUploaded ? <span style={{textAlign: 'right'}}>{_get(this.state,'file.name','')}</span> : ''}
+                            <TextField
+                                id="outlined-name"
+                                label="Document Name"
+                                type="text"
+                                value={this.state.documentName}
+                                onChange={this.handleTextfieldChange('documentName')}
+                                margin="normal"
+                                variant="outlined"
+                                style={{ width: '48%' }}
+                            /></span> : ''}
                         </div> : null
                 }
                 <div className='fwidth flex-row justify-flex-end form-actions '>
@@ -309,7 +456,7 @@ class CheckInForm extends React.Component {
                     >
                         Add
                     </Button> */}
-                    <Button
+                    {!this.state.isEdit ? <Button
                         className='mr-10'
                         variant='contained'
                         color="primary"
@@ -317,7 +464,26 @@ class CheckInForm extends React.Component {
                         onClick={this.addCustomerMoveInQueue}
                     >
                         Check In
+                    </Button> :
+                        <div>
+                            <Button
+                                className='mr-10'
+                                variant='contained'
+                                color="primary"
+                                // disabled={this.state.disableSubmit}
+                                onClick={()=>this.props.handleCancel(this.props.customerData)}
+                            >
+                                Cancel
                     </Button>
+                            <Button
+                                className='mr-10'
+                                variant='contained'
+                                color="primary"
+                                // disabled={this.state.disableSubmit}
+                                onClick={this.updateCustomer}
+                            >
+                                Save
+                    </Button></div>}
                 </div>
             </div>
         );
