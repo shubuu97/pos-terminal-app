@@ -1123,7 +1123,6 @@ const getCustomerUpdate = async (propsOfComp, dispatch) => {
     })
 }
 const pollingWrapper = async (propsOfComp, dispatch) => {
-    debugger;
     await getInventoryUpdate(propsOfComp, dispatch);
     await getCustomerUpdate(propsOfComp, dispatch);
     await getHotProductUpdate(propsOfComp, dispatch);
