@@ -160,9 +160,9 @@ class CannabisCustomerTab extends React.Component {
                 <div className="order-amount-section">
                     <LinearProgress
                         variant="buffer"
-                        value={_get(this.props, 'cart.cartItems', 0).length * 10}
+                        value={_get(this.props, 'cart.cannabisCartLimitPercentage', 0)}
                         classes={
-                            _get(this.props, 'cart.cartItems', 0).length > 10 ?
+                            _get(this.props, 'cart.cannabisCartLimitPercentage', 0) > 100 ?
                                 { barColorPrimary: classes.barColorPrimary, colorPrimary: classes.barColorPrimary } : {}
                         }
                         style={{

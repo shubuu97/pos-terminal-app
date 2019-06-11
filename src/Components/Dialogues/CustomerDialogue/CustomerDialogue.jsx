@@ -327,11 +327,10 @@ class CustomerDialogue extends React.Component {
         this.setState({ open: false, snackbarText: '' });
     }
     handleEditCancel = (data) => {
-        debugger
         let customerData = {
             customer: data
         }
-        this.setState({ 
+        this.setState({
             showEditForm: false,
             selectedCustomer: customerData.customer.id,
             customerData: customerData,
@@ -398,10 +397,10 @@ class CustomerDialogue extends React.Component {
                                                 />
                                             </div>
                                             {this.state.showEditForm ?
-                                                <CheckInForm 
-                                                handleCancel={this.handleEditCancel} 
-                                                getQueueList={this.getQueueList} 
-                                                {...this.state} /> 
+                                                <CheckInForm
+                                                    handleCancel={this.handleEditCancel}
+                                                    getQueueList={this.getQueueList}
+                                                    {...this.state} />
                                                 :
                                                 <CustomerShow {...this.state} />}
                                         </div>
