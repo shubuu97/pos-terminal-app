@@ -39,21 +39,8 @@ class CheckoutSection extends React.Component {
         return (
             <div className='pos-checkout' style={{height: this.props.windowHeight}}>
                 <TabView
-                    offline={this.props.offline}
-                    toggleViewPayment={this.props.toggleViewPayment}
-                    toggleViewProduct={this.props.toggleViewProduct}
-                    checkoutMainPart={this.props.checkoutMainPart}
-                    checkoutcalcArea={this.props.checkoutcalcArea}
-                    checkoutactionArea={this.props.checkoutactionArea}
-                    checkoutcartArea={this.props.checkoutcartArea}
-                    checkoutCustomerArea={this.props.checkoutCustomerArea}
-                    cart={this.props.cart}
-                    // ! Actions
-                    handleClickOpen={this.handleClickOpen}
-                    handleHistoryOpen={this.props.handleHistoryOpen}
-                    handleClickOpenCustomer={this.props.handleClickOpenCustomer}
+                    {...this.props}
                 />
-
                 {
                     this.state.openOnHold ?
                         <PutHoldCartDialogue
