@@ -31,6 +31,7 @@ const Products = (props) => {
                 productList={props.productList}
                 //cart={_get(props, 'cart', [])}
                 dispatch={props.dispatch}
+                isProductModalOpen={props.isProductModalOpen}
             />
         })
     }

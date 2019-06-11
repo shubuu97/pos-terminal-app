@@ -594,6 +594,7 @@ class ProductsSection extends React.Component {
                             isOpenHistoryDialogue={_get(this.props, 'isOpenHistoryDialogue', false)}
                             isCustomerTabOpen={_get(this.props, 'isCustomerTabOpen.lookUpData', false)}
                             openCustomerDialogue={_get(this.props, 'openCustomerDialogue', false)}
+                            productModalOpen={this.state.productModalOpen}
                             handleChange={this.handleChange}
                             onKeyPress={this.onKeyPress}
                             value={this.state.searchText}
@@ -643,6 +644,7 @@ class ProductsSection extends React.Component {
                 {/* Products List Component */}
                 <div className='pos-products' id='productList' style={{ height: this.props.productListHeight }} onScroll={this.scroll}>
                     <Products
+                        isProductModalOpen={(productModalOpen) => this.setState({ productModalOpen })}
                         {...this.props}
                     />
                     {
