@@ -26,7 +26,6 @@ class CheckInForm extends React.Component {
             loyaltyCheckbox: false,
             disableSubmit: true,
             isEdit: false,
-            documentName: '',
             documentUrl: ''
         }
     }
@@ -177,7 +176,7 @@ class CheckInForm extends React.Component {
             reqObj.gramLimit = parseInt(_get(this.state, 'gramLimit', 0))
             reqObj.plantCountLimit = parseInt(_get(this.state, 'plantCount', 0))
             reqObj.attachments = [{
-                name: _get(this.state,'documentName',''),
+                name: 'document',
                 url: _get(this.state,'documentUrl',''),
             }]
         }
@@ -412,37 +411,21 @@ class CheckInForm extends React.Component {
                                 variant="outlined"
                                 style={{ width: '48%' }}
                             />
-                            {!this.state.isEdit ? <div><span style={{ display: 'flex', alignItems: 'center'}}>
+                            {!this.state.isEdit ? 
                                 <Dropzone onDrop={this.handleFileUpload}>
                                 {({ getRootProps, getInputProps }) => (
                                     <section>
                                         <div {...getRootProps()}>
                                             <input {...getInputProps()} />
                                             <Button variant="outlined" 
-                                                style={{ height: "55px", width: "92%", marginRight: '20px'}} >
+                                                style={{ height: "55px", width: "100%", marginRight: '20px'}} >
                                                 Upload Document<CloudUploadIcon />
                                             </Button>
+                                            {this.state.imageUploaded ? <span>{_get(this.state,'file.name','')}</span> : ''}
                                         </div>
                                     </section>
                                 )}
-                            </Dropzone>
-                            <TextField
-                                id="outlined-name"
-                                label="Document Name"
-                                type="text"
-                                value={this.state.documentName}
-                                onChange={this.handleTextfieldChange('documentName')}
-                                margin="normal"
-                                variant="outlined"
-                                style={{ width: '48%' }}
-                            />
-                            <br />
-                            
-                            </span>
-                            {this.state.imageUploaded ? 
-                                <div>{_get(this.state,'file.name','')}</div> : ''
-                            }
-                            </div> : ''}
+                            </Dropzone> : ''}
                         </div> : null
                 }
                 <div className='fwidth flex-row justify-flex-end form-actions '>
