@@ -88,14 +88,9 @@ class FullWidthTabs extends React.Component {
                 <OrdersTab
                     cartItems={cartItems}
                     cart={cart}
-                    dispatch={this.props.dispatch}
-                    checkoutMainPart={this.props.checkoutMainPart}
-                    checkoutcalcArea={this.props.checkoutcalcArea}
-                    checkoutactionArea={this.props.checkoutactionArea}
-                    checkoutcartArea={this.props.checkoutcartArea}
-                    handleClickOpen={this.props.handleClickOpen}
                     handleChangeIndex={this.handleChangeIndex}
                     tabValue={this.state.value}
+                    {...this.props}
                 />
             </TabContainer>
         )
@@ -109,30 +104,13 @@ class FullWidthTabs extends React.Component {
                 {
                     cannabisStore ?
                         <CannabisCustomersTab
-                            handleClickOpenCustomer={this.props.handleClickOpenCustomer}
-                            offline={this.props.offline}
                             cartItems={cartItems}
-                            {...this.props}
-                            checkoutMainPart={this.props.checkoutMainPart}
-                            checkoutactionArea={this.props.checkoutactionArea}
-                            checkoutCustomerArea={this.props.checkoutCustomerArea}
-                            checkoutcalcArea={this.props.checkoutcalcArea}
-                            checkoutcartArea={this.props.checkoutcartArea}
-                            handleClickOpen={this.props.handleClickOpen}
-                            handleHistoryOpen={this.props.handleHistoryOpen}
                             disablePaymentTab={this.disablePaymentTab}
+                            {...this.props}
                         /> :
                         <CustomersTab
-                            offline={this.props.offline}
                             cartItems={cartItems}
                             {...this.props}
-                            checkoutMainPart={this.props.checkoutMainPart}
-                            checkoutactionArea={this.props.checkoutactionArea}
-                            checkoutCustomerArea={this.props.checkoutCustomerArea}
-                            checkoutcalcArea={this.props.checkoutcalcArea}
-                            checkoutcartArea={this.props.checkoutcartArea}
-                            handleClickOpen={this.props.handleClickOpen}
-                            handleHistoryOpen={this.props.handleHistoryOpen}
                         />
                 }
             </TabContainer>
