@@ -177,7 +177,7 @@ class CheckInForm extends React.Component {
             reqObj.plantCountLimit = parseInt(_get(this.state, 'plantCount', 0))
             reqObj.attachments = [{
                 name: 'document',
-                url: _get(this.state,'documentUrl',''),
+                url: _get(this.state, 'documentUrl', ''),
             }]
         }
         else {
@@ -268,7 +268,7 @@ class CheckInForm extends React.Component {
             identifier: 'UPLOAD_IMAGE',
             successCb: (data) => { }
         }).then((data) => {
-            this.setState({ documentUrl:  data.url, imageUploaded: true })
+            this.setState({ documentUrl: data.url, imageUploaded: true })
         })
     }
 
@@ -411,21 +411,21 @@ class CheckInForm extends React.Component {
                                 variant="outlined"
                                 style={{ width: '48%' }}
                             />
-                            {!this.state.isEdit ? 
+                            {!this.state.isEdit ?
                                 <Dropzone onDrop={this.handleFileUpload}>
-                                {({ getRootProps, getInputProps }) => (
-                                    <section>
-                                        <div {...getRootProps()}>
-                                            <input {...getInputProps()} />
-                                            <Button variant="outlined" 
-                                                style={{ height: "55px", width: "100%", marginRight: '20px'}} >
-                                                Upload Document<CloudUploadIcon />
-                                            </Button>
-                                            {this.state.imageUploaded ? <span>{_get(this.state,'file.name','')}</span> : ''}
-                                        </div>
-                                    </section>
-                                )}
-                            </Dropzone> : ''}
+                                    {({ getRootProps, getInputProps }) => (
+                                        <section className='fwidth pt-10'>
+                                            <div {...getRootProps()}>
+                                                <input {...getInputProps()} />
+                                                <Button variant="outlined"
+                                                    style={{ height: "55px", width: "100%" }} >
+                                                    <span className='pr-10'>Upload Document</span> <CloudUploadIcon />
+                                                </Button>
+                                                {this.state.imageUploaded ? <span>{_get(this.state, 'file.name', '')}</span> : ''}
+                                            </div>
+                                        </section>
+                                    )}
+                                </Dropzone> : ''}
                         </div> : null
                 }
                 <div className='fwidth flex-row justify-flex-end form-actions '>
@@ -460,7 +460,7 @@ class CheckInForm extends React.Component {
                                 variant='contained'
                                 color="primary"
                                 // disabled={this.state.disableSubmit}
-                                onClick={()=>this.props.handleCancel(this.props.customerData)}
+                                onClick={() => this.props.handleCancel(this.props.customerData)}
                             >
                                 Cancel
                     </Button>
