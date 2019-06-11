@@ -384,17 +384,30 @@ class HomeContainer extends React.Component {
     }
 
     getCannabisProductData = () => {
+        let customerType = _get(this.props, 'customer.customerType');
+
+        let filters = [{ "field": "retailerId", "value": localStorage.getItem('retailerId') }]
+        if (customerType == 1) {
+            filters = [...filters,
+            { 'field': 'productType', 'value': '0' },
+            { 'field': 'productType', 'value': '1' },
+            { 'field': 'productType', 'value': '2' },
+
+            ]
+        }
+        else if (customerType == 2) {
+            filters = [
+                ...filters,
+                { 'field': 'productType', 'value': '0' },
+                { 'field': 'productType', 'value': '1' },
+            ]
+        }
         let reqObj = {
             request: {
                 "text": '',
                 "offset": 0,
                 "limit": 39,
-                "filters": [
-                    {
-                        "field": "retailerId",
-                        "value": localStorage.getItem('retailerId')
-                    }
-                ]
+                "filters":filters
             }
         }
         genericPostData({
@@ -448,7 +461,7 @@ class HomeContainer extends React.Component {
                 error: 'GET_CANNABIS_STORE_TAXES_ERROR'
             },
             identifier: 'GET_CANNABIS_STORE_TAXES',
-            successCb: (data) => {}
+            successCb: (data) => { }
         }).then((data) => {
             this.props.dispatch(commonActionCreater(data, 'GET_CANNABIS_STORE_TAXES'));
         })
