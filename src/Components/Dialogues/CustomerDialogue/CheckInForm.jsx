@@ -242,7 +242,6 @@ class CheckInForm extends React.Component {
             identifier: 'UPDATE_CANNABIS_CUSTOMER',
             successCb: (data) => { }
         }).then((data) => {
-            debugger
             this.props.handleCancel(data)
             this.props.getQueueList()
             this.clearFormValues()
