@@ -59,7 +59,7 @@ const addToCart = (product, cartItems, cart, quantity, dispatch, selectedPackage
     let cartDiscountObj = {}
     cartDiscountObj.cartItems = reqObj
     cartDiscountObj.prevCart = cart
-    if (localStorage.getItem('cannabisStore') && _get(cart, 'customer.customerType', 0) != 2) {
+    if (localStorage.getItem('cannabisStore') && !(_get(cart, 'customer.customerType', 0) != 0)) {
         dispatch(showMessage({ text: 'Please Select a Customer', isSuccess: false }));
         setTimeout(() => {
             dispatch(showMessage({}));
