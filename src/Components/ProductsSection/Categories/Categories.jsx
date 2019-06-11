@@ -26,7 +26,8 @@ class Categories extends Component {
     this.state = {
       categoryToDisplay: [],
       displayLevel: 0,
-      hotActive: true,
+      //!mute 
+      // hotActive: true,
       rootCategory: {
         name: "",
         categoryType: 0,
@@ -51,17 +52,18 @@ class Categories extends Component {
   }
 
   componentDidMount() {
-    let hps = localStorage.getItem('hotProducts') || '[]';
-    hps = JSON.parse(hps)
-    if (hps.length > 0) {
-      localStorage.setItem('IS_HOT_PRODUCT_ACTIVE', true);
-      this.setState({ hotActive: true })
+    //!mute hot proudct
+    // let hps = localStorage.getItem('hotProducts') || '[]';
+    // hps = JSON.parse(hps)
+    // if (hps.length > 0) {
+    //   localStorage.setItem('IS_HOT_PRODUCT_ACTIVE', true);
+    //   // this.setState({ hotActive: true })
 
-    }
-    else {
-      localStorage.setItem('IS_HOT_PRODUCT_ACTIVE', false);
-      this.setState({ hotActive: false })
-    }
+    // }
+    // else {
+    //   localStorage.setItem('IS_HOT_PRODUCT_ACTIVE', false);
+    //   //this.setState({ hotActive: false })
+    // }
     let categoryDb = new PouchDb(`categoryDb${localStorage.getItem("storeId")}`);
     categoryDb
       .find({
@@ -86,7 +88,9 @@ class Categories extends Component {
   handleHomeClick = () => {
     this.props.getHomeClicked();
     localStorage.setItem('IS_HOT_PRODUCT_ACTIVE', false);
-    this.setState({ selectedCategory: { categoryType: -1 }, hotActive: false });
+    //!mute
+    // this.setState({ selectedCategory: { categoryType: -1 }, hotActive: false });
+    this.setState({ selectedCategory: { categoryType: -1 }});
     this.props.getProductData();
     this.getCategory(0);
   };
