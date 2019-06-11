@@ -412,7 +412,7 @@ class CheckInForm extends React.Component {
                                 variant="outlined"
                                 style={{ width: '48%' }}
                             />
-                            {!this.state.isEdit ? <span style={{ display: 'flex', alignItems: 'center'}}>
+                            {!this.state.isEdit ? <div><span style={{ display: 'flex', alignItems: 'center'}}>
                                 <Dropzone onDrop={this.handleFileUpload}>
                                 {({ getRootProps, getInputProps }) => (
                                     <section>
@@ -426,7 +426,6 @@ class CheckInForm extends React.Component {
                                     </section>
                                 )}
                             </Dropzone>
-                            {this.state.imageUploaded ? <span style={{textAlign: 'right'}}>{_get(this.state,'file.name','')}</span> : ''}
                             <TextField
                                 id="outlined-name"
                                 label="Document Name"
@@ -436,7 +435,14 @@ class CheckInForm extends React.Component {
                                 margin="normal"
                                 variant="outlined"
                                 style={{ width: '48%' }}
-                            /></span> : ''}
+                            />
+                            <br />
+                            
+                            </span>
+                            {this.state.imageUploaded ? 
+                                <div>{_get(this.state,'file.name','')}</div> : ''
+                            }
+                            </div> : ''}
                         </div> : null
                 }
                 <div className='fwidth flex-row justify-flex-end form-actions '>
