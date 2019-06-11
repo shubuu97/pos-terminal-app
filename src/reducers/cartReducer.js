@@ -5,6 +5,7 @@ import Dinero from "dinero.js";
 import { stat } from 'fs';
 /* Global Imports */
 import splitDotWithInt from '../Global/PosFunctions/splitDotWithInt'
+import taxCalculations from '../Global/cannabisFunctions/taxCalculations';
 
 // * Init method for Dinero
 const DineroFunc = (amount) => {
@@ -48,6 +49,11 @@ const cartItem = (state = {
                 redemptionRules: action.data,
             });
             break;
+        case 'GET_CANNABIS_STORE_TAXES':
+            return Object.assign({}, state, {
+                cannabisTaxes: action.data,
+            });
+            break;
         case 'CART_ITEM_LIST':
             let maxAllowedDiscountMoney = DineroFunc(0)
             const employeeDiscountPercent = _get(state, 'empDiscount', 0);
@@ -80,6 +86,8 @@ const cartItem = (state = {
             }
             let discountableItemsIndex = []
             let discountableItems = []
+            let cannabisTaxes = _get(state, 'cannabisTaxes', {} )
+
             _get(action, 'data.cartItems', _get(action, 'data.prevCart.cartItems', [])).forEach((item, index) => {
                 item.itemSalesPriceMoney = DineroFunc((_get(item, 'doc.product.salePrice.amount', 0)))
                 item.itemRegularTotalMoney = item.itemSalesPriceMoney.multiply(_get(item, 'qty', 0))
@@ -235,11 +243,19 @@ const cartItem = (state = {
                 let isTaxable = ("isTaxable" in item.doc.product)
                 let itemTaxPercent = 0
                 if (isTaxable) {
-                    let federalTaxRate = localStorage.getItem('federalTaxRate')
-                    let stateTaxRate = localStorage.getItem('stateTaxRate')
-                    let countyTaxRate = localStorage.getItem('countyTaxRate')
-                    itemTaxPercent = Number(federalTaxRate) + Number(stateTaxRate) + Number(countyTaxRate);
-                    item.itemTaxAmount = item.subTotal.percentage(itemTaxPercent)
+                    if (localStorage.getItem('cannabisStore')) {
+                        itemTaxPercent = Number(taxCalculations(item, cannabisTaxes))
+                        item.itemTaxAmount = item.subTotal.percentage(itemTaxPercent)
+                        console.log(item.itemTaxAmount.getAmount(), 'Mayuk - Tax Cannabis')
+                        debugger
+                    }
+                    else {
+                        let federalTaxRate = localStorage.getItem('federalTaxRate')
+                        let stateTaxRate = localStorage.getItem('stateTaxRate')
+                        let countyTaxRate = localStorage.getItem('countyTaxRate')
+                        itemTaxPercent = Number(federalTaxRate) + Number(stateTaxRate) + Number(countyTaxRate);
+                        item.itemTaxAmount = item.subTotal.percentage(itemTaxPercent)
+                    }
                 }
                 else {
                     item.itemTaxAmount = DineroFunc(0)

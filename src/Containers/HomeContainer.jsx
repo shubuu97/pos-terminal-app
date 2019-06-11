@@ -92,6 +92,8 @@ class HomeContainer extends React.Component {
             this.getRuleSet();
             if (localStorage.getItem('cannabisStore')) {
                 this.getCannabisProductData();
+                this.getCannabisStoreTaxes();
+                
             }
             else {
                 this.getProductData();
@@ -431,14 +433,27 @@ class HomeContainer extends React.Component {
         })
     }
 
-    handleTerminalHistoryOpen = () => {
-        let url = 'Sale/GetByTerminalId';
-        let data = { id: localStorage.getItem('terminalId') }
-        this.getOrderHistory(url, data)
-        this.setState({
-            openOrderHistory: true,
-        });
+    getCannabisStoreTaxes = () => {
+        let reqObj = {
+            id: localStorage.getItem('retailerId')
+        }
+        genericPostData({
+            dispatch: this.props.dispatch,
+            reqObj: reqObj,
+            url: 'Get/Tax/RetailerId/Active',
+            dontShowMessage: true,
+            constants: {
+                init: 'GET_CANNABIS_STORE_TAXES_INIT',
+                success: 'GET_CANNABIS_STORE_TAXES_SUCCESS',
+                error: 'GET_CANNABIS_STORE_TAXES_ERROR'
+            },
+            identifier: 'GET_CANNABIS_STORE_TAXES',
+            successCb: (data) => {}
+        }).then((data) => {
+            this.props.dispatch(commonActionCreater(data, 'GET_CANNABIS_STORE_TAXES'));
+        })
     }
+
     getOrderHistory = (url, data) => {
         genericPostData({
             dispatch: this.props.dispatch,
@@ -454,6 +469,16 @@ class HomeContainer extends React.Component {
             errorCb: this.handleGetCustomerSaleDataError
         })
     }
+
+    handleTerminalHistoryOpen = () => {
+        let url = 'Sale/GetByTerminalId';
+        let data = { id: localStorage.getItem('terminalId') }
+        this.getOrderHistory(url, data)
+        this.setState({
+            openOrderHistory: true,
+        });
+    }
+
     handleHistoryOpen = () => {
         // let url = 'Sale/GetByCustomerId';
         // let data = { id: _get(this.props, 'customer.id', '') }
@@ -539,6 +564,7 @@ class HomeContainer extends React.Component {
             )
         }
     }
+
     orderHistorySelect = (selectedSaleTransaction) => {
         if (_get(this.state, 'selectedSaleTransaction', false) && _get(this.state, 'selectedSaleTransaction') != selectedSaleTransaction.sale.id) {
             let element = document.getElementById(_get(this.state, 'selectedSaleTransaction.sale.id'))
@@ -1123,7 +1149,6 @@ const getCustomerUpdate = async (propsOfComp, dispatch) => {
     })
 }
 const pollingWrapper = async (propsOfComp, dispatch) => {
-    debugger;
     await getInventoryUpdate(propsOfComp, dispatch);
     await getCustomerUpdate(propsOfComp, dispatch);
     await getHotProductUpdate(propsOfComp, dispatch);
