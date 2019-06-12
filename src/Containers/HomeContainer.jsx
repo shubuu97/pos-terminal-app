@@ -843,6 +843,7 @@ class HomeContainer extends React.Component {
                 {
                     this.state.openCustomerDialogue ?
                         <CustomerDialogue
+                            getCannabisProductData = {this.getCannabisProductData}
                             handleClickOpen={() => this.handleClickOpen('openCustomerDialogue')}
                             handleClose={() => this.handleClose('openCustomerDialogue')}
                             open={this.state.openCustomerDialogue}
