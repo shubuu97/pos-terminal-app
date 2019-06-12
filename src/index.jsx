@@ -60,7 +60,7 @@ const persistConfig = {
   storage,
   stateReconciler: hardSet,
   transforms: [SetTransform],
-  blacklist: ['form', 'ShowToast', 'PaymentDetails', 'RefundPaymentDetails', 'resetProduct', 'resetCategory',]
+  blacklist: ['form', 'ShowToast', 'PaymentDetails', 'RefundPaymentDetails', 'resetProduct', 'resetCategory']
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -9,6 +9,8 @@ import _find from 'lodash/find';
 import _findIndex from 'lodash/findIndex';
 /* Material Icons */
 import SignalWifiOffOutlined from '@material-ui/icons/SignalWifiOffOutlined'
+import BlockOutlined from '@material-ui/icons/BlockOutlined'
+
 import FullScreen from '@material-ui/icons/Fullscreen'
 import FullscreenExit from '@material-ui/icons/FullscreenExit'
 /* Material Import */
@@ -81,7 +83,41 @@ class HomeContainer extends React.Component {
             openHistoryDialogue: false
         }
     }
-
+    closeStore = () => {
+        this.props.dispatch(commonActionCreater({ storeClose: true, message: 'SALE Blocked:Login time outside the operating hours!' }, 'STORE_CLOSE_INDICATOR'));
+    }
+    checkForClosingTime = () => {
+        debugger;
+        let operatingTimezone = localStorage.getItem('operatingTimezone');
+        let operatingHoursStart = localStorage.getItem('operatingHoursStart');
+        let operatingHoursEnd = localStorage.getItem('operatingHoursEnd');
+        let offset = operatingTimezone.split("UTC")[1]
+        let d = new Date();
+        let utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+        let nd = new Date(utc + (3600000 * offset));
+        let timeZoneCurrentHour = nd.getHours();
+        let timeZoneCurrentMinutes = nd.getMinutes();
+        let stHours = new Date(operatingHoursStart).getHours();
+        let stMinutes = new Date(operatingHoursStart).getMinutes();
+        let enHours = new Date(operatingHoursEnd).getHours();
+        let enMinutes = new Date(operatingHoursEnd).getMinutes();
+        let secondsNow = timeZoneCurrentHour * 60 * 60 + timeZoneCurrentMinutes * 60;
+        let stseconds = stHours * 60 * 60 + stMinutes * 60;
+        let enSeconds = enHours * 60 * 60 + enMinutes * 60;
+        if (secondsNow >= stseconds) {
+            if (secondsNow < enSeconds) {
+                this.props.dispatch(commonActionCreater({ "storeClose": false, "message": '' }, 'STORE_CLOSE_INDICATOR'));
+                setTimeout(this.closeStore, (enSeconds - secondsNow)*1000)
+            }   
+            else {
+                this.props.dispatch(commonActionCreater({ "storeClose": true, "message": 'SALE Blocked:Login time outside the operating hours!' }, 'STORE_CLOSE_INDICATOR'));
+            }
+        }
+        else {
+            this.props.dispatch(commonActionCreater({ storeClose: true, message: 'SALE Blocked:Login time outside the operating hours!' }, 'STORE_CLOSE_INDICATOR'));
+            setTimeout(this.checkForClosingTime, (stseconds - secondsNow)*1000);
+        }
+    }
     componentDidMount() {
         let token = localStorage.getItem('Token')
         if (_isEmpty(token)) {
@@ -93,6 +129,7 @@ class HomeContainer extends React.Component {
             if (localStorage.getItem('cannabisStore')) {
                 this.getCannabisProductData();
                 this.getCannabisStoreTaxes();
+                this.checkForClosingTime()
 
             }
             else {
@@ -407,7 +444,7 @@ class HomeContainer extends React.Component {
                 "text": '',
                 "offset": 0,
                 "limit": 39,
-                "filters":filters
+                "filters": filters
             },
             storeId: localStorage.getItem('storeId')
         }
@@ -923,6 +960,17 @@ class HomeContainer extends React.Component {
                 </div>
 
 
+                {
+                    _get(this.props, 'storeClose.storeClose') ?
+                        <div className='toast-area absolute flex-row justify-center align-center'>
+                            <div className='offline-indicator flex-row justify-center align-center'>
+                                <BlockOutlined />
+                                <span className='pl-10'>{_get(this.props, 'storeClose.message')}</span>
+                            </div>
+                        </div> : null
+                }
+
+
             </div>
         );
     }
@@ -935,14 +983,15 @@ function mapStateToProps(state) {
     let customer = _get(cart, 'customer', {});
     let lockState = _get(lockTerminal, 'lookUpData.lock', false);
     let paymentMethods = _get(state, 'storeData.lookUpData.store.paymentMethods')
-
+    let storeClose = _get(state, 'storeClose.lookUpData')
     return {
         productList,
         cart,
         holdCartData,
         customer,
         lockState,
-        paymentMethods
+        paymentMethods,
+        storeClose
     }
 }
 

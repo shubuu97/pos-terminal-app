@@ -10,6 +10,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import { withStyles } from '@material-ui/core/styles';
 import blue from '@material-ui/core/colors/blue';
 import SvgIcon from '@material-ui/core/SvgIcon';
+import _get from 'lodash/get';
 // import { Detector } from 'react-detect-offline';
 import SettingContainer from '../Containers/SettingContainer';
 
@@ -100,7 +101,7 @@ function TemporaryDrawer(props) {
                     <ListItemText primary={'Offline Transactions'} />
                 </ListItem> 
                 <Divider />
-                <ListItem button key={6} onClick={props.handleClickOpenCustomer}>
+                <ListItem disabled={_get(props,'storeClose.storeClose')?true:false} button key={6} onClick={props.handleClickOpenCustomer}>
                     <ListItemText primary={'Customer'} />
                 </ListItem> 
                 <Divider />

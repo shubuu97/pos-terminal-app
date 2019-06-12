@@ -51,6 +51,8 @@ let employeePayroll = commonStaticReducer('EMPLOYEE_PAYROLL')
 let isCustomerTabOpen = commonStaticReducer('IS_CUSTOMER_DIALOGUE_OPEN')
 let isHotProductActive = commonStaticReducer('IS_HOT_PRODUCT_ACTIVE');
 let loginCreds = commonStaticReducer('LOGIN_CREDS_DECODE');
+let storeClose = commonStaticReducer('STORE_CLOSE_INDICATOR');
+
 
 // let cartOrderDetails = cartOrderDetailsFun('ORDER_DETAILS');
 
@@ -89,7 +91,8 @@ let rootRducer = combineReducers({
     resetCategory,
     isCustomerTabOpen,
     isHotProductActive,
-    customerQueue
+    customerQueue,
+    storeClose
 })
 
 export default rootRducer;
