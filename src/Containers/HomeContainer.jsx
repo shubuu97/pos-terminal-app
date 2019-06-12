@@ -421,7 +421,8 @@ class HomeContainer extends React.Component {
     }
 
     getCannabisProductData = () => {
-        let customerType = _get(this.props, 'customer.customerType');
+        debugger;
+        let customerType = localStorage.getItem('selectedCustomerType')
 
         let filters = [{ "field": "retailerId", "value": localStorage.getItem('retailerId') }]
         if (customerType == 1) {
@@ -980,7 +981,7 @@ function mapStateToProps(state) {
     let { productList, cart, cartHoldData, lockTerminal } = state;
     productList = _get(productList, 'lookUpData.rows', []);
     let holdCartData = _get(cartHoldData, 'holdedItems', []);
-    let customer = _get(cart, 'customer', {});
+    let customer = _get(state, 'customerQueue.customer.customer');
     let lockState = _get(lockTerminal, 'lookUpData.lock', false);
     let paymentMethods = _get(state, 'storeData.lookUpData.store.paymentMethods')
     let storeClose = _get(state, 'storeClose.lookUpData')

@@ -315,6 +315,8 @@ class CustomerDialogue extends React.Component {
                 this.getQueueList()
             })
         })
+        debugger;
+        localStorage.setItem('selectedCustomerType',_get(customer,'customer.customerType'));
         this.props.handleClose();
 
     }

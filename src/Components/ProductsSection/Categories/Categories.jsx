@@ -90,12 +90,110 @@ class Categories extends Component {
     localStorage.setItem('IS_HOT_PRODUCT_ACTIVE', false);
     //!mute
     // this.setState({ selectedCategory: { categoryType: -1 }, hotActive: false });
-    this.setState({ selectedCategory: { categoryType: -1 }});
+    this.setState({ selectedCategory: { categoryType: -1 } });
     this.props.getProductData();
     this.getCategory(0);
   };
 
+  handleCannaCategoryClick = category => {
+    debugger;
+    let filters = [{ "field": "retailerId", "value": localStorage.getItem('retailerId') }]
+    this.setState({ selectedCategory: category });
+
+    if (category.categoryType === 0) {
+      filters.push({ "field": "category1", "value": category.id })
+      this.setState({ rootCategory: category });
+    }
+    if (category.categoryType === 1) {
+      filters.push({ "field": "category2", "value": category.id })
+
+      this.setState({ subCategory: category });
+    }
+    if (category.categoryType === 2) {
+      filters.push({ "field": "category3", "value": category.id })
+      this.setState({ leafCategory: category });
+    }
+    let customerType = localStorage.getItem('selectedCustomerType')
+
+    if (customerType == 1) {
+      filters = [...filters,
+      { 'field': 'productType', 'value': '1' },
+      { 'field': 'productType', 'value': '2' },
+      { 'field': 'productType', 'value': '3' },
+
+
+      ]
+    }
+    else if (customerType == 2) {
+      filters = [
+        ...filters,
+        { 'field': 'productType', 'value': '1' },
+        { 'field': 'productType', 'value': '3' },
+      ]
+    }
+    let reqObj = {
+      request: {
+        "text": '',
+        "offset": 0,
+        "limit": 39,
+        "filters": filters
+      },
+      storeId: localStorage.getItem('storeId')
+    }
+    let categoryDb = new PouchDb(`categoryDb${localStorage.getItem("storeId")}`);
+    categoryDb
+      .find({
+        selector: { parentCategoryId: category.id }
+      })
+      .then(results => {
+        this.props.dispatch(
+          commonActionCreater(results.docs, "GET_CATEGORY_DATA_SUCCESS")
+        );
+      })
+      .catch(err => {
+        console.log(err);
+      });
+
+    genericPostData({
+      dispatch: this.props.dispatch,
+      reqObj: reqObj,
+      url: 'Search/Inventory',
+      dontShowMessage: true,
+      constants: {
+        init: 'ELASTIC_SEARCH_PRODUCTS_INIT',
+        success: 'ELASTIC_SEARCH_PRODUCTS_SUCCESS',
+        error: 'ELASTIC_SEARCH_PRODUCTS_ERROR'
+      },
+      identifier: 'ELASTIC_SEARCH_PRODUCTS_RULES',
+      successCb: (data) => { }
+    }).then((data) => {
+      let result = {}
+      result.pagination = {}
+      result.pagination.method = "allDocs"
+      result.pagination.firstItemId = _get(data, 'products[0].id', '')
+      result.pagination.lastItemId = _get(data, 'products[data.products.length - 1].id', '')
+      result.pagination.pageNo = 1
+      result.pagination.startVal = 1
+      result.pagination.endVal = _get(data, 'products.length', 0)
+      let rows = _get(data, 'products', []).map((d) => {
+        let obj = {
+          doc: {
+            product: d
+          },
+          id: d.product.id
+        }
+        return obj
+      })
+      result.rows = rows
+      console.log(result, 'result')
+      this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+    })
+
+  }
+
+
   handleCategoryClick = category => {
+
     this.setState({ selectedCategory: category });
 
     if (category.categoryType === 0) {
@@ -179,7 +277,7 @@ class Categories extends Component {
     this.getHotProductFromPouch();
   }
   getHotProductFromPouch = () => {
-    let hotProducts = localStorage.getItem('hotProducts')||'[]';
+    let hotProducts = localStorage.getItem('hotProducts') || '[]';
     hotProducts = JSON.parse(hotProducts);
     if (hotProducts.length == 0) {
       this.handleHomeClick()
@@ -210,7 +308,7 @@ class Categories extends Component {
         <div className="breadcrumbs">
           <BreadCrumb
             homeClickHandler={this.handleHomeClick}
-            categoryClickHandler={this.handleCategoryClick}
+            categoryClickHandler={localStorage.getItem('cannabisStore') ? this.handleCannaCategoryClick : this.handleCategoryClick}
             selectedRootCategory={this.state.rootCategory}
             selectedSubCategory={this.state.subCategory}
             selectedLeafCategory={this.state.leafCategory}
@@ -228,7 +326,7 @@ class Categories extends Component {
               return (
                 <Category
                   category={category}
-                  clickHandler={this.handleCategoryClick}
+                  clickHandler={localStorage.getItem('cannabisStore') ? this.handleCannaCategoryClick : this.handleCategoryClick}
                 />
               );
             })}
