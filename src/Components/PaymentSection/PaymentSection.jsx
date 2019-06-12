@@ -369,13 +369,16 @@ class PaymentSection extends React.Component {
     };
 
     makReqObj = async (offline) => {
+        debugger
         let { customer, cartItems, totalAmount, sessionId } = this.props;
         let { cartDiscount, employeeDiscountMoney, totalItemDiscountMoney, totalTaxAmount } = this.props.cart
         let saleItems = cartItems.map((item) => {
+            debugger
             let obj = {}
             obj.productId = item.doc.product.id;
             if(localStorage.getItem('cannabisStore')){
                 obj.itemQuantity = item.qty;
+                obj.qty = item.qty;
             }
             else{
                 obj.qty = item.qty;
@@ -389,7 +392,8 @@ class PaymentSection extends React.Component {
             obj.itemTaxAmount = item.itemTaxAmount
             obj.saleType = item.saleType;
             obj.product = item.doc.product;
-            obj.itemPackage = item.packages[0]
+            if(_get(item, 'packages[0]', false))
+            obj.itemPackage = _get(item, 'packages[0]', [])
             return obj;
         });
 
@@ -562,6 +566,7 @@ class PaymentSection extends React.Component {
             changeDue: { currency: 'USD', amount: this.props.remainingAmount.isNegative() ? this.props.remainingAmount.multiply(-1).getAmount() : this.props.remainingAmount.getAmount() }
 
         };
+        debugger
         if (offline) {
             reqObj.customerName = _get(customer, 'customer.firstName', '') + ' ' + _get(customer, 'customer.lastName');
             reqObj.terminalName = localStorage.getItem('terminalName');
@@ -575,6 +580,7 @@ class PaymentSection extends React.Component {
     handleSaleTransaction = async (offline) => {
         this.setState({ isLoadingTransaction: true })
         await this.makReqObj(offline).then((reqObj) => {
+            debugger
             if (offline) {
                 this.handleSaleTransactionOffline(JSON.parse(JSON.stringify(reqObj))); 
             }
@@ -582,6 +588,7 @@ class PaymentSection extends React.Component {
                 this.handleSaleTransactionOnline(reqObj);
             }
             if(localStorage.getItem('cannabisStore')){
+                debugger;
                 let queueId = _get(this.props, 'cannabisCustomer.queueId', '')
                 genericPostData({
                     dispatch: this.props.dispatch,
@@ -596,17 +603,20 @@ class PaymentSection extends React.Component {
                     identifier: 'REMOVE_CUSTOMER_TO_QUEUE',
                     successCb: (data) => { }
                 }).then((data) => {
+                    debugger
                     this.props.dispatch(commonActionCreater(data.queueItems, 'UPDATE_CUSTOMER_QUEUE'));
                     this.props.dispatch(commonActionCreater({}, 'CUSTOMER_SERVING'));
                 })
             }
         })
             .catch((error) => {
+                debugger
                 this.setState({ isLoadingTransaction: false });
                 showErrorAlert({ dispatch: this.props.dispatch, error: _get(error, 'err', '') })
             })
     }
     handleSaleTransactionOffline = (reqObj) => {
+        debugger
         let transactiondb = new PouchDb(`transactiondb${localStorage.getItem('storeId')}`)
         transactiondb.put({
             _id: reqObj.id,
@@ -629,6 +639,7 @@ class PaymentSection extends React.Component {
     }
 
     handleSaleTransactionOnline = (reqObj) => {
+        debugger
         genericPostData({
             dispatch: this.props.dispatch,
             reqObj,
@@ -647,11 +658,13 @@ class PaymentSection extends React.Component {
     }
 
     handleSaleOnlineTransactionSuccess = (data) => {
+        debugger
         this.setState({ isLoadingTransaction: false })
         this.props.dispatch(commonActionCreater('', 'SALE_COMMENT'));
         this.setState({ receiptData: data, showPaymentReceipt: true, transactionStatus: 'online' })
     }
     handleSaleOnlineTransactionError = () => {
+        debugger
         this.setState({ isLoadingTransaction: false })
     }
     handleClose = () => {
