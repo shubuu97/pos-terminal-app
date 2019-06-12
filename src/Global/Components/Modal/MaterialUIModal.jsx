@@ -133,7 +133,7 @@ class MaterialUIModal extends React.Component {
                                     }
                                     <div className='expanded-options flex-row justify-space-between'>
                                         {
-                                            this.props.cannabisRetailer ?
+                                            this.props.cannabisRetailer && !(_get(this.props, 'productDetails.productType', 3) == 3) ?
                                                 <div className='flex-row justify-space-between align-center' style={{ width: '100%' }}>
                                                     <ReactSelect
                                                         name='Select Package'

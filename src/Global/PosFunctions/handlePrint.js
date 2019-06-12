@@ -103,7 +103,7 @@ const HandlePrint = (props) => {
     return (
         <div style={{ fontSize: "12px", fontFamily: "arial, sans-serif", color:'black' }} >
             <div style={{ textAlign: "center" }}>
-                <div style={{width: "100%" }}> <img style={{ height: "auto", width: "100%" }} src={props.logo} /></div>
+                <div style={{width: "100%" }}> <img style={{ height: "70px", width: "100px" }} src={props.logo} /></div>
                 <div style={{ marginTop: '15px' }}>{_get(props, 'orderId', '')}</div>
                 <div>{_get(props, 'orderDate', '')}</div>
                 <div style={{ marginTop: '10px' }}><span style={{ fontSize: '11px', fontWeight: 'bold' }}>STORE:</span> {_get(props, 'storeName', '')}</div>

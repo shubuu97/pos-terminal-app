@@ -15,7 +15,6 @@ const holdCartItem = (state = { holdedItems: [], }, action) => {
             return Object.assign({}, state, {
                 unHoldedItem: action.data
             });
-            break;
     }
     return state;
 }

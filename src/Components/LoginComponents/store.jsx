@@ -96,26 +96,33 @@ class Store extends React.Component {
     //     .catch(err=> {
     //        
     //     })
-        //     return blobDb.putAttachment('storeLogo', 'storeLogo.png', blob, 'image/png');
-        //   }).then(() => {
-        //      return blobDb.get('storeLogo', {attachments: true});
-        //   }).then((doc) => {
-        //      
-        //     return blobDb.getAttachment('storeLogo', 'storeLogo.png');
-        //   }).then(function (blob) {
-        //      
-        //     var url = URL.createObjectURL(blob);
-        //     console.log(url, 'here is the url')
-        //   });
+    //     return blobDb.putAttachment('storeLogo', 'storeLogo.png', blob, 'image/png');
+    //   }).then(() => {
+    //      return blobDb.get('storeLogo', {attachments: true});
+    //   }).then((doc) => {
+    //      
+    //     return blobDb.getAttachment('storeLogo', 'storeLogo.png');
+    //   }).then(function (blob) {
+    //      
+    //     var url = URL.createObjectURL(blob);
+    //     console.log(url, 'here is the url')
+    //   });
     // }
 
     afterStoreSuccess = (data) => {
-        let countyTaxRate = _get(data, 'tax.countyTaxRate', 0)||0;
-        let federalTaxRate = _get(data, 'tax.federalTaxRate', 0)||0;
-        let stateTaxRate = _get(data, 'tax.stateTaxRate', 0)||0;
+        let countyTaxRate = _get(data, 'tax.countyTaxRate', 0) || 0;
+        let federalTaxRate = _get(data, 'tax.federalTaxRate', 0) || 0;
+        let stateTaxRate = _get(data, 'tax.stateTaxRate', 0) || 0;
+        let operatingTimezone = _get(data, 'store.operatingTimezone', 0) || 0;
+        let operatingHoursStart = _get(data, 'store.operatingHoursStart', 0) || 0;
+        let operatingHoursEnd = _get(data, 'store.operatingHoursEnd', 0) || 0;
         localStorage.setItem('countyTaxRate', countyTaxRate);
         localStorage.setItem('federalTaxRate', federalTaxRate);
         localStorage.setItem('stateTaxRate', stateTaxRate);
+        localStorage.setItem('operatingTimezone', operatingTimezone);
+        localStorage.setItem('operatingHoursStart', operatingHoursStart);
+        localStorage.setItem('operatingHoursEnd', operatingHoursEnd);
+
         this.setState({ terminals: _get(data, 'terminals') })
     }
     mapTermainal = () => {
@@ -225,9 +232,9 @@ class Store extends React.Component {
                 >
                     Login in to POS
                 </LoaderButton>
-                
+
                 {/* Rendering LogoImage so that it will show on offline mode as well */}
-                <img id='logoImage' src={localStorage.getItem('storeLogo')} style={{display: "none"}} />
+                <img id='logoImage' src={localStorage.getItem('storeLogo')} style={{ display: "none" }} />
 
 
                 {this.state.showAuthModal ? <AuthModal

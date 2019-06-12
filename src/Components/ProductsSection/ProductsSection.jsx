@@ -112,7 +112,8 @@ class ProductsSection extends React.Component {
                 "offset": 0,
                 "limit": 39,
                 "filters": filters
-            }
+            },
+            storeId: localStorage.getItem('storeId')
         }
 
         // enum ProductType {
@@ -356,7 +357,8 @@ class ProductsSection extends React.Component {
                 "offset": (result.pagination.pageNo - 1) * 39,
                 "limit": 39,
                 "filters": filters
-            }
+            },
+            storeId: localStorage.getItem('storeId')
         }
         genericPostData({
             dispatch: this.props.dispatch,
@@ -577,6 +579,7 @@ class ProductsSection extends React.Component {
                     <div className="header-top flex-row align-center justify-space-between pl-10" >
                         <SideDrawer
                             offline={this.props.offline}
+                            storeClose = {this.props.storeClose}
                             // ! Actions
                             handleTransactionPopulate={this.props.handleTransactionPopulate}
                             handleClickOpenOnHold={this.props.handleClickOpenOnHold}
@@ -673,7 +676,9 @@ const mapStateToProps = state => {
     let endVal = _get(productList, 'lookUpData.pagination.endVal', '')
     let paymentMethods = _get(state, 'storeData.lookUpData.store.paymentMethods', [])
     let resetProduct = _get(state, 'resetProduct.lookUpData')
-    let customer = _get(state, 'customerQueue.customer.customer')
+    let customer = _get(state, 'customerQueue.customer.customer');
+    let storeClose = _get(state, 'storeClose.lookUpData')
+
     return {
         cart,
         productCount,
@@ -688,7 +693,8 @@ const mapStateToProps = state => {
         paymentMethods,
         resetProduct,
         isCustomerTabOpen,
-        customer
+        customer,
+        storeClose
     }
 }
 
