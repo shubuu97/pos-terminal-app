@@ -17,9 +17,10 @@ const taxCalculations = (cartItem, cannabisTaxes) => {
     // }
     //  * ProductType enums as defined in backend
     // enum ProductType {
-    //     NON_CANNABIS = 0;
+    //     
     //     CANNABIS = 1;
     //     MEDICAL_ONLY_CANNABIS = 2;
+    //     NON_CANNABIS = 3;
     // }
 
     let productType = _get(cartItem, 'doc.product.productType', 0)
@@ -43,7 +44,7 @@ const taxCalculations = (cartItem, cannabisTaxes) => {
                 }
                 break;
             case 4:
-                if (productType == 0) {
+                if (productType == 3) {
                     itemTax += data.percentage
                 }
                 break;

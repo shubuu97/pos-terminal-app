@@ -114,6 +114,7 @@ const cartItem = (state = {
                 weightLimit: 0,
             }
 
+            // * Init Discount Stuff
             _get(action, 'data.cartItems', _get(action, 'data.prevCart.cartItems', [])).forEach((item, index) => {
                 item.itemSalesPriceMoney = DineroFunc((_get(item, 'doc.product.salePrice.amount', 0)))
                 item.itemRegularTotalMoney = item.itemSalesPriceMoney.multiply(_get(item, 'qty', 0))
@@ -128,6 +129,7 @@ const cartItem = (state = {
             })
             // * Calculating max discount
             maxAllowedDiscountMoney = discountableMoney.percentage(80);
+
             // ************ Cart Discount ************
             // * Deciding if discount in "Absolute" or "Percent"
             let isPercentage = false
@@ -269,6 +271,7 @@ const cartItem = (state = {
                 let isTaxable = ("isTaxable" in item.doc.product)
                 let itemTaxPercent = 0
                 if (isTaxable) {
+                    // * Cannabis tax calculation
                     if (localStorage.getItem('cannabisStore')) {
                         itemTaxPercent = Number(taxCalculations(item, cannabisTaxes))
                         item.itemTaxAmount = item.subTotal.percentage(itemTaxPercent)

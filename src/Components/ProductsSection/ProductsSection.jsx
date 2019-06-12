@@ -112,7 +112,8 @@ class ProductsSection extends React.Component {
                 "offset": 0,
                 "limit": 39,
                 "filters": filters
-            }
+            },
+            storeId: localStorage.getItem('storeId')
         }
 
         // enum ProductType {
@@ -356,7 +357,8 @@ class ProductsSection extends React.Component {
                 "offset": (result.pagination.pageNo - 1) * 39,
                 "limit": 39,
                 "filters": filters
-            }
+            },
+            storeId: localStorage.getItem('storeId')
         }
         genericPostData({
             dispatch: this.props.dispatch,
