@@ -133,9 +133,9 @@ function TemporaryDrawer(props) {
                     </div>
                 </div>
 
-                <div>
+                {/* <div>
                     <SettingContainer  {...props} />
-                </div>
+                </div> */}
             </Drawer>
 
         </div>
