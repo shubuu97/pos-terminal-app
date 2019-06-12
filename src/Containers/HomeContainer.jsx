@@ -81,293 +81,320 @@ class HomeContainer extends React.Component {
             openHistoryDialogue: false
         }
     }
-
-    componentDidMount() {
-        let token = localStorage.getItem('Token')
-        if (_isEmpty(token)) {
-            this.props.history.push('/login')
+    closeStore = () => {
+        console.log("This is the time to close store ")
+        this.props.dispatch(commonActionCreater({ storeClose: true, message: 'This is the time to close store' }, 'STORE_CLOSE_INDICATOR'));
+    }
+    checkForClosingTime = () => {
+        debugger;
+        let operatingTimezone = localStorage.getItem('operatingTimezone');
+        let operatingHoursStart = localStorage.getItem('operatingHoursStart');
+        let operatingHoursEnd = localStorage.getItem('operatingHoursEnd');
+        let offset = operatingTimezone.split("UTC")[1]
+        let d = new Date();
+        let utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+        let nd = new Date(utc + (3600000 * offset));
+        let timeZoneCurrentHour = nd.getHours();
+        let timeZoneCurrentMinutes = nd.getMinutes();
+        let stHours = new Date(operatingHoursStart).getHours();
+        let stMinutes = new Date(operatingHoursStart).getMinutes();
+        let enHours = new Date(operatingHoursEnd).getHours();
+        let enMinutes = new Date(operatingHoursEnd).getMinutes();
+        let secondsNow = timeZoneCurrentHour * 60 * 60 + timeZoneCurrentMinutes * 60;
+        let stseconds = stHours * 60 * 60 + stMinutes * 60;
+        let enSeconds = enHours * 60 * 60 + enMinutes * 60;
+        if (secondsNow > stseconds) {
+            if (secondsNow < enSeconds) {
+            this.props.dispatch(commonActionCreater({ "storeClose": false, "message": '' }, 'STORE_CLOSE_INDICATOR'));
+            setTimeout(this.closeStore, enSeconds - secondsNow)
+        }
+            else {
+                console.log("This is the time to close store ");
+                this.props.dispatch(commonActionCreater({ "storeClose": true, "message": 'This is the time to close store' }, 'STORE_CLOSE_INDICATOR'));
+            }
         }
         else {
-            this.calcHeight();
-            this.getRuleSet();
-            if (localStorage.getItem('cannabisStore')) {
-                this.getCannabisProductData();
-                this.getCannabisStoreTaxes();
-
-            }
-            else {
-                this.getProductData();
-            }
-
-            this.fetchFreedomPayDetails();
-            this.props.startPolling();
+            console.log("wait for some time to start the store");
+            this.props.dispatch(commonActionCreater({ storeClose: true, message: 'wait for some time to start the store' }, 'STORE_CLOSE_INDICATOR'));
+            setTimeout(this.checkForClosingTime, stseconds - secondsNow);
         }
-        this.props.dispatch(commonActionCreater(false, 'IS_CUSTOMER_DIALOGUE_OPEN'))
+}
+componentDidMount() {
+    let token = localStorage.getItem('Token')
+    if (_isEmpty(token)) {
+        this.props.history.push('/login')
     }
-
-    fetchFreedomPayDetails = () => {
-        axiosFetcher({
-            method: 'POST',
-            url: 'Payment/FreedomPay/Config/Get',
-            reqObj: { id: localStorage.getItem('terminalId') },
-            successCb: this.fetchFreedomPayDetailsSuccess,
-            errorCb: (err) => {
-
-            }
-        })
-    }
-
-    fetchFreedomPayDetailsSuccess = (res) => {
-        localStorage.setItem('freedomPayClientEnvironment', _get(res, 'data.freedomPayClientEnvironment'));
-        localStorage.setItem('freedomPayClientUrl', _get(res, 'data.freedomPayClientUrl'));
-        localStorage.setItem('freedomPayStoreId', _get(res, 'data.freedomPayStoreId'));
-        localStorage.setItem('freedomPayTerminalId', _get(res, 'data.freedomPayTerminalId'));
-        localStorage.setItem('merchantReferenceCode', _get(res, 'data.merchantReferenceCode'));
-        localStorage.setItem('freedomPayWorkstationId', _get(res, 'data.freedomPayWorkstationId'));
-        console.log(res, "res is here")
-    }
-
-    calcHeight() {
-        let windowHeight = document.documentElement.clientHeight
-        // ! Product Section Calculations
-        let headerHeight = 70;
-        let categoriesHeight = 0;
-        categoriesHeight = 90;
-        let productListHeight = windowHeight - (headerHeight + categoriesHeight + 25)
-
-        // ! Checkout Section Calculations
-        let checkoutHeader = headerHeight * 0.65;
-        let checkoutMainPart = windowHeight - (checkoutHeader + 80);
-        let checkoutcalcArea = 150
-        let checkoutactionArea = 60
-        let checkoutcartArea = checkoutMainPart - (checkoutcalcArea + checkoutactionArea)
-        // * Checkout Customer Section Calculations
-        let checkoutCustomerArea = checkoutMainPart - checkoutactionArea
-
-        // ! Payment Section
-        let paymentOptionsPart = headerHeight;
-        let paymentMainPart = windowHeight - (checkoutHeader + 100);
-        let paymentCalculator = paymentMainPart * 0.70;
-        let paymentSaleComment = paymentMainPart * 0.10;
-        let paymentSubmitTransaction = paymentMainPart * 0.10;
-
-        console.log("Screen Height Calc - windowHeight=", windowHeight,
-            ' headerHeight=', headerHeight,
-            ' categoriesHeight=', categoriesHeight,
-            ' productListHeight=', productListHeight,
-            ' checkoutHeader=', checkoutHeader,
-            ' checkoutMainPart=', checkoutMainPart,
-            ' checkoutcalcArea=', checkoutcalcArea,
-            ' checkoutactionArea=', checkoutactionArea,
-            ' checkoutcartArea=', checkoutcartArea,
-            ' checkoutCustomerArea=', checkoutCustomerArea,
-            ' paymentOptionsPart=', paymentOptionsPart,
-            ' paymentMainPart=', paymentMainPart,
-            ' paymentCalculator=', paymentCalculator,
-            ' paymentSaleComment=', paymentSaleComment,
-            ' paymentSubmitTransaction=', paymentSubmitTransaction,
-
-        )
-        this.setState({
-            windowHeight,
-            headerHeight,
-            categoriesHeight,
-            productListHeight,
-            checkoutHeader,
-            checkoutMainPart,
-            checkoutcalcArea,
-            checkoutactionArea,
-            checkoutcartArea,
-            checkoutCustomerArea,
-            paymentOptionsPart,
-            paymentMainPart,
-            paymentCalculator,
-            paymentSaleComment,
-            paymentSubmitTransaction,
-        })
-    }
-    errorLoyaltyPoint = (err, errCode) => {
-        if (err) {
-            if (errCode == 401) {
-                this.handleLogout()
-            }
-        }
-    }
-
-    getRuleSet = () => {
-        let data = { id: localStorage.getItem('retailerId') }
-        genericPostData({
-            dispatch: this.props.dispatch,
-            reqObj: data,
-            url: 'Rewards/RedemptionRule/ByRetailer',
-            dontShowMessage: true,
-            constants: {
-                init: 'GET_LOYALTY_REDEMPTION_RULES_INIT',
-                success: 'GET_LOYALTY_REDEMPTION_RULES_SUCCESS',
-                error: 'GET_LOYALTY_REDEMPTION_RULES_ERROR'
-            },
-            identifier: 'GET_LOYALTY_REDEMPTION_RULES',
-            successCb: this.saveRedemptionRules,
-            errorCb: this.errorLoyaltyPoint
-        })
-        genericPostData({
-            dispatch: this.props.dispatch,
-            reqObj: data,
-            url: 'Rewards/EarningRule/ByRetailer',
-            dontShowMessage: true,
-            constants: {
-                init: 'GET_LOYALTY_EARNING_RULES_INIT',
-                success: 'GET_LOYALTY_EARNING_RULES_SUCCESS',
-                error: 'GET_LOYALTY_EARNING_RULES_ERROR'
-            },
-            identifier: 'GET_LOYALTY_EARNING_RULES',
-            successCb: this.saveEarningRules,
-            errorCb: this.handleErrorRedemption
-        })
-    }
-
-    saveRedemptionRules = (data) => {
-        this.props.dispatch(commonActionCreater(data, 'GET_LOYALTY_REDEMPTION_RULES'));
-    }
-
-    saveEarningRules = (data) => {
-        this.props.dispatch(commonActionCreater(data, 'GET_LOYALTY_EARNING_RULES'));
-    }
-
-    toggleViewPayment = () => {
-        this.setState({
-            isOpenProduct: false,
-            isOpenPayment: true,
-        })
-    }
-
-    toggleViewProduct = () => {
-        this.setState({
-            isOpenProduct: true,
-            isOpenPayment: false,
-        })
-    }
-
-    handleClickOpen = (name) => {
-        this.setState({ [name]: true });
-    };
-
-    handleClose = (name) => {
-        this.setState({ [name]: false });
-        if (name = 'openHistoryDialogue') {
-            this.setState({
-                historySidebarItems: [],
-                selectedSaleTransaction: null,
-                historySidebarLoading: false
-            })
-        }
-    };
-    handleClickOpenSessionContainer = () => {
-        this.setState({ openSessionContainer: true });
-    };
-
-    handleCloseSessionContainer = () => {
-        if (localStorage.getItem('sessionId') == 'nil') {
-            localStorage.clear();
-            this.props.history.push('/login')
-        }
-        this.setState({ openSessionContainer: false });
-    };
-
-    handleHoldIndex = (index) => {
-        this.setState({
-            holdIndex: index
-        })
-    }
-    filterResult = (result) => {
-        return new Promise(async (resolve, reject) => {
-            this.resolveArray.push(resolve);
-            if (_get(result, 'rows.length') == 0) {
-                let resolved = this.resolveArray[0];
-
-                resolved(this.filteredResult)
-            }
-
-            let rowsWithPositiveQuantity = result.rows.filter((row) => {
-                if (_get(row, 'doc.inventory.quantity') > 0) {
-                    return true;
-                }
-                else {
-                    return false;
-                }
-            });
-            this.filteredResult = [...this.filteredResult, ...rowsWithPositiveQuantity];
-            let filteredCount = _get(result, 'rows.length', 0) - rowsWithPositiveQuantity.length;
-            console.log(filteredCount, "filteredCount");
-            if (filteredCount > 0) {
-                let startkey = result.rows[result.rows.length - 1].id;
-                let productsdb = new PouchDb(`productsdb${localStorage.getItem('storeId')}`);
-                let res = await productsdb.allDocs({
-                    include_docs: true,
-                    startkey,
-                    limit: filteredCount,
-                    skip: 1
-                });
-                this.filterResult(res);
-            }
-            else {
-                console.log(this.filteredResult)
-                let resolved = this.resolveArray[0];
-                resolved(this.filteredResult);
-            }
-        })
-
-    }
-    getProductData = () => {
-        let hotProducts = localStorage.getItem('hotProducts') || [];
-        hotProducts = JSON.parse(hotProducts);
-        if (hotProducts.length > 0) {
-            let result = { rows: [] }
-            result.rows = hotProducts.map(hotProduct => {
-                let obj = {};
-                _set(obj, 'id', hotProduct._id)
-                _set(obj, 'doc', hotProduct);
-                return obj;
-            });
-            result.pagination = {}
-            result.pagination.method = "allDocs"
-            result.pagination.firstItemId = result.rows[0].id
-            result.pagination.lastItemId = result.rows[result.rows.length - 1].id
-            result.pagination.pageNo = 1
-            result.pagination.startVal = 1
-            result.pagination.endVal = result.rows.length;
-            this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
-            return;
+    else {
+        this.calcHeight();
+        this.getRuleSet();
+        if (localStorage.getItem('cannabisStore')) {
+            this.getCannabisProductData();
+            this.getCannabisStoreTaxes();
+            this.checkForClosingTime()
 
         }
         else {
+            this.getProductData();
+        }
+
+        this.fetchFreedomPayDetails();
+        this.props.startPolling();
+    }
+    this.props.dispatch(commonActionCreater(false, 'IS_CUSTOMER_DIALOGUE_OPEN'))
+}
+
+fetchFreedomPayDetails = () => {
+    axiosFetcher({
+        method: 'POST',
+        url: 'Payment/FreedomPay/Config/Get',
+        reqObj: { id: localStorage.getItem('terminalId') },
+        successCb: this.fetchFreedomPayDetailsSuccess,
+        errorCb: (err) => {
+
+        }
+    })
+}
+
+fetchFreedomPayDetailsSuccess = (res) => {
+    localStorage.setItem('freedomPayClientEnvironment', _get(res, 'data.freedomPayClientEnvironment'));
+    localStorage.setItem('freedomPayClientUrl', _get(res, 'data.freedomPayClientUrl'));
+    localStorage.setItem('freedomPayStoreId', _get(res, 'data.freedomPayStoreId'));
+    localStorage.setItem('freedomPayTerminalId', _get(res, 'data.freedomPayTerminalId'));
+    localStorage.setItem('merchantReferenceCode', _get(res, 'data.merchantReferenceCode'));
+    localStorage.setItem('freedomPayWorkstationId', _get(res, 'data.freedomPayWorkstationId'));
+    console.log(res, "res is here")
+}
+
+calcHeight() {
+    let windowHeight = document.documentElement.clientHeight
+    // ! Product Section Calculations
+    let headerHeight = 70;
+    let categoriesHeight = 0;
+    categoriesHeight = 90;
+    let productListHeight = windowHeight - (headerHeight + categoriesHeight + 25)
+
+    // ! Checkout Section Calculations
+    let checkoutHeader = headerHeight * 0.65;
+    let checkoutMainPart = windowHeight - (checkoutHeader + 80);
+    let checkoutcalcArea = 150
+    let checkoutactionArea = 60
+    let checkoutcartArea = checkoutMainPart - (checkoutcalcArea + checkoutactionArea)
+    // * Checkout Customer Section Calculations
+    let checkoutCustomerArea = checkoutMainPart - checkoutactionArea
+
+    // ! Payment Section
+    let paymentOptionsPart = headerHeight;
+    let paymentMainPart = windowHeight - (checkoutHeader + 100);
+    let paymentCalculator = paymentMainPart * 0.70;
+    let paymentSaleComment = paymentMainPart * 0.10;
+    let paymentSubmitTransaction = paymentMainPart * 0.10;
+
+    console.log("Screen Height Calc - windowHeight=", windowHeight,
+        ' headerHeight=', headerHeight,
+        ' categoriesHeight=', categoriesHeight,
+        ' productListHeight=', productListHeight,
+        ' checkoutHeader=', checkoutHeader,
+        ' checkoutMainPart=', checkoutMainPart,
+        ' checkoutcalcArea=', checkoutcalcArea,
+        ' checkoutactionArea=', checkoutactionArea,
+        ' checkoutcartArea=', checkoutcartArea,
+        ' checkoutCustomerArea=', checkoutCustomerArea,
+        ' paymentOptionsPart=', paymentOptionsPart,
+        ' paymentMainPart=', paymentMainPart,
+        ' paymentCalculator=', paymentCalculator,
+        ' paymentSaleComment=', paymentSaleComment,
+        ' paymentSubmitTransaction=', paymentSubmitTransaction,
+
+    )
+    this.setState({
+        windowHeight,
+        headerHeight,
+        categoriesHeight,
+        productListHeight,
+        checkoutHeader,
+        checkoutMainPart,
+        checkoutcalcArea,
+        checkoutactionArea,
+        checkoutcartArea,
+        checkoutCustomerArea,
+        paymentOptionsPart,
+        paymentMainPart,
+        paymentCalculator,
+        paymentSaleComment,
+        paymentSubmitTransaction,
+    })
+}
+errorLoyaltyPoint = (err, errCode) => {
+    if (err) {
+        if (errCode == 401) {
+            this.handleLogout()
+        }
+    }
+}
+
+getRuleSet = () => {
+    let data = { id: localStorage.getItem('retailerId') }
+    genericPostData({
+        dispatch: this.props.dispatch,
+        reqObj: data,
+        url: 'Rewards/RedemptionRule/ByRetailer',
+        dontShowMessage: true,
+        constants: {
+            init: 'GET_LOYALTY_REDEMPTION_RULES_INIT',
+            success: 'GET_LOYALTY_REDEMPTION_RULES_SUCCESS',
+            error: 'GET_LOYALTY_REDEMPTION_RULES_ERROR'
+        },
+        identifier: 'GET_LOYALTY_REDEMPTION_RULES',
+        successCb: this.saveRedemptionRules,
+        errorCb: this.errorLoyaltyPoint
+    })
+    genericPostData({
+        dispatch: this.props.dispatch,
+        reqObj: data,
+        url: 'Rewards/EarningRule/ByRetailer',
+        dontShowMessage: true,
+        constants: {
+            init: 'GET_LOYALTY_EARNING_RULES_INIT',
+            success: 'GET_LOYALTY_EARNING_RULES_SUCCESS',
+            error: 'GET_LOYALTY_EARNING_RULES_ERROR'
+        },
+        identifier: 'GET_LOYALTY_EARNING_RULES',
+        successCb: this.saveEarningRules,
+        errorCb: this.handleErrorRedemption
+    })
+}
+
+saveRedemptionRules = (data) => {
+    this.props.dispatch(commonActionCreater(data, 'GET_LOYALTY_REDEMPTION_RULES'));
+}
+
+saveEarningRules = (data) => {
+    this.props.dispatch(commonActionCreater(data, 'GET_LOYALTY_EARNING_RULES'));
+}
+
+toggleViewPayment = () => {
+    this.setState({
+        isOpenProduct: false,
+        isOpenPayment: true,
+    })
+}
+
+toggleViewProduct = () => {
+    this.setState({
+        isOpenProduct: true,
+        isOpenPayment: false,
+    })
+}
+
+handleClickOpen = (name) => {
+    this.setState({ [name]: true });
+};
+
+handleClose = (name) => {
+    this.setState({ [name]: false });
+    if (name = 'openHistoryDialogue') {
+        this.setState({
+            historySidebarItems: [],
+            selectedSaleTransaction: null,
+            historySidebarLoading: false
+        })
+    }
+};
+handleClickOpenSessionContainer = () => {
+    this.setState({ openSessionContainer: true });
+};
+
+handleCloseSessionContainer = () => {
+    if (localStorage.getItem('sessionId') == 'nil') {
+        localStorage.clear();
+        this.props.history.push('/login')
+    }
+    this.setState({ openSessionContainer: false });
+};
+
+handleHoldIndex = (index) => {
+    this.setState({
+        holdIndex: index
+    })
+}
+filterResult = (result) => {
+    return new Promise(async (resolve, reject) => {
+        this.resolveArray.push(resolve);
+        if (_get(result, 'rows.length') == 0) {
+            let resolved = this.resolveArray[0];
+
+            resolved(this.filteredResult)
+        }
+
+        let rowsWithPositiveQuantity = result.rows.filter((row) => {
+            if (_get(row, 'doc.inventory.quantity') > 0) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        });
+        this.filteredResult = [...this.filteredResult, ...rowsWithPositiveQuantity];
+        let filteredCount = _get(result, 'rows.length', 0) - rowsWithPositiveQuantity.length;
+        console.log(filteredCount, "filteredCount");
+        if (filteredCount > 0) {
+            let startkey = result.rows[result.rows.length - 1].id;
             let productsdb = new PouchDb(`productsdb${localStorage.getItem('storeId')}`);
-            productsdb.allDocs({
+            let res = await productsdb.allDocs({
                 include_docs: true,
-                attachments: true,
-                limit: 39,
-                skip: 0
-            }).then(async (result) => {
-                if (localStorage.getItem("showOutOfStock") == "false") {
-                    this.filteredResult = [];
-                    this.resolveArray = [];
-                    this.filterResult(result).then(async (rows) => {
-                        if (rows.length == 0) {
-                            return;
-                        }
-                        let result = { rows };
+                startkey,
+                limit: filteredCount,
+                skip: 1
+            });
+            this.filterResult(res);
+        }
+        else {
+            console.log(this.filteredResult)
+            let resolved = this.resolveArray[0];
+            resolved(this.filteredResult);
+        }
+    })
 
-                        result.pagination = {}
-                        result.pagination.method = "allDocs"
-                        result.pagination.firstItemId = result.rows[0].id
-                        result.pagination.lastItemId = result.rows[result.rows.length - 1].id
-                        result.pagination.pageNo = 1
-                        result.pagination.startVal = 1
-                        result.pagination.endVal = result.rows.length
-                        this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
-                    })
-                }
-                else {
+}
+getProductData = () => {
+    let hotProducts = localStorage.getItem('hotProducts') || [];
+    hotProducts = JSON.parse(hotProducts);
+    if (hotProducts.length > 0) {
+        let result = { rows: [] }
+        result.rows = hotProducts.map(hotProduct => {
+            let obj = {};
+            _set(obj, 'id', hotProduct._id)
+            _set(obj, 'doc', hotProduct);
+            return obj;
+        });
+        result.pagination = {}
+        result.pagination.method = "allDocs"
+        result.pagination.firstItemId = result.rows[0].id
+        result.pagination.lastItemId = result.rows[result.rows.length - 1].id
+        result.pagination.pageNo = 1
+        result.pagination.startVal = 1
+        result.pagination.endVal = result.rows.length;
+        this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+        return;
+
+    }
+    else {
+        let productsdb = new PouchDb(`productsdb${localStorage.getItem('storeId')}`);
+        productsdb.allDocs({
+            include_docs: true,
+            attachments: true,
+            limit: 39,
+            skip: 0
+        }).then(async (result) => {
+            if (localStorage.getItem("showOutOfStock") == "false") {
+                this.filteredResult = [];
+                this.resolveArray = [];
+                this.filterResult(result).then(async (rows) => {
+                    if (rows.length == 0) {
+                        return;
+                    }
+                    let result = { rows };
+
                     result.pagination = {}
                     result.pagination.method = "allDocs"
                     result.pagination.firstItemId = result.rows[0].id
@@ -376,555 +403,566 @@ class HomeContainer extends React.Component {
                     result.pagination.startVal = 1
                     result.pagination.endVal = result.rows.length
                     this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
-                }
-            }).catch((err) => {
-                console.log(err)
-            });
-        }
+                })
+            }
+            else {
+                result.pagination = {}
+                result.pagination.method = "allDocs"
+                result.pagination.firstItemId = result.rows[0].id
+                result.pagination.lastItemId = result.rows[result.rows.length - 1].id
+                result.pagination.pageNo = 1
+                result.pagination.startVal = 1
+                result.pagination.endVal = result.rows.length
+                this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+            }
+        }).catch((err) => {
+            console.log(err)
+        });
     }
+}
 
-    getCannabisProductData = () => {
-        let customerType = _get(this.props, 'customer.customerType');
+getCannabisProductData = () => {
+    let customerType = _get(this.props, 'customer.customerType');
 
-        let filters = [{ "field": "retailerId", "value": localStorage.getItem('retailerId') }]
-        if (customerType == 1) {
-            filters = [...filters,
+    let filters = [{ "field": "retailerId", "value": localStorage.getItem('retailerId') }]
+    if (customerType == 1) {
+        filters = [...filters,
+        { 'field': 'productType', 'value': '0' },
+        { 'field': 'productType', 'value': '1' },
+        { 'field': 'productType', 'value': '2' },
+
+        ]
+    }
+    else if (customerType == 2) {
+        filters = [
+            ...filters,
             { 'field': 'productType', 'value': '0' },
             { 'field': 'productType', 'value': '1' },
-            { 'field': 'productType', 'value': '2' },
-
-            ]
+        ]
+    }
+    let reqObj = {
+        request: {
+            "text": '',
+            "offset": 0,
+            "limit": 39,
+            "filters": filters
         }
-        else if (customerType == 2) {
-            filters = [
-                ...filters,
-                { 'field': 'productType', 'value': '0' },
-                { 'field': 'productType', 'value': '1' },
-            ]
-        }
-        let reqObj = {
-            request: {
-                "text": '',
-                "offset": 0,
-                "limit": 39,
-                "filters":filters
+    }
+    genericPostData({
+        dispatch: this.props.dispatch,
+        reqObj: reqObj,
+        url: 'Search/Inventory',
+        dontShowMessage: true,
+        constants: {
+            init: 'ELASTIC_SEARCH_PRODUCTS_INIT',
+            success: 'ELASTIC_SEARCH_PRODUCTS_SUCCESS',
+            error: 'ELASTIC_SEARCH_PRODUCTS_ERROR'
+        },
+        identifier: 'ELASTIC_SEARCH_PRODUCTS_RULES',
+        successCb: (data) => { }
+    }).then((data) => {
+        let result = {}
+        result.pagination = {}
+        result.pagination.method = "allDocs"
+        result.pagination.firstItemId = data.products[0].id
+        result.pagination.lastItemId = data.products[data.products.length - 1].id
+        result.pagination.pageNo = 1
+        result.pagination.startVal = 1
+        result.pagination.endVal = data.products.length
+        let rows = data.products.map((d) => {
+            let obj = {
+                doc: {
+                    product: d
+                },
+                id: d.product.id
             }
-        }
-        genericPostData({
-            dispatch: this.props.dispatch,
-            reqObj: reqObj,
-            url: 'Search/Inventory',
-            dontShowMessage: true,
-            constants: {
-                init: 'ELASTIC_SEARCH_PRODUCTS_INIT',
-                success: 'ELASTIC_SEARCH_PRODUCTS_SUCCESS',
-                error: 'ELASTIC_SEARCH_PRODUCTS_ERROR'
-            },
-            identifier: 'ELASTIC_SEARCH_PRODUCTS_RULES',
-            successCb: (data) => { }
-        }).then((data) => {
-            let result = {}
-            result.pagination = {}
-            result.pagination.method = "allDocs"
-            result.pagination.firstItemId = data.products[0].id
-            result.pagination.lastItemId = data.products[data.products.length - 1].id
-            result.pagination.pageNo = 1
-            result.pagination.startVal = 1
-            result.pagination.endVal = data.products.length
-            let rows = data.products.map((d) => {
-                let obj = {
-                    doc: {
-                        product: d
-                    },
-                    id: d.product.id
-                }
-                return obj
-            })
-            result.rows = rows
-            console.log(result, 'result')
-            this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+            return obj
         })
-    }
+        result.rows = rows
+        console.log(result, 'result')
+        this.props.dispatch(commonActionCreater(result, 'GET_PRODUCT_DATA_SUCCESS'));
+    })
+}
 
-    getCannabisStoreTaxes = () => {
-        let reqObj = {
-            id: localStorage.getItem('retailerId')
-        }
-        genericPostData({
-            dispatch: this.props.dispatch,
-            reqObj: reqObj,
-            url: 'Get/Tax/RetailerId/Active',
-            dontShowMessage: true,
-            constants: {
-                init: 'GET_CANNABIS_STORE_TAXES_INIT',
-                success: 'GET_CANNABIS_STORE_TAXES_SUCCESS',
-                error: 'GET_CANNABIS_STORE_TAXES_ERROR'
-            },
-            identifier: 'GET_CANNABIS_STORE_TAXES',
-            successCb: (data) => { }
-        }).then((data) => {
-            this.props.dispatch(commonActionCreater(data, 'GET_CANNABIS_STORE_TAXES'));
+getCannabisStoreTaxes = () => {
+    let reqObj = {
+        id: localStorage.getItem('retailerId')
+    }
+    genericPostData({
+        dispatch: this.props.dispatch,
+        reqObj: reqObj,
+        url: 'Get/Tax/RetailerId/Active',
+        dontShowMessage: true,
+        constants: {
+            init: 'GET_CANNABIS_STORE_TAXES_INIT',
+            success: 'GET_CANNABIS_STORE_TAXES_SUCCESS',
+            error: 'GET_CANNABIS_STORE_TAXES_ERROR'
+        },
+        identifier: 'GET_CANNABIS_STORE_TAXES',
+        successCb: (data) => { }
+    }).then((data) => {
+        this.props.dispatch(commonActionCreater(data, 'GET_CANNABIS_STORE_TAXES'));
+    })
+}
+
+getOrderHistory = (url, data) => {
+    genericPostData({
+        dispatch: this.props.dispatch,
+        reqObj: data,
+        url: url,
+        constants: {
+            init: 'GET_CUSTOMER_SALE_DATA_INIT',
+            success: 'GET_CUSTOMER_SALE_DATA_SUCCESS',
+            error: 'GET_CUSTOMER_SALE_DATA_ERROR'
+        },
+        identifier: 'GET_CUSTOMER_SALE_DATA',
+        successCb: this.handleGetCustomerSaleData,
+        errorCb: this.handleGetCustomerSaleDataError
+    })
+}
+
+handleTerminalHistoryOpen = () => {
+    let url = 'Sale/GetByTerminalId';
+    let data = { id: localStorage.getItem('terminalId') }
+    this.getOrderHistory(url, data)
+    this.setState({
+        openOrderHistory: true,
+    });
+}
+
+handleHistoryOpen = () => {
+    // let url = 'Sale/GetByCustomerId';
+    // let data = { id: _get(this.props, 'customer.id', '') }
+    // this.getOrderHistory(url, data)
+    // this.setState({
+    //     openOrderHistory: true,
+    // });
+    this.setState({ openHistoryDialogue: true });
+    this.handleTransactionPopulate(_get(this.props, 'customer.id', null));
+
+}
+handleGetCustomerSaleData = (data) => {
+
+}
+handleGetCustomerSaleDataError = (error) => {
+
+}
+handleOrderHistoryClose = () => {
+    this.setState({
+        openOrderHistory: false,
+    });
+}
+handleGiftCard = (open) => {
+    this.setState({
+        openGiftCard: open,
+    });
+}
+handleMiscProduct = (open) => {
+    this.setState({
+        openMiscProduct: open,
+    })
+}
+handleLockTerminal = () => {
+    this.props.dispatch(commonActionCreater({ lock: true }, 'LOCK_TERMINAL'));
+}
+handleUnlockTerminal = () => {
+    this.props.dispatch(commonActionCreater({ lock: false }, 'LOCK_TERMINAL'));
+}
+
+handleLogout = () => {
+    //logic to destory the dbs
+    // let p1 = new PouchDb(`customersdb${localStorage.getItem('storeId')}`).destroy();
+    // let p2 = new PouchDb(`productsdb${localStorage.getItem('storeId')}`).destroy();
+    // let p3 = new PouchDb(`categoryDb${localStorage.getItem('storeId')}`).destroy();
+    this.setState({ isLoading: true })
+    // Promise.all([p1, p2, p3]).then((data) => {
+    let hotProducts = localStorage.getItem('hotProducts') || '[]'
+    localStorage.clear();
+    //!mute hot products
+    //localStorage.setItem('hotProducts', hotProducts)
+    this.setState({ isLoading: false });
+    window.location.reload();
+    this.props.history.push('/login')
+    // });
+}
+
+showNetworkIndicator = ({ online }) => {
+    if (online && this.state.offline == true) {
+        this.setState({
+            offline: false
         })
+        return null
     }
-
-    getOrderHistory = (url, data) => {
-        genericPostData({
-            dispatch: this.props.dispatch,
-            reqObj: data,
-            url: url,
-            constants: {
-                init: 'GET_CUSTOMER_SALE_DATA_INIT',
-                success: 'GET_CUSTOMER_SALE_DATA_SUCCESS',
-                error: 'GET_CUSTOMER_SALE_DATA_ERROR'
-            },
-            identifier: 'GET_CUSTOMER_SALE_DATA',
-            successCb: this.handleGetCustomerSaleData,
-            errorCb: this.handleGetCustomerSaleDataError
-        })
+    else if (online && this.state.offline == false) {
+        return null
     }
-
-    handleTerminalHistoryOpen = () => {
-        let url = 'Sale/GetByTerminalId';
-        let data = { id: localStorage.getItem('terminalId') }
-        this.getOrderHistory(url, data)
-        this.setState({
-            openOrderHistory: true,
-        });
-    }
-
-    handleHistoryOpen = () => {
-        // let url = 'Sale/GetByCustomerId';
-        // let data = { id: _get(this.props, 'customer.id', '') }
-        // this.getOrderHistory(url, data)
-        // this.setState({
-        //     openOrderHistory: true,
-        // });
-        this.setState({ openHistoryDialogue: true });
-        this.handleTransactionPopulate(_get(this.props, 'customer.id', null));
-
-    }
-    handleGetCustomerSaleData = (data) => {
-
-    }
-    handleGetCustomerSaleDataError = (error) => {
-
-    }
-    handleOrderHistoryClose = () => {
-        this.setState({
-            openOrderHistory: false,
-        });
-    }
-    handleGiftCard = (open) => {
-        this.setState({
-            openGiftCard: open,
-        });
-    }
-    handleMiscProduct = (open) => {
-        this.setState({
-            openMiscProduct: open,
-        })
-    }
-    handleLockTerminal = () => {
-        this.props.dispatch(commonActionCreater({ lock: true }, 'LOCK_TERMINAL'));
-    }
-    handleUnlockTerminal = () => {
-        this.props.dispatch(commonActionCreater({ lock: false }, 'LOCK_TERMINAL'));
-    }
-
-    handleLogout = () => {
-        //logic to destory the dbs
-        // let p1 = new PouchDb(`customersdb${localStorage.getItem('storeId')}`).destroy();
-        // let p2 = new PouchDb(`productsdb${localStorage.getItem('storeId')}`).destroy();
-        // let p3 = new PouchDb(`categoryDb${localStorage.getItem('storeId')}`).destroy();
-        this.setState({ isLoading: true })
-        // Promise.all([p1, p2, p3]).then((data) => {
-        let hotProducts = localStorage.getItem('hotProducts') || '[]'
-        localStorage.clear();
-        //!mute hot products
-        //localStorage.setItem('hotProducts', hotProducts)
-        this.setState({ isLoading: false });
-        window.location.reload();
-        this.props.history.push('/login')
-        // });
-    }
-
-    showNetworkIndicator = ({ online }) => {
-        if (online && this.state.offline == true) {
-            this.setState({
-                offline: false
-            })
-            return null
-        }
-        else if (online && this.state.offline == false) {
-            return null
-        }
-        else if (!online && this.state.offline == false) {
-            this.setState({ offline: true })
-            return (
-                <div className='toast-area absolute flex-row justify-center align-center'>
-                    <div className='offline-indicator flex-row justify-center align-center'>
-                        <SignalWifiOffOutlined /> <span className='pl-10'>Uhhh, You are Offline</span>
-                    </div>
+    else if (!online && this.state.offline == false) {
+        this.setState({ offline: true })
+        return (
+            <div className='toast-area absolute flex-row justify-center align-center'>
+                <div className='offline-indicator flex-row justify-center align-center'>
+                    <SignalWifiOffOutlined /> <span className='pl-10'>Uhhh, You are Offline</span>
                 </div>
-            )
-        }
-        else {
-            return (
-                <div className='toast-area absolute flex-row justify-center align-center'>
-                    <div className='offline-indicator flex-row justify-center align-center'>
-                        <SignalWifiOffOutlined /> <span className='pl-10'>Uhhh, You are Offline</span>
-                    </div>
+            </div>
+        )
+    }
+    else {
+        return (
+            <div className='toast-area absolute flex-row justify-center align-center'>
+                <div className='offline-indicator flex-row justify-center align-center'>
+                    <SignalWifiOffOutlined /> <span className='pl-10'>Uhhh, You are Offline</span>
                 </div>
-            )
+            </div>
+        )
+    }
+}
+
+orderHistorySelect = (selectedSaleTransaction) => {
+    if (_get(this.state, 'selectedSaleTransaction', false) && _get(this.state, 'selectedSaleTransaction') != selectedSaleTransaction.sale.id) {
+        let element = document.getElementById(_get(this.state, 'selectedSaleTransaction.sale.id'))
+        if (element) {
+            element.className = 'fwidth card'
         }
     }
+    document.getElementById(selectedSaleTransaction.sale.id).className = 'fwidth card card-active'
+    this.setState({ selectedSaleTransaction })
+}
 
-    orderHistorySelect = (selectedSaleTransaction) => {
-        if (_get(this.state, 'selectedSaleTransaction', false) && _get(this.state, 'selectedSaleTransaction') != selectedSaleTransaction.sale.id) {
-            let element = document.getElementById(_get(this.state, 'selectedSaleTransaction.sale.id'))
-            if (element) {
-                element.className = 'fwidth card'
-            }
-        }
-        document.getElementById(selectedSaleTransaction.sale.id).className = 'fwidth card card-active'
-        this.setState({ selectedSaleTransaction })
-    }
-
-    makeViewForSideBar = (data) => {
-        let view = [];
-        (data || []).map((transactions, index) => {
-            view.push(
-                <div onClick={() => { this.orderHistorySelect(transactions) }} key={index} id={transactions.sale.id} className={this.state.selectedSaleTransaction == transactions ? 'fwidth card card-active' : 'fwidth card'}>
-                    <div className={_get(this.state, 'orderId', '') === _get(transactions, 'sale.id', '') ? "active" : ""}>
-                        <div className="mui-row no-gutters history-card-head">
-                            <div className="mui-col-md-4">
-                                {moment(_get(transactions, 'sale.saleCommitTimeStamp.seconds', 0) * 1000).format('MMMM Do YYYY, h:mm a')}
-                            </div>
-                            <div className="mui-col-md-8 text-right">
-                                #{`${_get(transactions, 'sale.id', '')}`}
-                            </div>
+makeViewForSideBar = (data) => {
+    let view = [];
+    (data || []).map((transactions, index) => {
+        view.push(
+            <div onClick={() => { this.orderHistorySelect(transactions) }} key={index} id={transactions.sale.id} className={this.state.selectedSaleTransaction == transactions ? 'fwidth card card-active' : 'fwidth card'}>
+                <div className={_get(this.state, 'orderId', '') === _get(transactions, 'sale.id', '') ? "active" : ""}>
+                    <div className="mui-row no-gutters history-card-head">
+                        <div className="mui-col-md-4">
+                            {moment(_get(transactions, 'sale.saleCommitTimeStamp.seconds', 0) * 1000).format('MMMM Do YYYY, h:mm a')}
                         </div>
-                        <div className="mui-row no-gutters">
-                            <div className="mui-col-md-6">
-                                <label className="c-name">{_get(transactions, 'customer.customer.firstName', '') + ' ' + _get(transactions, 'customer.customer.lastName', '')}</label>
-                            </div>
-                            <div className="mui-col-md-6 text-right">
-                                <label className="c-name">{`${(DineroInit(_get(transactions, 'sale.totalAmount.amount', 0), _get(transactions, 'sale.totalAmount.currency', 'USD'))).toFormat('$0,0.00')}`}</label>
-                            </div>
+                        <div className="mui-col-md-8 text-right">
+                            #{`${_get(transactions, 'sale.id', '')}`}
+                        </div>
+                    </div>
+                    <div className="mui-row no-gutters">
+                        <div className="mui-col-md-6">
+                            <label className="c-name">{_get(transactions, 'customer.customer.firstName', '') + ' ' + _get(transactions, 'customer.customer.lastName', '')}</label>
+                        </div>
+                        <div className="mui-col-md-6 text-right">
+                            <label className="c-name">{`${(DineroInit(_get(transactions, 'sale.totalAmount.amount', 0), _get(transactions, 'sale.totalAmount.currency', 'USD'))).toFormat('$0,0.00')}`}</label>
                         </div>
                     </div>
                 </div>
-            )
-        })
-        view.reverse();
-        this.setState({
-            historySidebarItems: view,
-            historySidebarLoading: false
-        })
-    }
+            </div>
+        )
+    })
+    view.reverse();
+    this.setState({
+        historySidebarItems: view,
+        historySidebarLoading: false
+    })
+}
 
-    /* History Actions */
-    handleTransactionPopulate = (customerId, limit, skip, timeFrom, timeTo) => {
-        let url = 'Sale/GetByTerminalId';
-        let data = { id: localStorage.getItem('terminalId') }
-        if (customerId) {
-            data.id = customerId;
-            url = "Sale/GetByCustomerId"
-        }
+/* History Actions */
+handleTransactionPopulate = (customerId, limit, skip, timeFrom, timeTo) => {
+    let url = 'Sale/GetByTerminalId';
+    let data = { id: localStorage.getItem('terminalId') }
+    if (customerId) {
+        data.id = customerId;
+        url = "Sale/GetByCustomerId"
+    }
+    this.setState({
+        historySidebarLoading: true
+    })
+    genericPostData({
+        dispatch: this.props.dispatch,
+        reqObj: data,
+        url: url,
+        constants: {
+            init: 'GET_CUSTOMER_SALE_DATA_INIT',
+            success: 'GET_CUSTOMER_SALE_DATA_SUCCESS',
+            error: 'GET_CUSTOMER_SALE_DATA_ERROR'
+        },
+        identifier: 'GET_CUSTOMER_SALE_DATA',
+        dontShowMessage: true
+    }).then((data) => {
+        this.makeViewForSideBar(data);
+    })
+}
+
+handleTransactionSearch = (transactionId) => {
+    if (transactionId == '') {
+        this.handleTransactionPopulate();
+        return;
+    }
+    if (transactionId.length > 0) {
         this.setState({
             historySidebarLoading: true
         })
         genericPostData({
             dispatch: this.props.dispatch,
-            reqObj: data,
-            url: url,
+            reqObj: { id: transactionId },
+            url: "Sale/Get",
             constants: {
-                init: 'GET_CUSTOMER_SALE_DATA_INIT',
-                success: 'GET_CUSTOMER_SALE_DATA_SUCCESS',
-                error: 'GET_CUSTOMER_SALE_DATA_ERROR'
+                init: "SaleById_INIT",
+                success: "SaleById_SUCCESS",
+                error: "SaleById_ERROR"
             },
-            identifier: 'GET_CUSTOMER_SALE_DATA',
+            errorCb: (err) => console.log(err),
+            identifier: "SaleById",
             dontShowMessage: true
         }).then((data) => {
-            this.makeViewForSideBar(data);
+            let arr = [];
+            arr.push(data.sale);
+            this.makeViewForSideBar(arr);
         })
     }
+}
 
-    handleTransactionSearch = (transactionId) => {
-        if (transactionId == '') {
-            this.handleTransactionPopulate();
-            return;
+toggleFullscreen = () => {
+    let elem = document.documentElement;
+    if (!document.fullscreenElement && !document.mozFullScreenElement &&
+        !document.webkitFullscreenElement && !document.msFullscreenElement) {
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.msRequestFullscreen) {
+            elem.msRequestFullscreen();
+        } else if (elem.mozRequestFullScreen) {
+            elem.mozRequestFullScreen();
+        } else if (elem.webkitRequestFullscreen) {
+            elem.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
         }
-        if (transactionId.length > 0) {
-            this.setState({
-                historySidebarLoading: true
-            })
-            genericPostData({
-                dispatch: this.props.dispatch,
-                reqObj: { id: transactionId },
-                url: "Sale/Get",
-                constants: {
-                    init: "SaleById_INIT",
-                    success: "SaleById_SUCCESS",
-                    error: "SaleById_ERROR"
-                },
-                errorCb: (err) => console.log(err),
-                identifier: "SaleById",
-                dontShowMessage: true
-            }).then((data) => {
-                let arr = [];
-                arr.push(data.sale);
-                this.makeViewForSideBar(arr);
-            })
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
         }
     }
-
-    toggleFullscreen = () => {
-        let elem = document.documentElement;
-        if (!document.fullscreenElement && !document.mozFullScreenElement &&
-            !document.webkitFullscreenElement && !document.msFullscreenElement) {
-            if (elem.requestFullscreen) {
-                elem.requestFullscreen();
-            } else if (elem.msRequestFullscreen) {
-                elem.msRequestFullscreen();
-            } else if (elem.mozRequestFullScreen) {
-                elem.mozRequestFullScreen();
-            } else if (elem.webkitRequestFullscreen) {
-                elem.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-            }
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if (document.msExitFullscreen) {
-                document.msExitFullscreen();
-            } else if (document.mozCancelFullScreen) {
-                document.mozCancelFullScreen();
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-            }
-        }
-        this.setState({
-            toggleFullScreen: !this.state.toggleFullScreen
-        })
-        setTimeout(() => {
-            this.calcHeight()
-        }, 100);
-    }
+    this.setState({
+        toggleFullScreen: !this.state.toggleFullScreen
+    })
+    setTimeout(() => {
+        this.calcHeight()
+    }, 100);
+}
 
 
-    render() {
-        let windowHeight = document.documentElement.scrollHeight
-        let { productListHeight, isOpenProduct, isOpenPayment, headerHeight, categoriesHeight, checkoutHeader, checkoutMainPart, checkoutcalcArea, checkoutactionArea, checkoutcartArea, checkoutCustomerArea } = this.state
+render() {
+    let windowHeight = document.documentElement.scrollHeight
+    let { productListHeight, isOpenProduct, isOpenPayment, headerHeight, categoriesHeight, checkoutHeader, checkoutMainPart, checkoutcalcArea, checkoutactionArea, checkoutcartArea, checkoutCustomerArea } = this.state
 
-        let { productList, dispatch, cart } = this.props
-        return (
-            <div className='main pos-body relative' >
-                <Products pose={isOpenProduct ? 'open' : 'closed'}>
-                    <ProductsSection
-                        offline={this.state.offline}
-                        // * Css Specific props
-                        windowHeight={windowHeight}
-                        productListHeight={productListHeight}
-                        headerHeight={headerHeight}
-                        categoriesHeight={categoriesHeight}
-                        productList={productList}
-                        cart={cart}
-                        dispatch={dispatch}
-                        history={this.props.history}
-                        paymentMethods={this.props.paymentMethods}
-                        // ! Actions
-                        handleTransactionPopulate={this.handleTransactionPopulate}
-                        handleHistoryOpen={this.handleTerminalHistoryOpen}
-                        handleClickOpenOnHold={() => this.handleClickOpen('openOnHold')}
-                        handleClickOpenHistory={() => this.handleClickOpen('openHistoryDialogue')}
-                        handleClickOpenCustomer={() => this.handleClickOpen('openCustomerDialogue')}
-                        handleClickOpenSessionContainer={this.handleClickOpenSessionContainer}
-                        handleClickQuickBook={() => this.setState({ openQuickBookContainer: true })}
-                        handleLockTerminal={this.handleLockTerminal}
-                        handleSetting={() => this.setState({ openSetting: true })}
-                        getProductData={localStorage.getItem('cannabisStore') ? this.getCannabisProductData : this.getProductData}
-                        handleLogout={this.handleLogout}
-                        handleGiftCard={() => this.handleGiftCard(true)}
-                        handleMiscProduct={() => this.handleMiscProduct(true)}
-                        isOpenProduct={isOpenProduct}
-                        isOpenHistoryDialogue={this.state.openHistoryDialogue}
-                        isGiftCardModelOpen={this.state.openGiftCard}
-                        openCustomerDialogue={this.state.openCustomerDialogue}
-                    />
-                </Products>
-                <CheckoutSection
+    let { productList, dispatch, cart } = this.props
+    return (
+        <div className='main pos-body relative' >
+            <Products pose={isOpenProduct ? 'open' : 'closed'}>
+                <ProductsSection
                     offline={this.state.offline}
                     // * Css Specific props
                     windowHeight={windowHeight}
-                    checkoutHeader={checkoutHeader}
-                    checkoutMainPart={checkoutMainPart}
-                    checkoutcalcArea={checkoutcalcArea}
-                    checkoutactionArea={checkoutactionArea}
-                    checkoutcartArea={checkoutcartArea}
-                    checkoutCustomerArea={checkoutCustomerArea}
-                    dispatch={dispatch}
+                    productListHeight={productListHeight}
+                    headerHeight={headerHeight}
+                    categoriesHeight={categoriesHeight}
+                    productList={productList}
                     cart={cart}
+                    dispatch={dispatch}
+                    history={this.props.history}
+                    paymentMethods={this.props.paymentMethods}
                     // ! Actions
-                    toggleViewPayment={this.toggleViewPayment}
-                    toggleViewProduct={this.toggleViewProduct}
-                    handleHistoryOpen={this.handleHistoryOpen}
+                    handleTransactionPopulate={this.handleTransactionPopulate}
+                    handleHistoryOpen={this.handleTerminalHistoryOpen}
+                    handleClickOpenOnHold={() => this.handleClickOpen('openOnHold')}
+                    handleClickOpenHistory={() => this.handleClickOpen('openHistoryDialogue')}
                     handleClickOpenCustomer={() => this.handleClickOpen('openCustomerDialogue')}
-
-                />
-                <Payment pose={isOpenPayment ? 'open' : 'closed'}>
-                    {isOpenPayment ?
-                        <PaymentSection
-                            offline={this.state.offline}
-                            startPolling={this.props.startPolling}
-                            windowHeight={windowHeight}
-                            paymentOptionsPart={this.state.paymentOptionsPart}
-                            paymentMainPart={this.state.paymentMainPart}
-                            paymentCalculator={this.state.paymentCalculator}
-                            paymentSaleComment={this.state.paymentSaleComment}
-                            paymentSubmitTransaction={this.state.paymentSubmitTransaction}
-                        /> : null
-                    }
-                </Payment>
-                {
-                    this.state.openOnHold ?
-                        <OnHoldDialogue
-                            offline={this.state.offline}
-                            handleClickOpenOnHold={() => this.handleClickOpen('openOnHold')}
-                            handleCloseOnHold={() => this.handleClose('openOnHold')}
-                            handleClickOpenAlertCartClear={() => this.handleClickOpen('openCartOnHoldOrClear')}
-                            handleCloseAlertCartClear={() => this.handleClose('openCartOnHoldOrClear')}
-                            handleHoldIndex={this.handleHoldIndex}
-                            open={this.state.openOnHold}
-                            cart={this.props.cart}
-                            holdCartData={this.props.holdCartData}
-                            dispatch={dispatch}
-                        /> : null
-                }
-
-                {
-                    this.state.openCustomerDialogue ?
-                        <CustomerDialogue
-                            handleClickOpen={() => this.handleClickOpen('openCustomerDialogue')}
-                            handleClose={() => this.handleClose('openCustomerDialogue')}
-                            open={this.state.openCustomerDialogue}
-                            dispatch={dispatch}
-                        /> : null
-                }
-
-                {
-                    this.state.openHistoryDialogue ?
-                        <HistoryDialogue
-                            handleSidebarPopulate={(limit, skip, timeFrom, timeTo) => this.handleTransactionPopulate(limit, skip, timeFrom, timeTo)}
-                            handleSearch={this.handleTransactionSearch}
-                            historySidebarItems={this.state.historySidebarItems}
-                            selectedSaleTransaction={this.state.selectedSaleTransaction}
-                            historySidebarLoading={this.state.historySidebarLoading}
-                            handleClickOpen={() => this.handleClickOpen('openHistoryDialogue')}
-                            handleClose={() => this.handleClose('openHistoryDialogue')}
-                            open={this.state.openHistoryDialogue}
-                            dispatch={dispatch}
-                        /> : null
-                }
-                {
-                    this.state.openCartOnHoldOrClear ?
-                        <AlertCartClear
-                            offline={this.state.offline}
-                            //handleClickOpenOnHold={() => this.handleClickOpen('openOnHold')}
-                            handleCloseOnHold={() => this.handleClose('openOnHold')}
-                            //handleClickOpenAlertCartClear={() => this.handleClickOpen('openCartOnHoldOrClear')}
-                            handleCloseAlertCartClear={() => this.handleClose('openCartOnHoldOrClear')}
-                            open={this.state.openCartOnHoldOrClear}
-                            cart={this.props.cart}
-                            holdCartData={this.props.holdCartData}
-                            dispatch={dispatch}
-                            index={this.state.holdIndex}
-                        /> : null
-                }
-                {
-                    this.state.openSessionContainer ?
-                        <SessionDialog
-                            offline={this.state.offline}
-                            title="Sesssion List"
-                            handleClickOpen={this.handleClickOpenSessionContainer}
-                            handleClose={this.handleCloseSessionContainer}
-                            open={this.state.openSessionContainer}
-                            holdCartData={this.props.holdCartData}
-                            dispatch={dispatch}
-                        /> : null
-                }
-                {
-                    this.state.openQuickBookContainer ?
-                        <OfflineTransactionDialog
-                            offline={this.state.offline}
-                            title="Offline Transactions"
-                            handleClickOpen={() => this.setState({ openQuickBookContainer: true })}
-                            handleClose={() => this.setState({ openQuickBookContainer: false })}
-                            open={this.state.openQuickBookContainer}
-                            holdCartData={this.props.holdCartData}
-                            dispatch={dispatch}
-                            {...this.props}
-                        /> : null
-                }
-                {
-                    this.state.openSetting ?
-                        <SettingDialog
-                            offline={this.state.offline}
-                            title="Settings"
-                            handleClickOpen={() => this.setState({ openSetting: true })}
-                            handleClose={() => this.setState({ openSetting: false })}
-                            open={this.state.openSetting}
-                            getProductData={localStorage.getItem('cannabisStore') ? this.getCannabisProductData : this.getProductData}
-                            dispatch={dispatch}
-                            {...this.props}
-                        /> : null
-                }
-                {
-                    this.state.openGiftCard &&
-                    <GiftCardModel
-                        offline={this.state.offline}
-                        open={this.state.openGiftCard}
-                        handleClose={() => this.handleGiftCard(false)}
-                        isGiftCardModal
-                    />
-                }
-                {
-                    this.state.openMiscProduct &&
-                    <MiscProductModal
-                        offline={this.state.offline}
-                        open={this.state.openMiscProduct}
-                        handleClose={() => this.handleMiscProduct(false)}
-                    />
-                }
-
-                <Detector render={this.showNetworkIndicator} />
-
-                <LockTerminalDialogue
-                    offline={this.state.offline}
-                    open={this.props.lockState}
-                    handleUnlockTerminal={this.handleUnlockTerminal}
+                    handleClickOpenSessionContainer={this.handleClickOpenSessionContainer}
+                    handleClickQuickBook={() => this.setState({ openQuickBookContainer: true })}
+                    handleLockTerminal={this.handleLockTerminal}
+                    handleSetting={() => this.setState({ openSetting: true })}
+                    getProductData={localStorage.getItem('cannabisStore') ? this.getCannabisProductData : this.getProductData}
                     handleLogout={this.handleLogout}
+                    handleGiftCard={() => this.handleGiftCard(true)}
+                    handleMiscProduct={() => this.handleMiscProduct(true)}
+                    isOpenProduct={isOpenProduct}
+                    isOpenHistoryDialogue={this.state.openHistoryDialogue}
+                    isGiftCardModelOpen={this.state.openGiftCard}
+                    openCustomerDialogue={this.state.openCustomerDialogue}
                 />
+            </Products>
+            <CheckoutSection
+                offline={this.state.offline}
+                // * Css Specific props
+                windowHeight={windowHeight}
+                checkoutHeader={checkoutHeader}
+                checkoutMainPart={checkoutMainPart}
+                checkoutcalcArea={checkoutcalcArea}
+                checkoutactionArea={checkoutactionArea}
+                checkoutcartArea={checkoutcartArea}
+                checkoutCustomerArea={checkoutCustomerArea}
+                dispatch={dispatch}
+                cart={cart}
+                // ! Actions
+                toggleViewPayment={this.toggleViewPayment}
+                toggleViewProduct={this.toggleViewProduct}
+                handleHistoryOpen={this.handleHistoryOpen}
+                handleClickOpenCustomer={() => this.handleClickOpen('openCustomerDialogue')}
 
-                {
-                    this.state.isLoading ?
-                        <div className=' fwidth fheight absolute flex-column justify-center align-center' style={{ background: "rgba(0,0,0,0.5)" }}>
-                            <CircularProgress size={50} style={{ color: '#fff' }} />
-                            <div className='pt-15' style={{ fontSize: '1.5em', color: '#fff', fontWeight: 'bold' }}>Logging Out</div>
-                        </div> : null
+            />
+            <Payment pose={isOpenPayment ? 'open' : 'closed'}>
+                {isOpenPayment ?
+                    <PaymentSection
+                        offline={this.state.offline}
+                        startPolling={this.props.startPolling}
+                        windowHeight={windowHeight}
+                        paymentOptionsPart={this.state.paymentOptionsPart}
+                        paymentMainPart={this.state.paymentMainPart}
+                        paymentCalculator={this.state.paymentCalculator}
+                        paymentSaleComment={this.state.paymentSaleComment}
+                        paymentSubmitTransaction={this.state.paymentSubmitTransaction}
+                    /> : null
                 }
+            </Payment>
+            {
+                this.state.openOnHold ?
+                    <OnHoldDialogue
+                        offline={this.state.offline}
+                        handleClickOpenOnHold={() => this.handleClickOpen('openOnHold')}
+                        handleCloseOnHold={() => this.handleClose('openOnHold')}
+                        handleClickOpenAlertCartClear={() => this.handleClickOpen('openCartOnHoldOrClear')}
+                        handleCloseAlertCartClear={() => this.handleClose('openCartOnHoldOrClear')}
+                        handleHoldIndex={this.handleHoldIndex}
+                        open={this.state.openOnHold}
+                        cart={this.props.cart}
+                        holdCartData={this.props.holdCartData}
+                        dispatch={dispatch}
+                    /> : null
+            }
 
-                <div className='flex-row justify-center align-center full-screen-button'>
-                    {
-                        this.state.toggleFullScreen ?
-                            <FullscreenExit className='flex-row' onClick={this.toggleFullscreen} /> :
-                            <FullScreen className='flex-row' onClick={this.toggleFullscreen} />
-                    }
-                </div>
+            {
+                this.state.openCustomerDialogue ?
+                    <CustomerDialogue
+                        handleClickOpen={() => this.handleClickOpen('openCustomerDialogue')}
+                        handleClose={() => this.handleClose('openCustomerDialogue')}
+                        open={this.state.openCustomerDialogue}
+                        dispatch={dispatch}
+                    /> : null
+            }
 
+            {
+                this.state.openHistoryDialogue ?
+                    <HistoryDialogue
+                        handleSidebarPopulate={(limit, skip, timeFrom, timeTo) => this.handleTransactionPopulate(limit, skip, timeFrom, timeTo)}
+                        handleSearch={this.handleTransactionSearch}
+                        historySidebarItems={this.state.historySidebarItems}
+                        selectedSaleTransaction={this.state.selectedSaleTransaction}
+                        historySidebarLoading={this.state.historySidebarLoading}
+                        handleClickOpen={() => this.handleClickOpen('openHistoryDialogue')}
+                        handleClose={() => this.handleClose('openHistoryDialogue')}
+                        open={this.state.openHistoryDialogue}
+                        dispatch={dispatch}
+                    /> : null
+            }
+            {
+                this.state.openCartOnHoldOrClear ?
+                    <AlertCartClear
+                        offline={this.state.offline}
+                        //handleClickOpenOnHold={() => this.handleClickOpen('openOnHold')}
+                        handleCloseOnHold={() => this.handleClose('openOnHold')}
+                        //handleClickOpenAlertCartClear={() => this.handleClickOpen('openCartOnHoldOrClear')}
+                        handleCloseAlertCartClear={() => this.handleClose('openCartOnHoldOrClear')}
+                        open={this.state.openCartOnHoldOrClear}
+                        cart={this.props.cart}
+                        holdCartData={this.props.holdCartData}
+                        dispatch={dispatch}
+                        index={this.state.holdIndex}
+                    /> : null
+            }
+            {
+                this.state.openSessionContainer ?
+                    <SessionDialog
+                        offline={this.state.offline}
+                        title="Sesssion List"
+                        handleClickOpen={this.handleClickOpenSessionContainer}
+                        handleClose={this.handleCloseSessionContainer}
+                        open={this.state.openSessionContainer}
+                        holdCartData={this.props.holdCartData}
+                        dispatch={dispatch}
+                    /> : null
+            }
+            {
+                this.state.openQuickBookContainer ?
+                    <OfflineTransactionDialog
+                        offline={this.state.offline}
+                        title="Offline Transactions"
+                        handleClickOpen={() => this.setState({ openQuickBookContainer: true })}
+                        handleClose={() => this.setState({ openQuickBookContainer: false })}
+                        open={this.state.openQuickBookContainer}
+                        holdCartData={this.props.holdCartData}
+                        dispatch={dispatch}
+                        {...this.props}
+                    /> : null
+            }
+            {
+                this.state.openSetting ?
+                    <SettingDialog
+                        offline={this.state.offline}
+                        title="Settings"
+                        handleClickOpen={() => this.setState({ openSetting: true })}
+                        handleClose={() => this.setState({ openSetting: false })}
+                        open={this.state.openSetting}
+                        getProductData={localStorage.getItem('cannabisStore') ? this.getCannabisProductData : this.getProductData}
+                        dispatch={dispatch}
+                        {...this.props}
+                    /> : null
+            }
+            {
+                this.state.openGiftCard &&
+                <GiftCardModel
+                    offline={this.state.offline}
+                    open={this.state.openGiftCard}
+                    handleClose={() => this.handleGiftCard(false)}
+                    isGiftCardModal
+                />
+            }
+            {
+                this.state.openMiscProduct &&
+                <MiscProductModal
+                    offline={this.state.offline}
+                    open={this.state.openMiscProduct}
+                    handleClose={() => this.handleMiscProduct(false)}
+                />
+            }
 
+            <Detector render={this.showNetworkIndicator} />
+
+            <LockTerminalDialogue
+                offline={this.state.offline}
+                open={this.props.lockState}
+                handleUnlockTerminal={this.handleUnlockTerminal}
+                handleLogout={this.handleLogout}
+            />
+
+            {
+                this.state.isLoading ?
+                    <div className=' fwidth fheight absolute flex-column justify-center align-center' style={{ background: "rgba(0,0,0,0.5)" }}>
+                        <CircularProgress size={50} style={{ color: '#fff' }} />
+                        <div className='pt-15' style={{ fontSize: '1.5em', color: '#fff', fontWeight: 'bold' }}>Logging Out</div>
+                    </div> : null
+            }
+
+            <div className='flex-row justify-center align-center full-screen-button'>
+                {
+                    this.state.toggleFullScreen ?
+                        <FullscreenExit className='flex-row' onClick={this.toggleFullscreen} /> :
+                        <FullScreen className='flex-row' onClick={this.toggleFullscreen} />
+                }
             </div>
-        );
-    }
+
+
+        </div>
+    );
+}
 }
 
 function mapStateToProps(state) {
