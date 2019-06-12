@@ -12,7 +12,7 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Slide from '@material-ui/core/Slide';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles, makeStyles } from '@material-ui/core/styles';
 /* Material Icons */
 import RemoveCircleIcons from '@material-ui/icons/RemoveCircleOutline';
 import DeleteIcons from '@material-ui/icons/DeleteOutline';
@@ -24,6 +24,8 @@ import { commonActionCreater } from '../../../Redux/commonAction';
 /* Component Imports */
 import CalculationSection from './CalculationSection'
 import DiscountDialogue from '../../Dialogues/DiscountDialogue/DiscountDialogue'
+import CannaConsumptionTooltip from './CannaConsumptionTooltip';
+import ArrowTooltip from './ArrowTooltip';
 /* Global Function import */
 import genericPostData from '../../../Global/dataFetch/genericPostData';
 import globalClearCart from '../../../Global/PosFunctions/clearCart';
@@ -64,6 +66,7 @@ class OrdersTab extends React.Component {
             itemIndex: '',
             forCart: false,
             cartItemQty: 0,
+            tooltipOpen: false
         }
     }
 
@@ -353,6 +356,10 @@ class OrdersTab extends React.Component {
         this.props.dispatch(commonActionCreater(2, 'SWITCH_TAB_NUMBER'))
     }
 
+    handleTooltipClose = () => {
+        this.setState({ tooltipOpen: false })
+    }
+
     handleItemDiscountRemove = (index) => {
         let cartDiscountObj = {}
         cartDiscountObj.cartItems = _get(this.props, 'cart.cartItems', [])
@@ -364,7 +371,7 @@ class OrdersTab extends React.Component {
     }
 
     render() {
-        let { checkoutcalcArea, checkoutactionArea, checkoutcartArea, checkoutMainPart } = this.props;
+        let { checkoutcalcArea, checkoutactionArea, checkoutcartArea, checkoutMainPart, cart } = this.props;
         let cartListHeight = checkoutcartArea - 30
         const { classes } = this.props;
         return (
@@ -393,19 +400,25 @@ class OrdersTab extends React.Component {
                 <div className="order-amount-section">
                     {
                         localStorage.getItem('cannabisStore') || false ?
-                            <LinearProgress
-                                variant="buffer"
-                                value={_get(this.props, 'cart.cannabisCartLimitPercentage', 0)}
-                                classes={
-                                    _get(this.props, 'cart.cannabisCartLimitPercentage', 0) > 100 ?
-                                        { barColorPrimary: classes.barColorPrimary, colorPrimary: classes.barColorPrimary } : {}
-                                }
-                                style={{
-                                    width: '100%',
-                                    height: '15px',
-                                    borderRadius: '8px',
-                                }}
-                            /> : null
+                            <ArrowTooltip
+                                title={<CannaConsumptionTooltip cart={cart} />}
+                                placement="top"
+                            >
+                                <LinearProgress
+                                    onClick={() => this.setState({ tooltipOpen: true })}
+                                    variant="buffer"
+                                    value={_get(this.props, 'cart.cannabisCartLimitPercentage', 0)}
+                                    classes={
+                                        _get(this.props, 'cart.cannabisCartLimitPercentage', 0) > 100 ?
+                                            { barColorPrimary: classes.barColorPrimary, colorPrimary: classes.barColorPrimary } : {}
+                                    }
+                                    style={{
+                                        width: '100%',
+                                        height: '15px',
+                                        borderRadius: '8px',
+                                    }}
+                                />
+                            </ArrowTooltip> : null
                     }
                     <CalculationSection
                         checkoutcalcArea={checkoutcalcArea}
