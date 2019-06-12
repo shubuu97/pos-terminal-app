@@ -326,7 +326,9 @@ const cartItem = (state = {
                 allowedLoyaltyPoints,
                 loyaltyPoints,
                 loyaltyDiscountMoney,
-                cannabisCartLimitPercentage
+                cannabisCartLimitPercentage,
+                cannabisCartLimits,
+                cannabisCartContent
             });
 
             break;
