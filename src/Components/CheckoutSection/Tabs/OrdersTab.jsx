@@ -13,6 +13,7 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Slide from '@material-ui/core/Slide';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 /* Material Icons */
 import RemoveCircleIcons from '@material-ui/icons/RemoveCircleOutline';
 import DeleteIcons from '@material-ui/icons/DeleteOutline';
@@ -66,7 +67,7 @@ class OrdersTab extends React.Component {
             itemIndex: '',
             forCart: false,
             cartItemQty: 0,
-            tooltipOpen: false
+            openTooltip: false
         }
     }
 
@@ -356,10 +357,6 @@ class OrdersTab extends React.Component {
         this.props.dispatch(commonActionCreater(2, 'SWITCH_TAB_NUMBER'))
     }
 
-    handleTooltipClose = () => {
-        this.setState({ tooltipOpen: false })
-    }
-
     handleItemDiscountRemove = (index) => {
         let cartDiscountObj = {}
         cartDiscountObj.cartItems = _get(this.props, 'cart.cartItems', [])
@@ -400,25 +397,30 @@ class OrdersTab extends React.Component {
                 <div className="order-amount-section">
                     {
                         localStorage.getItem('cannabisStore') || false ?
-                            <ArrowTooltip
-                                title={<CannaConsumptionTooltip cart={cart} />}
-                                placement="top"
-                            >
-                                <LinearProgress
-                                    onClick={() => this.setState({ tooltipOpen: true })}
-                                    variant="buffer"
-                                    value={_get(this.props, 'cart.cannabisCartLimitPercentage', 0)}
-                                    classes={
-                                        _get(this.props, 'cart.cannabisCartLimitPercentage', 0) > 100 ?
-                                            { barColorPrimary: classes.barColorPrimary, colorPrimary: classes.barColorPrimary } : {}
-                                    }
-                                    style={{
-                                        width: '100%',
-                                        height: '15px',
-                                        borderRadius: '8px',
-                                    }}
-                                />
-                            </ArrowTooltip> : null
+                            <ClickAwayListener onClickAway={() => this.setState({ openTooltip: false })}>
+                                <div>
+                                    <ArrowTooltip
+                                        title={<CannaConsumptionTooltip cart={cart} />}
+                                        placement="top"
+                                        open={this.state.openTooltip}
+                                    >
+                                        <LinearProgress
+                                            onClick={() => this.setState({ openTooltip: true })}
+                                            variant="buffer"
+                                            value={_get(this.props, 'cart.cannabisCartLimitPercentage', 0)}
+                                            classes={
+                                                _get(this.props, 'cart.cannabisCartLimitPercentage', 0) > 100 ?
+                                                    { barColorPrimary: classes.barColorPrimary, colorPrimary: classes.barColorPrimary } : {}
+                                            }
+                                            style={{
+                                                width: '100%',
+                                                height: '15px',
+                                                borderRadius: '8px',
+                                            }}
+                                        />
+                                    </ArrowTooltip>
+                                </div>
+                            </ClickAwayListener> : null
                     }
                     <CalculationSection
                         checkoutcalcArea={checkoutcalcArea}
