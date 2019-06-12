@@ -389,17 +389,17 @@ class HomeContainer extends React.Component {
         let filters = [{ "field": "retailerId", "value": localStorage.getItem('retailerId') }]
         if (customerType == 1) {
             filters = [...filters,
-            { 'field': 'productType', 'value': '0' },
             { 'field': 'productType', 'value': '1' },
             { 'field': 'productType', 'value': '2' },
+            { 'field': 'productType', 'value': '3' },
 
             ]
         }
         else if (customerType == 2) {
             filters = [
                 ...filters,
-                { 'field': 'productType', 'value': '0' },
                 { 'field': 'productType', 'value': '1' },
+                { 'field': 'productType', 'value': '3' },
             ]
         }
         let reqObj = {
@@ -408,7 +408,8 @@ class HomeContainer extends React.Component {
                 "offset": 0,
                 "limit": 39,
                 "filters":filters
-            }
+            },
+            storeId: localStorage.getItem('storeId')
         }
         genericPostData({
             dispatch: this.props.dispatch,

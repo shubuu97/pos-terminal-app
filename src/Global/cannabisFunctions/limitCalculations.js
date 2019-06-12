@@ -10,7 +10,7 @@ const limitCalculations = (cartItem, cannabisCartContent) => {
     let cannabisWeight = cannabisContent * packageQty
     let limitType = _get(cartItem, 'doc.product.limitType', 0)
 
-    // * ProductType Enums in backend
+    // * LimitType Enums in backend
     // enum limitType {
     //     NON_CANNABIS = 0;
     //     Concentrate = 1;

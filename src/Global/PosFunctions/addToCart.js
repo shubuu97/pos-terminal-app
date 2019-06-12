@@ -13,7 +13,9 @@ const addToCart = (product, cartItems, cart, quantity, dispatch, selectedPackage
     _get(product.doc.product, 'isGiftCard') ? saleType = 1 : saleType = 0
     let reqObj = []
     let cannabisStore = localStorage.getItem('cannabisStore')
-    if (cannabisStore) {
+    let productType = _get(product, 'doc.product.productType', 3)
+    debugger
+    if (cannabisStore && !(productType == 3) ) {
         let packages = []
         cartItems.map((data, index) => {
             let cartItemPackage = _get(data, 'packages', [])
