@@ -10,6 +10,9 @@ import _find from 'lodash/find'
 import Info from '@material-ui/icons/Info';
 import SimpleModal from '../../Global/Components/Modal/MaterialUIModal.jsx';
 /* Material Icons */
+import ShoppingCart from '@material-ui/icons/ShoppingCartOutlined'
+import HealingIcon from '@material-ui/icons/HealingOutlined';
+import SpaIcon from '@material-ui/icons/SpaOutlined';
 import InfoOutlined from '@material-ui/icons/InfoOutlined'
 /* Redux Imports */
 import { commonActionCreater } from '../../Redux/commonAction';
@@ -111,8 +114,18 @@ class Product extends React.PureComponent {
                                             <span className='each-card-code'>{_get(data, 'doc.inventory.quantity', 0)}</span>
                                     }
                                 </div>
-                                <div className="each-card-price flex-row">
+                                <div className="each-card-price flex-row justify-space-between">
                                     {Money.toFormat('$0,0.00')}
+                                    {
+                                        _get(data, 'doc.product.productType', 3) == 1 || _get(data, 'doc.product.productType', 3) == 2 ?
+                                            _get(data, 'doc.product.productType', 3) == 1 ?
+                                                <SpaIcon style={{ width:'0.8em', height:'0.8em', paddingRight:'8px', color: 'rgba(0,0,0,0.5)' }} />
+                                                :
+                                                <HealingIcon style={{width:'0.8em', height:'0.8em', paddingRight:'8px', color: 'rgba(0,0,0,0.5)' }} />
+                                            :
+                                            <ShoppingCart style={{width:'0.8em', height:'0.8em', paddingRight:'8px', color: 'rgba(0,0,0,0.5)' }} />
+
+                                    }
                                 </div>
                                 <span
                                     onMouseLeave={() => this.setState({ iconSelected: false })}
@@ -122,7 +135,7 @@ class Product extends React.PureComponent {
                                     title="View Details">
                                     <InfoOutlined style={{ color: '#000' }} />
                                 </span>
-                                <span className="each-card-availabilty">
+                                {/* <span className="each-card-availabilty">
                                     <div
                                         className='indicator'
                                         style={
@@ -131,7 +144,7 @@ class Product extends React.PureComponent {
                                                 :
                                                 { background: '#00ca008c' }
                                         }></div>
-                                </span>
+                                </span> */}
                             </div>
                         </div>
                     </div> : null}

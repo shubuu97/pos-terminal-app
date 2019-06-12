@@ -58,7 +58,7 @@ class PaymentTab extends React.Component {
                         <img src={_get(data, 'doc.product.image', '')} alt="" />
                     </div> */}
                     <span className='product-name'>{_get(data, 'doc.product.name', '')}</span>
-                    <div className='flex-column product-deductions justify-flex-end'>
+                    <div className='flex-column product-deductions'>
                         <span className='product-cost-price flex-row justify-flex-end'>{itemSubTotal.toFormat('$0,0.00')}</span>
                         {
                             itemTotalDiscount.getAmount() ?
@@ -89,9 +89,31 @@ class PaymentTab extends React.Component {
         )
     }
 
+    // handleDelete = (item) => {
+    //     let cartItems = [...this.props.cart.cartItems];
+    //     let index = _findIndex(cartItems, cartItem => cartItem.doc._id == item.doc._id);
+    //     cartItems.splice(index, 1);
+    //     this.dispatchCartAction(cartItems)
+    // };
+
     handleDelete = (item) => {
         let cartItems = [...this.props.cart.cartItems];
-        let index = _findIndex(cartItems, cartItem => cartItem.doc._id == item.doc._id);
+        let index
+        if (localStorage.getItem('cannabisStore') && !(_get(item, 'doc.product.productType', 3) == 3)) {
+            debugger
+            index = _findIndex(cartItems, cartItem => {
+                if(_get(cartItem, 'packages', false)){
+                    return cartItem.packages[0].label == item.packages[0].label
+                }
+                return
+            });
+        }
+        else if(localStorage.getItem('cannabisStore') && _get(item, 'doc.product.productType', 3) == 3) {
+            index = _findIndex(cartItems, cartItem => cartItem.doc.product.id == item.doc.product.id);
+        }
+        else {
+            index = _findIndex(cartItems, cartItem => cartItem.doc._id == item.doc._id);
+        }
         cartItems.splice(index, 1);
         this.dispatchCartAction(cartItems)
     };

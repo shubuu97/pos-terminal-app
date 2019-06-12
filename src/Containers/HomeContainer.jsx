@@ -91,7 +91,7 @@ class HomeContainer extends React.Component {
         let operatingTimezone = localStorage.getItem('operatingTimezone');
         let operatingHoursStart = localStorage.getItem('operatingHoursStart');
         let operatingHoursEnd = localStorage.getItem('operatingHoursEnd');
-        let offset = operatingTimezone.split("UTC")[1]
+        let offset = operatingTimezone && operatingTimezone.split("UTC")[1] 
         let d = new Date();
         let utc = d.getTime() + (d.getTimezoneOffset() * 60000);
         let nd = new Date(utc + (3600000 * offset));

@@ -13,6 +13,7 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Slide from '@material-ui/core/Slide';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 /* Material Icons */
 import RemoveCircleIcons from '@material-ui/icons/RemoveCircleOutline';
 import DeleteIcons from '@material-ui/icons/DeleteOutline';
@@ -66,7 +67,7 @@ class OrdersTab extends React.Component {
             itemIndex: '',
             forCart: false,
             cartItemQty: 0,
-            tooltipOpen: false
+            openTooltip: false
         }
     }
 
@@ -129,13 +130,21 @@ class OrdersTab extends React.Component {
     handleDelete = (item) => {
         let cartItems = [...this.props.cartItems];
         let index
-        if (localStorage.getItem('cannabisStore')) {
-            index = _findIndex(cartItems, cartItem => cartItem.packages[0].label == item.packages[0].label);
+        if (localStorage.getItem('cannabisStore') && !(_get(item, 'doc.product.productType', 3) == 3)) {
+            debugger
+            index = _findIndex(cartItems, cartItem => {
+                if(_get(cartItem, 'packages', false)){
+                    return cartItem.packages[0].label == item.packages[0].label
+                }
+                return
+            });
+        }
+        else if(localStorage.getItem('cannabisStore') && _get(item, 'doc.product.productType', 3) == 3) {
+            index = _findIndex(cartItems, cartItem => cartItem.doc.product.id == item.doc.product.id);
         }
         else {
             index = _findIndex(cartItems, cartItem => cartItem.doc._id == item.doc._id);
         }
-
         cartItems.splice(index, 1);
         this.handleCartDiscountCalculate(cartItems)
     };
@@ -192,7 +201,7 @@ class OrdersTab extends React.Component {
         }
     };
     handleClearCart = () => {
-        if (localStorage.getItem('cannabisStore')) {
+        if (localStorage.getItem('cannabisStore') ) {
             let selectedCannabisCustomer = _get(this.props, 'customerQueue.customer', {})
             selectedCannabisCustomer.status = 1
             genericPostData({
@@ -284,7 +293,7 @@ class OrdersTab extends React.Component {
                         <ExpansionPanelDetails>
                             <div className='fwidth flex-row justify-space-between'>
                                 {
-                                    localStorage.getItem('cannabisStore') ?
+                                    localStorage.getItem('cannabisStore') && !(_get(item, 'doc.product.productType', 3) == 3) ?
                                         <div className='expanded-options'>
                                             <span className='option-title'>Quantity</span>
                                             <div className='flex-row justify-center align-center'>
@@ -356,10 +365,6 @@ class OrdersTab extends React.Component {
         this.props.dispatch(commonActionCreater(2, 'SWITCH_TAB_NUMBER'))
     }
 
-    handleTooltipClose = () => {
-        this.setState({ tooltipOpen: false })
-    }
-
     handleItemDiscountRemove = (index) => {
         let cartDiscountObj = {}
         cartDiscountObj.cartItems = _get(this.props, 'cart.cartItems', [])
@@ -399,26 +404,31 @@ class OrdersTab extends React.Component {
                 </div>
                 <div className="order-amount-section">
                     {
-                        localStorage.getItem('cannabisStore') || false ?
-                            <ArrowTooltip
-                                title={<CannaConsumptionTooltip cart={cart} />}
-                                placement="top"
-                            >
-                                <LinearProgress
-                                    onClick={() => this.setState({ tooltipOpen: true })}
-                                    variant="buffer"
-                                    value={_get(this.props, 'cart.cannabisCartLimitPercentage', 0)}
-                                    classes={
-                                        _get(this.props, 'cart.cannabisCartLimitPercentage', 0) > 100 ?
-                                            { barColorPrimary: classes.barColorPrimary, colorPrimary: classes.barColorPrimary } : {}
-                                    }
-                                    style={{
-                                        width: '100%',
-                                        height: '15px',
-                                        borderRadius: '8px',
-                                    }}
-                                />
-                            </ArrowTooltip> : null
+                        localStorage.getItem('cannabisStore') ?
+                            <ClickAwayListener onClickAway={() => this.setState({ openTooltip: false })}>
+                                <div>
+                                    <ArrowTooltip
+                                        title={<CannaConsumptionTooltip cart={cart} />}
+                                        placement="top"
+                                        open={this.state.openTooltip}
+                                    >
+                                        <LinearProgress
+                                            onClick={() => this.setState({ openTooltip: true })}
+                                            variant="buffer"
+                                            value={_get(this.props, 'cart.cannabisCartLimitPercentage', 0)}
+                                            classes={
+                                                _get(this.props, 'cart.cannabisCartLimitPercentage', 0) > 100 ?
+                                                    { barColorPrimary: classes.barColorPrimary, colorPrimary: classes.barColorPrimary } : {}
+                                            }
+                                            style={{
+                                                width: '100%',
+                                                height: '15px',
+                                                borderRadius: '8px',
+                                            }}
+                                        />
+                                    </ArrowTooltip>
+                                </div>
+                            </ClickAwayListener> : null
                     }
                     <CalculationSection
                         checkoutcalcArea={checkoutcalcArea}
