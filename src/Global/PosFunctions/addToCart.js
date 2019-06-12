@@ -16,10 +16,12 @@ const addToCart = (product, cartItems, cart, quantity, dispatch, selectedPackage
     let productType = _get(product, 'doc.product.productType', 3)
     debugger
     if (cannabisStore && !(productType == 3) ) {
+        debugger
         let packages = []
         cartItems.map((data, index) => {
-            let cartItemPackage = _get(data, 'packages', [])
-            packages = [...packages, ...data.packages]
+            if(!(_get(data, 'doc.product.productType', 3) == 3)){
+                packages = [...packages, ...data.packages]
+            }
         })
         product.packages = [selectedPackage]
         if (_isEmpty(_find(packages, selectedPackage))) {
@@ -39,6 +41,7 @@ const addToCart = (product, cartItems, cart, quantity, dispatch, selectedPackage
         }
     }
     else {
+        debugger
         if (_isEmpty(_find(cartItems, product))) {
             reqObj = [
                 ...cartItems,

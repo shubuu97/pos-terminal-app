@@ -23,7 +23,7 @@ const taxCalculations = (cartItem, cannabisTaxes) => {
     //     NON_CANNABIS = 3;
     // }
 
-    let productType = _get(cartItem, 'doc.product.productType', 0)
+    let productType = _get(cartItem, 'doc.product.productType', 3)
     let itemTax = 0
 
     taxes.map((data, index) => {

@@ -126,13 +126,21 @@ class OrdersTab extends React.Component {
     handleDelete = (item) => {
         let cartItems = [...this.props.cartItems];
         let index
-        if (localStorage.getItem('cannabisStore')) {
-            index = _findIndex(cartItems, cartItem => cartItem.packages[0].label == item.packages[0].label);
+        if (localStorage.getItem('cannabisStore') && !(_get(item, 'doc.product.productType', 3) == 3)) {
+            debugger
+            index = _findIndex(cartItems, cartItem => {
+                if(_get(cartItem, 'packages', false)){
+                    return cartItem.packages[0].label == item.packages[0].label
+                }
+                return
+            });
+        }
+        else if(localStorage.getItem('cannabisStore') && _get(item, 'doc.product.productType', 3) == 3) {
+            index = _findIndex(cartItems, cartItem => cartItem.doc.product.id == item.doc.product.id);
         }
         else {
             index = _findIndex(cartItems, cartItem => cartItem.doc._id == item.doc._id);
         }
-
         cartItems.splice(index, 1);
         this.handleCartDiscountCalculate(cartItems)
     };
@@ -189,7 +197,7 @@ class OrdersTab extends React.Component {
         }
     };
     handleClearCart = () => {
-        if (localStorage.getItem('cannabisStore')) {
+        if (localStorage.getItem('cannabisStore') ) {
             let selectedCannabisCustomer = _get(this.props, 'customerQueue.customer', {})
             selectedCannabisCustomer.status = 1
             genericPostData({
@@ -281,7 +289,7 @@ class OrdersTab extends React.Component {
                         <ExpansionPanelDetails>
                             <div className='fwidth flex-row justify-space-between'>
                                 {
-                                    localStorage.getItem('cannabisStore') ?
+                                    localStorage.getItem('cannabisStore') && !(_get(item, 'doc.product.productType', 3) == 3) ?
                                         <div className='expanded-options'>
                                             <span className='option-title'>Quantity</span>
                                             <div className='flex-row justify-center align-center'>
@@ -392,7 +400,7 @@ class OrdersTab extends React.Component {
                 </div>
                 <div className="order-amount-section">
                     {
-                        localStorage.getItem('cannabisStore') || false ?
+                        localStorage.getItem('cannabisStore') ?
                             <LinearProgress
                                 variant="buffer"
                                 value={_get(this.props, 'cart.cannabisCartLimitPercentage', 0)}
