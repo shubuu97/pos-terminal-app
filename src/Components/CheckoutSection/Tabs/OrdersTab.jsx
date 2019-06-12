@@ -12,7 +12,8 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Slide from '@material-ui/core/Slide';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles, makeStyles } from '@material-ui/core/styles';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 /* Material Icons */
 import RemoveCircleIcons from '@material-ui/icons/RemoveCircleOutline';
 import DeleteIcons from '@material-ui/icons/DeleteOutline';
@@ -24,6 +25,8 @@ import { commonActionCreater } from '../../../Redux/commonAction';
 /* Component Imports */
 import CalculationSection from './CalculationSection'
 import DiscountDialogue from '../../Dialogues/DiscountDialogue/DiscountDialogue'
+import CannaConsumptionTooltip from './CannaConsumptionTooltip';
+import ArrowTooltip from './ArrowTooltip';
 /* Global Function import */
 import genericPostData from '../../../Global/dataFetch/genericPostData';
 import globalClearCart from '../../../Global/PosFunctions/clearCart';
@@ -64,6 +67,7 @@ class OrdersTab extends React.Component {
             itemIndex: '',
             forCart: false,
             cartItemQty: 0,
+            openTooltip: false
         }
     }
 
@@ -372,7 +376,7 @@ class OrdersTab extends React.Component {
     }
 
     render() {
-        let { checkoutcalcArea, checkoutactionArea, checkoutcartArea, checkoutMainPart } = this.props;
+        let { checkoutcalcArea, checkoutactionArea, checkoutcartArea, checkoutMainPart, cart } = this.props;
         let cartListHeight = checkoutcartArea - 30
         const { classes } = this.props;
         return (
@@ -401,19 +405,30 @@ class OrdersTab extends React.Component {
                 <div className="order-amount-section">
                     {
                         localStorage.getItem('cannabisStore') ?
-                            <LinearProgress
-                                variant="buffer"
-                                value={_get(this.props, 'cart.cannabisCartLimitPercentage', 0)}
-                                classes={
-                                    _get(this.props, 'cart.cannabisCartLimitPercentage', 0) > 100 ?
-                                        { barColorPrimary: classes.barColorPrimary, colorPrimary: classes.barColorPrimary } : {}
-                                }
-                                style={{
-                                    width: '100%',
-                                    height: '15px',
-                                    borderRadius: '8px',
-                                }}
-                            /> : null
+                            <ClickAwayListener onClickAway={() => this.setState({ openTooltip: false })}>
+                                <div>
+                                    <ArrowTooltip
+                                        title={<CannaConsumptionTooltip cart={cart} />}
+                                        placement="top"
+                                        open={this.state.openTooltip}
+                                    >
+                                        <LinearProgress
+                                            onClick={() => this.setState({ openTooltip: true })}
+                                            variant="buffer"
+                                            value={_get(this.props, 'cart.cannabisCartLimitPercentage', 0)}
+                                            classes={
+                                                _get(this.props, 'cart.cannabisCartLimitPercentage', 0) > 100 ?
+                                                    { barColorPrimary: classes.barColorPrimary, colorPrimary: classes.barColorPrimary } : {}
+                                            }
+                                            style={{
+                                                width: '100%',
+                                                height: '15px',
+                                                borderRadius: '8px',
+                                            }}
+                                        />
+                                    </ArrowTooltip>
+                                </div>
+                            </ClickAwayListener> : null
                     }
                     <CalculationSection
                         checkoutcalcArea={checkoutcalcArea}

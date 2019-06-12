@@ -146,12 +146,12 @@ class FullWidthTabs extends React.Component {
                         variant="fullWidth"
                     >
                         <Tab label="Cart"
-                            className={this.props.cardRefrenceId ? 'disable-button' : null}
-                            disabled={this.props.cardRefrenceId ? true : false}
+                            className={this.props.cardRefrenceId ? 'disable-button' : null||_get(this.props,'storeClose.storeClose')?'disable-button':null}
+                            disabled={this.props.cardRefrenceId ? true : false||_get(this.props,'storeClose.storeClose')? true : false}
                         />
                         <Tab label="Customer"
-                            className={this.props.cardRefrenceId ? 'disable-button' : null}
-                            disabled={this.props.cardRefrenceId ? true : false} />
+                            className={this.props.cardRefrenceId ? 'disable-button' : null||_get(this.props,'storeClose.storeClose')?'disable-button':null}
+                            disabled={this.props.cardRefrenceId ? true : false||_get(this.props,'storeClose.storeClose')? true : false} />
                         <Tab className={!(this.disablePaymentTab()) ? '' : 'disable-button'} label="Payment" disabled={this.disablePaymentTab()} />
                     </Tabs>
                 </AppBar>
@@ -190,7 +190,9 @@ function mapStateToProps(state) {
     let cannabisCustomer = _get(state, 'customerQueue.customer', {})
     let afterSellRedirectToCart = _get(state, 'afterSellRedirectToCart.lookUpData')
     let cardRefrenceId = _get(state, 'PaymentDetails.cardRefrenceId');
+    let storeClose = _get(state, 'storeClose.lookUpData')
 
-    return { cartItems, cart, afterSellRedirectToCart, cardRefrenceId, cannabisCustomer };
+
+    return { cartItems, cart, afterSellRedirectToCart, cardRefrenceId, cannabisCustomer, storeClose };
 }
 export default connect(mapStateToProps)(FullWidthTabs);
