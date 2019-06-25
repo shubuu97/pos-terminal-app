@@ -421,10 +421,12 @@ class HomeContainer extends React.Component {
     }
 
     getCannabisProductData = () => {
-        debugger;
         let customerType = localStorage.getItem('selectedCustomerType')
 
-        let filters = [{ "field": "retailerId", "value": localStorage.getItem('retailerId') }]
+        let filters = [
+            { "field": "retailerId", "value": localStorage.getItem('retailerId') },
+            { "field": "availableAtStores", "value": localStorage.getItem('storeId') },
+        ]
         if (customerType == 1) {
             filters = [...filters,
             { 'field': 'productType', 'value': '1' },
@@ -487,12 +489,12 @@ class HomeContainer extends React.Component {
 
     getCannabisStoreTaxes = () => {
         let reqObj = {
-            id: localStorage.getItem('retailerId')
+            id: localStorage.getItem('storeId')
         }
         genericPostData({
             dispatch: this.props.dispatch,
             reqObj: reqObj,
-            url: 'Get/Tax/RetailerId/Active',
+            url: 'Get/Tax/StoreId/Active',
             dontShowMessage: true,
             constants: {
                 init: 'GET_CANNABIS_STORE_TAXES_INIT',

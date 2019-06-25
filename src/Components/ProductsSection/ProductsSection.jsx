@@ -90,7 +90,10 @@ class ProductsSection extends React.Component {
     searchWithElastic = (searchText) => {
         let customerType = _get(this.props, 'customer.customerType');
 
-        let filters = [{ "field": "retailerId", "value": localStorage.getItem('retailerId') }]
+        let filters = [
+            { "field": "retailerId", "value": localStorage.getItem('retailerId') },
+            { "field": "availableAtStores", "value": localStorage.getItem('storeId') },
+        ]
         if (customerType == 1) {
             filters = [...filters,
             { 'field': 'productType', 'value': '3' },
@@ -335,7 +338,10 @@ class ProductsSection extends React.Component {
         console.log(result, 'getNextCannabisProducts')
         let customerType = _get(this.props, 'customer.customerType');
 
-        let filters = [{ "field": "retailerId", "value": localStorage.getItem('retailerId') }]
+        let filters = [
+            { "field": "retailerId", "value": localStorage.getItem('retailerId') },
+            { "field": "availableAtStores", "value": localStorage.getItem('storeId') },
+        ]
         if (customerType == 1) {
             filters = [...filters,
             { 'field': 'productType', 'value': '1' },
