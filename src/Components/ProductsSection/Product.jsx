@@ -65,7 +65,8 @@ class Product extends React.PureComponent {
         }
         if (!this.state.iconSelected) {
             debugger
-            addToCart(products, cartItems, cart, quantity, dispatch, selectedPackage)
+            let handleClickOpenCustomer = this.props.handleClickOpenCustomer
+            addToCart(products, cartItems, cart, quantity, dispatch, selectedPackage, handleClickOpenCustomer)
             this.setState({
                 qty: this.state.qty + quantity
             })
@@ -162,6 +163,7 @@ class Product extends React.PureComponent {
                             cartItems={cartItems}
                             product={data}
                             dispatch={dispatch}
+                            handleClickOpenCustomer={this.props.handleClickOpenCustomer}
                             cannabisRetailer={this.props.cannabisRetailer}
                             addToCart={(product, cartItems, cart, qty, dispatch, selectedPackage) => this.addToCart(product, cartItems, cart, qty, dispatch, selectedPackage)}
                         /> : ''

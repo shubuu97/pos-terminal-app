@@ -220,7 +220,8 @@ class ProductsSection extends React.Component {
                         let quantity = _get(result, 'itemPackage.quantity', 0)
                         let dispatch = this.props.dispatch
                         let selectedPackage = result.itemPackage
-                        addToCart(product, cartItems, cart, quantity, dispatch, selectedPackage)
+                        let handleClickOpenCustomer = this.props.handleClickOpenCustomer
+                        addToCart(product, cartItems, cart, quantity, dispatch, selectedPackage,handleClickOpenCustomer)
                         this.props.enqueueSnackbar(
                             <div className='flex-row justify-space-between cart-snackbar'>
                                 <div className='flex-row'>
@@ -257,7 +258,8 @@ class ProductsSection extends React.Component {
                             let cartItems = _get(this, 'props.cart.cartItems', [])
                             let cart = _get(this, 'props.cart', {})
                             let product = { doc: result.docs[0] }
-                            addToCart(product, cartItems, cart, 1, this.props.dispatch)
+                            let handleClickOpenCustomer = this.props.handleClickOpenCustomer
+                            addToCart(product, cartItems, cart, 1, this.props.dispatch, {}, handleClickOpenCustomer)
 
                             // View for Snackbar
                             this.props.enqueueSnackbar(

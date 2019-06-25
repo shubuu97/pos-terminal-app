@@ -8,7 +8,7 @@ import showMessage from '../../Redux/toastAction';
 /* Redux Imports */
 import { commonActionCreater } from '../../Redux/commonAction';
 
-const addToCart = (product, cartItems, cart, quantity, dispatch, selectedPackage) => {
+const addToCart = (product, cartItems, cart, quantity, dispatch, selectedPackage, handleClickOpenCustomer) => {
     let saleType = 0
     _get(product.doc.product, 'isGiftCard') ? saleType = 1 : saleType = 0
     let reqObj = []
@@ -66,6 +66,8 @@ const addToCart = (product, cartItems, cart, quantity, dispatch, selectedPackage
         setTimeout(() => {
             dispatch(showMessage({}));
         }, 3000);
+        debugger
+        handleClickOpenCustomer()
         return
     }
     dispatch(commonActionCreater(cartDiscountObj, 'CART_ITEM_LIST'));

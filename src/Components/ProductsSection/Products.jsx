@@ -17,7 +17,7 @@ const Products = (props) => {
         products = productList.map((data, index) => {
             let productData = {
                 doc: {
-                    
+
 
                 }
             }
@@ -29,6 +29,7 @@ const Products = (props) => {
                 key={index}
                 index={index}
                 productList={props.productList}
+                handleClickOpenCustomer={props.handleClickOpenCustomer}
                 //cart={_get(props, 'cart', [])}
                 dispatch={props.dispatch}
                 isProductModalOpen={props.isProductModalOpen}
