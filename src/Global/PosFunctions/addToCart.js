@@ -14,9 +14,7 @@ const addToCart = (product, cartItems, cart, quantity, dispatch, selectedPackage
     let reqObj = []
     let cannabisStore = localStorage.getItem('cannabisStore')
     let productType = _get(product, 'doc.product.productType', 3)
-    debugger
     if (cannabisStore && !(productType == 3) ) {
-        debugger
         let packages = []
         cartItems.map((data, index) => {
             if(!(_get(data, 'doc.product.productType', 3) == 3)){
@@ -41,7 +39,6 @@ const addToCart = (product, cartItems, cart, quantity, dispatch, selectedPackage
         }
     }
     else {
-        debugger
         if (_isEmpty(_find(cartItems, product))) {
             reqObj = [
                 ...cartItems,
@@ -53,7 +50,7 @@ const addToCart = (product, cartItems, cart, quantity, dispatch, selectedPackage
             ];
         } else {
             let qty = (_find(cartItems, product)).qty + (quantity)
-            let index = _findIndex(cartItems, ['doc._id', product.doc._id]);
+            let index = _findIndex(cartItems, ['doc.product.id', product.doc.product.id]);
             reqObj = [
                 ...cartItems
             ]

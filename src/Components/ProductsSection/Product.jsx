@@ -64,6 +64,7 @@ class Product extends React.PureComponent {
             doc: product.doc
         }
         if (!this.state.iconSelected) {
+            debugger
             addToCart(products, cartItems, cart, quantity, dispatch, selectedPackage)
             this.setState({
                 qty: this.state.qty + quantity
