@@ -5,7 +5,7 @@ import '../../assets/stylesheets/print.css';
 import Dinero from 'dinero.js';
 
 let DineroInit = (amount, currency, precision) => (
-    Dinero({amount:  parseInt(amount) || 0, currency: currency || 'USD', precision: precision || 2})
+    Dinero({ amount: parseInt(amount) || 0, currency: currency || 'USD', precision: precision || 2 })
 )
 
 var Barcode = require('react-barcode');
@@ -15,20 +15,20 @@ const HandlePrint = (props) => {
     let ohSubTotal = 0
     const saleTransaction = _get(props, 'itemList', []).map(item => {
         console.log(item, 'ilgydygkjvhfugjk')
-        stSubTotal += _get(item,'subTotal',DineroInit()).getAmount()
+        stSubTotal += _get(item, 'subTotal', DineroInit()).getAmount()
         return (
             <div style={{ display: 'flex', flex: '1', paddingTop: "10px", paddingBottom: "10px", borderBottom: 'dotted 1px #9e9e9e' }}>
-                <div style={{ width: "35%" }}>{_get(item, 'doc.product.isGiftCard', false) ? 'Gift Card' : _get(item, 'doc.product.name', '')}<br /><span style={{fontSize: '10px'}}>{_get(item,'packages[0].label')}</span></div>
+                <div style={{ width: "35%" }}>{_get(item, 'doc.product.isGiftCard', false) ? 'Gift Card' : _get(item, 'doc.product.name', '')}<br /><span style={{ fontSize: '10px' }}>{_get(item, 'packages[0].label')}</span></div>
                 <div style={{ width: "10%", textAlign: "center" }}>{_get(item, 'qty', '')}</div>
                 <div style={{ width: "30%", textAlign: "right" }}>{DineroInit(_get(item, 'doc.product.salePrice.amount', 0)).toFormat('$0,0.00')}<br />
                     <div style={{ fontSize: "9px" }}>
-                        {_get(item,'itemDiscountMoney', DineroInit()).getAmount() == 0 ? '' : <span>(Item Disc.: {_get(item,'itemDiscountMoney', DineroInit()).toFormat('$0,0.00')})</span>}
+                        {_get(item, 'itemDiscountMoney', DineroInit()).getAmount() == 0 ? '' : <span>(Item Disc.: {_get(item, 'itemDiscountMoney', DineroInit()).toFormat('$0,0.00')})</span>}
                         <br />
-                        {_get(item,'empDiscountMoney', DineroInit()).getAmount() == 0 ? '' : <span>(Emp Disc.: {_get(item,'empDiscountMoney', DineroInit()).toFormat('$0,0.00')})</span>}
-                        {_get(item,'cartDiscountMoney', DineroInit()).getAmount() == 0 ? '' : <span>(Cart Disc.: {_get(item,'cartDiscountMoney', DineroInit()).toFormat('$0,0.00')})</span>}
+                        {_get(item, 'empDiscountMoney', DineroInit()).getAmount() == 0 ? '' : <span>(Emp Disc.: {_get(item, 'empDiscountMoney', DineroInit()).toFormat('$0,0.00')})</span>}
+                        {_get(item, 'cartDiscountMoney', DineroInit()).getAmount() == 0 ? '' : <span>(Cart Disc.: {_get(item, 'cartDiscountMoney', DineroInit()).toFormat('$0,0.00')})</span>}
                     </div>
                 </div>
-                <div style={{ width: "25%", textAlign: "right" }}>{_get(item,'subTotal',DineroInit()).toFormat('$0,0.00')}</div>
+                <div style={{ width: "25%", textAlign: "right" }}>{_get(item, 'subTotal', DineroInit()).toFormat('$0,0.00')}</div>
             </div>
         )
     })
@@ -54,7 +54,7 @@ const HandlePrint = (props) => {
             case 5:
                 method = 'Loyalty'
                 break;
-                case 6:
+            case 6:
                 method = 'Declining Balance'
                 break;
         }
@@ -63,7 +63,7 @@ const HandlePrint = (props) => {
     }
 
     const orderHistory = _get(props, 'itemList', []).map(item => {
-        let itemSubTotal = _get(item,'itemSubTotal.amount',0)
+        let itemSubTotal = _get(item, 'itemSubTotal.amount', 0)
         if (_isEmpty(item.giftCard)) {
             ohSubTotal += itemSubTotal
         } else {
@@ -71,17 +71,17 @@ const HandlePrint = (props) => {
         }
         return (
             <div style={{ display: 'flex', flex: '1', paddingTop: "10px", paddingBottom: "10px", borderBottom: 'dotted 1px #9e9e9e' }}>
-                <div style={{ width: "35%", paddingRight: '10px' }}>{_isEmpty(item.giftCard) ? _get(item, 'product.name', ''): 'Gift Card'}<br /><span style={{fontSize: '10px'}}>{_get(item,'itemPackage.label','')}</span></div>
+                <div style={{ width: "35%", paddingRight: '10px' }}>{_isEmpty(item.giftCard) ? _get(item, 'product.name', '') : 'Gift Card'}<br /><span style={{ fontSize: '10px' }}>{_get(item, 'itemPackage.label', '')}</span></div>
                 <div style={{ width: "10%", textAlign: "center" }}>{_get(item, 'qty', '')}</div>
-                <div style={{ width: "30%", textAlign: "right" }}>{_isEmpty(item.giftCard) ? '$'+((_get(item, 'product.salePrice.amount', 0))/100).toFixed(2) : (_get(item, 'giftCard.value.amount', 0)/100).toFixed(2)}<br />
+                <div style={{ width: "30%", textAlign: "right" }}>{_isEmpty(item.giftCard) ? '$' + ((_get(item, 'product.salePrice.amount', 0)) / 100).toFixed(2) : (_get(item, 'giftCard.value.amount', 0) / 100).toFixed(2)}<br />
                     <div style={{ fontSize: "9px" }}>
-                        {_get(item,'itemDiscountTotal.amount',0) == 0 ? '' : <span>(Item Disc.: {'$'+((_get(item,'itemDiscountTotal.amount',0))/100).toFixed(2)})</span>}
+                        {_get(item, 'itemDiscountTotal.amount', 0) == 0 ? '' : <span>(Item Disc.: {'$' + ((_get(item, 'itemDiscountTotal.amount', 0)) / 100).toFixed(2)})</span>}
                         <br />
-                        {_get(item,'employeeDiscountTotal.amount',0) == 0 ? '' : <span>(Emp Disc.: {'$'+((_get(item,'employeeDiscountTotal.amount',0))/100).toFixed(2)})</span>}
-                        {_get(item,'cartDiscountTotal.amount',0) == 0 ? '' : <span>(Cart Disc.: {'$'+((_get(item,'cartDiscountTotal.amount',0))/100).toFixed(2)})</span>}
+                        {_get(item, 'employeeDiscountTotal.amount', 0) == 0 ? '' : <span>(Emp Disc.: {'$' + ((_get(item, 'employeeDiscountTotal.amount', 0)) / 100).toFixed(2)})</span>}
+                        {_get(item, 'cartDiscountTotal.amount', 0) == 0 ? '' : <span>(Cart Disc.: {'$' + ((_get(item, 'cartDiscountTotal.amount', 0)) / 100).toFixed(2)})</span>}
                     </div>
                 </div>
-                <div style={{ width: "25%", textAlign: "right" }}>{_isEmpty(item.giftCard) ? '$'+(itemSubTotal/100).toFixed(2) : (_get(item, 'giftCard.value.amount', 0)/100)}</div>
+                <div style={{ width: "25%", textAlign: "right" }}>{_isEmpty(item.giftCard) ? '$' + (itemSubTotal / 100).toFixed(2) : (_get(item, 'giftCard.value.amount', 0) / 100)}</div>
             </div>
         )
     })
@@ -101,9 +101,13 @@ const HandlePrint = (props) => {
     let totalAmountPaid = _get(props, 'totalAmountPaid', 0)
     let changeDue = _get(props, 'changeDue', 0)
     return (
-        <div style={{ fontSize: "12px", fontFamily: "arial, sans-serif", color:'black' }} >
+        <div style={{ fontSize: "12px", fontFamily: "arial, sans-serif", color: 'black' }} >
             <div style={{ textAlign: "center" }}>
-                <div style={{width: "100%" }}> <img style={{ height: "70px", width: "100px" }} src={props.logo} /></div>
+                <div style={{ width: "100%", display:'flex', justifyContent: 'center', marginTop: '20px' }}>
+                    <div style={{width:'30%'}}>
+                        <img style={{ width: "100%" }} src={props.logo} />
+                    </div>
+                </div>
                 <div style={{ marginTop: '15px' }}>{_get(props, 'orderId', '')}</div>
                 <div>{_get(props, 'orderDate', '')}</div>
                 <div style={{ marginTop: '10px' }}><span style={{ fontSize: '11px', fontWeight: 'bold' }}>STORE:</span> {_get(props, 'storeName', '')}</div>
@@ -134,31 +138,31 @@ const HandlePrint = (props) => {
 
             <div style={{ display: 'flex', flex: '1', flexDirection: 'column', borderBottom: 'solid 1px #9e9e9e', paddingTop: "10px", paddingBottom: "5px" }} >
                 <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>
-                    SUB TOTAL: <span style={{ fontWeight: 'bold' }}>${(subTotal/100).toFixed(2)}</span>
+                    SUB TOTAL: <span style={{ fontWeight: 'bold' }}>${(subTotal / 100).toFixed(2)}</span>
                 </div>
                 {
                     _get(props, 'itemsDiscount') == 0 ? '' :
                         <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>
-                            ITEMS DISCOUNT: <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + (itemDiscount/100).toFixed(2)}</span>
+                            ITEMS DISCOUNT: <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + (itemDiscount / 100).toFixed(2)}</span>
                         </div>
                 }
 
                 {
                     _get(props, 'cartDiscount') == 0 ? '' :
                         <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>
-                            CART DISCOUNT: <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + (cartDiscount/100).toFixed(2)}</span>
+                            CART DISCOUNT: <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + (cartDiscount / 100).toFixed(2)}</span>
                         </div>
                 }
 
                 {
                     _get(props, 'employeeDiscount') == 0 ? '' :
                         <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>
-                            EMPLOYEE DISCOUNT: <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + (employeeDiscount/100).toFixed(2)}</span>
+                            EMPLOYEE DISCOUNT: <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + (employeeDiscount / 100).toFixed(2)}</span>
                         </div>
                 }
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>
-                    TOTAL TAX: <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + (taxAmount/100).toFixed(2)}</span>
+                    TOTAL TAX: <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + (taxAmount / 100).toFixed(2)}</span>
                 </div>
 
             </div>
@@ -180,18 +184,18 @@ const HandlePrint = (props) => {
                 }
                     */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>
-                    GRAND TOTAL: <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + (grandTotal/100).toFixed(2)}</span>
+                    GRAND TOTAL: <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + (grandTotal / 100).toFixed(2)}</span>
                 </div>
 
                 {props.totalAmountPaid &&
                     <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>
-                        TOTAL PAID: <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + (totalAmountPaid/100).toFixed(2)}</span>
+                        TOTAL PAID: <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + (totalAmountPaid / 100).toFixed(2)}</span>
                     </div>
                 }
 
                 {props.changeDue == 0 ? '' :
                     <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: "4px" }}>
-                        CHANGE:  <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + (changeDue/100).toFixed(2)}</span>
+                        CHANGE:  <span style={{ fontWeight: 'bold' }}>{_get(props, 'currency', '') + (changeDue / 100).toFixed(2)}</span>
                     </div>
                 }
 
@@ -207,7 +211,7 @@ const HandlePrint = (props) => {
                     {_get(props, 'paymentMethods', []).map(payment => {
                             return (
                                 <div style={{ display: 'flex' }}>
-                                    <span style={{ fontWeight: 'bold', textAlign: "right" }}>{_get(props, 'currency', '') + (_get(payment, 'paymentAmount.amount', 0)/100).toFixed(2)}<br />
+                                    <span style={{ fontWeight: 'bold', textAlign: "right" }}>{_get(props, 'currency', '') + (_get(payment, 'paymentAmount.amount', 0) / 100).toFixed(2)}<br />
                                         by {paymentMethods(_get(payment, 'paymentMethod', 0))}</span>
                                 </div>
                             )
