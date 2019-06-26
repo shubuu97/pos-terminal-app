@@ -145,12 +145,12 @@ class ProductsSection extends React.Component {
                     let result = {}
                     result.pagination = {}
                     result.pagination.method = "allDocs"
-                    result.pagination.firstItemId = data.products[0].id
-                    result.pagination.lastItemId = data.products[data.products.length - 1].id
+                    result.pagination.firstItemId = _get(data, `products[0].id`, '')
+                    result.pagination.lastItemId = _get(data, `products[${_get(data, 'products.length', 1)} - 1].id`, '')
                     result.pagination.pageNo = 1
                     result.pagination.startVal = 1
-                    result.pagination.endVal = data.products.length
-                    let rows = data.products.map((d) => {
+                    result.pagination.endVal = _get(data, 'products.length', 0)
+                    let rows = _get(data, 'products', []).map((d) => {
                         let obj = {
                             doc: {
                                 product: d

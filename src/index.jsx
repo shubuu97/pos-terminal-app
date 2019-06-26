@@ -40,6 +40,7 @@ import StoreContainer from './Containers/StoreContainer';
 import SessionContainer from './Containers/SessionContainer';
 import DenominationDetailsForm from './Components/SessionComponents/DenominationDetailsForm'
 import OfflineTransactions from './Containers/OfflineTransactionContainer';
+import PackageLabel from './Global/Components/PrintLabel/PackageLabel'
 
 import QuickBookContainer from './Containers/QuickBookContainer'
 import ThankYou from './Components/QuickBook/ThankYou'
@@ -102,6 +103,7 @@ ReactDOM.render(
                 <RouteWithLayout Layout={EmptyLayout} exact path="/OfflineTransactions" Component={OfflineTransactions} />
                 <RouteWithLayout Layout={EmptyLayout} exact path="/QuickBookContainer" Component={QuickBookContainer} />
                 <RouteWithLayout Layout={EmptyLayout} exact path="/QuickBook" Component={ThankYou} />
+                <Route exact path="/PackageLabel" component={PackageLabel} />,
               </Switch>
             </Router>
             {/* </PersistGate> */}
