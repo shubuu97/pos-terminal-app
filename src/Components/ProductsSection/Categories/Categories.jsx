@@ -96,8 +96,10 @@ class Categories extends Component {
   };
 
   handleCannaCategoryClick = category => {
-    debugger;
-    let filters = [{ "field": "retailerId", "value": localStorage.getItem('retailerId') }]
+    let filters = [
+      { "field": "retailerId", "value": localStorage.getItem('retailerId') },
+      { "field": "availableAtStores", "value": localStorage.getItem('storeId') },
+  ]
     this.setState({ selectedCategory: category });
 
     if (category.categoryType === 0) {
