@@ -74,6 +74,7 @@ class MaterialUIModal extends React.Component {
     };
 
     incrementer = () => {
+        if( this.state.qty < _get(this.props.inventoryDetails, 'quantity', 0))
         this.setState({ qty: this.state.qty + 1 })
     }
 
