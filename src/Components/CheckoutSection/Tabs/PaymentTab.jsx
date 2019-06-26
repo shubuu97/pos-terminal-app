@@ -78,7 +78,7 @@ class PaymentTab extends React.Component {
                         <span className='product-name'>{_get(data, 'doc.product.name', '')}</span>
                         {
                             _get(data, 'doc.itemPackages[0]', false) ?
-                                <Button color="primary" className={this.props.classes.button} onClick={() => this.printLabel(_get(data, 'doc.itemPackages[0]', ''))}><PrintIcon style={{fontSize:'1.2em', paddingRight:'5px'}}/>Print Label</Button> : null
+                                <Button color="primary" className={this.props.classes.button} onClick={() => this.printLabel(_get(data, 'doc.itemPackages[0]', ''))}><PrintIcon style={{ fontSize: '1.2em', paddingRight: '5px' }} />Print Label</Button> : null
                         }
 
                     </div>
@@ -122,7 +122,6 @@ class PaymentTab extends React.Component {
     // };
 
     printLabel = (data) => {
-        debugger
         return this.props.history.push({
             pathname: "/PackageLabel",
             search: `sourcePackageId=${data.id}&label=${data.label}&name=${data.metrcProduct}`,
@@ -136,7 +135,6 @@ class PaymentTab extends React.Component {
         let cartItems = [...this.props.cart.cartItems];
         let index
         if (localStorage.getItem('cannabisStore') && !(_get(item, 'doc.product.productType', 3) == 3)) {
-            debugger
             index = _findIndex(cartItems, cartItem => {
                 if (_get(cartItem, 'packages', false)) {
                     return cartItem.packages[0].label == item.packages[0].label
@@ -269,7 +267,10 @@ class PaymentTab extends React.Component {
                                 <div className='flex-column fwidth'>
                                     <span className='customer-name'>{_get(customer, 'customer.firstName')} {_get(customer, 'customer.lastName')}</span>
                                     <span className='customer-email'>{_get(customer, 'email')}</span>
-                                    <span className='customer-phone'>+{_get(customer, 'phoneNumber.countryCode')} {_get(customer, 'phoneNumber.phoneNumber')}</span>
+                                    {
+                                        _get(customer, 'phoneNumber.phoneNumber', false) ?
+                                        <span className='customer-phone'>+{_get(customer, 'phoneNumber.countryCode')} {_get(customer, 'phoneNumber.phoneNumber')}</span> : null
+                                    }
                                 </div>
                         }
                     </div>
