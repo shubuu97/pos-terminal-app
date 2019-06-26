@@ -78,6 +78,7 @@ class RefundDialogue extends React.Component {
     showItemList = () => {
         let saleItems = _get(this.props, "selectedSaleTransaction.sale.saleItems", []);
         let saleItemResp = saleItems.map((saleItem, index) => {
+            debugger
             if (saleItem.saleType == 1) {
                 return null
             }
@@ -100,9 +101,10 @@ class RefundDialogue extends React.Component {
                     }
                 </td>
                 {
-                    _get(saleItem, 'product.misc', false) ?
-                        <td align='center '></td> :
-                        <td align='center '><FormControlLabel
+                    _get(saleItem, 'product.misc', false) || (localStorage.getItem('cannabisStore') && _get(saleItem, 'product.productType', 3) != 3)?
+                        <td align='center '>-</td> :
+                        <td align='center '>
+                            <FormControlLabel
                             control={
                                 <Checkbox
                                     checked={this.state[`checkbox${index}`]}
@@ -110,6 +112,9 @@ class RefundDialogue extends React.Component {
                                 // value="checkedA"
                                 />
                             }
+                            style={{
+                                margin: 0
+                            }}
                         /></td>
                 }
 

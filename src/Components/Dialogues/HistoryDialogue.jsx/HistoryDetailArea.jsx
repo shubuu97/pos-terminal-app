@@ -42,6 +42,7 @@ class HistoryDetailArea extends React.Component {
     showItemList = () => {
         let saleItems = _get(this.props, "selectedSaleTransaction.sale.saleItems", []);
         let saleItemResp = saleItems.map((saleItem, index) => {
+            debugger
             let totalDiscount = _get(saleItem, 'cartDiscountTotal.amount', 0) + _get(saleItem, 'employeeDiscountTotal.amount', 0) + _get(saleItem, 'itemDiscountTotal.amount', 0)
             return (<tr>
                 <td style={{ maxWidth: '70px' }}>
@@ -54,7 +55,9 @@ class HistoryDetailArea extends React.Component {
                 <td>
                     {
                         localStorage.getItem('cannabisStore') ?
-                            <div><span>Ordered: </span><span>{_get(saleItem, "itemPackage.quantity", 0)}</span></div> :
+
+                            <div><span>Ordered: </span><span>{_get(saleItem, "itemPackage.quantity", _get(saleItem, 'qty', 0))}</span></div>
+                            :
                             <div><span>Ordered: </span><span>{_get(saleItem, "qty", 0)}</span></div>
                     }
                     {
