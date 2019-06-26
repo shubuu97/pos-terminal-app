@@ -84,7 +84,6 @@ class MaterialUIModal extends React.Component {
     }
 
     addToCart = (index, qty) => {
-        debugger
         this.props.addToCart(this.props.product, this.props.cartItems, this.props.cart, qty, this.props.dispatch, this.state.packageSelected);
         this.setState({ qty: 0, fromInfoView: true })
     }

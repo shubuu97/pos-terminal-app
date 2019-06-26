@@ -141,12 +141,12 @@ import Select from 'react-select';
 class PackageSelect extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {selectedOption:null,options:[]}
+        this.state = { selectedOption: null, options: [] }
     }
     componentDidMount() {
         genericPostData({
             dispatch: this.props.dispatch,
-            reqObj: { id:this.props.productId },
+            reqObj: { id: this.props.productId },
             url: 'Package/Get/ByProduct',
             dontShowMessage: true,
             constants: {
@@ -157,17 +157,25 @@ class PackageSelect extends React.Component {
             identifier: 'GET_ACTIVE_PACKAGES_OF PRODUCT',
             successCb: (data) => { }
         }).then((data) => {
-         this.setState({options:data.packages})
+            let packages = data.packages.map((data, index) => {
+                data.value = data.label
+                data.label = `${data.label} (${data.quantity} ${data.uom})`
+                return data
+            })
+            this.setState({ options: packages })
         });
     }
     handleChange = selectedOption => {
         this.setState({ selectedOption });
-        this.props.handleSelectedPackage(selectedOption)
-        console.log(`Option selected:`, selectedOption);
+        let selectedData = {
+            ...selectedOption,
+            label: selectedOption.value
+        }
+        this.props.handleSelectedPackage(selectedData)
     };
     render() {
         return (
-            <div style={{width: '60%'}}>
+            <div style={{ width: '60%' }}>
                 <Select
                     value={this.state.selectedOption}
                     onChange={this.handleChange}
